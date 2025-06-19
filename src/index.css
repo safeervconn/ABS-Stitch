@@ -171,48 +171,126 @@ img {
   animation: scroll 30s linear infinite;
 }
 
-/* Shiny button effects - completely static */
+/* Shiny button effects with hover pause and pop effect */
 .shiny-button {
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  /* No animation or hover effects */
+  background-size: 400% 400%;
+  animation: shine 3s ease-in-out infinite;
+  transition: transform 0.2s ease-out;
+}
+
+.shiny-button:hover {
+  animation-play-state: paused;
+  transform: scale(1.05);
+}
+
+.shiny-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.shiny-button:hover::before {
+  animation-play-state: paused;
 }
 
 .shiny-button-premium {
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
-  /* No animation or hover effects */
+  background-size: 400% 400%;
+  animation: shine 3s ease-in-out infinite;
+  transition: transform 0.2s ease-out;
+}
+
+.shiny-button-premium:hover {
+  animation-play-state: paused;
+  transform: scale(1.05);
+}
+
+.shiny-button-premium::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.shiny-button-premium:hover::before {
+  animation-play-state: paused;
 }
 
 .shiny-button-enterprise {
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  /* No animation or hover effects */
+  background-size: 400% 400%;
+  animation: shine 3s ease-in-out infinite;
+  transition: transform 0.2s ease-out;
 }
 
-/* No slide animation buttons - completely static */
+.shiny-button-enterprise:hover {
+  animation-play-state: paused;
+  transform: scale(1.05);
+}
+
+.shiny-button-enterprise::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.shiny-button-enterprise:hover::before {
+  animation-play-state: paused;
+}
+
+/* No slide animation buttons - static with pop effect */
 .shiny-button-no-slide {
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  /* No animation or hover effects */
+  transition: transform 0.2s ease-out;
+}
+
+.shiny-button-no-slide:hover {
+  transform: scale(1.05);
 }
 
 .shiny-button-premium-no-slide {
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
-  /* No animation or hover effects */
+  transition: transform 0.2s ease-out;
+}
+
+.shiny-button-premium-no-slide:hover {
+  transform: scale(1.05);
 }
 
 .shiny-button-enterprise-no-slide {
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  /* No animation or hover effects */
+  transition: transform 0.2s ease-out;
+}
+
+.shiny-button-enterprise-no-slide:hover {
+  transform: scale(1.05);
 }
 
 /* Basic card effects */
