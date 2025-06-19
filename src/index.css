@@ -6,6 +6,12 @@
 
 :root {
   --font-inter: 'Inter', system-ui, sans-serif;
+  --primary-blue: #3b82f6;
+  --primary-blue-dark: #1d4ed8;
+  --primary-purple: #7c3aed;
+  --primary-purple-dark: #4c1d95;
+  --primary-green: #059669;
+  --primary-green-dark: #047857;
 }
 
 body {
@@ -25,7 +31,7 @@ img {
   height: auto;
 }
 
-/* Animations */
+/* Optimized animations with better performance */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -88,15 +94,6 @@ img {
   }
 }
 
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
 @keyframes scroll {
   0% {
     transform: translateX(0);
@@ -106,78 +103,31 @@ img {
   }
 }
 
-@keyframes shine {
-  0% {
-    background-position: -200% center;
-  }
-  100% {
-    background-position: 200% center;
-  }
-}
-
-@keyframes sparkle {
-  0%, 100% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-}
-
-/* New animated gradient keyframes */
+/* Optimized gradient animations with better performance */
 @keyframes gradientShift {
-  0% {
+  0%, 100% {
     background-position: 0% 50%;
-  }
-  25% {
-    background-position: 100% 50%;
   }
   50% {
-    background-position: 100% 100%;
-  }
-  75% {
-    background-position: 0% 100%;
-  }
-  100% {
-    background-position: 0% 50%;
+    background-position: 100% 50%;
   }
 }
 
 @keyframes gradientShiftPremium {
-  0% {
+  0%, 100% {
     background-position: 0% 50%;
-  }
-  25% {
-    background-position: 100% 50%;
   }
   50% {
-    background-position: 100% 100%;
-  }
-  75% {
-    background-position: 0% 100%;
-  }
-  100% {
-    background-position: 0% 50%;
+    background-position: 100% 50%;
   }
 }
 
 @keyframes gradientShiftEnterprise {
-  0% {
+  0%, 100% {
     background-position: 0% 50%;
-  }
-  25% {
-    background-position: 100% 50%;
   }
   50% {
-    background-position: 100% 100%;
-  }
-  75% {
-    background-position: 0% 100%;
-  }
-  100% {
-    background-position: 0% 50%;
+    background-position: 100% 50%;
   }
 }
 
@@ -190,24 +140,12 @@ img {
   animation: fadeInUp 0.8s ease-out;
 }
 
-.animate-fade-in-delayed {
-  animation: fadeIn 0.8s ease-out 0.3s both;
-}
-
-.animate-fade-in-up-delayed {
-  animation: fadeInUp 1s ease-out 0.5s both;
-}
-
 .animate-slide-in-left {
   animation: slideInLeft 0.8s ease-out;
 }
 
 .animate-slide-in-right {
   animation: slideInRight 1s ease-out 0.2s both;
-}
-
-.animate-slide-in-item {
-  animation: slideInRight 0.6s ease-out both;
 }
 
 .animate-float {
@@ -226,22 +164,23 @@ img {
   animation: scroll 30s linear infinite;
 }
 
-/* Enhanced shiny button effects with animated gradients */
+/* Enhanced button effects with optimized animations */
 .shiny-button {
   position: relative;
   overflow: hidden;
   background: linear-gradient(
     45deg,
-    #3b82f6,
-    #1d4ed8,
+    var(--primary-blue),
+    var(--primary-blue-dark),
     #2563eb,
     #1e40af,
-    #3b82f6,
+    var(--primary-blue),
     #60a5fa
   );
-  background-size: 300% 300%;
+  background-size: 200% 200%;
   animation: gradientShift 3.5s ease-in-out infinite;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
 }
 
 .shiny-button:hover {
@@ -254,16 +193,17 @@ img {
   overflow: hidden;
   background: linear-gradient(
     45deg,
-    #7c3aed,
-    #4c1d95,
+    var(--primary-purple),
+    var(--primary-purple-dark),
     #6d28d9,
     #5b21b6,
     #8b5cf6,
     #a855f7
   );
-  background-size: 300% 300%;
+  background-size: 200% 200%;
   animation: gradientShiftPremium 3.8s ease-in-out infinite;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
 }
 
 .shiny-button-premium:hover {
@@ -276,16 +216,17 @@ img {
   overflow: hidden;
   background: linear-gradient(
     45deg,
-    #059669,
-    #047857,
+    var(--primary-green),
+    var(--primary-green-dark),
     #10b981,
     #065f46,
     #34d399,
     #6ee7b7
   );
-  background-size: 300% 300%;
+  background-size: 200% 200%;
   animation: gradientShiftEnterprise 4s ease-in-out infinite;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
 }
 
 .shiny-button-enterprise:hover {
@@ -293,33 +234,36 @@ img {
   box-shadow: 0 20px 40px rgba(5, 150, 105, 0.4);
 }
 
-/* No slide animation buttons - static background for Submit & Consult button */
+/* Static button for form submission */
 .shiny-button-no-slide {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  transition: all 0.3s ease;
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: box-shadow;
 }
 
 .shiny-button-no-slide:hover {
   box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3);
 }
 
+/* Animated support package buttons */
 .shiny-button-premium-no-slide {
   position: relative;
   overflow: hidden;
   background: linear-gradient(
     45deg,
-    #7c3aed,
-    #4c1d95,
+    var(--primary-purple),
+    var(--primary-purple-dark),
     #6d28d9,
     #5b21b6,
     #8b5cf6,
     #a855f7
   );
-  background-size: 300% 300%;
+  background-size: 200% 200%;
   animation: gradientShiftPremium 3.8s ease-in-out infinite;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: box-shadow;
 }
 
 .shiny-button-premium-no-slide:hover {
@@ -331,25 +275,26 @@ img {
   overflow: hidden;
   background: linear-gradient(
     45deg,
-    #059669,
-    #047857,
+    var(--primary-green),
+    var(--primary-green-dark),
     #10b981,
     #065f46,
     #34d399,
     #6ee7b7
   );
-  background-size: 300% 300%;
+  background-size: 200% 200%;
   animation: gradientShiftEnterprise 4s ease-in-out infinite;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: box-shadow;
 }
 
 .shiny-button-enterprise-no-slide:hover {
   box-shadow: 0 15px 30px rgba(5, 150, 105, 0.3);
 }
 
-/* Basic card effects */
+/* Service package card effects */
 .basic-card {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
   position: relative;
 }
 
@@ -364,7 +309,6 @@ img {
   border-radius: inherit;
 }
 
-/* Premium card effects */
 .premium-card {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
@@ -410,7 +354,7 @@ img {
   }
 }
 
-/* Custom scrollbar */
+/* Optimized scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -420,7 +364,7 @@ img {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
+  background: linear-gradient(to bottom, var(--primary-blue), var(--primary-blue-dark));
   border-radius: 10px;
 }
 
@@ -430,15 +374,15 @@ img {
 
 /* Enhanced dark mode scrollbar */
 .dark ::-webkit-scrollbar-track {
-  background: #121212;
+  background: #0f172a;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
+  background: linear-gradient(to bottom, var(--primary-blue), var(--primary-blue-dark));
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #60a5fa, #3b82f6);
+  background: linear-gradient(to bottom, #60a5fa, var(--primary-blue));
 }
 
 /* Typography improvements */
@@ -459,7 +403,7 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-text-fill-color: transparent;
 }
 
-/* 3D Effects */
+/* Enhanced shadows */
 .shadow-3xl {
   box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
 }
@@ -478,57 +422,57 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Enhanced dark mode colors */
 .dark {
-  background-color: #121212;
-  color: #f5f5f5;
+  background-color: #0f172a;
+  color: #f8fafc;
 }
 
 .dark body {
-  background-color: #121212;
-  color: #f5f5f5;
+  background-color: #0f172a;
+  color: #f8fafc;
 }
 
 .dark .bg-slate-950 {
-  background-color: #121212 !important;
+  background-color: #0f172a !important;
 }
 
 .dark .bg-slate-900 {
-  background-color: #1a1a1a !important;
+  background-color: #1e293b !important;
 }
 
 .dark .bg-slate-800 {
-  background-color: #2a2a2a !important;
+  background-color: #334155 !important;
 }
 
 .dark .text-slate-100 {
-  color: #f5f5f5 !important;
+  color: #f8fafc !important;
 }
 
 .dark .text-slate-200 {
-  color: #e5e5e5 !important;
+  color: #e2e8f0 !important;
 }
 
 .dark .text-slate-300 {
-  color: #d5d5d5 !important;
+  color: #cbd5e1 !important;
 }
 
 .dark .text-slate-400 {
-  color: #a5a5a5 !important;
+  color: #94a3b8 !important;
 }
 
 .dark .text-slate-500 {
-  color: #858585 !important;
+  color: #64748b !important;
 }
 
 .dark .text-slate-600 {
-  color: #656565 !important;
+  color: #475569 !important;
 }
 
 .dark .border-slate-700 {
-  border-color: rgba(75, 85, 99, 0.6);
+  border-color: rgba(51, 65, 85, 0.6);
 }
 
 .dark .border-slate-600 {
-  border-color: rgba(107, 114, 128, 0.7);
+  border-color: rgba(71, 85, 105, 0.7);
 }
 
 /* Mobile responsive adjustments */
@@ -575,12 +519,11 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Reduced motion support - disable animations for users who prefer reduced motion */
+/* Reduced motion support - accessibility improvement */
 @media (prefers-reduced-motion: reduce) {
   .shiny-button,
   .shiny-button-premium,
   .shiny-button-enterprise,
-  .shiny-button-no-slide,
   .shiny-button-premium-no-slide,
   .shiny-button-enterprise-no-slide {
     animation: none !important;

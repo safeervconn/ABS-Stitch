@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, Clock, Phone, Mail, MapPin, Linkedin, Twitter, Github, Instagram, Facebook } from 'lucide-react';
+import { Send, Clock, Phone, Mail, MapPin, Linkedin, Twitter, Github, Instagram, Facebook, AlertCircle } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 
 const Contact = () => {
@@ -15,37 +15,83 @@ const Contact = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Full name is required';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email address is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    if (!formData.company.trim()) {
+      newErrors.company = 'Company name is required';
+    }
+
+    if (!formData.service) {
+      newErrors.service = 'Please select a service package';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log('Form submitted:', formData);
-    alert('Thank you for your inquiry! Our team will contact you within 48 hours to discuss how we can reduce your IT overhead and boost productivity.');
-    
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      company: '',
-      phone: '',
-      service: '',
-      supportPackage: '',
-      teamSize: '',
-      message: ''
-    });
-    
-    setIsSubmitting(false);
+    try {
+      // Simulate form submission
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      console.log('Form submitted:', formData);
+      alert('Thank you for your inquiry! Our team will contact you within 48 hours to discuss how we can reduce your IT overhead and boost productivity.');
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        company: '',
+        phone: '',
+        service: '',
+        supportPackage: '',
+        teamSize: '',
+        message: ''
+      });
+      setErrors({});
+    } catch (error) {
+      console.error('Form submission error:', error);
+      alert('There was an error submitting your form. Please try again or contact us directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const socialLinks = [
@@ -62,10 +108,10 @@ const Contact = () => {
         <AnimatedSection>
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
-              Get in Touch
+              Get Your Free IT Infrastructure Consultation
             </h2>
             <p className="text-lg sm:text-xl mobile-text text-slate-600 dark:text-slate-300 max-w-4xl mx-auto">
-              Ready to transform your workplace and reduce IT overhead? Let's discuss your requirements and create a customized solution that fits your business needs.
+              Ready to transform your workplace and reduce IT overhead by up to 60%? Let's discuss your requirements and create a customized Office 365 implementation strategy that fits your business needs.
             </p>
           </div>
         </AnimatedSection>
@@ -74,7 +120,7 @@ const Contact = () => {
           <AnimatedSection className="lg:col-span-3">
             <div className="bg-gradient-to-br from-white/95 via-blue-50/50 to-white/95 dark:from-slate-800/95 dark:via-blue-900/30 dark:to-slate-800/95 backdrop-blur-xl rounded-3xl p-6 sm:p-10 mobile-tile shadow-2xl border border-slate-200/50 dark:border-slate-700/50 mobile-card">
               <h3 className="text-2xl sm:text-3xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-8 leading-[1.1] pb-2">
-                Tell Us About Your Project
+                Tell Us About Your IT Infrastructure Needs
               </h3>
               
               <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8" noValidate>
@@ -90,10 +136,18 @@ const Contact = () => {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 text-sm sm:text-base"
+                      className={`w-full px-4 sm:px-6 py-3 sm:py-4 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 text-sm sm:text-base ${
+                        errors.name ? 'border-red-500 dark:border-red-400' : 'border-slate-300 dark:border-slate-600'
+                      }`}
                       placeholder="Your full name"
-                      aria-describedby="name-error"
+                      aria-describedby={errors.name ? 'name-error' : undefined}
                     />
+                    {errors.name && (
+                      <p id="name-error" className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        {errors.name}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
@@ -106,10 +160,18 @@ const Contact = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 text-sm sm:text-base"
+                      className={`w-full px-4 sm:px-6 py-3 sm:py-4 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 text-sm sm:text-base ${
+                        errors.email ? 'border-red-500 dark:border-red-400' : 'border-slate-300 dark:border-slate-600'
+                      }`}
                       placeholder="your.email@company.com"
-                      aria-describedby="email-error"
+                      aria-describedby={errors.email ? 'email-error' : undefined}
                     />
+                    {errors.email && (
+                      <p id="email-error" className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -125,9 +187,18 @@ const Contact = () => {
                       required
                       value={formData.company}
                       onChange={handleChange}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 text-sm sm:text-base"
+                      className={`w-full px-4 sm:px-6 py-3 sm:py-4 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 text-sm sm:text-base ${
+                        errors.company ? 'border-red-500 dark:border-red-400' : 'border-slate-300 dark:border-slate-600'
+                      }`}
                       placeholder="Your company name"
+                      aria-describedby={errors.company ? 'company-error' : undefined}
                     />
+                    {errors.company && (
+                      <p id="company-error" className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        {errors.company}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
@@ -156,14 +227,23 @@ const Contact = () => {
                       required
                       value={formData.service}
                       onChange={handleChange}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 appearance-none cursor-pointer text-sm sm:text-base"
+                      className={`w-full px-4 sm:px-6 py-3 sm:py-4 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 appearance-none cursor-pointer text-sm sm:text-base ${
+                        errors.service ? 'border-red-500 dark:border-red-400' : 'border-slate-300 dark:border-slate-600'
+                      }`}
+                      aria-describedby={errors.service ? 'service-error' : undefined}
                     >
                       <option value="">Select a package</option>
-                      <option value="basic">Basic Package (Starting from $299/month)</option>
-                      <option value="premium">Premium Package (Starting from $599/month)</option>
-                      <option value="enterprise">Enterprise Package (Starting from $1,299/month)</option>
-                      <option value="custom">Custom Solution</option>
+                      <option value="basic">Basic Package - Office 365 Setup ($299/month)</option>
+                      <option value="premium">Premium Package - Advanced Implementation ($599/month)</option>
+                      <option value="enterprise">Enterprise Package - Complete Solution ($1,299/month)</option>
+                      <option value="custom">Custom Solution - Tailored to Your Needs</option>
                     </select>
+                    {errors.service && (
+                      <p id="service-error" className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        {errors.service}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label htmlFor="supportPackage" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
@@ -177,9 +257,9 @@ const Contact = () => {
                       className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 appearance-none cursor-pointer text-sm sm:text-base"
                     >
                       <option value="">Select support package</option>
-                      <option value="basic-support">Basic Support (Starting from $50-150/month)</option>
-                      <option value="premium-support">Premium Support (Starting from $150-400/month)</option>
-                      <option value="enterprise-support">Enterprise Support (Starting from $400-1000/month)</option>
+                      <option value="basic-support">Basic Support ($50-150/month)</option>
+                      <option value="premium-support">Premium Support ($150-400/month)</option>
+                      <option value="enterprise-support">Enterprise Support ($400-1000/month)</option>
                     </select>
                   </div>
                 </div>
@@ -206,7 +286,7 @@ const Contact = () => {
 
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                    Additional Details
+                    Project Details & Requirements
                   </label>
                   <textarea
                     id="message"
@@ -215,7 +295,7 @@ const Contact = () => {
                     value={formData.message}
                     onChange={handleChange}
                     className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 resize-none text-sm sm:text-base"
-                    placeholder="Tell us about your current setup, specific requirements, challenges, or any questions you have..."
+                    placeholder="Tell us about your current IT setup, specific Office 365 requirements, compliance needs, integration requirements, or any questions you have about our services..."
                   />
                 </div>
 
@@ -234,7 +314,7 @@ const Contact = () => {
 
                 <p className="text-xs sm:text-sm mobile-text text-slate-600 dark:text-slate-400 text-center flex items-center justify-center">
                   <Clock className="inline w-4 h-4 mr-2" aria-hidden="true" />
-                  Our team will contact you within 48 hours
+                  Our IT specialists will contact you within 48 hours with a customized proposal
                 </p>
               </form>
             </div>
