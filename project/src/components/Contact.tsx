@@ -1,0 +1,280 @@
+import React, { useState } from 'react';
+import { Send, Clock, Phone, Mail, MapPin, Linkedin, Twitter, Github, Instagram, Facebook } from 'lucide-react';
+
+const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    company: '',
+    phone: '',
+    service: '',
+    supportPackage: '',
+    teamSize: '',
+    message: ''
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Form submitted:', formData);
+    alert('Thank you for your inquiry! Our team will contact you within 48 hours.');
+  };
+
+  return (
+    <section id="contact" className="py-20 bg-gradient-to-br from-slate-50 via-indigo-50 via-purple-50 to-indigo-50 dark:from-slate-900 dark:via-indigo-950 dark:via-purple-950 dark:to-indigo-950">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-purple-800 to-slate-900 dark:from-white dark:via-purple-300 dark:to-white bg-clip-text text-transparent mb-6 leading-tight">
+            Get in Touch
+          </h2>
+          <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+            Ready to transform your workplace? Let's discuss your requirements and create a customized solution that fits your business needs.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+          <div className="lg:col-span-3">
+            <div className="bg-gradient-to-br from-white via-indigo-50/50 to-white dark:from-slate-800 dark:via-indigo-900/50 dark:to-slate-800 rounded-3xl p-10 shadow-2xl border border-slate-200/50 dark:border-slate-700/50 transform hover:scale-105 transition-all duration-200">
+              <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-purple-800 to-slate-900 dark:from-white dark:via-purple-300 dark:to-white bg-clip-text text-transparent mb-8 leading-tight">
+                Tell Us About Your Project
+              </h3>
+              
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      required
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
+                      placeholder="Your full name"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
+                      placeholder="your.email@company.com"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="company" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                      Company Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="company"
+                      name="company"
+                      required
+                      value={formData.company}
+                      onChange={handleChange}
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
+                      placeholder="Your company name"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
+                      placeholder="+1 (555) 123-4567"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="service" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                      Service Package *
+                    </label>
+                    <div className="relative">
+                      <select
+                        id="service"
+                        name="service"
+                        required
+                        value={formData.service}
+                        onChange={handleChange}
+                        className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 appearance-none cursor-pointer"
+                      >
+                        <option value="">Select a package</option>
+                        <option value="basic">Basic Package ($299/month)</option>
+                        <option value="premium">Premium Package ($599/month)</option>
+                        <option value="enterprise">Enterprise Package ($1,299/month)</option>
+                        <option value="custom">Custom Solution</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="supportPackage" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                      Support Package
+                    </label>
+                    <div className="relative">
+                      <select
+                        id="supportPackage"
+                        name="supportPackage"
+                        value={formData.supportPackage}
+                        onChange={handleChange}
+                        className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 appearance-none cursor-pointer"
+                      >
+                        <option value="">Select support package</option>
+                        <option value="basic-support">Basic Support ($50-150/month)</option>
+                        <option value="premium-support">Premium Support ($150-400/month)</option>
+                        <option value="enterprise-support">Enterprise Support ($400-1000/month)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="teamSize" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                    Team Size
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="teamSize"
+                      name="teamSize"
+                      value={formData.teamSize}
+                      onChange={handleChange}
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 appearance-none cursor-pointer"
+                    >
+                      <option value="">Select team size</option>
+                      <option value="1-10">1-10 employees</option>
+                      <option value="11-50">11-50 employees</option>
+                      <option value="51-200">51-200 employees</option>
+                      <option value="201-500">201-500 employees</option>
+                      <option value="500+">500+ employees</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                    Additional Details
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={6}
+                    value={formData.message}
+                    onChange={handleChange}
+                    className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 resize-none"
+                    placeholder="Tell us about your current setup, specific requirements, challenges, or any questions you have..."
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white py-5 px-8 rounded-xl font-semibold hover:shadow-xl hover:shadow-indigo-500/25 transform hover:scale-105 transition-all duration-150 flex items-center justify-center group text-lg"
+                >
+                  Submit & Consult
+                  <Send className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform duration-150" />
+                </button>
+
+                <p className="text-sm text-slate-600 dark:text-slate-400 text-center flex items-center justify-center">
+                  <Clock className="inline w-4 h-4 mr-2" />
+                  Our team will contact you within 48 hours
+                </p>
+              </form>
+            </div>
+          </div>
+
+          <div className="lg:col-span-2 space-y-8">
+            <div className="bg-gradient-to-br from-white via-purple-50/50 to-white dark:from-slate-800 dark:via-purple-900/50 dark:to-slate-800 rounded-3xl p-8 shadow-2xl border border-slate-200/50 dark:border-slate-700/50 transform hover:scale-105 transition-all duration-200">
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-purple-800 to-slate-900 dark:from-white dark:via-purple-300 dark:to-white bg-clip-text text-transparent mb-8 leading-tight">
+                Contact Information
+              </h3>
+
+              <div className="space-y-8">
+                <div className="flex items-start space-x-4">
+                  <div className="p-4 bg-gradient-to-br from-indigo-100 via-purple-100 to-indigo-100 dark:from-indigo-900/30 dark:via-purple-900/30 dark:to-indigo-900/30 rounded-xl shadow-lg">
+                    <Phone className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 dark:text-white text-lg mb-1">Phone</h4>
+                    <p className="text-slate-600 dark:text-slate-300 mb-1">+1 (555) 123-4567</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Mon-Fri 9AM-6PM EST</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className="p-4 bg-gradient-to-br from-indigo-100 via-purple-100 to-indigo-100 dark:from-indigo-900/30 dark:via-purple-900/30 dark:to-indigo-900/30 rounded-xl shadow-lg">
+                    <Mail className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 dark:text-white text-lg mb-1">Email</h4>
+                    <p className="text-slate-600 dark:text-slate-300 mb-1">hello@techflowsolutions.com</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">We reply within 24 hours</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className="p-4 bg-gradient-to-br from-indigo-100 via-purple-100 to-indigo-100 dark:from-indigo-900/30 dark:via-purple-900/30 dark:to-indigo-900/30 rounded-xl shadow-lg">
+                    <MapPin className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 dark:text-white text-lg mb-1">Office</h4>
+                    <p className="text-slate-600 dark:text-slate-300">123 Business Ave, Suite 456</p>
+                    <p className="text-slate-600 dark:text-slate-300">Tech City, TC 12345</p>
+                  </div>
+                </div>
+
+                <div className="pt-8 border-t border-slate-200 dark:border-slate-700">
+                  <h4 className="font-semibold text-slate-900 dark:text-white mb-6 text-lg">Follow Us</h4>
+                  <div className="flex space-x-4">
+                    {[
+                      { name: 'LinkedIn', icon: Linkedin },
+                      { name: 'Twitter', icon: Twitter },
+                      { name: 'Facebook', icon: Facebook },
+                      { name: 'Instagram', icon: Instagram },
+                      { name: 'GitHub', icon: Github }
+                    ].map((social) => (
+                      <a
+                        key={social.name}
+                        href={`https://${social.name.toLowerCase()}.com/techflowsolutions`}
+                        className="p-3 bg-gradient-to-br from-indigo-100 via-purple-100 to-indigo-100 dark:from-indigo-900/30 dark:via-purple-900/30 dark:to-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400 hover:from-indigo-200 hover:via-purple-200 hover:to-indigo-200 dark:hover:from-indigo-800/50 dark:hover:via-purple-800/50 dark:hover:to-indigo-800/50 transition-all duration-150 hover:scale-110 shadow-lg"
+                        title={social.name}
+                      >
+                        <social.icon size={20} />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Contact;
