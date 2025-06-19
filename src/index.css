@@ -126,6 +126,33 @@ img {
   }
 }
 
+@keyframes flash {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 /* Animation classes */
 .animate-fade-in {
   animation: fadeIn 0.6s ease-out;
@@ -171,19 +198,14 @@ img {
   animation: scroll 30s linear infinite;
 }
 
-/* Shiny button effects with hover pause and pop effect */
+/* Consistent animated button effects */
 .shiny-button {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #3b82f6 100%);
   background-size: 400% 400%;
-  animation: shine 3s ease-in-out infinite;
+  animation: gradientShift 3s ease-in-out infinite;
   transition: transform 0.2s ease-out;
-}
-
-.shiny-button:hover {
-  animation-play-state: paused;
-  transform: scale(1.05);
 }
 
 .shiny-button::before {
@@ -193,26 +215,43 @@ img {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  animation: shimmer 2s infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2.5s infinite;
+}
+
+.shiny-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+
+.shiny-button:hover {
+  animation: none;
+  transform: scale(1.05);
 }
 
 .shiny-button:hover::before {
-  animation-play-state: paused;
+  animation: none;
+}
+
+.shiny-button:hover::after {
+  animation: flash 0.6s ease-out;
 }
 
 .shiny-button-premium {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
+  background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 50%, #7c3aed 100%);
   background-size: 400% 400%;
-  animation: shine 3s ease-in-out infinite;
+  animation: gradientShift 3s ease-in-out infinite;
   transition: transform 0.2s ease-out;
-}
-
-.shiny-button-premium:hover {
-  animation-play-state: paused;
-  transform: scale(1.05);
 }
 
 .shiny-button-premium::before {
@@ -222,26 +261,43 @@ img {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  animation: shimmer 2s infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2.5s infinite;
+}
+
+.shiny-button-premium::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+
+.shiny-button-premium:hover {
+  animation: none;
+  transform: scale(1.05);
 }
 
 .shiny-button-premium:hover::before {
-  animation-play-state: paused;
+  animation: none;
+}
+
+.shiny-button-premium:hover::after {
+  animation: flash 0.6s ease-out;
 }
 
 .shiny-button-enterprise {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  background: linear-gradient(135deg, #059669 0%, #047857 50%, #059669 100%);
   background-size: 400% 400%;
-  animation: shine 3s ease-in-out infinite;
+  animation: gradientShift 3s ease-in-out infinite;
   transition: transform 0.2s ease-out;
-}
-
-.shiny-button-enterprise:hover {
-  animation-play-state: paused;
-  transform: scale(1.05);
 }
 
 .shiny-button-enterprise::before {
@@ -251,15 +307,37 @@ img {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  animation: shimmer 2s infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2.5s infinite;
+}
+
+.shiny-button-enterprise::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+
+.shiny-button-enterprise:hover {
+  animation: none;
+  transform: scale(1.05);
 }
 
 .shiny-button-enterprise:hover::before {
-  animation-play-state: paused;
+  animation: none;
 }
 
-/* No slide animation buttons - static with pop effect */
+.shiny-button-enterprise:hover::after {
+  animation: flash 0.6s ease-out;
+}
+
+/* Static buttons - no animation, only pop effect */
 .shiny-button-no-slide {
   position: relative;
   overflow: hidden;
