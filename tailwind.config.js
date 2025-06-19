@@ -5,7 +5,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Poppins', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.6s ease-out',
@@ -14,10 +14,12 @@ export default {
         'slide-in-right': 'slideInRight 1s ease-out',
         'float': 'float 3s ease-in-out infinite',
         'bounce-gentle': 'bounceGentle 2s ease-in-out infinite',
-        'slide-up': 'slideUp 0.6s ease-out',
       },
       boxShadow: {
         '3xl': '0 35px 60px -12px rgba(0, 0, 0, 0.25)',
+      },
+      screens: {
+        'xs': '475px',
       },
     },
   },
