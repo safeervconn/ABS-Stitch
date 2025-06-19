@@ -274,19 +274,12 @@ img {
   left: 100%;
 }
 
-/* No slide animation buttons */
+/* No slide animation buttons - completely static */
 .shiny-button-no-slide {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(
-    45deg,
-    #3b82f6,
-    #1d4ed8,
-    #3b82f6,
-    #1d4ed8
-  );
-  background-size: 400% 400%;
-  animation: shine 3s ease-in-out infinite;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  /* No animation property */
 }
 
 .shiny-button-no-slide::before {
@@ -312,15 +305,8 @@ img {
 .shiny-button-premium-no-slide {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(
-    45deg,
-    #7c3aed,
-    #4c1d95,
-    #7c3aed,
-    #4c1d95
-  );
-  background-size: 400% 400%;
-  animation: shine 3s ease-in-out infinite;
+  background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
+  /* No animation property */
 }
 
 .shiny-button-premium-no-slide::before {
@@ -346,15 +332,8 @@ img {
 .shiny-button-enterprise-no-slide {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(
-    45deg,
-    #059669,
-    #047857,
-    #059669,
-    #047857
-  );
-  background-size: 400% 400%;
-  animation: shine 3s ease-in-out infinite;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  /* No animation property */
 }
 
 .shiny-button-enterprise-no-slide::before {
