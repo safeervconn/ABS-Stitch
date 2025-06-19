@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Star, Quote } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 import LazyImage from './LazyImage';
 
 const Testimonials = () => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   const testimonials = [
     {
       name: 'Sarah Johnson',
@@ -40,13 +42,34 @@ const Testimonials = () => {
     { name: 'Zoom', logo: '📹' }
   ];
 
+  useEffect(() => {
+    const scrollContainer = scrollRef.current;
+    if (!scrollContainer) return;
+
+    let scrollAmount = 0;
+    const scrollStep = 1;
+    const scrollDelay = 30;
+
+    const scroll = () => {
+      scrollAmount += scrollStep;
+      if (scrollAmount >= scrollContainer.scrollWidth / 2) {
+        scrollAmount = 0;
+      }
+      scrollContainer.scrollLeft = scrollAmount;
+    };
+
+    const intervalId = setInterval(scroll, scrollDelay);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <>
-      <section id="testimonials" className="py-20 bg-gradient-to-br from-white via-purple-50/30 to-white dark:from-slate-900 dark:via-purple-950/30 dark:to-slate-900">
+      <section id="testimonials" className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-white dark:from-slate-900 dark:via-blue-950/30 dark:to-slate-900">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <AnimatedSection>
             <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-purple-800 to-slate-900 dark:from-white dark:via-purple-300 dark:to-white bg-clip-text text-transparent mb-6 leading-tight">
+              <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
                 What Our Clients Say
               </h2>
               <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -58,8 +81,8 @@ const Testimonials = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <AnimatedSection key={index} delay={index * 100}>
-                <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-100 dark:from-indigo-900/20 dark:via-purple-900/20 dark:to-indigo-800/20 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-200 hover:-translate-y-2 border border-indigo-200/50 dark:border-indigo-700/50 relative transform hover:scale-105">
-                  <div className="absolute top-6 right-6 text-indigo-200 dark:text-indigo-800">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-200 hover:-translate-y-2 border border-blue-200/50 dark:border-blue-700/50 relative transform hover:scale-105">
+                  <div className="absolute top-6 right-6 text-blue-200 dark:text-blue-800">
                     <Quote size={32} aria-hidden="true" />
                   </div>
 
@@ -74,7 +97,7 @@ const Testimonials = () => {
                         {testimonial.name}
                       </h4>
                       <p className="text-slate-600 dark:text-slate-400">{testimonial.position}</p>
-                      <p className="text-indigo-600 dark:text-indigo-400 font-medium">{testimonial.company}</p>
+                      <p className="text-blue-600 dark:text-blue-400 font-medium">{testimonial.company}</p>
                     </div>
                   </div>
 
@@ -94,11 +117,11 @@ const Testimonials = () => {
         </div>
       </section>
 
-      <section className="py-16 bg-gradient-to-r from-indigo-50 via-purple-50 to-indigo-100 dark:from-indigo-950 dark:via-purple-950 dark:to-indigo-900">
+      <section className="py-16 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <AnimatedSection>
             <div className="text-center mb-12">
-              <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-purple-800 to-slate-900 dark:from-white dark:via-purple-300 dark:to-white bg-clip-text text-transparent mb-4 leading-tight">
+              <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-4 leading-[1.1] pb-2">
                 Trusted Partners
               </h3>
               <p className="text-lg text-slate-600 dark:text-slate-300">
@@ -107,17 +130,24 @@ const Testimonials = () => {
             </div>
           </AnimatedSection>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
-            {partners.map((partner, index) => (
-              <AnimatedSection key={index} delay={index * 50}>
-                <div className="bg-gradient-to-br from-white via-indigo-50/50 to-white dark:from-slate-800 dark:via-indigo-900/50 dark:to-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-150 hover:-translate-y-1 border border-slate-200/50 dark:border-slate-700/50 text-center transform hover:scale-105">
+          <div className="overflow-hidden">
+            <div 
+              ref={scrollRef}
+              className="flex space-x-8 animate-scroll"
+              style={{ width: 'calc(200% + 2rem)' }}
+            >
+              {[...partners, ...partners].map((partner, index) => (
+                <div
+                  key={index}
+                  className="flex-shrink-0 w-48 h-32 bg-gradient-to-br from-white via-blue-50/50 to-white dark:from-slate-800 dark:via-blue-900/50 dark:to-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-150 hover:-translate-y-1 border border-slate-200/50 dark:border-slate-700/50 text-center transform hover:scale-105 flex flex-col items-center justify-center"
+                >
                   <div className="text-4xl mb-3" aria-hidden="true">{partner.logo}</div>
                   <div className="text-sm font-medium text-slate-700 dark:text-slate-300">
                     {partner.name}
                   </div>
                 </div>
-              </AnimatedSection>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>

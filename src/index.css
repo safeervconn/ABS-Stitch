@@ -88,6 +88,26 @@ img {
   }
 }
 
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 /* Animation classes */
 .animate-fade-in {
   animation: fadeIn 0.6s ease-out;
@@ -129,10 +149,38 @@ img {
   animation: bounceGentle 2s ease-in-out infinite;
 }
 
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+/* Sparkle effect */
+.sparkle::before {
+  content: '✨';
+  position: absolute;
+  animation: sparkle 2s ease-in-out infinite;
+  font-size: 0.8rem;
+}
+
+.sparkle::after {
+  content: '✨';
+  position: absolute;
+  animation: sparkle 2s ease-in-out infinite 1s;
+  font-size: 0.6rem;
+  right: 10%;
+  top: 20%;
+}
+
 /* Background patterns */
 .bg-grid-pattern {
-  background-image: radial-gradient(circle, rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
+}
+
+/* Glassmorphism support */
+@supports (backdrop-filter: blur(20px)) {
+  .supports-backdrop-blur {
+    backdrop-filter: blur(20px);
+  }
 }
 
 /* Custom scrollbar */
@@ -145,12 +193,12 @@ img {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #6366f1, #8b5cf6);
+  background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #4f46e5, #7c3aed);
+  background: linear-gradient(to bottom, #2563eb, #1e40af);
 }
 
 /* Dark mode scrollbar */
@@ -159,17 +207,18 @@ img {
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #6366f1, #8b5cf6);
+  background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #818cf8, #a78bfa);
+  background: linear-gradient(to bottom, #60a5fa, #3b82f6);
 }
 
 /* Typography improvements */
 h1, h2, h3, h4, h5, h6 {
-  line-height: 1.2;
+  line-height: 1.1;
   font-weight: 700;
+  padding-bottom: 0.125rem;
 }
 
 .leading-tight {
@@ -198,6 +247,23 @@ h1, h2, h3, h4, h5, h6 {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+/* Improved dark mode opacity */
+.dark {
+  --tw-bg-opacity: 0.95;
+}
+
+.dark .bg-slate-900 {
+  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+}
+
+.dark .text-slate-300 {
+  color: rgb(203 213 225 / 0.9);
+}
+
+.dark .text-slate-400 {
+  color: rgb(148 163 184 / 0.8);
 }
 
 /* Reduced motion support */

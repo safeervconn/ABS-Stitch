@@ -57,11 +57,11 @@ const Contact = () => {
   ];
 
   return (
-    <section id="contact" className="py-20 bg-gradient-to-br from-slate-50 via-indigo-50 via-purple-50 to-indigo-50 dark:from-slate-900 dark:via-indigo-950 dark:via-purple-950 dark:to-indigo-950">
+    <section id="contact" className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 dark:from-slate-900 dark:via-blue-950/50 dark:to-slate-900">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <AnimatedSection>
           <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-purple-800 to-slate-900 dark:from-white dark:via-purple-300 dark:to-white bg-clip-text text-transparent mb-6 leading-tight">
+            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
               Get in Touch
             </h2>
             <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -72,8 +72,8 @@ const Contact = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
           <AnimatedSection className="lg:col-span-3">
-            <div className="bg-gradient-to-br from-white via-indigo-50/50 to-white dark:from-slate-800 dark:via-indigo-900/50 dark:to-slate-800 rounded-3xl p-10 shadow-2xl border border-slate-200/50 dark:border-slate-700/50 transform hover:scale-105 transition-all duration-200">
-              <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-purple-800 to-slate-900 dark:from-white dark:via-purple-300 dark:to-white bg-clip-text text-transparent mb-8 leading-tight">
+            <div className="bg-gradient-to-br from-white/95 via-blue-50/50 to-white/95 dark:from-slate-800/95 dark:via-blue-900/30 dark:to-slate-800/95 backdrop-blur-xl rounded-3xl p-10 shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
+              <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-8 leading-[1.1] pb-2">
                 Tell Us About Your Project
               </h3>
               
@@ -90,7 +90,7 @@ const Contact = () => {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
                       placeholder="Your full name"
                       aria-describedby="name-error"
                     />
@@ -106,7 +106,7 @@ const Contact = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
                       placeholder="your.email@company.com"
                       aria-describedby="email-error"
                     />
@@ -125,7 +125,7 @@ const Contact = () => {
                       required
                       value={formData.company}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
                       placeholder="Your company name"
                     />
                   </div>
@@ -139,7 +139,7 @@ const Contact = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
                       placeholder="+1 (555) 123-4567"
                     />
                   </div>
@@ -156,7 +156,7 @@ const Contact = () => {
                       required
                       value={formData.service}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 appearance-none cursor-pointer"
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 appearance-none cursor-pointer"
                     >
                       <option value="">Select a package</option>
                       <option value="basic">Basic Package ($299/month)</option>
@@ -174,7 +174,7 @@ const Contact = () => {
                       name="supportPackage"
                       value={formData.supportPackage}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 appearance-none cursor-pointer"
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 appearance-none cursor-pointer"
                     >
                       <option value="">Select support package</option>
                       <option value="basic-support">Basic Support ($50-150/month)</option>
@@ -193,7 +193,7 @@ const Contact = () => {
                     name="teamSize"
                     value={formData.teamSize}
                     onChange={handleChange}
-                    className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 appearance-none cursor-pointer"
+                    className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 appearance-none cursor-pointer"
                   >
                     <option value="">Select team size</option>
                     <option value="1-10">1-10 employees</option>
@@ -214,7 +214,7 @@ const Contact = () => {
                     rows={6}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 resize-none"
+                    className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 resize-none"
                     placeholder="Tell us about your current setup, specific requirements, challenges, or any questions you have..."
                   />
                 </div>
@@ -222,7 +222,7 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white py-5 px-8 rounded-xl font-semibold hover:shadow-xl hover:shadow-indigo-500/25 transform hover:scale-105 transition-all duration-150 flex items-center justify-center group text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white py-5 px-8 rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-150 flex items-center justify-center group text-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   {isSubmitting ? 'Submitting...' : 'Submit & Consult'}
                   {!isSubmitting && (
@@ -239,19 +239,19 @@ const Contact = () => {
           </AnimatedSection>
 
           <AnimatedSection className="lg:col-span-2 space-y-8" delay={200}>
-            <div className="bg-gradient-to-br from-white via-purple-50/50 to-white dark:from-slate-800 dark:via-purple-900/50 dark:to-slate-800 rounded-3xl p-8 shadow-2xl border border-slate-200/50 dark:border-slate-700/50 transform hover:scale-105 transition-all duration-200">
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-purple-800 to-slate-900 dark:from-white dark:via-purple-300 dark:to-white bg-clip-text text-transparent mb-8 leading-tight">
+            <div className="bg-gradient-to-br from-white/95 via-blue-50/50 to-white/95 dark:from-slate-800/95 dark:via-blue-900/30 dark:to-slate-800/95 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-8 leading-[1.1] pb-2">
                 Contact Information
               </h3>
 
               <div className="space-y-8">
                 <div className="flex items-start space-x-4">
-                  <div className="p-4 bg-gradient-to-br from-indigo-100 via-purple-100 to-indigo-100 dark:from-indigo-900/30 dark:via-purple-900/30 dark:to-indigo-900/30 rounded-xl shadow-lg">
-                    <Phone className="w-6 h-6 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
+                  <div className="p-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl shadow-lg">
+                    <Phone className="w-6 h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-slate-900 dark:text-white text-lg mb-1">Phone</h4>
-                    <a href="tel:+15551234567" className="text-slate-600 dark:text-slate-300 mb-1 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                    <a href="tel:+15551234567" className="text-slate-600 dark:text-slate-300 mb-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                       +1 (555) 123-4567
                     </a>
                     <p className="text-sm text-slate-500 dark:text-slate-400">Mon-Fri 9AM-6PM EST</p>
@@ -259,12 +259,12 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="p-4 bg-gradient-to-br from-indigo-100 via-purple-100 to-indigo-100 dark:from-indigo-900/30 dark:via-purple-900/30 dark:to-indigo-900/30 rounded-xl shadow-lg">
-                    <Mail className="w-6 h-6 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
+                  <div className="p-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl shadow-lg">
+                    <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-slate-900 dark:text-white text-lg mb-1">Email</h4>
-                    <a href="mailto:hello@techflowsolutions.com" className="text-slate-600 dark:text-slate-300 mb-1 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                    <a href="mailto:hello@techflowsolutions.com" className="text-slate-600 dark:text-slate-300 mb-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                       hello@techflowsolutions.com
                     </a>
                     <p className="text-sm text-slate-500 dark:text-slate-400">We reply within 24 hours</p>
@@ -272,8 +272,8 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="p-4 bg-gradient-to-br from-indigo-100 via-purple-100 to-indigo-100 dark:from-indigo-900/30 dark:via-purple-900/30 dark:to-indigo-900/30 rounded-xl shadow-lg">
-                    <MapPin className="w-6 h-6 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
+                  <div className="p-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl shadow-lg">
+                    <MapPin className="w-6 h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-slate-900 dark:text-white text-lg mb-1">Office</h4>
@@ -293,7 +293,7 @@ const Contact = () => {
                         href={social.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-3 bg-gradient-to-br from-indigo-100 via-purple-100 to-indigo-100 dark:from-indigo-900/30 dark:via-purple-900/30 dark:to-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400 hover:from-indigo-200 hover:via-purple-200 hover:to-indigo-200 dark:hover:from-indigo-800/50 dark:hover:via-purple-800/50 dark:hover:to-indigo-800/50 transition-all duration-150 hover:scale-110 shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="p-3 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-lg text-blue-600 dark:text-blue-400 hover:from-blue-200 hover:to-blue-300 dark:hover:from-blue-800/50 dark:hover:to-blue-700/50 transition-all duration-150 hover:scale-110 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         title={`Follow us on ${social.name}`}
                         aria-label={`Follow TechFlow Solutions on ${social.name}`}
                       >

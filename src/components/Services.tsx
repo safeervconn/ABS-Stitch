@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Check, X } from 'lucide-react';
+import { ArrowRight, Check, X, Headphones, Zap, Shield } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 
 const Services = () => {
@@ -23,7 +23,7 @@ const Services = () => {
         { name: 'Enterprise Compliance', included: false },
       ],
       popular: false,
-      gradient: 'from-indigo-600 via-purple-600 to-indigo-700'
+      gradient: 'from-blue-600 to-blue-800'
     },
     {
       name: 'Premium',
@@ -44,7 +44,7 @@ const Services = () => {
         { name: 'Enterprise Compliance', included: false },
       ],
       popular: true,
-      gradient: 'from-indigo-600 via-purple-600 to-indigo-700'
+      gradient: 'from-blue-600 to-blue-800'
     },
     {
       name: 'Enterprise',
@@ -65,7 +65,7 @@ const Services = () => {
         { name: 'Enterprise Compliance', included: true },
       ],
       popular: false,
-      gradient: 'from-indigo-600 via-purple-600 to-indigo-700'
+      gradient: 'from-blue-600 to-blue-800'
     }
   ];
 
@@ -73,38 +73,41 @@ const Services = () => {
     {
       name: 'Basic Support',
       price: '$50-150/month',
+      icon: Headphones,
       features: [
         'Email support (48h response)',
         'Basic troubleshooting',
         'Monthly system health check'
       ],
-      gradient: 'from-indigo-500 to-purple-500',
-      bgGradient: 'from-indigo-50 via-purple-50 to-indigo-100 dark:from-indigo-900/20 dark:via-purple-900/20 dark:to-indigo-800/20'
+      gradient: 'from-blue-500 to-blue-600',
+      bgGradient: 'from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20'
     },
     {
       name: 'Premium Support',
       price: '$150-400/month',
+      icon: Zap,
       features: [
         'Priority support (24h response)',
         'Phone + email support',
         'Advanced troubleshooting',
         'Bi-weekly optimization'
       ],
-      gradient: 'from-purple-500 to-indigo-500',
-      bgGradient: 'from-purple-50 via-indigo-50 to-purple-100 dark:from-purple-900/20 dark:via-indigo-900/20 dark:to-purple-800/20',
+      gradient: 'from-blue-600 to-blue-700',
+      bgGradient: 'from-blue-100 to-blue-200 dark:from-blue-800/20 dark:to-blue-700/20',
       popular: true
     },
     {
       name: 'Enterprise Support',
       price: '$400-1000/month',
+      icon: Shield,
       features: [
         '24/7 priority support',
         'Dedicated account manager',
         'Proactive monitoring',
         'Weekly optimization calls'
       ],
-      gradient: 'from-purple-600 to-indigo-600',
-      bgGradient: 'from-purple-100 via-indigo-100 to-purple-200 dark:from-purple-800/20 dark:via-indigo-800/20 dark:to-purple-700/20'
+      gradient: 'from-blue-700 to-blue-800',
+      bgGradient: 'from-blue-200 to-blue-300 dark:from-blue-700/20 dark:to-blue-600/20'
     }
   ];
 
@@ -117,11 +120,11 @@ const Services = () => {
 
   return (
     <>
-      <section id="services" className="py-20 bg-gradient-to-br from-slate-50 via-indigo-50 via-purple-50 to-indigo-50 dark:from-slate-900 dark:via-indigo-950 dark:via-purple-950 dark:to-indigo-950">
+      <section id="services" className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 dark:from-slate-900 dark:via-blue-950/50 dark:to-slate-900">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <AnimatedSection>
             <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-indigo-800 via-purple-800 to-slate-900 dark:from-white dark:via-indigo-300 dark:via-purple-300 dark:to-white bg-clip-text text-transparent mb-6 leading-tight">
+              <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
                 Our Service Packages
               </h2>
               <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -133,16 +136,16 @@ const Services = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {packages.map((pkg, index) => (
               <AnimatedSection key={index} delay={index * 100}>
-                <div className={`relative group ${pkg.popular ? 'transform scale-105 z-10' : ''}`}>
+                <div className={`relative group h-full ${pkg.popular ? 'transform scale-105 z-10' : ''}`}>
                   {pkg.popular && (
                     <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 z-20">
-                      <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg">
+                      <span className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg">
                         Most Popular
                       </span>
                     </div>
                   )}
                   
-                  <div className="bg-gradient-to-br from-white via-indigo-50/50 to-white dark:from-slate-800 dark:via-indigo-900/50 dark:to-slate-800 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-200 overflow-hidden h-full border border-slate-200/50 dark:border-slate-700/50 transform hover:scale-105">
+                  <div className={`bg-gradient-to-br from-white via-blue-50/50 to-white dark:from-slate-800 dark:via-blue-900/50 dark:to-slate-800 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-200 overflow-hidden h-full border border-slate-200/50 dark:border-slate-700/50 ${pkg.popular ? 'transform hover:scale-105' : 'transform hover:scale-105'}`}>
                     <div className={`bg-gradient-to-r ${pkg.gradient} p-8 text-white text-center`}>
                       <h3 className="text-2xl font-bold mb-2">{pkg.name}</h3>
                       <p className="opacity-90 mb-6">{pkg.description}</p>
@@ -152,8 +155,8 @@ const Services = () => {
                       </div>
                     </div>
 
-                    <div className="p-8">
-                      <ul className="space-y-4 mb-8">
+                    <div className="p-8 flex flex-col h-full">
+                      <ul className="space-y-4 mb-8 flex-grow">
                         {pkg.features.map((feature, featureIndex) => (
                           <li key={featureIndex} className="flex items-center">
                             <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mr-4 ${
@@ -180,7 +183,7 @@ const Services = () => {
 
                       <button
                         onClick={scrollToContact}
-                        className={`w-full bg-gradient-to-r ${pkg.gradient} text-white py-4 px-6 rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-150 flex items-center justify-center group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+                        className={`w-full bg-gradient-to-r ${pkg.gradient} text-white py-4 px-6 rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-150 flex items-center justify-center group focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
                       >
                         Consult Now
                         <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-150" />
@@ -194,11 +197,11 @@ const Services = () => {
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-br from-white via-purple-50/30 to-white dark:from-slate-900 dark:via-purple-950/30 dark:to-slate-900 border-t border-gradient-to-r border-slate-200 dark:border-slate-800">
+      <section className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-white dark:from-slate-900 dark:via-blue-950/30 dark:to-slate-900 border-t border-gradient-to-r border-slate-200 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <AnimatedSection>
             <div className="text-center mb-16">
-              <h3 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-purple-800 to-slate-900 dark:from-white dark:via-purple-300 dark:to-white bg-clip-text text-transparent mb-6 leading-tight">
+              <h3 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
                 Ongoing Technical Support
               </h3>
               <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -210,26 +213,26 @@ const Services = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {supportPackages.map((support, index) => (
               <AnimatedSection key={index} delay={index * 100}>
-                <div className={`relative group ${support.popular ? 'transform scale-105' : ''}`}>
+                <div className={`relative group h-full ${support.popular ? 'transform scale-105' : ''}`}>
                   {support.popular && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                      <span className="bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                      <span className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
                         Popular Choice
                       </span>
                     </div>
                   )}
                   
-                  <div className={`relative bg-gradient-to-br ${support.bgGradient} rounded-3xl p-8 border border-indigo-200/30 dark:border-indigo-700/30 hover:shadow-xl transition-all duration-200 transform hover:scale-105 ${support.popular ? 'mt-4' : ''}`}>
+                  <div className={`relative bg-gradient-to-br ${support.bgGradient} rounded-3xl p-8 border border-blue-200/30 dark:border-blue-700/30 hover:shadow-xl transition-all duration-200 h-full flex flex-col ${support.popular ? 'transform hover:scale-105 mt-4' : 'transform hover:scale-105'}`}>
                     <div className="mb-6">
                       <div className={`w-16 h-16 bg-gradient-to-br ${support.gradient} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}>
-                        <span className="text-white text-2xl font-bold">{support.name.charAt(0)}</span>
+                        <support.icon className="text-white" size={28} />
                       </div>
                       <h4 className={`text-2xl font-bold bg-gradient-to-r ${support.gradient} bg-clip-text text-transparent mb-2`}>
                         {support.name}
                       </h4>
                     </div>
                     
-                    <div className="space-y-4 text-slate-600 dark:text-slate-300 mb-8">
+                    <div className="space-y-4 text-slate-600 dark:text-slate-300 mb-8 flex-grow">
                       {support.features.map((feature, featureIndex) => (
                         <div key={featureIndex} className="flex items-center space-x-3">
                           <div className={`w-2 h-2 bg-gradient-to-r ${support.gradient} rounded-full`}></div>
@@ -238,7 +241,7 @@ const Services = () => {
                       ))}
                     </div>
                     
-                    <div className="pt-6 border-t border-indigo-200/50 dark:border-indigo-700/50">
+                    <div className="pt-6 border-t border-blue-200/50 dark:border-blue-700/50">
                       <div className={`text-lg font-bold bg-gradient-to-r ${support.gradient} bg-clip-text text-transparent`}>
                         {support.price}
                       </div>

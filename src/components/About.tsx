@@ -27,11 +27,11 @@ const About = () => {
   ];
 
   return (
-    <section id="about" className="py-20 bg-gradient-to-br from-white via-indigo-50/30 to-white dark:from-slate-900 dark:via-indigo-950/30 dark:to-slate-900">
+    <section id="about" className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-white dark:from-slate-900 dark:via-blue-950/30 dark:to-slate-900">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <AnimatedSection>
           <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-indigo-800 to-slate-900 dark:from-white dark:via-indigo-300 dark:to-white bg-clip-text text-transparent mb-6 leading-tight">
+            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
               Why Choose TechFlow Solutions?
             </h2>
             <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -43,14 +43,14 @@ const About = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
             <AnimatedSection key={index} delay={index * 100}>
-              <div className="group p-8 bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-100 dark:from-indigo-900/20 dark:via-purple-900/20 dark:to-indigo-800/20 rounded-2xl hover:shadow-xl transition-all duration-200 hover:-translate-y-2 border border-indigo-200/50 dark:border-indigo-700/50 transform hover:scale-105">
-                <div className="p-4 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-2xl w-fit mb-6 group-hover:scale-110 transition-transform duration-150 shadow-lg">
+              <div className="group p-8 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl hover:shadow-xl transition-all duration-200 hover:-translate-y-2 border border-blue-200/50 dark:border-blue-700/50 transform hover:scale-105 h-full flex flex-col">
+                <div className="p-4 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl w-fit mb-6 group-hover:scale-110 transition-transform duration-150 shadow-lg">
                   <feature.icon className="text-white" size={28} aria-hidden="true" />
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p className="text-slate-600 dark:text-slate-300 leading-relaxed flex-grow">
                   {feature.description}
                 </p>
               </div>
