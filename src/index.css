@@ -293,21 +293,11 @@ img {
   box-shadow: 0 20px 40px rgba(5, 150, 105, 0.4);
 }
 
-/* No slide animation buttons with animated gradients */
+/* No slide animation buttons - static background for Submit & Consult button */
 .shiny-button-no-slide {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(
-    45deg,
-    #3b82f6,
-    #1d4ed8,
-    #2563eb,
-    #1e40af,
-    #3b82f6,
-    #60a5fa
-  );
-  background-size: 300% 300%;
-  animation: gradientShift 3.5s ease-in-out infinite;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   transition: all 0.3s ease;
 }
 
