@@ -257,7 +257,7 @@ const Services = () => {
                       className={`w-full ${support.buttonClass} text-white py-3 sm:py-4 px-6 rounded-2xl font-semibold hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-auto`}
                     >
                       <span className="relative z-10 flex items-center text-sm sm:text-base">
-                        Get Support
+                        Subscribe
                         <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
                       </span>
                     </button>
