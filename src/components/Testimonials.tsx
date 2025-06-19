@@ -11,7 +11,7 @@ const Testimonials = () => {
       name: 'Sarah Johnson',
       position: 'CTO',
       company: 'TechStart Inc.',
-      content: 'TechFlow Solutions transformed our entire workflow. The implementation was seamless and their support team is exceptional. Our productivity increased by 40% within the first month.',
+      content: 'TechFlow Solutions transformed our entire workflow. The implementation was seamless and their support team is exceptional. Our productivity increased by 40% within the first month while reducing IT overhead significantly.',
       rating: 5,
       avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
     },
@@ -19,7 +19,7 @@ const Testimonials = () => {
       name: 'Michael Chen',
       position: 'Operations Director', 
       company: 'Global Dynamics',
-      content: 'The premium package was perfect for our growing team. Professional setup, excellent training, and ongoing support that actually works. Highly recommend their services.',
+      content: 'The premium package was perfect for our growing team. Professional setup, excellent training, and ongoing support that actually works. We reduced our IT costs by 50% while improving efficiency.',
       rating: 5,
       avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
     },
@@ -27,7 +27,7 @@ const Testimonials = () => {
       name: 'Emily Rodriguez',
       position: 'IT Manager',
       company: 'Creative Solutions',
-      content: 'Outstanding service from start to finish. They handled everything while we focused on our business. The enterprise package features are exactly what we needed for compliance.',
+      content: 'Outstanding service from start to finish. They handled everything while we focused on our business. The enterprise package features are exactly what we needed for compliance and security.',
       rating: 5,
       avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
     }
@@ -41,6 +41,13 @@ const Testimonials = () => {
     { name: 'Slack', logo: '💬' },
     { name: 'Zoom', logo: '📹' }
   ];
+
+  const scrollToContact = () => {
+    const element = document.getElementById('contact');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
@@ -65,16 +72,24 @@ const Testimonials = () => {
 
   return (
     <>
-      <section id="testimonials" className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-white dark:from-slate-900 dark:via-blue-950/30 dark:to-slate-900">
+      <section id="testimonials" className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-white dark:from-slate-950 dark:via-blue-950/30 dark:to-slate-950">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <AnimatedSection>
             <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
+              <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
                 What Our Clients Say
               </h2>
-              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-                Don't just take our word for it. Here's what business leaders say about our services.
+              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
+                Don't just take our word for it. Here's what business leaders say about our IT infrastructure services and how we've helped them reduce overhead while boosting productivity.
               </p>
+              <button
+                onClick={scrollToContact}
+                className="shiny-button text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative overflow-hidden"
+              >
+                <span className="relative z-10">
+                  Consult Our Team
+                </span>
+              </button>
             </div>
           </AnimatedSection>
 
@@ -93,7 +108,7 @@ const Testimonials = () => {
                       className="w-16 h-16 rounded-full object-cover mr-4 border-4 border-white dark:border-slate-600 shadow-lg"
                     />
                     <div>
-                      <h4 className="font-semibold text-slate-900 dark:text-white text-lg">
+                      <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg">
                         {testimonial.name}
                       </h4>
                       <p className="text-slate-600 dark:text-slate-400">{testimonial.position}</p>
@@ -121,7 +136,7 @@ const Testimonials = () => {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <AnimatedSection>
             <div className="text-center mb-12">
-              <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-4 leading-[1.1] pb-2">
+              <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-4 leading-[1.1] pb-2">
                 Trusted Partners
               </h3>
               <p className="text-lg text-slate-600 dark:text-slate-300">

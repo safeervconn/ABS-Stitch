@@ -26,17 +26,32 @@ const About = () => {
     }
   ];
 
+  const scrollToContact = () => {
+    const element = document.getElementById('contact');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <section id="about" className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-white dark:from-slate-900 dark:via-blue-950/30 dark:to-slate-900">
+    <section id="about" className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-white dark:from-slate-950 dark:via-blue-950/30 dark:to-slate-950">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <AnimatedSection>
           <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
+            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
               Why Choose TechFlow Solutions?
             </h2>
-            <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-              We specialize in modern workplace solutions, helping businesses streamline operations and boost productivity through expert implementation and ongoing support.
+            <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
+              We specialize in modern workplace solutions, helping businesses streamline operations and boost productivity through expert implementation and ongoing support. <strong>Reduce your IT overhead by up to 60%</strong> while increasing team efficiency.
             </p>
+            <button
+              onClick={scrollToContact}
+              className="shiny-button text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative overflow-hidden"
+            >
+              <span className="relative z-10">
+                Consult Our Experts
+              </span>
+            </button>
           </div>
         </AnimatedSection>
 
@@ -47,7 +62,7 @@ const About = () => {
                 <div className="p-4 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl w-fit mb-6 group-hover:scale-110 transition-transform duration-150 shadow-lg">
                   <feature.icon className="text-white" size={28} aria-hidden="true" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
+                <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
                   {feature.title}
                 </h3>
                 <p className="text-slate-600 dark:text-slate-300 leading-relaxed flex-grow">

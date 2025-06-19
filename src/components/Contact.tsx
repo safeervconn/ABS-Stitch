@@ -31,7 +31,7 @@ const Contact = () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     console.log('Form submitted:', formData);
-    alert('Thank you for your inquiry! Our team will contact you within 48 hours.');
+    alert('Thank you for your inquiry! Our team will contact you within 48 hours to discuss how we can reduce your IT overhead and boost productivity.');
     
     // Reset form
     setFormData({
@@ -57,15 +57,15 @@ const Contact = () => {
   ];
 
   return (
-    <section id="contact" className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 dark:from-slate-900 dark:via-blue-950/50 dark:to-slate-900">
+    <section id="contact" className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 dark:from-slate-950 dark:via-blue-950/50 dark:to-slate-950">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <AnimatedSection>
           <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
+            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
               Get in Touch
             </h2>
             <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-              Ready to transform your workplace? Let's discuss your requirements and create a customized solution that fits your business needs.
+              Ready to transform your workplace and reduce IT overhead? Let's discuss your requirements and create a customized solution that fits your business needs.
             </p>
           </div>
         </AnimatedSection>
@@ -73,7 +73,7 @@ const Contact = () => {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
           <AnimatedSection className="lg:col-span-3">
             <div className="bg-gradient-to-br from-white/95 via-blue-50/50 to-white/95 dark:from-slate-800/95 dark:via-blue-900/30 dark:to-slate-800/95 backdrop-blur-xl rounded-3xl p-10 shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
-              <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-8 leading-[1.1] pb-2">
+              <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-8 leading-[1.1] pb-2">
                 Tell Us About Your Project
               </h3>
               
@@ -90,7 +90,7 @@ const Contact = () => {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150"
                       placeholder="Your full name"
                       aria-describedby="name-error"
                     />
@@ -106,7 +106,7 @@ const Contact = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150"
                       placeholder="your.email@company.com"
                       aria-describedby="email-error"
                     />
@@ -125,7 +125,7 @@ const Contact = () => {
                       required
                       value={formData.company}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150"
                       placeholder="Your company name"
                     />
                   </div>
@@ -139,7 +139,7 @@ const Contact = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150"
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150"
                       placeholder="+1 (555) 123-4567"
                     />
                   </div>
@@ -156,12 +156,12 @@ const Contact = () => {
                       required
                       value={formData.service}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 appearance-none cursor-pointer"
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 appearance-none cursor-pointer"
                     >
                       <option value="">Select a package</option>
-                      <option value="basic">Basic Package ($299/month)</option>
-                      <option value="premium">Premium Package ($599/month)</option>
-                      <option value="enterprise">Enterprise Package ($1,299/month)</option>
+                      <option value="basic">Basic Package (Starting from $299/month)</option>
+                      <option value="premium">Premium Package (Starting from $599/month)</option>
+                      <option value="enterprise">Enterprise Package (Starting from $1,299/month)</option>
                       <option value="custom">Custom Solution</option>
                     </select>
                   </div>
@@ -174,12 +174,12 @@ const Contact = () => {
                       name="supportPackage"
                       value={formData.supportPackage}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 appearance-none cursor-pointer"
+                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 appearance-none cursor-pointer"
                     >
                       <option value="">Select support package</option>
-                      <option value="basic-support">Basic Support ($50-150/month)</option>
-                      <option value="premium-support">Premium Support ($150-400/month)</option>
-                      <option value="enterprise-support">Enterprise Support ($400-1000/month)</option>
+                      <option value="basic-support">Basic Support (Starting from $50-150/month)</option>
+                      <option value="premium-support">Premium Support (Starting from $150-400/month)</option>
+                      <option value="enterprise-support">Enterprise Support (Starting from $400-1000/month)</option>
                     </select>
                   </div>
                 </div>
@@ -193,7 +193,7 @@ const Contact = () => {
                     name="teamSize"
                     value={formData.teamSize}
                     onChange={handleChange}
-                    className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 appearance-none cursor-pointer"
+                    className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 appearance-none cursor-pointer"
                   >
                     <option value="">Select team size</option>
                     <option value="1-10">1-10 employees</option>
@@ -214,7 +214,7 @@ const Contact = () => {
                     rows={6}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all duration-150 resize-none"
+                    className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 resize-none"
                     placeholder="Tell us about your current setup, specific requirements, challenges, or any questions you have..."
                   />
                 </div>
@@ -222,12 +222,14 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white py-5 px-8 rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-150 flex items-center justify-center group text-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="w-full shiny-button text-white py-5 px-8 rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-150 flex items-center justify-center group text-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative overflow-hidden"
                 >
-                  {isSubmitting ? 'Submitting...' : 'Submit & Consult'}
-                  {!isSubmitting && (
-                    <Send className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform duration-150" />
-                  )}
+                  <span className="relative z-10 flex items-center">
+                    {isSubmitting ? 'Submitting...' : 'Submit & Consult'}
+                    {!isSubmitting && (
+                      <Send className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform duration-150" />
+                    )}
+                  </span>
                 </button>
 
                 <p className="text-sm text-slate-600 dark:text-slate-400 text-center flex items-center justify-center">
@@ -240,7 +242,7 @@ const Contact = () => {
 
           <AnimatedSection className="lg:col-span-2 space-y-8" delay={200}>
             <div className="bg-gradient-to-br from-white/95 via-blue-50/50 to-white/95 dark:from-slate-800/95 dark:via-blue-900/30 dark:to-slate-800/95 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent mb-8 leading-[1.1] pb-2">
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-8 leading-[1.1] pb-2">
                 Contact Information
               </h3>
 
@@ -250,7 +252,7 @@ const Contact = () => {
                     <Phone className="w-6 h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900 dark:text-white text-lg mb-1">Phone</h4>
+                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg mb-1">Phone</h4>
                     <a href="tel:+15551234567" className="text-slate-600 dark:text-slate-300 mb-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                       +1 (555) 123-4567
                     </a>
@@ -263,7 +265,7 @@ const Contact = () => {
                     <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900 dark:text-white text-lg mb-1">Email</h4>
+                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg mb-1">Email</h4>
                     <a href="mailto:hello@techflowsolutions.com" className="text-slate-600 dark:text-slate-300 mb-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                       hello@techflowsolutions.com
                     </a>
@@ -276,7 +278,7 @@ const Contact = () => {
                     <MapPin className="w-6 h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900 dark:text-white text-lg mb-1">Office</h4>
+                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg mb-1">Office</h4>
                     <address className="text-slate-600 dark:text-slate-300 not-italic">
                       123 Business Ave, Suite 456<br />
                       Tech City, TC 12345
@@ -285,7 +287,7 @@ const Contact = () => {
                 </div>
 
                 <div className="pt-8 border-t border-slate-200 dark:border-slate-700">
-                  <h4 className="font-semibold text-slate-900 dark:text-white mb-6 text-lg">Follow Us</h4>
+                  <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-6 text-lg">Follow Us</h4>
                   <div className="flex space-x-4">
                     {socialLinks.map((social) => (
                       <a

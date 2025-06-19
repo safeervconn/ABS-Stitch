@@ -20,7 +20,7 @@ const Footer = () => {
   const navItems = ['home', 'about', 'services', 'testimonials', 'contact'];
 
   return (
-    <footer className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white">
+    <footer className="bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 text-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           <div className="space-y-6">
@@ -33,7 +33,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-slate-300 leading-relaxed text-sm max-w-sm">
-              Your trusted partner for workplace technology implementation and support.
+              Your trusted partner for workplace technology implementation and support. Reduce IT overhead while maximizing productivity.
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social) => (
@@ -53,7 +53,7 @@ const Footer = () => {
           </div>
 
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Quick Links</h3>
+            <h3 className="text-lg font-semibold text-slate-100">Quick Links</h3>
             <nav>
               <ul className="space-y-3 text-sm">
                 {navItems.map((item) => (
@@ -71,7 +71,7 @@ const Footer = () => {
           </div>
 
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Contact</h3>
+            <h3 className="text-lg font-semibold text-slate-100">Contact</h3>
             <div className="space-y-4 text-sm">
               <div className="flex items-center space-x-3">
                 <Phone className="w-4 h-4 text-blue-400" aria-hidden="true" />

@@ -20,14 +20,14 @@ const Hero = () => {
   const features = [
     { icon: Headphones, title: '24/7 Support', desc: 'Round-the-clock assistance' },
     { icon: Users, title: 'Expert Consultation', desc: 'Certified professionals' },
-    { icon: Shield, title: 'Remove IT Overhead', desc: 'Focus on your business' },
+    { icon: Shield, title: 'Reduce IT Overhead', desc: 'Focus on your business' },
     { icon: Clock, title: 'Quick Deployment', desc: 'Minimal downtime' }
   ];
 
   return (
     <section
       id="home"
-      className="min-h-screen flex items-center bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 dark:from-slate-900 dark:via-blue-950/50 dark:to-slate-900 relative overflow-hidden"
+      className="min-h-screen flex items-center bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 dark:from-slate-950 dark:via-blue-950/50 dark:to-slate-950 relative overflow-hidden"
     >
       <div className="absolute inset-0 bg-grid-pattern opacity-5" aria-hidden="true"></div>
       <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float" aria-hidden="true"></div>
@@ -40,26 +40,28 @@ const Hero = () => {
               <div className="space-y-6">
                 <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-full text-blue-700 dark:text-blue-300 text-sm font-medium shadow-lg animate-bounce-gentle">
                   <Zap className="w-4 h-4 mr-2" aria-hidden="true" />
-                  Professional IT Solutions
+                  Professional IT Infrastructure Solutions
                 </div>
-                <h1 className="text-5xl lg:text-7xl font-bold text-slate-900 dark:text-white leading-tight">
+                <h1 className="text-5xl lg:text-7xl font-bold text-slate-900 dark:text-slate-100 leading-tight">
                   Transform Your
                   <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent block">
                     Digital Workspace
                   </span>
                 </h1>
                 <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
-                  Expert implementation and support for modern workplace solutions. Reduce IT overhead while maximizing team productivity.
+                  Expert implementation and support for modern workplace solutions. <strong>Reduce IT overhead by 60%</strong> while maximizing team productivity with our comprehensive infrastructure services.
                 </p>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={scrollToServices}
-                  className="group bg-gradient-to-r from-blue-600 to-blue-800 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-150 flex items-center justify-center shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="group shiny-button text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-150 flex items-center justify-center shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative overflow-hidden"
                 >
-                  View Packages
-                  <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform duration-150" size={20} />
+                  <span className="relative z-10 flex items-center">
+                    View Packages
+                    <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform duration-150" size={20} />
+                  </span>
                 </button>
                 <button
                   onClick={scrollToContact}
@@ -82,7 +84,7 @@ const Hero = () => {
                           <item.icon size={24} aria-hidden="true" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-slate-900 dark:text-white">{item.title}</h3>
+                          <h3 className="font-semibold text-slate-900 dark:text-slate-100">{item.title}</h3>
                           <p className="text-slate-600 dark:text-slate-400 text-sm">{item.desc}</p>
                         </div>
                       </div>
