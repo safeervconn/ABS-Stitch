@@ -222,12 +222,12 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full shiny-button text-white py-5 px-8 rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-150 flex items-center justify-center group text-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative overflow-hidden"
+                  className="w-full shiny-button text-white py-5 px-8 rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-150 flex items-center justify-center text-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative overflow-hidden"
                 >
                   <span className="relative z-10 flex items-center">
                     {isSubmitting ? 'Submitting...' : 'Submit & Consult'}
                     {!isSubmitting && (
-                      <Send className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform duration-150" />
+                      <Send className="ml-3 w-6 h-6" />
                     )}
                   </span>
                 </button>

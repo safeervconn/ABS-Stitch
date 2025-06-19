@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Check, X, Headphones, Zap, Shield, Crown, Star, Award } from 'lucide-react';
+import { ArrowRight, Check, X, Headphones, Zap, Shield } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 
 const Services = () => {
@@ -22,9 +22,8 @@ const Services = () => {
         { name: 'Dedicated Account Manager', included: false },
         { name: 'Enterprise Compliance', included: false },
       ],
-      popular: false,
       gradient: 'from-blue-600 to-blue-800',
-      cardClass: '',
+      cardClass: 'basic-card',
       buttonClass: 'shiny-button'
     },
     {
@@ -45,11 +44,9 @@ const Services = () => {
         { name: 'Dedicated Account Manager', included: false },
         { name: 'Enterprise Compliance', included: false },
       ],
-      popular: true,
       gradient: 'from-purple-600 to-purple-800',
       cardClass: 'premium-card',
-      buttonClass: 'shiny-button-premium',
-      icon: Crown
+      buttonClass: 'shiny-button-premium'
     },
     {
       name: 'Enterprise',
@@ -69,11 +66,9 @@ const Services = () => {
         { name: 'Dedicated Account Manager', included: true },
         { name: 'Enterprise Compliance', included: true },
       ],
-      popular: false,
       gradient: 'from-emerald-600 to-emerald-800',
       cardClass: 'enterprise-card',
-      buttonClass: 'shiny-button-enterprise',
-      icon: Award
+      buttonClass: 'shiny-button-enterprise'
     }
   ];
 
@@ -90,7 +85,6 @@ const Services = () => {
       ],
       gradient: 'from-blue-500 to-blue-600',
       bgGradient: 'from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20',
-      popular: false,
       buttonClass: 'shiny-button'
     },
     {
@@ -106,7 +100,6 @@ const Services = () => {
       ],
       gradient: 'from-purple-600 to-purple-700',
       bgGradient: 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
-      popular: true,
       buttonClass: 'shiny-button-premium'
     },
     {
@@ -123,7 +116,6 @@ const Services = () => {
       ],
       gradient: 'from-emerald-700 to-emerald-800',
       bgGradient: 'from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20',
-      popular: false,
       buttonClass: 'shiny-button-enterprise'
     }
   ];
@@ -153,25 +145,11 @@ const Services = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {packages.map((pkg, index) => (
               <AnimatedSection key={index} delay={index * 100}>
-                <div className={`relative group h-full transform transition-all duration-300 hover:scale-105 ${pkg.popular ? 'scale-105 z-10' : ''}`}>
-                  {pkg.popular && (
-                    <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 z-20 transition-all duration-300 group-hover:scale-110">
-                      <span className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg relative overflow-hidden">
-                        <span className="relative z-10 flex items-center">
-                          <Star className="w-4 h-4 mr-1" />
-                          Most Popular
-                        </span>
-                      </span>
-                    </div>
-                  )}
-                  
+                <div className="relative group h-full transform transition-all duration-300 hover:scale-105">
                   <div className={`${pkg.cardClass} bg-gradient-to-br from-white via-blue-50/50 to-white dark:from-slate-800 dark:via-blue-900/50 dark:to-slate-800 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 overflow-hidden h-full border border-slate-200/50 dark:border-slate-700/50`}>
                     <div className={`${pkg.cardClass ? 'text-white' : `bg-gradient-to-r ${pkg.gradient} text-white`} p-8 text-center relative overflow-hidden`}>
                       <div className="relative z-10">
-                        <div className="flex items-center justify-center mb-4">
-                          {pkg.icon && <pkg.icon className="w-8 h-8 mr-2" />}
-                          <h3 className="text-2xl font-bold">{pkg.name}</h3>
-                        </div>
+                        <h3 className="text-2xl font-bold mb-4">{pkg.name}</h3>
                         <p className="opacity-90 mb-6">{pkg.description}</p>
                         <div className="text-sm opacity-75 mb-2">Starting from</div>
                         <div className="text-4xl font-bold">
@@ -209,11 +187,11 @@ const Services = () => {
 
                       <button
                         onClick={scrollToContact}
-                        className={`w-full ${pkg.buttonClass} text-white py-4 px-6 rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center group relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                        className={`w-full ${pkg.buttonClass} text-white py-4 px-6 rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
                       >
                         <span className="relative z-10 flex items-center">
                           Consult Now
-                          <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                          <ArrowRight className="ml-2 w-5 h-5" />
                         </span>
                       </button>
                     </div>
@@ -241,19 +219,8 @@ const Services = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {supportPackages.map((support, index) => (
               <AnimatedSection key={index} delay={index * 100}>
-                <div className={`relative group h-full transform transition-all duration-300 hover:scale-105 ${support.popular ? 'scale-105 z-10' : ''}`}>
-                  {support.popular && (
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20 transition-all duration-300 group-hover:scale-110">
-                      <span className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg relative overflow-hidden">
-                        <span className="relative z-10 flex items-center">
-                          <Star className="w-4 h-4 mr-1" />
-                          Popular Choice
-                        </span>
-                      </span>
-                    </div>
-                  )}
-                  
-                  <div className={`relative bg-gradient-to-br ${support.bgGradient} rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-300 h-full flex flex-col border border-blue-200/50 dark:border-blue-700/50 backdrop-blur-sm ${support.popular ? 'mt-4' : ''}`}>
+                <div className="relative group h-full transform transition-all duration-300 hover:scale-105">
+                  <div className={`relative bg-gradient-to-br ${support.bgGradient} rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-300 h-full flex flex-col border border-blue-200/50 dark:border-blue-700/50 backdrop-blur-sm`}>
                     
                     {/* Header with Icon and Title */}
                     <div className="relative mb-8">
@@ -287,11 +254,11 @@ const Services = () => {
                     {/* CTA Button */}
                     <button
                       onClick={scrollToContact}
-                      className={`w-full ${support.buttonClass} text-white py-4 px-6 rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center group/btn relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                      className={`w-full ${support.buttonClass} text-white py-4 px-6 rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
                     >
                       <span className="relative z-10 flex items-center">
                         Get Support
-                        <ArrowRight className="ml-2 w-5 h-5 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                        <ArrowRight className="ml-2 w-5 h-5" />
                       </span>
                     </button>
                   </div>

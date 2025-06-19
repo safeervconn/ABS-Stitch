@@ -42,13 +42,6 @@ const Testimonials = () => {
     { name: 'Zoom', logo: '📹' }
   ];
 
-  const scrollToContact = () => {
-    const element = document.getElementById('contact');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
@@ -79,17 +72,9 @@ const Testimonials = () => {
               <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
                 What Our Clients Say
               </h2>
-              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
+              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
                 Don't just take our word for it. Here's what business leaders say about our IT infrastructure services and how we've helped them reduce overhead while boosting productivity.
               </p>
-              <button
-                onClick={scrollToContact}
-                className="shiny-button text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative overflow-hidden"
-              >
-                <span className="relative z-10">
-                  Consult Our Team
-                </span>
-              </button>
             </div>
           </AnimatedSection>
 
