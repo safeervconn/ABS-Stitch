@@ -153,6 +153,107 @@ img {
   }
 }
 
+/* Enhanced Button Animations */
+@keyframes waveFlow {
+  0% {
+    background-position: 0% 50%, 0% 50%;
+  }
+  25% {
+    background-position: 50% 25%, 25% 75%;
+  }
+  50% {
+    background-position: 100% 50%, 50% 50%;
+  }
+  75% {
+    background-position: 50% 75%, 75% 25%;
+  }
+  100% {
+    background-position: 0% 50%, 0% 50%;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.1);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5), 0 0 60px rgba(59, 130, 246, 0.2);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes liquidFlow {
+  0% {
+    background-position: 0% 0%, 100% 100%, 50% 50%;
+  }
+  33% {
+    background-position: 100% 0%, 0% 100%, 0% 50%;
+  }
+  66% {
+    background-position: 50% 100%, 50% 0%, 100% 50%;
+  }
+  100% {
+    background-position: 0% 0%, 100% 100%, 50% 50%;
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.03);
+    filter: brightness(1.1);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+@keyframes morphGradient {
+  0% {
+    border-radius: 12px;
+    background: linear-gradient(45deg, #3b82f6, #1d4ed8, #2563eb, #1e40af);
+  }
+  25% {
+    border-radius: 20px;
+    background: linear-gradient(135deg, #1d4ed8, #2563eb, #1e40af, #3b82f6);
+  }
+  50% {
+    border-radius: 16px;
+    background: linear-gradient(225deg, #2563eb, #1e40af, #3b82f6, #1d4ed8);
+  }
+  75% {
+    border-radius: 24px;
+    background: linear-gradient(315deg, #1e40af, #3b82f6, #1d4ed8, #2563eb);
+  }
+  100% {
+    border-radius: 12px;
+    background: linear-gradient(45deg, #3b82f6, #1d4ed8, #2563eb, #1e40af);
+  }
+}
+
+@keyframes energyPulse {
+  0%, 100% {
+    background-size: 100% 100%, 200% 200%;
+    background-position: 0% 0%, 0% 0%;
+  }
+  50% {
+    background-size: 120% 120%, 300% 300%;
+    background-position: 50% 50%, 50% 50%;
+  }
+}
+
 /* Animation classes */
 .animate-fade-in {
   animation: fadeIn 0.6s ease-out;
@@ -198,14 +299,15 @@ img {
   animation: scroll 30s linear infinite;
 }
 
-/* Consistent animated button effects */
+/* Enhanced Button Styles with Smooth Animations */
 .shiny-button {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #3b82f6 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 3s ease-in-out infinite;
-  transition: transform 0.2s ease-out;
+  background: linear-gradient(45deg, #3b82f6, #1d4ed8, #2563eb, #1e40af);
+  background-size: 300% 300%;
+  animation: waveFlow 4s ease-in-out infinite, pulseGlow 3s ease-in-out infinite;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
 }
 
 .shiny-button::before {
@@ -215,43 +317,54 @@ img {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  animation: shimmer 2.5s infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 3s infinite ease-in-out;
+  transition: opacity 0.3s ease;
 }
 
 .shiny-button::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
-  opacity: 0;
-  transform: scale(0);
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
 
 .shiny-button:hover {
-  animation: none;
-  transform: scale(1.05);
+  animation: breathe 2s ease-in-out infinite;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px rgba(59, 130, 246, 0.4);
 }
 
 .shiny-button:hover::before {
-  animation: none;
+  animation: shimmer 1.5s infinite ease-in-out;
 }
 
 .shiny-button:hover::after {
-  animation: flash 0.6s ease-out;
+  width: 100%;
+  height: 100%;
+  animation: ripple 0.6s ease-out;
+}
+
+.shiny-button:active {
+  transform: translateY(0px) scale(0.98);
+  transition: transform 0.1s ease;
 }
 
 .shiny-button-premium {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 50%, #7c3aed 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 3s ease-in-out infinite;
-  transition: transform 0.2s ease-out;
+  background: linear-gradient(45deg, #7c3aed, #4c1d95, #6d28d9, #5b21b6);
+  background-size: 300% 300%;
+  animation: waveFlow 4.5s ease-in-out infinite;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
 }
 
 .shiny-button-premium::before {
@@ -261,8 +374,8 @@ img {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  animation: shimmer 2.5s infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 3.2s infinite ease-in-out;
 }
 
 .shiny-button-premium::after {
@@ -272,32 +385,36 @@ img {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
-  opacity: 0;
-  transform: scale(0);
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(124, 58, 237, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(76, 29, 149, 0.3) 0%, transparent 50%);
+  animation: liquidFlow 6s ease-in-out infinite;
   pointer-events: none;
 }
 
 .shiny-button-premium:hover {
-  animation: none;
-  transform: scale(1.05);
+  animation: breathe 2.2s ease-in-out infinite;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px rgba(124, 58, 237, 0.4);
 }
 
 .shiny-button-premium:hover::before {
-  animation: none;
+  animation: shimmer 1.3s infinite ease-in-out;
 }
 
-.shiny-button-premium:hover::after {
-  animation: flash 0.6s ease-out;
+.shiny-button-premium:active {
+  transform: translateY(0px) scale(0.98);
+  transition: transform 0.1s ease;
 }
 
 .shiny-button-enterprise {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #059669 0%, #047857 50%, #059669 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 3s ease-in-out infinite;
-  transition: transform 0.2s ease-out;
+  background: linear-gradient(45deg, #059669, #047857, #065f46, #064e3b);
+  background-size: 300% 300%;
+  animation: waveFlow 5s ease-in-out infinite;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
 }
 
 .shiny-button-enterprise::before {
@@ -307,8 +424,8 @@ img {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  animation: shimmer 2.5s infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 3.5s infinite ease-in-out;
 }
 
 .shiny-button-enterprise::after {
@@ -318,63 +435,125 @@ img {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
-  opacity: 0;
-  transform: scale(0);
+  background: 
+    linear-gradient(45deg, rgba(5, 150, 105, 0.2), transparent, rgba(4, 120, 87, 0.2)),
+    radial-gradient(circle at 30% 70%, rgba(6, 95, 70, 0.3) 0%, transparent 60%);
+  background-size: 200% 200%, 150% 150%;
+  animation: energyPulse 4s ease-in-out infinite;
   pointer-events: none;
 }
 
 .shiny-button-enterprise:hover {
-  animation: none;
-  transform: scale(1.05);
+  animation: breathe 2.5s ease-in-out infinite;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px rgba(5, 150, 105, 0.4);
 }
 
 .shiny-button-enterprise:hover::before {
-  animation: none;
+  animation: shimmer 1.2s infinite ease-in-out;
 }
 
-.shiny-button-enterprise:hover::after {
-  animation: flash 0.6s ease-out;
+.shiny-button-enterprise:active {
+  transform: translateY(0px) scale(0.98);
+  transition: transform 0.1s ease;
 }
 
-/* Static buttons - no animation, only pop effect */
+/* Static buttons with subtle animations */
 .shiny-button-no-slide {
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  transition: transform 0.2s ease-out;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.shiny-button-no-slide::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
 }
 
 .shiny-button-no-slide:hover {
-  transform: scale(1.05);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+  animation: none;
+}
+
+.shiny-button-no-slide:hover::before {
+  transform: translateX(100%);
 }
 
 .shiny-button-premium-no-slide {
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
-  transition: transform 0.2s ease-out;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: breathe 4.2s ease-in-out infinite;
+}
+
+.shiny-button-premium-no-slide::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
 }
 
 .shiny-button-premium-no-slide:hover {
-  transform: scale(1.05);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.3);
+  animation: none;
+}
+
+.shiny-button-premium-no-slide:hover::before {
+  transform: translateX(100%);
 }
 
 .shiny-button-enterprise-no-slide {
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  transition: transform 0.2s ease-out;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: breathe 4.5s ease-in-out infinite;
+}
+
+.shiny-button-enterprise-no-slide::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
 }
 
 .shiny-button-enterprise-no-slide:hover {
-  transform: scale(1.05);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(5, 150, 105, 0.3);
+  animation: none;
 }
 
-/* Basic card effects */
+.shiny-button-enterprise-no-slide:hover::before {
+  transform: translateX(100%);
+}
+
+/* Enhanced card effects with smooth animations */
 .basic-card {
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   position: relative;
+  animation: breathe 6s ease-in-out infinite;
 }
 
 .basic-card::before {
@@ -384,14 +563,17 @@ img {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  background: 
+    linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%),
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1) 0%, transparent 50%);
   border-radius: inherit;
+  animation: liquidFlow 8s ease-in-out infinite;
 }
 
-/* Premium card effects */
 .premium-card {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
+  animation: breathe 6.5s ease-in-out infinite;
 }
 
 .premium-card::before {
@@ -401,13 +583,17 @@ img {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  background: 
+    linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%),
+    radial-gradient(circle at 70% 70%, rgba(255,255,255,0.1) 0%, transparent 50%);
   border-radius: inherit;
+  animation: liquidFlow 9s ease-in-out infinite;
 }
 
 .enterprise-card {
   background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
   position: relative;
+  animation: breathe 7s ease-in-out infinite;
 }
 
 .enterprise-card::before {
@@ -417,8 +603,11 @@ img {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  background: 
+    linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%),
+    radial-gradient(circle at 50% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
   border-radius: inherit;
+  animation: liquidFlow 10s ease-in-out infinite;
 }
 
 /* Background patterns */
@@ -608,6 +797,21 @@ h1, h2, h3, h4, h5, h6 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  
+  .shiny-button,
+  .shiny-button-premium,
+  .shiny-button-enterprise,
+  .shiny-button-no-slide,
+  .shiny-button-premium-no-slide,
+  .shiny-button-enterprise-no-slide {
+    animation: none !important;
+  }
+  
+  .shiny-button::before,
+  .shiny-button-premium::before,
+  .shiny-button-enterprise::before {
+    animation: none !important;
   }
 }
 
