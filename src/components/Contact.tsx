@@ -58,27 +58,27 @@ const Contact = () => {
 
   return (
     <section id="contact" className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 dark:from-slate-950 dark:via-blue-950/50 dark:to-slate-950">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <AnimatedSection>
           <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
               Get in Touch
             </h2>
-            <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl mobile-text text-slate-600 dark:text-slate-300 max-w-4xl mx-auto">
               Ready to transform your workplace and reduce IT overhead? Let's discuss your requirements and create a customized solution that fits your business needs.
             </p>
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
           <AnimatedSection className="lg:col-span-3">
-            <div className="bg-gradient-to-br from-white/95 via-blue-50/50 to-white/95 dark:from-slate-800/95 dark:via-blue-900/30 dark:to-slate-800/95 backdrop-blur-xl rounded-3xl p-10 shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
-              <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-8 leading-[1.1] pb-2">
+            <div className="bg-gradient-to-br from-white/95 via-blue-50/50 to-white/95 dark:from-slate-800/95 dark:via-blue-900/30 dark:to-slate-800/95 backdrop-blur-xl rounded-3xl p-6 sm:p-10 mobile-tile shadow-2xl border border-slate-200/50 dark:border-slate-700/50 mobile-card">
+              <h3 className="text-2xl sm:text-3xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-8 leading-[1.1] pb-2">
                 Tell Us About Your Project
               </h3>
               
-              <form onSubmit={handleSubmit} className="space-y-8" noValidate>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8" noValidate>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                       Full Name *
@@ -90,7 +90,7 @@ const Contact = () => {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 text-sm sm:text-base"
                       placeholder="Your full name"
                       aria-describedby="name-error"
                     />
@@ -106,14 +106,14 @@ const Contact = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 text-sm sm:text-base"
                       placeholder="your.email@company.com"
                       aria-describedby="email-error"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label htmlFor="company" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                       Company Name *
@@ -125,7 +125,7 @@ const Contact = () => {
                       required
                       value={formData.company}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 text-sm sm:text-base"
                       placeholder="Your company name"
                     />
                   </div>
@@ -139,13 +139,13 @@ const Contact = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 text-sm sm:text-base"
                       placeholder="+1 (555) 123-4567"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label htmlFor="service" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                       Service Package *
@@ -156,7 +156,7 @@ const Contact = () => {
                       required
                       value={formData.service}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 appearance-none cursor-pointer"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 appearance-none cursor-pointer text-sm sm:text-base"
                     >
                       <option value="">Select a package</option>
                       <option value="basic">Basic Package (Starting from $299/month)</option>
@@ -174,7 +174,7 @@ const Contact = () => {
                       name="supportPackage"
                       value={formData.supportPackage}
                       onChange={handleChange}
-                      className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 appearance-none cursor-pointer"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 appearance-none cursor-pointer text-sm sm:text-base"
                     >
                       <option value="">Select support package</option>
                       <option value="basic-support">Basic Support (Starting from $50-150/month)</option>
@@ -193,7 +193,7 @@ const Contact = () => {
                     name="teamSize"
                     value={formData.teamSize}
                     onChange={handleChange}
-                    className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 appearance-none cursor-pointer"
+                    className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 appearance-none cursor-pointer text-sm sm:text-base"
                   >
                     <option value="">Select team size</option>
                     <option value="1-10">1-10 employees</option>
@@ -214,7 +214,7 @@ const Contact = () => {
                     rows={6}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-6 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 resize-none"
+                    className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 resize-none text-sm sm:text-base"
                     placeholder="Tell us about your current setup, specific requirements, challenges, or any questions you have..."
                   />
                 </div>
@@ -222,17 +222,17 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full shiny-button text-white py-5 px-8 rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-150 flex items-center justify-center text-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative overflow-hidden"
+                  className="w-full shiny-button-no-slide text-white py-4 sm:py-5 px-8 rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-150 flex items-center justify-center text-base sm:text-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative overflow-hidden"
                 >
                   <span className="relative z-10 flex items-center">
                     {isSubmitting ? 'Submitting...' : 'Submit & Consult'}
                     {!isSubmitting && (
-                      <Send className="ml-3 w-6 h-6" />
+                      <Send className="ml-3 w-5 h-5 sm:w-6 sm:h-6" />
                     )}
                   </span>
                 </button>
 
-                <p className="text-sm text-slate-600 dark:text-slate-400 text-center flex items-center justify-center">
+                <p className="text-xs sm:text-sm mobile-text text-slate-600 dark:text-slate-400 text-center flex items-center justify-center">
                   <Clock className="inline w-4 h-4 mr-2" aria-hidden="true" />
                   Our team will contact you within 48 hours
                 </p>
@@ -241,65 +241,65 @@ const Contact = () => {
           </AnimatedSection>
 
           <AnimatedSection className="lg:col-span-2 space-y-8" delay={200}>
-            <div className="bg-gradient-to-br from-white/95 via-blue-50/50 to-white/95 dark:from-slate-800/95 dark:via-blue-900/30 dark:to-slate-800/95 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-8 leading-[1.1] pb-2">
+            <div className="bg-gradient-to-br from-white/95 via-blue-50/50 to-white/95 dark:from-slate-800/95 dark:via-blue-900/30 dark:to-slate-800/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 mobile-tile shadow-2xl border border-slate-200/50 dark:border-slate-700/50 mobile-card">
+              <h3 className="text-xl sm:text-2xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-8 leading-[1.1] pb-2">
                 Contact Information
               </h3>
 
-              <div className="space-y-8">
+              <div className="space-y-6 sm:space-y-8">
                 <div className="flex items-start space-x-4">
-                  <div className="p-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl shadow-lg">
-                    <Phone className="w-6 h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+                  <div className="p-3 sm:p-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl shadow-lg">
+                    <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg mb-1">Phone</h4>
-                    <a href="tel:+15551234567" className="text-slate-600 dark:text-slate-300 mb-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-base sm:text-lg mb-1">Phone</h4>
+                    <a href="tel:+15551234567" className="text-slate-600 dark:text-slate-300 mb-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm sm:text-base mobile-text">
                       +1 (555) 123-4567
                     </a>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Mon-Fri 9AM-6PM EST</p>
+                    <p className="text-xs sm:text-sm mobile-text text-slate-500 dark:text-slate-400">Mon-Fri 9AM-6PM EST</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="p-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl shadow-lg">
-                    <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+                  <div className="p-3 sm:p-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl shadow-lg">
+                    <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg mb-1">Email</h4>
-                    <a href="mailto:hello@techflowsolutions.com" className="text-slate-600 dark:text-slate-300 mb-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-base sm:text-lg mb-1">Email</h4>
+                    <a href="mailto:hello@techflowsolutions.com" className="text-slate-600 dark:text-slate-300 mb-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm sm:text-base mobile-text">
                       hello@techflowsolutions.com
                     </a>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">We reply within 24 hours</p>
+                    <p className="text-xs sm:text-sm mobile-text text-slate-500 dark:text-slate-400">We reply within 24 hours</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="p-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl shadow-lg">
-                    <MapPin className="w-6 h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+                  <div className="p-3 sm:p-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl shadow-lg">
+                    <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg mb-1">Office</h4>
-                    <address className="text-slate-600 dark:text-slate-300 not-italic">
+                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-base sm:text-lg mb-1">Office</h4>
+                    <address className="text-slate-600 dark:text-slate-300 not-italic text-sm sm:text-base mobile-text">
                       123 Business Ave, Suite 456<br />
                       Tech City, TC 12345
                     </address>
                   </div>
                 </div>
 
-                <div className="pt-8 border-t border-slate-200 dark:border-slate-700">
-                  <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-6 text-lg">Follow Us</h4>
-                  <div className="flex space-x-4">
+                <div className="pt-6 sm:pt-8 border-t border-slate-200 dark:border-slate-700">
+                  <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-4 sm:mb-6 text-base sm:text-lg">Follow Us</h4>
+                  <div className="flex space-x-3 sm:space-x-4">
                     {socialLinks.map((social) => (
                       <a
                         key={social.name}
                         href={social.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-3 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-lg text-blue-600 dark:text-blue-400 hover:from-blue-200 hover:to-blue-300 dark:hover:from-blue-800/50 dark:hover:to-blue-700/50 transition-all duration-150 hover:scale-110 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className="p-2 sm:p-3 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-lg text-blue-600 dark:text-blue-400 hover:from-blue-200 hover:to-blue-300 dark:hover:from-blue-800/50 dark:hover:to-blue-700/50 transition-all duration-150 hover:scale-110 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         title={`Follow us on ${social.name}`}
                         aria-label={`Follow TechFlow Solutions on ${social.name}`}
                       >
-                        <social.icon size={20} />
+                        <social.icon size={18} />
                       </a>
                     ))}
                   </div>

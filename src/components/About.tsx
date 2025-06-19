@@ -35,13 +35,13 @@ const About = () => {
 
   return (
     <section id="about" className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-white dark:from-slate-950 dark:via-blue-950/30 dark:to-slate-950">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <AnimatedSection>
           <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
               Why Choose TechFlow Solutions?
             </h2>
-            <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
+            <p className="text-lg sm:text-xl mobile-text text-slate-600 dark:text-slate-300 max-w-4xl mx-auto mb-8">
               We specialize in modern workplace solutions, helping businesses streamline operations and boost productivity through expert implementation and ongoing support. <strong>Reduce your IT overhead by up to 60%</strong> while increasing team efficiency.
             </p>
             <button
@@ -55,17 +55,17 @@ const About = () => {
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {features.map((feature, index) => (
             <AnimatedSection key={index} delay={index * 100}>
-              <div className="group p-8 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl hover:shadow-xl transition-all duration-200 hover:-translate-y-2 border border-blue-200/50 dark:border-blue-700/50 transform hover:scale-105 h-full flex flex-col">
+              <div className="group p-6 sm:p-8 mobile-tile bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl hover:shadow-xl transition-all duration-200 hover:-translate-y-2 border border-blue-200/50 dark:border-blue-700/50 transform hover:scale-105 h-full flex flex-col mobile-card">
                 <div className="p-4 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl w-fit mb-6 group-hover:scale-110 transition-transform duration-150 shadow-lg">
                   <feature.icon className="text-white" size={28} aria-hidden="true" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
+                <h3 className="text-lg sm:text-xl mobile-title font-semibold text-slate-900 dark:text-slate-100 mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-slate-600 dark:text-slate-300 leading-relaxed flex-grow">
+                <p className="text-slate-600 dark:text-slate-300 leading-relaxed flex-grow mobile-text">
                   {feature.description}
                 </p>
               </div>

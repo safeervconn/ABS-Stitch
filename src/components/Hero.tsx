@@ -33,7 +33,7 @@ const Hero = () => {
       <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float" aria-hidden="true"></div>
       <div className="absolute bottom-20 right-10 w-72 h-72 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float-delayed" aria-hidden="true"></div>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20 relative z-10">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <AnimatedSection animation="slide-left">
             <div className="space-y-8">
@@ -42,13 +42,13 @@ const Hero = () => {
                   <Zap className="w-4 h-4 mr-2" aria-hidden="true" />
                   Professional IT Infrastructure Solutions
                 </div>
-                <h1 className="text-5xl lg:text-7xl font-bold text-slate-900 dark:text-slate-100 leading-tight">
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl mobile-hero-title font-bold text-slate-900 dark:text-slate-100 leading-tight">
                   Transform Your
                   <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent block">
                     Digital Workspace
                   </span>
                 </h1>
-                <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
+                <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
                   Expert implementation and support for modern workplace solutions. <strong>Reduce IT overhead by 60%</strong> while maximizing team productivity with our comprehensive infrastructure services.
                 </p>
               </div>
@@ -75,7 +75,7 @@ const Hero = () => {
 
           <AnimatedSection animation="slide-right" delay={200}>
             <div className="relative">
-              <div className="relative z-10 bg-gradient-to-br from-white/90 via-blue-50/90 to-white/90 dark:from-slate-800/90 dark:via-blue-900/90 dark:to-slate-800/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20 dark:border-slate-700/30 transform hover:scale-105 transition-all duration-200">
+              <div className="relative z-10 bg-gradient-to-br from-white/90 via-blue-50/90 to-white/90 dark:from-slate-800/90 dark:via-blue-900/90 dark:to-slate-800/90 backdrop-blur-xl rounded-3xl p-6 sm:p-8 mobile-card shadow-2xl border border-white/20 dark:border-slate-700/30 transform hover:scale-105 transition-all duration-200">
                 <div className="space-y-6">
                   {features.map((item, index) => (
                     <AnimatedSection key={index} delay={300 + index * 100}>
@@ -85,7 +85,7 @@ const Hero = () => {
                         </div>
                         <div>
                           <h3 className="font-semibold text-slate-900 dark:text-slate-100">{item.title}</h3>
-                          <p className="text-slate-600 dark:text-slate-400 text-sm">{item.desc}</p>
+                          <p className="text-slate-600 dark:text-slate-400 text-sm mobile-text">{item.desc}</p>
                         </div>
                       </div>
                     </AnimatedSection>

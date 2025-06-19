@@ -274,6 +274,109 @@ img {
   left: 100%;
 }
 
+/* No slide animation buttons */
+.shiny-button-no-slide {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    45deg,
+    #3b82f6,
+    #1d4ed8,
+    #3b82f6,
+    #1d4ed8
+  );
+  background-size: 400% 400%;
+  animation: shine 3s ease-in-out infinite;
+}
+
+.shiny-button-no-slide::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.shiny-button-no-slide:hover::before {
+  left: 100%;
+}
+
+.shiny-button-premium-no-slide {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    45deg,
+    #7c3aed,
+    #4c1d95,
+    #7c3aed,
+    #4c1d95
+  );
+  background-size: 400% 400%;
+  animation: shine 3s ease-in-out infinite;
+}
+
+.shiny-button-premium-no-slide::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.shiny-button-premium-no-slide:hover::before {
+  left: 100%;
+}
+
+.shiny-button-enterprise-no-slide {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    45deg,
+    #059669,
+    #047857,
+    #059669,
+    #047857
+  );
+  background-size: 400% 400%;
+  animation: shine 3s ease-in-out infinite;
+}
+
+.shiny-button-enterprise-no-slide::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.shiny-button-enterprise-no-slide:hover::before {
+  left: 100%;
+}
+
 /* Basic card effects */
 .basic-card {
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
@@ -357,7 +460,7 @@ img {
 
 /* Enhanced dark mode scrollbar */
 .dark ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #121212;
 }
 
 .dark ::-webkit-scrollbar-thumb {
@@ -405,39 +508,101 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Enhanced dark mode colors */
 .dark {
-  --tw-bg-opacity: 1;
+  background-color: #121212;
+  color: #f5f5f5;
+}
+
+.dark body {
+  background-color: #121212;
+  color: #f5f5f5;
+}
+
+.dark .bg-slate-950 {
+  background-color: #121212 !important;
 }
 
 .dark .bg-slate-900 {
-  background-color: rgb(2 6 23 / var(--tw-bg-opacity));
+  background-color: #1a1a1a !important;
 }
 
 .dark .bg-slate-800 {
-  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+  background-color: #2a2a2a !important;
 }
 
 .dark .text-slate-100 {
-  color: rgb(241 245 249 / 0.95);
+  color: #f5f5f5 !important;
 }
 
 .dark .text-slate-200 {
-  color: rgb(226 232 240 / 0.9);
+  color: #e5e5e5 !important;
 }
 
 .dark .text-slate-300 {
-  color: rgb(203 213 225 / 0.85);
+  color: #d5d5d5 !important;
 }
 
 .dark .text-slate-400 {
-  color: rgb(148 163 184 / 0.8);
+  color: #a5a5a5 !important;
+}
+
+.dark .text-slate-500 {
+  color: #858585 !important;
+}
+
+.dark .text-slate-600 {
+  color: #656565 !important;
 }
 
 .dark .border-slate-700 {
-  border-color: rgb(51 65 85 / 0.6);
+  border-color: rgba(75, 85, 99, 0.6);
 }
 
 .dark .border-slate-600 {
-  border-color: rgb(71 85 105 / 0.7);
+  border-color: rgba(107, 114, 128, 0.7);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .mobile-card {
+    width: 90% !important;
+    padding: 1rem !important;
+    margin: 0.5rem auto !important;
+  }
+  
+  .mobile-tile {
+    padding: 1.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .mobile-text {
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+  }
+  
+  .mobile-title {
+    font-size: 1.5rem !important;
+    line-height: 2rem !important;
+  }
+  
+  .mobile-hero-title {
+    font-size: 2.5rem !important;
+    line-height: 1.1 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .mobile-card {
+    width: 95% !important;
+    padding: 0.75rem !important;
+  }
+  
+  .mobile-tile {
+    padding: 1rem !important;
+  }
+  
+  .mobile-hero-title {
+    font-size: 2rem !important;
+  }
 }
 
 /* Reduced motion support */

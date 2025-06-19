@@ -66,48 +66,48 @@ const Testimonials = () => {
   return (
     <>
       <section id="testimonials" className="py-20 bg-gradient-to-br from-white via-blue-50/30 to-white dark:from-slate-950 dark:via-blue-950/30 dark:to-slate-950">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection>
             <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
                 What Our Clients Say
               </h2>
-              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+              <p className="text-lg sm:text-xl mobile-text text-slate-600 dark:text-slate-300 max-w-4xl mx-auto">
                 Don't just take our word for it. Here's what business leaders say about our IT infrastructure services and how we've helped them reduce overhead while boosting productivity.
               </p>
             </div>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {testimonials.map((testimonial, index) => (
               <AnimatedSection key={index} delay={index * 100}>
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-200 hover:-translate-y-2 border border-blue-200/50 dark:border-blue-700/50 relative transform hover:scale-105">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-3xl p-6 sm:p-8 mobile-tile shadow-xl hover:shadow-2xl transition-all duration-200 hover:-translate-y-2 border border-blue-200/50 dark:border-blue-700/50 relative transform hover:scale-105 mobile-card">
                   <div className="absolute top-6 right-6 text-blue-200 dark:text-blue-800">
-                    <Quote size={32} aria-hidden="true" />
+                    <Quote size={28} aria-hidden="true" />
                   </div>
 
                   <div className="flex items-center mb-6">
                     <LazyImage
                       src={testimonial.avatar}
                       alt={`${testimonial.name} - ${testimonial.position} at ${testimonial.company}`}
-                      className="w-16 h-16 rounded-full object-cover mr-4 border-4 border-white dark:border-slate-600 shadow-lg"
+                      className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover mr-4 border-4 border-white dark:border-slate-600 shadow-lg"
                     />
                     <div>
-                      <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-lg">
+                      <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-base sm:text-lg mobile-title">
                         {testimonial.name}
                       </h4>
-                      <p className="text-slate-600 dark:text-slate-400">{testimonial.position}</p>
-                      <p className="text-blue-600 dark:text-blue-400 font-medium">{testimonial.company}</p>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm mobile-text">{testimonial.position}</p>
+                      <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mobile-text">{testimonial.company}</p>
                     </div>
                   </div>
 
                   <div className="flex mb-4" role="img" aria-label={`${testimonial.rating} out of 5 stars`}>
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" aria-hidden="true" />
+                      <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" aria-hidden="true" />
                     ))}
                   </div>
 
-                  <blockquote className="text-slate-700 dark:text-slate-300 leading-relaxed italic">
+                  <blockquote className="text-slate-700 dark:text-slate-300 leading-relaxed italic text-sm sm:text-base mobile-text">
                     "{testimonial.content}"
                   </blockquote>
                 </div>
@@ -118,13 +118,13 @@ const Testimonials = () => {
       </section>
 
       <section className="py-16 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/50">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection>
             <div className="text-center mb-12">
-              <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-4 leading-[1.1] pb-2">
+              <h3 className="text-2xl sm:text-3xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-4 leading-[1.1] pb-2">
                 Trusted Partners
               </h3>
-              <p className="text-lg text-slate-600 dark:text-slate-300">
+              <p className="text-base sm:text-lg mobile-text text-slate-600 dark:text-slate-300">
                 We work with industry-leading companies to deliver the best solutions
               </p>
             </div>
@@ -133,16 +133,16 @@ const Testimonials = () => {
           <div className="overflow-hidden">
             <div 
               ref={scrollRef}
-              className="flex space-x-8 animate-scroll"
+              className="flex space-x-6 sm:space-x-8 animate-scroll"
               style={{ width: 'calc(200% + 2rem)' }}
             >
               {[...partners, ...partners].map((partner, index) => (
                 <div
                   key={index}
-                  className="flex-shrink-0 w-48 h-32 bg-gradient-to-br from-white via-blue-50/50 to-white dark:from-slate-800 dark:via-blue-900/50 dark:to-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-150 hover:-translate-y-1 border border-slate-200/50 dark:border-slate-700/50 text-center transform hover:scale-105 flex flex-col items-center justify-center"
+                  className="flex-shrink-0 w-36 h-24 sm:w-48 sm:h-32 mobile-card bg-gradient-to-br from-white via-blue-50/50 to-white dark:from-slate-800 dark:via-blue-900/50 dark:to-slate-800 rounded-2xl p-4 sm:p-6 mobile-tile shadow-lg hover:shadow-xl transition-all duration-150 hover:-translate-y-1 border border-slate-200/50 dark:border-slate-700/50 text-center transform hover:scale-105 flex flex-col items-center justify-center"
                 >
-                  <div className="text-4xl mb-3" aria-hidden="true">{partner.logo}</div>
-                  <div className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  <div className="text-2xl sm:text-4xl mb-2 sm:mb-3" aria-hidden="true">{partner.logo}</div>
+                  <div className="text-xs sm:text-sm mobile-text font-medium text-slate-700 dark:text-slate-300">
                     {partner.name}
                   </div>
                 </div>
