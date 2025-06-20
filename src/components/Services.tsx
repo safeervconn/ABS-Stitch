@@ -175,7 +175,7 @@ const Services = () => {
                       <ul className="space-y-3 sm:space-y-4 mb-8 flex-grow">
                         {pkg.features.map((feature, featureIndex) => (
                           <li key={featureIndex} className="flex items-start">
-                            <div className={`flex-shrink-0 w-50 h-5 rounded-full flex items-center justify-center mr-4 mt-0.5 shadow-sm ${
+                            <div className={`flex-shrink-0 w-3 h-3 rounded-full flex items-center justify-center mr-4 mt-0.5 shadow-sm ${
                               feature.included 
                                 ? 'bg-gradient-to-r from-green-500 to-emerald-600' 
                                 : 'bg-gradient-to-r from-red-500 to-red-600'
