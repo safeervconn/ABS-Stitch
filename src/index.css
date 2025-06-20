@@ -31,7 +31,7 @@ img {
   height: auto;
 }
 
-/* Optimized animations with better performance */
+/* Optimized animations with better performance and shorter durations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -46,7 +46,7 @@ img {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -57,7 +57,7 @@ img {
 @keyframes slideInLeft {
   from {
     opacity: 0;
-    transform: translateX(-50px);
+    transform: translateX(-30px);
   }
   to {
     opacity: 1;
@@ -68,7 +68,7 @@ img {
 @keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(50px);
+    transform: translateX(30px);
   }
   to {
     opacity: 1;
@@ -131,21 +131,40 @@ img {
   }
 }
 
-/* Animation classes */
+/* Optimized tile animations with hardware acceleration */
+@keyframes tileHover {
+  from {
+    transform: translateY(0) scale(1);
+  }
+  to {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+@keyframes tileScale {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+/* Animation classes with optimized durations */
 .animate-fade-in {
-  animation: fadeIn 0.6s ease-out;
+  animation: fadeIn 0.8s ease-out;
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out;
+  animation: fadeInUp 0.3s ease-out;
 }
 
 .animate-slide-in-left {
-  animation: slideInLeft 0.8s ease-out;
+  animation: slideInLeft 0.3s ease-out;
 }
 
 .animate-slide-in-right {
-  animation: slideInRight 1s ease-out 0.2s both;
+  animation: slideInRight 0.3s ease-out 0.1s both;
 }
 
 .animate-float {
@@ -164,6 +183,30 @@ img {
   animation: scroll 30s linear infinite;
 }
 
+/* Optimized tile animations */
+.tile-hover {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s ease-out;
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
+}
+
+.tile-hover:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.tile-scale {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.tile-scale:hover {
+  transform: scale(1.05);
+}
+
 /* Enhanced button effects with optimized animations */
 .shiny-button {
   position: relative;
@@ -179,8 +222,9 @@ img {
   );
   background-size: 200% 200%;
   animation: gradientShift 3.5s ease-in-out infinite;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform, box-shadow;
+  transform: translateZ(0);
 }
 
 .shiny-button:hover {
@@ -202,8 +246,9 @@ img {
   );
   background-size: 200% 200%;
   animation: gradientShiftPremium 3.8s ease-in-out infinite;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform, box-shadow;
+  transform: translateZ(0);
 }
 
 .shiny-button-premium:hover {
@@ -225,8 +270,9 @@ img {
   );
   background-size: 200% 200%;
   animation: gradientShiftEnterprise 4s ease-in-out infinite;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform, box-shadow;
+  transform: translateZ(0);
 }
 
 .shiny-button-enterprise:hover {
@@ -239,60 +285,16 @@ img {
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: box-shadow;
+  transform: translateZ(0);
 }
 
 .shiny-button-no-slide:hover {
   box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3);
 }
 
-/* Animated support package buttons */
-.shiny-button-premium-no-slide {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(
-    45deg,
-    var(--primary-purple),
-    var(--primary-purple-dark),
-    #6d28d9,
-    #5b21b6,
-    #8b5cf6,
-    #a855f7
-  );
-  background-size: 200% 200%;
-  animation: gradientShiftPremium 3.8s ease-in-out infinite;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: box-shadow;
-}
-
-.shiny-button-premium-no-slide:hover {
-  box-shadow: 0 15px 30px rgba(124, 58, 237, 0.3);
-}
-
-.shiny-button-enterprise-no-slide {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(
-    45deg,
-    var(--primary-green),
-    var(--primary-green-dark),
-    #10b981,
-    #065f46,
-    #34d399,
-    #6ee7b7
-  );
-  background-size: 200% 200%;
-  animation: gradientShiftEnterprise 4s ease-in-out infinite;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: box-shadow;
-}
-
-.shiny-button-enterprise-no-slide:hover {
-  box-shadow: 0 15px 30px rgba(5, 150, 105, 0.3);
-}
-
-/* Service package card effects */
+/* Service package card effects with optimized animations */
 .basic-card {
   background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
   position: relative;
@@ -345,6 +347,19 @@ img {
 .bg-grid-pattern {
   background-image: radial-gradient(circle, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
+}
+
+/* CSS Containment for performance */
+.contain-layout {
+  contain: layout;
+}
+
+.contain-paint {
+  contain: paint;
+}
+
+.contain-size {
+  contain: size;
 }
 
 /* Glassmorphism support */
@@ -524,9 +539,10 @@ h1, h2, h3, h4, h5, h6 {
   .shiny-button,
   .shiny-button-premium,
   .shiny-button-enterprise,
-  .shiny-button-premium-no-slide,
-  .shiny-button-enterprise-no-slide {
+  .tile-hover,
+  .tile-scale {
     animation: none !important;
+    transition: none !important;
   }
   
   *,
