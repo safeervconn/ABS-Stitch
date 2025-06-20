@@ -42,18 +42,18 @@ const Hero = () => {
                   <Zap className="w-4 h-4 mr-2" aria-hidden="true" />
                   IT Infrastructure & Microsoft 365 Specialists
                 </div>
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl mobile-hero-title font-bold text-slate-900 dark:text-slate-100 leading-tight">
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl mobile-hero-title font-bold text-slate-900 dark:text-slate-100 leading-[1.1] pb-4">
                   Outsource Your
-                  <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent block">
+                  <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent block pb-2">
                     IT Management
                   </span>
                 </h1>
-                <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
+                <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl pb-2">
                   Let our expert team handle your IT infrastructure and Microsoft 365 implementation. <strong>Reduce IT overhead by 60%</strong> while maximizing productivity with our comprehensive managed services and support.
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <button
                   onClick={scrollToServices}
                   className="group shiny-button text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-150 flex items-center justify-center shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative overflow-hidden"

@@ -145,10 +145,10 @@ const Services = () => {
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection>
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-4">
                 IT Infrastructure & Microsoft 365 Services
               </h2>
-              <p className="text-lg sm:text-xl mobile-text text-slate-600 dark:text-slate-300 max-w-4xl mx-auto">
+              <p className="text-lg sm:text-xl mobile-text text-slate-600 dark:text-slate-300 max-w-4xl mx-auto pb-2">
                 Outsource your IT management and Microsoft 365 implementation to our expert team. We handle everything from infrastructure setup to ongoing support, so you can focus on growing your business while reducing IT overhead by up to 60%.
               </p>
             </div>
@@ -175,15 +175,15 @@ const Services = () => {
                       <ul className="space-y-3 sm:space-y-4 mb-8 flex-grow">
                         {pkg.features.map((feature, featureIndex) => (
                           <li key={featureIndex} className="flex items-start">
-                            <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mr-4 mt-0.5 ${
+                            <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mr-4 mt-0.5 shadow-sm ${
                               feature.included 
-                                ? 'bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30' 
-                                : 'bg-gradient-to-r from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30'
+                                ? 'bg-gradient-to-r from-green-500 to-emerald-600' 
+                                : 'bg-gradient-to-r from-red-500 to-red-600'
                             }`}>
                               {feature.included ? (
-                                <Check className="w-3 h-3 text-green-600 dark:text-green-400" aria-hidden="true" />
+                                <Check className="w-4 h-4 text-white font-bold" strokeWidth={3} aria-hidden="true" />
                               ) : (
-                                <X className="w-3 h-3 text-red-600 dark:text-red-400" aria-hidden="true" />
+                                <X className="w-4 h-4 text-white font-bold" strokeWidth={3} aria-hidden="true" />
                               )}
                             </div>
                             <div className="flex-grow">
@@ -229,10 +229,10 @@ const Services = () => {
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection>
             <div className="text-center mb-16">
-              <h3 className="text-3xl sm:text-4xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
+              <h3 className="text-3xl sm:text-4xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-4">
                 Ongoing IT Support & Management Services
               </h3>
-              <p className="text-lg sm:text-xl mobile-text text-slate-600 dark:text-slate-300 max-w-4xl mx-auto">
+              <p className="text-lg sm:text-xl mobile-text text-slate-600 dark:text-slate-300 max-w-4xl mx-auto pb-2">
                 Comprehensive IT support services for your infrastructure and Microsoft 365 environment. Our managed services ensure your systems run smoothly while you focus on your core business operations.
               </p>
             </div>
@@ -250,11 +250,11 @@ const Services = () => {
                         <support.icon className="text-white" size={28} />
                         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-3xl"></div>
                       </div>
-                      <h4 className={`text-2xl sm:text-3xl mobile-title font-bold bg-gradient-to-r ${support.gradient} bg-clip-text text-transparent mb-3`}>
+                      <h4 className={`text-2xl sm:text-3xl mobile-title font-bold bg-gradient-to-r ${support.gradient} bg-clip-text text-transparent mb-3 pb-2`}>
                         {support.name}
                       </h4>
                       <div className="text-xs sm:text-sm mobile-text text-slate-500 dark:text-slate-400 mb-1">Starting from</div>
-                      <div className={`text-xl sm:text-2xl font-bold bg-gradient-to-r ${support.gradient} bg-clip-text text-transparent`}>
+                      <div className={`text-xl sm:text-2xl font-bold bg-gradient-to-r ${support.gradient} bg-clip-text text-transparent pb-1`}>
                         {support.price}
                       </div>
                       <div className="text-xs sm:text-sm mobile-text text-slate-500 dark:text-slate-400 mt-1">based on infrastructure complexity</div>
