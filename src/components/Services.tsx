@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Check, X, Headphones, Zap, Shield, Cloud, Users, Settings, Database, Lock, BarChart3 } from 'lucide-react';
+import { ArrowRight, Check, X, Headphones, Zap, Shield } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 
 const Services = () => {
@@ -9,20 +9,20 @@ const Services = () => {
       price: '$299',
       description: 'Essential IT infrastructure setup for small teams',
       features: [
-        { name: 'Microsoft 365 Basic Implementation', included: true, details: 'Complete setup and configuration of core M365 services', icon: Cloud },
-        { name: 'OneDrive Setup & Configuration', included: true, details: 'File storage, sync, and sharing policies implementation', icon: Database },
-        { name: 'SharePoint Basic Deployment', included: true, details: 'Document libraries and team collaboration sites', icon: Users },
-        { name: 'Teams Platform Configuration', included: true, details: 'Chat, meetings, and channel setup with governance', icon: Users },
-        { name: 'Outlook & Exchange Setup', included: true, details: 'Email configuration, calendars, and basic security', icon: Cloud },
-        { name: 'User Management (up to 25 users)', included: true, details: 'Account provisioning, licensing, and basic permissions', icon: Users },
-        { name: 'IT Infrastructure Assessment', included: true, details: 'Network evaluation and optimization recommendations', icon: Settings },
-        { name: 'Basic Training & Documentation', included: true, details: '2 hours of user training and setup guides', icon: Users },
-        { name: 'Email Support', included: true, details: '48-hour response time for technical issues', icon: Headphones },
-        { name: 'Advanced Security & Compliance', included: false, icon: Lock },
-        { name: 'Custom Automation & Workflows', included: false, icon: Settings },
-        { name: 'Advanced Analytics & Reporting', included: false, icon: BarChart3 },
-        { name: 'Priority Support & Monitoring', included: false, icon: Headphones },
-        { name: 'Dedicated IT Account Manager', included: false, icon: Users },
+        { name: 'Microsoft 365 Basic Implementation', included: true, details: 'Complete setup and configuration of core M365 services' },
+        { name: 'OneDrive Setup & Configuration', included: true, details: 'File storage, sync, and sharing policies implementation' },
+        { name: 'SharePoint Basic Deployment', included: true, details: 'Document libraries and team collaboration sites' },
+        { name: 'Teams Platform Configuration', included: true, details: 'Chat, meetings, and channel setup with governance' },
+        { name: 'Outlook & Exchange Setup', included: true, details: 'Email configuration, calendars, and basic security' },
+        { name: 'User Management (up to 25 users)', included: true, details: 'Account provisioning, licensing, and basic permissions' },
+        { name: 'IT Infrastructure Assessment', included: true, details: 'Network evaluation and optimization recommendations' },
+        { name: 'Basic Training & Documentation', included: true, details: '2 hours of user training and setup guides' },
+        { name: 'Email Support', included: true, details: '48-hour response time for technical issues' },
+        { name: 'Advanced Security & Compliance', included: false },
+        { name: 'Custom Automation & Workflows', included: false },
+        { name: 'Advanced Analytics & Reporting', included: false },
+        { name: 'Priority Support & Monitoring', included: false },
+        { name: 'Dedicated IT Account Manager', included: false },
       ],
       gradient: 'from-blue-600 to-blue-800',
       cardClass: 'basic-card',
@@ -33,20 +33,20 @@ const Services = () => {
       price: '$599',
       description: 'Complete IT outsourcing for growing businesses',
       features: [
-        { name: 'Microsoft 365 Advanced Implementation', included: true, details: 'Full M365 suite with advanced features and integrations', icon: Cloud },
-        { name: 'OneDrive Advanced Management', included: true, details: 'Advanced sync policies, external sharing controls, and governance', icon: Database },
-        { name: 'SharePoint Advanced Deployment', included: true, details: 'Custom sites, workflows, content types, and automation', icon: Users },
-        { name: 'Teams Enterprise Configuration', included: true, details: 'Custom apps, governance policies, and third-party integrations', icon: Users },
-        { name: 'Outlook Advanced Integration', included: true, details: 'Advanced rules, shared mailboxes, distribution lists, and archiving', icon: Cloud },
-        { name: 'User Management (up to 100 users)', included: true, details: 'Advanced provisioning, groups, roles, and access management', icon: Users },
-        { name: 'IT Infrastructure Management', included: true, details: 'Network monitoring, security implementation, and optimization', icon: Settings },
-        { name: 'Comprehensive Training Program', included: true, details: '5 hours of advanced training and best practices guidance', icon: Users },
-        { name: 'Priority Support (24h response)', included: true, details: 'Phone and email support with dedicated queue', icon: Headphones },
-        { name: 'Advanced Security & Compliance', included: true, details: 'DLP, retention policies, audit logs, and threat protection', icon: Lock },
-        { name: 'Custom Automation & Workflows', included: true, details: 'Power Automate flows and business process automation', icon: Settings },
-        { name: 'Advanced Analytics & Reporting', included: true, details: 'Usage reports, productivity insights, and performance metrics', icon: BarChart3 },
-        { name: 'Priority Support & Monitoring', included: true, details: 'Proactive monitoring with escalated support queue', icon: Headphones },
-        { name: 'Dedicated IT Account Manager', included: false, icon: Users },
+        { name: 'Microsoft 365 Advanced Implementation', included: true, details: 'Full M365 suite with advanced features and integrations' },
+        { name: 'OneDrive Advanced Management', included: true, details: 'Advanced sync policies, external sharing controls, and governance' },
+        { name: 'SharePoint Advanced Deployment', included: true, details: 'Custom sites, workflows, content types, and automation' },
+        { name: 'Teams Enterprise Configuration', included: true, details: 'Custom apps, governance policies, and third-party integrations' },
+        { name: 'Outlook Advanced Integration', included: true, details: 'Advanced rules, shared mailboxes, distribution lists, and archiving' },
+        { name: 'User Management (up to 100 users)', included: true, details: 'Advanced provisioning, groups, roles, and access management' },
+        { name: 'IT Infrastructure Management', included: true, details: 'Network monitoring, security implementation, and optimization' },
+        { name: 'Comprehensive Training Program', included: true, details: '5 hours of advanced training and best practices guidance' },
+        { name: 'Priority Support (24h response)', included: true, details: 'Phone and email support with dedicated queue' },
+        { name: 'Advanced Security & Compliance', included: true, details: 'DLP, retention policies, audit logs, and threat protection' },
+        { name: 'Custom Automation & Workflows', included: true, details: 'Power Automate flows and business process automation' },
+        { name: 'Advanced Analytics & Reporting', included: true, details: 'Usage reports, productivity insights, and performance metrics' },
+        { name: 'Priority Support & Monitoring', included: true, details: 'Proactive monitoring with escalated support queue' },
+        { name: 'Dedicated IT Account Manager', included: false },
       ],
       gradient: 'from-purple-600 to-purple-800',
       cardClass: 'premium-card',
@@ -57,20 +57,20 @@ const Services = () => {
       price: '$1,299',
       description: 'Full IT outsourcing solution for large organizations',
       features: [
-        { name: 'Microsoft 365 Enterprise Implementation', included: true, details: 'Complete M365 enterprise suite with multi-geo and advanced compliance', icon: Cloud },
-        { name: 'OneDrive Enterprise Management', included: true, details: 'Multi-geo deployment, advanced compliance, and enterprise-grade security', icon: Database },
-        { name: 'SharePoint Enterprise Deployment', included: true, details: 'Hub sites, enterprise search, custom solutions, and integrations', icon: Users },
-        { name: 'Teams Enterprise Platform', included: true, details: 'Enterprise voice, compliance recording, custom development, and integrations', icon: Users },
-        { name: 'Outlook Enterprise Integration', included: true, details: 'Advanced threat protection, enterprise archiving, and compliance features', icon: Cloud },
-        { name: 'Unlimited User Management', included: true, details: 'Enterprise identity management, SSO integration, and advanced governance', icon: Users },
-        { name: 'Complete IT Infrastructure Outsourcing', included: true, details: 'Full network management, security, monitoring, and optimization', icon: Settings },
-        { name: 'Executive Training & Change Management', included: true, details: '10 hours of executive briefings and organizational change support', icon: Users },
-        { name: '24/7 Premium Support', included: true, details: 'Immediate response with dedicated support team and SLA guarantees', icon: Headphones },
-        { name: 'Enterprise Security & Compliance', included: true, details: 'Advanced threat protection, eDiscovery, regulatory compliance, and auditing', icon: Lock },
-        { name: 'Custom Enterprise Automation', included: true, details: 'Complex business process automation and custom application development', icon: Settings },
-        { name: 'Enterprise Analytics & BI', included: true, details: 'Power BI integration, executive dashboards, and business intelligence', icon: BarChart3 },
-        { name: 'White-Glove Priority Support', included: true, details: 'Dedicated support channel with guaranteed response times and SLAs', icon: Headphones },
-        { name: 'Dedicated IT Account Manager', included: true, details: 'Strategic IT partnership with quarterly business reviews and planning', icon: Users },
+        { name: 'Microsoft 365 Enterprise Implementation', included: true, details: 'Complete M365 enterprise suite with multi-geo and advanced compliance' },
+        { name: 'OneDrive Enterprise Management', included: true, details: 'Multi-geo deployment, advanced compliance, and enterprise-grade security' },
+        { name: 'SharePoint Enterprise Deployment', included: true, details: 'Hub sites, enterprise search, custom solutions, and integrations' },
+        { name: 'Teams Enterprise Platform', included: true, details: 'Enterprise voice, compliance recording, custom development, and integrations' },
+        { name: 'Outlook Enterprise Integration', included: true, details: 'Advanced threat protection, enterprise archiving, and compliance features' },
+        { name: 'Unlimited User Management', included: true, details: 'Enterprise identity management, SSO integration, and advanced governance' },
+        { name: 'Complete IT Infrastructure Outsourcing', included: true, details: 'Full network management, security, monitoring, and optimization' },
+        { name: 'Executive Training & Change Management', included: true, details: '10 hours of executive briefings and organizational change support' },
+        { name: '24/7 Premium Support', included: true, details: 'Immediate response with dedicated support team and SLA guarantees' },
+        { name: 'Enterprise Security & Compliance', included: true, details: 'Advanced threat protection, eDiscovery, regulatory compliance, and auditing' },
+        { name: 'Custom Enterprise Automation', included: true, details: 'Complex business process automation and custom application development' },
+        { name: 'Enterprise Analytics & BI', included: true, details: 'Power BI integration, executive dashboards, and business intelligence' },
+        { name: 'White-Glove Priority Support', included: true, details: 'Dedicated support channel with guaranteed response times and SLAs' },
+        { name: 'Dedicated IT Account Manager', included: true, details: 'Strategic IT partnership with quarterly business reviews and planning' },
       ],
       gradient: 'from-emerald-600 to-emerald-800',
       cardClass: 'enterprise-card',
@@ -175,12 +175,16 @@ const Services = () => {
                       <ul className="space-y-3 sm:space-y-4 mb-8 flex-grow">
                         {pkg.features.map((feature, featureIndex) => (
                           <li key={featureIndex} className="flex items-start">
-                            <div className={`flex-shrink-0 w-5 h-5 rounded-lg flex items-center justify-center mr-4 mt-0.5 shadow-sm ${
+                            <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mr-4 mt-0.5 shadow-sm ${
                               feature.included 
                                 ? 'bg-gradient-to-r from-green-500 to-emerald-600' 
-                                : 'bg-gradient-to-r from-slate-400 to-slate-500'
+                                : 'bg-gradient-to-r from-red-400 to-emerald-500'
                             }`}>
-                              <feature.icon className="w-3 h-3 text-white" strokeWidth={2} aria-hidden="true" />
+                              {feature.included ? (
+                                <Check className="w-3 h-3 text-white font-bold" strokeWidth={3} aria-hidden="true" />
+                              ) : (
+                                <X className="w-3 h-3 text-white font-bold" strokeWidth={3} aria-hidden="true" />
+                              )}
                             </div>
                             <div className="flex-grow">
                               <span className="text-sm sm:text-base mobile-text font-semibold text-slate-800 dark:text-slate-100">
