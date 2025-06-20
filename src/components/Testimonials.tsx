@@ -81,7 +81,7 @@ const Testimonials = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {testimonials.map((testimonial, index) => (
               <AnimatedSection key={index} delay={index * 100}>
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-3xl p-6 sm:p-8 mobile-tile shadow-xl hover:shadow-2xl transition-all duration-200 hover:-translate-y-2 border border-blue-200/50 dark:border-blue-700/50 relative transform hover:scale-105 mobile-card">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-3xl p-6 sm:p-8 mobile-tile shadow-xl hover:shadow-2xl transition-all duration-200 hover:-translate-y-2 border border-blue-200/50 dark:border-blue-700/50 relative transform hover:scale-105 mobile-card h-full flex flex-col">
                   <div className="absolute top-6 right-6 text-blue-200 dark:text-blue-800">
                     <Quote size={28} aria-hidden="true" />
                   </div>
@@ -107,7 +107,7 @@ const Testimonials = () => {
                     ))}
                   </div>
 
-                  <blockquote className="text-slate-700 dark:text-slate-300 leading-relaxed italic text-sm sm:text-base mobile-text">
+                  <blockquote className="text-slate-700 dark:text-slate-300 leading-relaxed italic text-sm sm:text-base mobile-text flex-grow">
                     "{testimonial.content}"
                   </blockquote>
                 </div>
