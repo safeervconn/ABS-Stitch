@@ -178,7 +178,7 @@ const Services = () => {
                             <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mr-4 mt-0.5 shadow-sm ${
                               feature.included 
                                 ? 'bg-gradient-to-r from-green-500 to-emerald-600' 
-                                : 'bg-gradient-to-r from-red-400 to-black-500'
+                                : 'bg-gradient-to-r from-red-400 to-slate-600'
                             }`}>
                               {feature.included ? (
                                 <Check className="w-3 h-3 text-white font-bold" strokeWidth={3} aria-hidden="true" />
