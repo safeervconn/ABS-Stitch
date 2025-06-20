@@ -156,15 +156,15 @@ img {
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.3s ease-out;
+  animation: fadeInUp 0.8s ease-out;
 }
 
 .animate-slide-in-left {
-  animation: slideInLeft 0.3s ease-out;
+  animation: slideInLeft 0.8s ease-out;
 }
 
 .animate-slide-in-right {
-  animation: slideInRight 0.3s ease-out 0.1s both;
+  animation: slideInRight 0.8s ease-out 0.1s both;
 }
 
 .animate-float {
