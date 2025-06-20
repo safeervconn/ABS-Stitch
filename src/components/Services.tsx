@@ -159,7 +159,7 @@ const Services = () => {
               <AnimatedSection key={index} delay={index * 100}>
                 <div className="relative group h-full transform transition-all duration-300 hover:scale-105">
                   <div className={`${pkg.cardClass} bg-gradient-to-br from-white via-blue-50/50 to-white dark:from-slate-800 dark:via-blue-900/50 dark:to-slate-800 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 overflow-hidden h-full border border-slate-200/50 dark:border-slate-700/50 mobile-card flex flex-col`}>
-                    <div className={`${pkg.cardClass ? 'text-white' : `bg-gradient-to-r ${pkg.gradient} text-white`} p-6 sm:p-8 mobile-tile text-center relative overflow-hidden`}>
+                    <div className={`${pkg.cardClass ? 'text-grey' : `bg-gradient-to-r ${pkg.gradient} text-white`} p-6 sm:p-8 mobile-tile text-center relative overflow-hidden`}>
                       <div className="relative z-10">
                         <h3 className="text-xl sm:text-2xl mobile-title font-bold mb-4">{pkg.name}</h3>
                         <p className="opacity-90 mb-6 mobile-text">{pkg.description}</p>
