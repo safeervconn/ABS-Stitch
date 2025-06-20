@@ -183,7 +183,7 @@ const Services = () => {
                               {feature.included ? (
                                 <Check className="w-3 h-3 text-white font-bold" strokeWidth={3} aria-hidden="true" />
                               ) : (
-                                <X className="w-30 h-3 text-white font-bold" strokeWidth={3} aria-hidden="true" />
+                                <X className="w-30 h-3 text-black font-bold" strokeWidth={3} aria-hidden="true" />
                               )}
                             </div>
                             <div className="flex-grow">
