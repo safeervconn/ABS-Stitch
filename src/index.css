@@ -172,7 +172,7 @@ img {
 }
 
 .animate-float-delayed {
-  animation: float 3s ease-in-out infinite 5.5s;
+  animation: float 6s ease-in-out infinite 5.5s;
 }
 
 .animate-bounce-gentle {
