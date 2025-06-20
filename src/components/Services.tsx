@@ -190,7 +190,7 @@ const Services = () => {
                               <span className={`text-sm sm:text-base mobile-text font-semibold ${
                                 feature.included 
                                   ? 'text-slate-800 dark:text-slate-100' 
-                                  : 'text-grey dark:text-grey'
+                                  : 'text-pink dark:text-grey'
                               }`}>
                                 {feature.name}
                               </span>
