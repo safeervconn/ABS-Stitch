@@ -7,20 +7,22 @@ const Services = () => {
     {
       name: 'Basic',
       price: '$299',
-      description: 'Perfect for small teams getting started',
+      description: 'Essential IT infrastructure setup for small teams',
       features: [
-        { name: 'OneDrive Implementation & Setup', included: true, details: 'Complete file storage and sync configuration' },
-        { name: 'SharePoint Basic Setup', included: true, details: 'Document libraries and basic collaboration' },
-        { name: 'Teams Configuration', included: true, details: 'Chat, meetings, and basic channels setup' },
-        { name: 'Outlook Integration', included: true, details: 'Email setup and calendar synchronization' },
-        { name: 'User Management System (up to 25 users)', included: true, details: 'Basic user provisioning and permissions' },
-        { name: 'Basic Training (2 hours)', included: true, details: 'Essential features walkthrough' },
-        { name: 'Email Support', included: true, details: '48-hour response time' },
+        { name: 'Microsoft 365 Basic Implementation', included: true, details: 'Complete setup and configuration of core M365 services' },
+        { name: 'OneDrive Setup & Configuration', included: true, details: 'File storage, sync, and sharing policies implementation' },
+        { name: 'SharePoint Basic Deployment', included: true, details: 'Document libraries and team collaboration sites' },
+        { name: 'Teams Platform Configuration', included: true, details: 'Chat, meetings, and channel setup with governance' },
+        { name: 'Outlook & Exchange Setup', included: true, details: 'Email configuration, calendars, and basic security' },
+        { name: 'User Management (up to 25 users)', included: true, details: 'Account provisioning, licensing, and basic permissions' },
+        { name: 'IT Infrastructure Assessment', included: true, details: 'Network evaluation and optimization recommendations' },
+        { name: 'Basic Training & Documentation', included: true, details: '2 hours of user training and setup guides' },
+        { name: 'Email Support', included: true, details: '48-hour response time for technical issues' },
         { name: 'Advanced Security & Compliance', included: false },
-        { name: 'Custom Workflows & Automation', included: false },
+        { name: 'Custom Automation & Workflows', included: false },
         { name: 'Advanced Analytics & Reporting', included: false },
-        { name: 'Priority Support', included: false },
-        { name: 'Dedicated Account Manager', included: false },
+        { name: 'Priority Support & Monitoring', included: false },
+        { name: 'Dedicated IT Account Manager', included: false },
       ],
       gradient: 'from-blue-600 to-blue-800',
       cardClass: 'basic-card',
@@ -29,20 +31,22 @@ const Services = () => {
     {
       name: 'Premium',
       price: '$599',
-      description: 'Most popular for growing businesses',
+      description: 'Complete IT outsourcing for growing businesses',
       features: [
-        { name: 'OneDrive Advanced Implementation', included: true, details: 'Advanced sync policies and external sharing controls' },
-        { name: 'SharePoint Advanced Setup', included: true, details: 'Custom sites, workflows, and content types' },
-        { name: 'Teams Advanced Configuration', included: true, details: 'Custom apps, governance policies, and integrations' },
-        { name: 'Outlook Advanced Integration', included: true, details: 'Advanced rules, shared mailboxes, and distribution lists' },
-        { name: 'User Management System (up to 100 users)', included: true, details: 'Advanced provisioning, groups, and role management' },
-        { name: 'Comprehensive Training (5 hours)', included: true, details: 'Advanced features and best practices' },
-        { name: 'Email + Phone Support', included: true, details: '24-hour response time' },
-        { name: 'Advanced Security & Compliance', included: true, details: 'DLP, retention policies, and audit logs' },
-        { name: 'Custom Workflows & Automation', included: true, details: 'Power Automate flows and business processes' },
-        { name: 'Advanced Analytics & Reporting', included: true, details: 'Usage reports and productivity insights' },
-        { name: 'Priority Support', included: true, details: 'Escalated support queue' },
-        { name: 'Dedicated Account Manager', included: false },
+        { name: 'Microsoft 365 Advanced Implementation', included: true, details: 'Full M365 suite with advanced features and integrations' },
+        { name: 'OneDrive Advanced Management', included: true, details: 'Advanced sync policies, external sharing controls, and governance' },
+        { name: 'SharePoint Advanced Deployment', included: true, details: 'Custom sites, workflows, content types, and automation' },
+        { name: 'Teams Enterprise Configuration', included: true, details: 'Custom apps, governance policies, and third-party integrations' },
+        { name: 'Outlook Advanced Integration', included: true, details: 'Advanced rules, shared mailboxes, distribution lists, and archiving' },
+        { name: 'User Management (up to 100 users)', included: true, details: 'Advanced provisioning, groups, roles, and access management' },
+        { name: 'IT Infrastructure Management', included: true, details: 'Network monitoring, security implementation, and optimization' },
+        { name: 'Comprehensive Training Program', included: true, details: '5 hours of advanced training and best practices guidance' },
+        { name: 'Priority Support (24h response)', included: true, details: 'Phone and email support with dedicated queue' },
+        { name: 'Advanced Security & Compliance', included: true, details: 'DLP, retention policies, audit logs, and threat protection' },
+        { name: 'Custom Automation & Workflows', included: true, details: 'Power Automate flows and business process automation' },
+        { name: 'Advanced Analytics & Reporting', included: true, details: 'Usage reports, productivity insights, and performance metrics' },
+        { name: 'Priority Support & Monitoring', included: true, details: 'Proactive monitoring with escalated support queue' },
+        { name: 'Dedicated IT Account Manager', included: false },
       ],
       gradient: 'from-purple-600 to-purple-800',
       cardClass: 'premium-card',
@@ -51,20 +55,22 @@ const Services = () => {
     {
       name: 'Enterprise',
       price: '$1,299',
-      description: 'Complete solution for large organizations',
+      description: 'Full IT outsourcing solution for large organizations',
       features: [
-        { name: 'OneDrive Enterprise Implementation', included: true, details: 'Multi-geo, advanced compliance, and enterprise-grade security' },
-        { name: 'SharePoint Enterprise Setup', included: true, details: 'Hub sites, enterprise search, and custom solutions' },
-        { name: 'Teams Enterprise Configuration', included: true, details: 'Enterprise voice, compliance recording, and custom development' },
-        { name: 'Outlook Enterprise Integration', included: true, details: 'Advanced threat protection and enterprise archiving' },
-        { name: 'User Management System (unlimited users)', included: true, details: 'Enterprise identity management and SSO integration' },
-        { name: 'Executive Training (10 hours)', included: true, details: 'Executive briefings and change management' },
-        { name: '24/7 Premium Support', included: true, details: 'Immediate response with dedicated support team' },
-        { name: 'Enterprise Security & Compliance', included: true, details: 'Advanced threat protection, eDiscovery, and regulatory compliance' },
-        { name: 'Custom Enterprise Workflows', included: true, details: 'Complex business process automation and custom applications' },
-        { name: 'Enterprise Analytics & BI', included: true, details: 'Power BI integration and executive dashboards' },
-        { name: 'White-Glove Priority Support', included: true, details: 'Dedicated support channel with SLA guarantees' },
-        { name: 'Dedicated Account Manager', included: true, details: 'Strategic partnership and quarterly business reviews' },
+        { name: 'Microsoft 365 Enterprise Implementation', included: true, details: 'Complete M365 enterprise suite with multi-geo and advanced compliance' },
+        { name: 'OneDrive Enterprise Management', included: true, details: 'Multi-geo deployment, advanced compliance, and enterprise-grade security' },
+        { name: 'SharePoint Enterprise Deployment', included: true, details: 'Hub sites, enterprise search, custom solutions, and integrations' },
+        { name: 'Teams Enterprise Platform', included: true, details: 'Enterprise voice, compliance recording, custom development, and integrations' },
+        { name: 'Outlook Enterprise Integration', included: true, details: 'Advanced threat protection, enterprise archiving, and compliance features' },
+        { name: 'Unlimited User Management', included: true, details: 'Enterprise identity management, SSO integration, and advanced governance' },
+        { name: 'Complete IT Infrastructure Outsourcing', included: true, details: 'Full network management, security, monitoring, and optimization' },
+        { name: 'Executive Training & Change Management', included: true, details: '10 hours of executive briefings and organizational change support' },
+        { name: '24/7 Premium Support', included: true, details: 'Immediate response with dedicated support team and SLA guarantees' },
+        { name: 'Enterprise Security & Compliance', included: true, details: 'Advanced threat protection, eDiscovery, regulatory compliance, and auditing' },
+        { name: 'Custom Enterprise Automation', included: true, details: 'Complex business process automation and custom application development' },
+        { name: 'Enterprise Analytics & BI', included: true, details: 'Power BI integration, executive dashboards, and business intelligence' },
+        { name: 'White-Glove Priority Support', included: true, details: 'Dedicated support channel with guaranteed response times and SLAs' },
+        { name: 'Dedicated IT Account Manager', included: true, details: 'Strategic IT partnership with quarterly business reviews and planning' },
       ],
       gradient: 'from-emerald-600 to-emerald-800',
       cardClass: 'enterprise-card',
@@ -78,11 +84,12 @@ const Services = () => {
       price: '$50-150/month',
       icon: Headphones,
       features: [
-        'Email support (48h response)',
-        'Basic troubleshooting and issue resolution',
-        'Monthly system health check and optimization',
-        'Access to knowledge base and documentation',
-        'Software updates and patch management'
+        'Email support for IT infrastructure and M365 issues (48h response)',
+        'Basic troubleshooting and technical issue resolution',
+        'Monthly system health checks and performance optimization',
+        'Access to IT knowledge base and documentation library',
+        'Software updates and security patch management',
+        'Basic user account management and licensing support'
       ],
       gradient: 'from-blue-500 to-blue-600',
       bgGradient: 'from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20',
@@ -93,12 +100,13 @@ const Services = () => {
       price: '$150-400/month',
       icon: Zap,
       features: [
-        'Priority support (24h response)',
-        'Phone + email support with dedicated queue',
+        'Priority IT support for infrastructure and M365 (24h response)',
+        'Phone and email support with dedicated technical queue',
         'Advanced troubleshooting and root cause analysis',
-        'Bi-weekly system optimization and tuning',
-        'Performance monitoring and proactive alerts',
-        'User training sessions and best practice guidance'
+        'Bi-weekly system optimization and performance tuning',
+        'Proactive monitoring with automated alerts and remediation',
+        'User training sessions and IT best practice guidance',
+        'Security incident response and threat management'
       ],
       gradient: 'from-purple-600 to-purple-700',
       bgGradient: 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
@@ -109,13 +117,14 @@ const Services = () => {
       price: '$400-1000/month',
       icon: Shield,
       features: [
-        '24/7 priority support with immediate response',
-        'Dedicated account manager and technical lead',
-        'Proactive monitoring with automated remediation',
-        'Weekly optimization calls and strategic planning',
-        'Custom integrations and development support',
-        'SLA guarantees with performance metrics',
-        'Executive reporting and business impact analysis'
+        '24/7 priority IT support with immediate response and escalation',
+        'Dedicated account manager and senior technical lead assignment',
+        'Proactive infrastructure monitoring with automated remediation',
+        'Weekly optimization calls and strategic IT planning sessions',
+        'Custom integrations and enterprise development support',
+        'SLA guarantees with performance metrics and reporting',
+        'Executive IT reporting and business impact analysis',
+        'Disaster recovery planning and business continuity support'
       ],
       gradient: 'from-emerald-700 to-emerald-800',
       bgGradient: 'from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20',
@@ -137,10 +146,10 @@ const Services = () => {
           <AnimatedSection>
             <div className="text-center mb-16">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
-                Professional IT Infrastructure Packages
+                IT Infrastructure & Microsoft 365 Services
               </h2>
               <p className="text-lg sm:text-xl mobile-text text-slate-600 dark:text-slate-300 max-w-4xl mx-auto">
-                Comprehensive Office 365 implementation and management services. All packages include full setup, user training, and ongoing support to maximize productivity while reducing IT overhead by up to 60%.
+                Outsource your IT management and Microsoft 365 implementation to our expert team. We handle everything from infrastructure setup to ongoing support, so you can focus on growing your business while reducing IT overhead by up to 60%.
               </p>
             </div>
           </AnimatedSection>
@@ -178,15 +187,17 @@ const Services = () => {
                               )}
                             </div>
                             <div className="flex-grow">
-                              <span className={`text-xs sm:text-sm mobile-text font-medium ${
+                              <span className={`text-sm sm:text-base mobile-text font-semibold ${
                                 feature.included 
-                                  ? 'text-slate-700 dark:text-slate-300' 
-                                  : 'text-slate-400 dark:text-slate-500'
+                                  ? 'text-slate-800 dark:text-slate-100' 
+                                  : 'text-slate-500 dark:text-slate-400'
                               }`}>
                                 {feature.name}
                               </span>
                               {feature.details && feature.included && (
-                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                <p className={`text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed ${
+                                  feature.included ? 'opacity-90' : 'opacity-60'
+                                }`}>
                                   {feature.details}
                                 </p>
                               )}
@@ -201,7 +212,7 @@ const Services = () => {
                         aria-label={`Get started with ${pkg.name} package`}
                       >
                         <span className="relative z-10 flex items-center text-sm sm:text-base">
-                          Consult Now
+                          Get Started
                           <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
                         </span>
                       </button>
@@ -219,10 +230,10 @@ const Services = () => {
           <AnimatedSection>
             <div className="text-center mb-16">
               <h3 className="text-3xl sm:text-4xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
-                Ongoing Technical Support Services
+                Ongoing IT Support & Management Services
               </h3>
               <p className="text-lg sm:text-xl mobile-text text-slate-600 dark:text-slate-300 max-w-4xl mx-auto">
-                Professional support services tailored to your package and team size. Maintain peak performance and reduce IT overhead with our dedicated technical support team.
+                Comprehensive IT support services for your infrastructure and Microsoft 365 environment. Our managed services ensure your systems run smoothly while you focus on your core business operations.
               </p>
             </div>
           </AnimatedSection>
@@ -246,16 +257,16 @@ const Services = () => {
                       <div className={`text-xl sm:text-2xl font-bold bg-gradient-to-r ${support.gradient} bg-clip-text text-transparent`}>
                         {support.price}
                       </div>
-                      <div className="text-xs sm:text-sm mobile-text text-slate-500 dark:text-slate-400 mt-1">based on team size and complexity</div>
+                      <div className="text-xs sm:text-sm mobile-text text-slate-500 dark:text-slate-400 mt-1">based on infrastructure complexity</div>
                     </div>
                     
-                    <div className="space-y-3 sm:space-y-4 text-slate-600 dark:text-slate-300 mb-8 flex-grow">
+                    <div className="space-y-3 sm:space-y-4 text-slate-700 dark:text-slate-200 mb-8 flex-grow">
                       {support.features.map((feature, featureIndex) => (
                         <div key={featureIndex} className="flex items-start space-x-4 group/item">
                           <div className={`flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r ${support.gradient} rounded-lg flex items-center justify-center mt-0.5 group-hover/item:scale-110 transition-transform duration-200`}>
                             <div className="w-2 h-2 bg-white rounded-full"></div>
                           </div>
-                          <span className="leading-relaxed text-sm sm:text-base mobile-text">{feature}</span>
+                          <span className="leading-relaxed text-sm sm:text-base mobile-text font-medium">{feature}</span>
                         </div>
                       ))}
                     </div>

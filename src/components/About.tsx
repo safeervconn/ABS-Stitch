@@ -6,23 +6,23 @@ const About = () => {
   const features = [
     {
       icon: Users,
-      title: 'Expert Team',
-      description: 'Certified professionals with extensive workplace solutions experience'
+      title: 'Expert IT Team',
+      description: 'Certified Microsoft 365 and infrastructure specialists with years of experience'
     },
     {
       icon: Clock,
-      title: 'Quick Setup',
-      description: 'Fast deployment with minimal business disruption'
+      title: 'Rapid Implementation',
+      description: 'Fast deployment and setup with minimal business disruption'
     },
     {
       icon: Headphones,
-      title: 'Dedicated Support',
-      description: 'Professional support when you need it most'
+      title: 'Managed IT Support',
+      description: 'Comprehensive support and management when you need it most'
     },
     {
       icon: Target,
       title: 'Tailored Solutions',
-      description: 'Customized implementations for your specific needs'
+      description: 'Customized IT infrastructure and M365 implementations for your needs'
     }
   ];
 
@@ -39,17 +39,17 @@ const About = () => {
         <AnimatedSection>
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
-              Why Choose TechFlow Solutions?
+              Why Outsource Your IT to TechFlow Solutions?
             </h2>
             <p className="text-lg sm:text-xl mobile-text text-slate-600 dark:text-slate-300 max-w-4xl mx-auto mb-8">
-              We specialize in modern workplace solutions, helping businesses streamline operations and boost productivity through expert implementation and ongoing support. <strong>Reduce your IT overhead by up to 60%</strong> while increasing team efficiency.
+              We specialize in IT infrastructure management and Microsoft 365 implementation, helping businesses outsource their entire IT operations. <strong>Reduce your IT overhead by up to 60%</strong> while increasing productivity and focusing on your core business growth.
             </p>
             <button
               onClick={scrollToContact}
               className="shiny-button text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative overflow-hidden"
             >
               <span className="relative z-10">
-                Consult Our Experts
+                Get Free IT Consultation
               </span>
             </button>
           </div>

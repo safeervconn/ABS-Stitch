@@ -18,10 +18,10 @@ const Hero = () => {
   };
 
   const features = [
-    { icon: Headphones, title: '24/7 Support', desc: 'Round-the-clock assistance' },
-    { icon: Users, title: 'Expert Consultation', desc: 'Certified professionals' },
-    { icon: Shield, title: 'Reduce IT Overhead', desc: 'Focus on your business' },
-    { icon: Clock, title: 'Quick Deployment', desc: 'Minimal downtime' }
+    { icon: Headphones, title: '24/7 IT Support', desc: 'Round-the-clock technical assistance' },
+    { icon: Users, title: 'Expert IT Team', desc: 'Certified Microsoft 365 professionals' },
+    { icon: Shield, title: 'Outsource IT Management', desc: 'Focus on your core business' },
+    { icon: Clock, title: 'Rapid Implementation', desc: 'Quick setup with minimal downtime' }
   ];
 
   return (
@@ -40,16 +40,16 @@ const Hero = () => {
               <div className="space-y-6">
                 <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-full text-blue-700 dark:text-blue-300 text-sm font-medium shadow-lg animate-bounce-gentle">
                   <Zap className="w-4 h-4 mr-2" aria-hidden="true" />
-                  Professional IT Infrastructure Solutions
+                  IT Infrastructure & Microsoft 365 Specialists
                 </div>
                 <h1 className="text-4xl sm:text-5xl lg:text-7xl mobile-hero-title font-bold text-slate-900 dark:text-slate-100 leading-tight">
-                  Transform Your
+                  Outsource Your
                   <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent block">
-                    Digital Workspace
+                    IT Management
                   </span>
                 </h1>
                 <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
-                  Expert implementation and support for modern workplace solutions. <strong>Reduce IT overhead by 60%</strong> while maximizing team productivity with our comprehensive infrastructure services.
+                  Let our expert team handle your IT infrastructure and Microsoft 365 implementation. <strong>Reduce IT overhead by 60%</strong> while maximizing productivity with our comprehensive managed services and support.
                 </p>
               </div>
 
@@ -59,7 +59,7 @@ const Hero = () => {
                   className="group shiny-button text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-150 flex items-center justify-center shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 relative overflow-hidden"
                 >
                   <span className="relative z-10 flex items-center">
-                    View Packages
+                    View Services
                     <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform duration-150" size={20} />
                   </span>
                 </button>
@@ -67,7 +67,7 @@ const Hero = () => {
                   onClick={scrollToContact}
                   className="border-2 border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 px-8 py-4 rounded-xl font-semibold hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 dark:hover:from-blue-900/20 dark:hover:to-blue-800/20 transition-all duration-150 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                  Free Consultation
+                  Free IT Consultation
                 </button>
               </div>
             </div>

@@ -72,7 +72,7 @@ const Contact = () => {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       console.log('Form submitted:', formData);
-      alert('Thank you for your inquiry! Our team will contact you within 48 hours to discuss how we can reduce your IT overhead and boost productivity.');
+      alert('Thank you for your inquiry! Our IT specialists will contact you within 48 hours to discuss how we can help outsource your IT management and reduce overhead costs.');
       
       // Reset form
       setFormData({
@@ -111,7 +111,7 @@ const Contact = () => {
               Get Your Free IT Infrastructure Consultation
             </h2>
             <p className="text-lg sm:text-xl mobile-text text-slate-600 dark:text-slate-300 max-w-4xl mx-auto">
-              Ready to transform your workplace and reduce IT overhead by up to 60%? Let's discuss your requirements and create a customized Office 365 implementation strategy that fits your business needs.
+              Ready to outsource your IT management and reduce overhead by up to 60%? Let's discuss your infrastructure needs and create a customized Microsoft 365 and IT support strategy that fits your business requirements.
             </p>
           </div>
         </AnimatedSection>
@@ -219,7 +219,7 @@ const Contact = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label htmlFor="service" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                      Service Package *
+                      IT Service Package *
                     </label>
                     <select
                       id="service"
@@ -232,10 +232,10 @@ const Contact = () => {
                       }`}
                       aria-describedby={errors.service ? 'service-error' : undefined}
                     >
-                      <option value="">Select a package</option>
-                      <option value="basic">Basic Package - Office 365 Setup ($299/month)</option>
-                      <option value="premium">Premium Package - Advanced Implementation ($599/month)</option>
-                      <option value="enterprise">Enterprise Package - Complete Solution ($1,299/month)</option>
+                      <option value="">Select a service package</option>
+                      <option value="basic">Basic Package - IT Infrastructure Setup ($299/month)</option>
+                      <option value="premium">Premium Package - Complete IT Outsourcing ($599/month)</option>
+                      <option value="enterprise">Enterprise Package - Full IT Management ($1,299/month)</option>
                       <option value="custom">Custom Solution - Tailored to Your Needs</option>
                     </select>
                     {errors.service && (
@@ -247,7 +247,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <label htmlFor="supportPackage" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                      Support Package
+                      Ongoing Support Package
                     </label>
                     <select
                       id="supportPackage"
@@ -257,9 +257,9 @@ const Contact = () => {
                       className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 appearance-none cursor-pointer text-sm sm:text-base"
                     >
                       <option value="">Select support package</option>
-                      <option value="basic-support">Basic Support ($50-150/month)</option>
-                      <option value="premium-support">Premium Support ($150-400/month)</option>
-                      <option value="enterprise-support">Enterprise Support ($400-1000/month)</option>
+                      <option value="basic-support">Basic IT Support ($50-150/month)</option>
+                      <option value="premium-support">Premium IT Support ($150-400/month)</option>
+                      <option value="enterprise-support">Enterprise IT Support ($400-1000/month)</option>
                     </select>
                   </div>
                 </div>
@@ -286,7 +286,7 @@ const Contact = () => {
 
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                    Project Details & Requirements
+                    IT Infrastructure Requirements & Current Setup
                   </label>
                   <textarea
                     id="message"
@@ -295,7 +295,7 @@ const Contact = () => {
                     value={formData.message}
                     onChange={handleChange}
                     className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 transition-all duration-150 resize-none text-sm sm:text-base"
-                    placeholder="Tell us about your current IT setup, specific Office 365 requirements, compliance needs, integration requirements, or any questions you have about our services..."
+                    placeholder="Tell us about your current IT setup, Microsoft 365 requirements, compliance needs, infrastructure challenges, or any specific questions about outsourcing your IT management..."
                   />
                 </div>
 

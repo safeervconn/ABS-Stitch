@@ -11,7 +11,7 @@ const Testimonials = () => {
       name: 'Sarah Johnson',
       position: 'CTO',
       company: 'TechStart Inc.',
-      content: 'TechFlow Solutions transformed our entire workflow. The implementation was seamless and their support team is exceptional. Our productivity increased by 40% within the first month while reducing IT overhead significantly.',
+      content: 'TechFlow Solutions completely transformed our IT operations. They handled our entire Microsoft 365 implementation and now manage our infrastructure. Our productivity increased by 40% while reducing IT costs by 50%. Best decision we made for our business.',
       rating: 5,
       avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
     },
@@ -19,7 +19,7 @@ const Testimonials = () => {
       name: 'Michael Chen',
       position: 'Operations Director', 
       company: 'Global Dynamics',
-      content: 'The premium package was perfect for our growing team. Professional setup, excellent training, and ongoing support that actually works. We reduced our IT costs by 50% while improving efficiency.',
+      content: 'Outsourcing our IT management to TechFlow was a game-changer. Their premium package gave us enterprise-level infrastructure without the overhead. Professional setup, excellent training, and ongoing support that actually works.',
       rating: 5,
       avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
     },
@@ -27,7 +27,7 @@ const Testimonials = () => {
       name: 'Emily Rodriguez',
       position: 'IT Manager',
       company: 'Creative Solutions',
-      content: 'Outstanding service from start to finish. They handled everything while we focused on our business. The enterprise package features are exactly what we needed for compliance and security.',
+      content: 'Outstanding IT outsourcing service from start to finish. They managed our complete Microsoft 365 deployment while we focused on our core business. The enterprise package features are exactly what we needed for compliance and security.',
       rating: 5,
       avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
     }
@@ -70,10 +70,10 @@ const Testimonials = () => {
           <AnimatedSection>
             <div className="text-center mb-16">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-6 leading-[1.1] pb-2">
-                What Our Clients Say
+                What Our Clients Say About Our IT Services
               </h2>
               <p className="text-lg sm:text-xl mobile-text text-slate-600 dark:text-slate-300 max-w-4xl mx-auto">
-                Don't just take our word for it. Here's what business leaders say about our IT infrastructure services and how we've helped them reduce overhead while boosting productivity.
+                Don't just take our word for it. Here's what business leaders say about outsourcing their IT infrastructure and Microsoft 365 management to our expert team, and how we've helped them reduce overhead while boosting productivity.
               </p>
             </div>
           </AnimatedSection>
@@ -122,10 +122,10 @@ const Testimonials = () => {
           <AnimatedSection>
             <div className="text-center mb-12">
               <h3 className="text-2xl sm:text-3xl mobile-title font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-slate-900 dark:from-slate-100 dark:via-blue-300 dark:to-slate-100 bg-clip-text text-transparent mb-4 leading-[1.1] pb-2">
-                Trusted Partners
+                Trusted Technology Partners
               </h3>
               <p className="text-base sm:text-lg mobile-text text-slate-600 dark:text-slate-300">
-                We work with industry-leading companies to deliver the best solutions
+                We work with industry-leading companies to deliver the best IT solutions
               </p>
             </div>
           </AnimatedSection>

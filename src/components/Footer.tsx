@@ -33,7 +33,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-slate-300 leading-relaxed text-sm max-w-sm mobile-text">
-              Your trusted partner for workplace technology implementation and support. Reduce IT overhead while maximizing productivity.
+              Your trusted partner for IT infrastructure outsourcing and Microsoft 365 management. Reduce IT overhead while maximizing productivity.
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social) => (
