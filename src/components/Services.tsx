@@ -93,7 +93,7 @@ const Services = () => {
       ],
       gradient: 'from-blue-500 to-blue-600',
       bgGradient: 'from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20',
-      buttonClass: 'shiny-button-no-slide'
+      buttonClass: 'shiny-button'
     },
     {
       name: 'Premium Support',
@@ -110,7 +110,7 @@ const Services = () => {
       ],
       gradient: 'from-purple-600 to-purple-700',
       bgGradient: 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
-      buttonClass: 'shiny-button-premium-no-slide'
+      buttonClass: 'shiny-button-premium'
     },
     {
       name: 'Enterprise Support',
@@ -128,7 +128,7 @@ const Services = () => {
       ],
       gradient: 'from-emerald-700 to-emerald-800',
       bgGradient: 'from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20',
-      buttonClass: 'shiny-button-enterprise-no-slide'
+      buttonClass: 'shiny-button-enterprise'
     }
   ];
 
