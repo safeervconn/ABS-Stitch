@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Check, X, Headphones, Zap, Shield } from 'lucide-react';
+import { ArrowRight, Check, X, HelpCircle, Zap, Crown } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 
 const Services = () => {
@@ -82,7 +82,7 @@ const Services = () => {
     {
       name: 'Basic Support',
       price: '$50-150/month',
-      icon: Headphones,
+      icon: HelpCircle,
       features: [
         'Email support for IT infrastructure and M365 issues (48h response)',
         'Basic troubleshooting and technical issue resolution',
@@ -115,7 +115,7 @@ const Services = () => {
     {
       name: 'Enterprise Support',
       price: '$400-1000/month',
-      icon: Shield,
+      icon: Crown,
       features: [
         '24/7 priority IT support with immediate response and escalation',
         'Dedicated account manager and senior technical lead assignment',
