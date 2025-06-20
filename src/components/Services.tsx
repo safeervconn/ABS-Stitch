@@ -181,7 +181,7 @@ const Services = () => {
                                 : 'bg-gradient-to-r from-red-500 to-red-600'
                             }`}>
                               {feature.included ? (
-                                <Check className="w-20 h-2 text-white font-bold" strokeWidth={3} aria-hidden="true" />
+                                <Check className="w-30 h-3 text-white font-bold" strokeWidth={3} aria-hidden="true" />
                               ) : (
                                 <X className="w-3 h-3 text-white font-bold" strokeWidth={3} aria-hidden="true" />
                               )}
