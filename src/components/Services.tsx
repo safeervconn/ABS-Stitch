@@ -187,10 +187,10 @@ const Services = () => {
                               )}
                             </div>
                             <div className="flex-grow">
-                              <span className={`text-sm sm:text-base mobile-text font-semibold ${
+                              <span className={`text-sm sm:text-base mobile-text  ${
                                 feature.included 
                                   ? 'text-slate-800 dark:text-slate-100'
-                                  : 'text-black dark:text-black mb-2'
+                                  : 'text-black dark:text-black'
                               }`}>
                                 {feature.name}
                               </span>
