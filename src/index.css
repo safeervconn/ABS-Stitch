@@ -152,19 +152,19 @@ img {
 
 /* Animation classes with optimized durations */
 .animate-fade-in {
-  animation: fadeIn 0.8s ease-out;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out;
+  animation: fadeInUp 0.3s ease-out;
 }
 
 .animate-slide-in-left {
-  animation: slideInLeft 0.8s ease-out;
+  animation: slideInLeft 0.3s ease-out;
 }
 
 .animate-slide-in-right {
-  animation: slideInRight 0.8s ease-out 0.1s both;
+  animation: slideInRight 0.3s ease-out 0.1s both;
 }
 
 .animate-float {
@@ -176,7 +176,7 @@ img {
 }
 
 .animate-bounce-gentle {
-  animation: bounceGentle 2s ease-in-out infinite;
+  animation: bounceGentle 8s ease-in-out infinite;
 }
 
 .animate-scroll {
