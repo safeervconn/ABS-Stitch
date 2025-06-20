@@ -176,7 +176,7 @@ img {
 }
 
 .animate-bounce-gentle {
-  animation: bounceGentle 2s ease-in-out infinite;
+  animation: bounceGentle 8s ease-in-out infinite;
 }
 
 .animate-scroll {
