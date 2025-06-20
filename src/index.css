@@ -35,7 +35,7 @@ img {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -46,7 +46,7 @@ img {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(40px);
   }
   to {
     opacity: 1;
@@ -172,11 +172,11 @@ img {
 }
 
 .animate-float-delayed {
-  animation: float 3s ease-in-out infinite 1.5s;
+  animation: float 3s ease-in-out infinite 5.5s;
 }
 
 .animate-bounce-gentle {
-  animation: bounceGentle 8s ease-in-out infinite;
+  animation: bounceGentle 2s ease-in-out infinite;
 }
 
 .animate-scroll {
