@@ -1,16 +1,16 @@
 /**
- * Catalog Page Component
- * 
- * Features:
- * - Full catalog of digital artwork for sale
- * - Filter and search functionality
- * - Grid layout with product cards
- * - Pagination for large catalogs
- * - E-commerce style product display
- */
++ * Catalog Page Component
++ * 
++ * Features:
++ * - Full catalog of digital artwork for sale
++ * - Filter and search functionality
++ * - Grid layout with product cards
++ * - Pagination for large catalogs
++ * - E-commerce style product display
++ */
 
 import React, { useState } from 'react';
-import { ArrowLeft, Search, Filter, Star, Eye, Heart } from 'lucide-react';
+import { ArrowLeft, Search, Filter, Star, Eye, Heart, ShoppingCart } from 'lucide-react';
 
 const Catalog: React.FC = () => {
   // Sample artwork data - expanded for full catalog
@@ -24,7 +24,8 @@ const Catalog: React.FC = () => {
       rating: 5,
       reviews: 24,
       image: "https://images.pexels.com/photos/1269968/pexels-photo-1269968.jpeg?auto=compress&cs=tinysrgb&w=400",
-      tags: ["abstract", "waves", "blue"]
+      tags: ["abstract", "waves", "blue"],
+      description: "Beautiful abstract wave design perfect for modern applications"
     },
     {
       id: 2,
@@ -34,7 +35,8 @@ const Catalog: React.FC = () => {
       rating: 5,
       reviews: 18,
       image: "https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=400",
-      tags: ["geometric", "pattern", "modern"]
+      tags: ["geometric", "pattern", "modern"],
+      description: "Clean geometric patterns ideal for apparel and branding"
     },
     {
       id: 3,
@@ -44,7 +46,8 @@ const Catalog: React.FC = () => {
       rating: 4,
       reviews: 12,
       image: "https://images.pexels.com/photos/1070534/pexels-photo-1070534.jpeg?auto=compress&cs=tinysrgb&w=400",
-      tags: ["nature", "organic", "green"]
+      tags: ["nature", "organic", "green"],
+      description: "Organic nature-inspired design for eco-friendly brands"
     },
     {
       id: 4,
@@ -54,7 +57,8 @@ const Catalog: React.FC = () => {
       rating: 5,
       reviews: 31,
       image: "https://images.pexels.com/photos/1194713/pexels-photo-1194713.jpeg?auto=compress&cs=tinysrgb&w=400",
-      tags: ["minimalist", "icons", "clean"]
+      tags: ["minimalist", "icons", "clean"],
+      description: "Clean minimalist icon set for professional applications"
     },
     {
       id: 5,
@@ -64,7 +68,8 @@ const Catalog: React.FC = () => {
       rating: 4,
       reviews: 15,
       image: "https://images.pexels.com/photos/1070542/pexels-photo-1070542.jpeg?auto=compress&cs=tinysrgb&w=400",
-      tags: ["vintage", "typography", "retro"]
+      tags: ["vintage", "typography", "retro"],
+      description: "Retro vintage typography perfect for nostalgic designs"
     },
     {
       id: 6,
@@ -74,9 +79,9 @@ const Catalog: React.FC = () => {
       rating: 5,
       reviews: 22,
       image: "https://images.pexels.com/photos/1194775/pexels-photo-1194775.jpeg?auto=compress&cs=tinysrgb&w=400",
-      tags: ["landscape", "modern", "art"]
+      tags: ["landscape", "modern", "art"],
+      description: "Contemporary landscape art for interior decoration"
     },
-    // Additional items for a fuller catalog
     {
       id: 7,
       title: "Cosmic Dreams",
@@ -85,7 +90,8 @@ const Catalog: React.FC = () => {
       rating: 5,
       reviews: 19,
       image: "https://images.pexels.com/photos/1629236/pexels-photo-1629236.jpeg?auto=compress&cs=tinysrgb&w=400",
-      tags: ["space", "cosmic", "purple"]
+      tags: ["space", "cosmic", "purple"],
+      description: "Dreamy cosmic artwork with vibrant space themes"
     },
     {
       id: 8,
@@ -95,7 +101,52 @@ const Catalog: React.FC = () => {
       rating: 4,
       reviews: 27,
       image: "https://images.pexels.com/photos/1194775/pexels-photo-1194775.jpeg?auto=compress&cs=tinysrgb&w=400",
-      tags: ["urban", "street", "graffiti"]
+      tags: ["urban", "street", "graffiti"],
+      description: "Bold urban street art style for edgy apparel designs"
+    },
+    {
+      id: 9,
+      title: "Floral Elegance",
+      category: "Logo Design",
+      price: "$38",
+      rating: 5,
+      reviews: 16,
+      image: "https://images.pexels.com/photos/1070534/pexels-photo-1070534.jpeg?auto=compress&cs=tinysrgb&w=400",
+      tags: ["floral", "elegant", "feminine"],
+      description: "Elegant floral designs perfect for beauty and wellness brands"
+    },
+    {
+      id: 10,
+      title: "Tech Circuit",
+      category: "Digital Art",
+      price: "$29",
+      rating: 4,
+      reviews: 21,
+      image: "https://images.pexels.com/photos/1269968/pexels-photo-1269968.jpeg?auto=compress&cs=tinysrgb&w=400",
+      tags: ["tech", "circuit", "digital"],
+      description: "High-tech circuit board design for technology companies"
+    },
+    {
+      id: 11,
+      title: "Watercolor Splash",
+      category: "Wall Art",
+      price: "$33",
+      rating: 5,
+      reviews: 14,
+      image: "https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=400",
+      tags: ["watercolor", "artistic", "colorful"],
+      description: "Vibrant watercolor splash art for creative spaces"
+    },
+    {
+      id: 12,
+      title: "Monogram Collection",
+      category: "Logo Design",
+      price: "$24",
+      rating: 4,
+      reviews: 18,
+      image: "https://images.pexels.com/photos/1194713/pexels-photo-1194713.jpeg?auto=compress&cs=tinysrgb&w=400",
+      tags: ["monogram", "classic", "elegant"],
+      description: "Classic monogram designs for personal branding"
     }
   ];
 
@@ -134,7 +185,7 @@ const Catalog: React.FC = () => {
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-12">
         <div className="container mx-auto px-4">
           <button 
-            onClick={() => window.history.back()}
+            onClick={() => window.location.href = '/'}
             className="flex items-center space-x-2 mb-4 hover:text-blue-200 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -242,10 +293,11 @@ const Catalog: React.FC = () => {
                   </div>
                 </div>
                 
-                <p className="text-gray-500 text-sm mb-3">{artwork.category}</p>
+                <p className="text-gray-500 text-sm mb-2">{artwork.category}</p>
+                <p className="text-gray-600 text-xs mb-3 line-clamp-2">{artwork.description}</p>
                 
                 {/* Rating and Reviews */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-1">
                     {[...Array(5)].map((_, i) => (
                       <Star 
@@ -255,11 +307,13 @@ const Catalog: React.FC = () => {
                     ))}
                     <span className="text-gray-500 text-sm ml-1">({artwork.reviews})</span>
                   </div>
-                  
-                  <button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-1 rounded-full text-sm hover:from-blue-700 hover:to-indigo-700 transition-all">
-                    Add to Cart
-                  </button>
                 </div>
+                
+                {/* Add to Cart Button */}
+                <button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2">
+                  <ShoppingCart className="h-4 w-4" />
+                  <span>Add to Cart</span>
+                </button>
               </div>
             </div>
           ))}

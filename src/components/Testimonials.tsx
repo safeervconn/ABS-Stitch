@@ -50,23 +50,34 @@ const Testimonials: React.FC = () => {
 
   // State to track current testimonial
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Auto-advance slideshow
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+      goToNext();
     }, 5000); // Change slide every 5 seconds
 
     return () => clearInterval(interval);
-  }, [testimonials.length]);
+  }, []);
 
   // Navigation functions
   const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
+      setIsTransitioning(false);
+    }, 150);
   };
 
   const goToNext = () => {
-    setCurrentIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+      setIsTransitioning(false);
+    }, 150);
   };
 
   return (
@@ -85,56 +96,73 @@ const Testimonials: React.FC = () => {
 
         {/* Testimonial Carousel */}
         <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8 md:p-12 relative shadow-lg">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 md:p-8 relative shadow-lg overflow-hidden">
             
             {/* Quote Icon */}
             <div className="absolute top-6 left-6 text-blue-200">
-              <Quote className="h-12 w-12" />
+              <Quote className="h-8 w-8" />
             </div>
 
-            {/* Current Testimonial */}
-            <div className="text-center">
-              
-              {/* Customer Photo */}
-              <img 
-                src={testimonials[currentIndex].image} 
-                alt={testimonials[currentIndex].name}
-                className="w-20 h-20 rounded-full mx-auto mb-6 object-cover"
-              />
+            {/* Testimonials Container */}
+            <div className="relative h-80 md:h-72">
+              <div 
+                className="flex transition-transform duration-500 ease-in-out h-full"
+                style={{ 
+                  transform: `translateX(-${currentIndex * 100}%)`,
+                  width: `${testimonials.length * 100}%`
+                }}
+              >
+                {testimonials.map((testimonial, index) => (
+                  <div 
+                    key={testimonial.id}
+                    className="w-full flex-shrink-0 text-center px-4"
+                    style={{ width: `${100 / testimonials.length}%` }}
+                  >
+                    {/* Customer Photo */}
+                    <img 
+                      src={testimonial.image} 
+                      alt={testimonial.name}
+                      className="w-16 h-16 rounded-full mx-auto mb-4 object-cover"
+                    />
 
-              {/* Rating */}
-              <div className="flex justify-center mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star 
-                    key={i} 
-                    className={`h-5 w-5 ${i < testimonials[currentIndex].rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                  />
+                    {/* Rating */}
+                    <div className="flex justify-center mb-3">
+                      {[...Array(5)].map((_, i) => (
+                        <Star 
+                          key={i} 
+                          className={`h-4 w-4 ${i < testimonial.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Testimonial Text */}
+                    <blockquote className="text-base md:text-lg text-gray-700 mb-4 italic leading-relaxed font-medium">
+                      "{testimonial.text}"
+                    </blockquote>
+
+                    {/* Customer Info */}
+                    <div>
+                      <p className="font-bold text-gray-800">{testimonial.name}</p>
+                      <p className="text-gray-500 text-sm">{testimonial.company}</p>
+                    </div>
+                  </div>
                 ))}
-              </div>
-
-              {/* Testimonial Text */}
-              <blockquote className="text-lg md:text-xl text-gray-700 mb-6 italic leading-relaxed font-medium">
-                "{testimonials[currentIndex].text}"
-              </blockquote>
-
-              {/* Customer Info */}
-              <div>
-                <p className="font-bold text-gray-800 text-lg">{testimonials[currentIndex].name}</p>
-                <p className="text-gray-500">{testimonials[currentIndex].company}</p>
               </div>
             </div>
 
             {/* Navigation Arrows */}
             <button 
               onClick={goToPrevious}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors"
+              disabled={isTransitioning}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
               <ChevronLeft className="h-6 w-6 text-gray-600" />
             </button>
             
             <button 
               onClick={goToNext}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors"
+              disabled={isTransitioning}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
               <ChevronRight className="h-6 w-6 text-gray-600" />
             </button>
@@ -145,7 +173,15 @@ const Testimonials: React.FC = () => {
             {testimonials.map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCurrentIndex(index)}
+                onClick={() => {
+                  if (!isTransitioning) {
+                    setIsTransitioning(true);
+                    setTimeout(() => {
+                      setCurrentIndex(index);
+                      setIsTransitioning(false);
+                    }, 150);
+                  }
+                }}
                 className={`w-3 h-3 rounded-full transition-colors ${
                   index === currentIndex ? 'bg-blue-600' : 'bg-gray-300'
                 }`}

@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
           {/* Navigation Links - Center (Hidden on mobile) */}
           <div className="hidden md:flex space-x-8">
             <a href="#home" className="text-gray-600 hover:text-blue-600 transition-colors">Home</a>
-            <a href="#catalog" className="text-gray-600 hover:text-blue-600 transition-colors">Catalog</a>
+            <a href="/catalog" className="text-gray-600 hover:text-blue-600 transition-colors">Catalog</a>
             <a href="#about" className="text-gray-600 hover:text-blue-600 transition-colors">About</a>
             <a href="#contact" className="text-gray-600 hover:text-blue-600 transition-colors">Contact</a>
           </div>
@@ -62,7 +62,7 @@ const Navbar: React.FC = () => {
           <div className="md:hidden border-t border-gray-100">
             <div className="px-2 pt-2 pb-3 space-y-1">
               <a href="#home" className="block px-3 py-2 text-gray-600 hover:text-blue-600">Home</a>
-              <a href="#catalog" className="block px-3 py-2 text-gray-600 hover:text-blue-600">Catalog</a>
+              <a href="/catalog" className="block px-3 py-2 text-gray-600 hover:text-blue-600">Catalog</a>
               <a href="#about" className="block px-3 py-2 text-gray-600 hover:text-blue-600">About</a>
               <a href="#contact" className="block px-3 py-2 text-gray-600 hover:text-blue-600">Contact</a>
               <div className="border-t border-gray-100 pt-2 mt-2">
