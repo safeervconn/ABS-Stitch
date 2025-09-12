@@ -107,17 +107,3 @@ const Homepage: React.FC = () => {
 };
 
 export default App;
-
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-      
-      {/* Footer - company info and links */}
-      <Footer />
-    </div>
-  );
-}
-
-export default App;
