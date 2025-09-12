@@ -30,19 +30,20 @@ const Navbar: React.FC = () => {
 
           {/* Navigation Links - Center (Hidden on mobile) */}
           <div className="hidden md:flex space-x-8">
-            <a href="#home" className="text-gray-600 hover:text-blue-600 transition-colors">Home</a>
-            <a href="/catalog" className="text-gray-600 hover:text-blue-600 transition-colors">Catalog</a>
-            <a href="#about" className="text-gray-600 hover:text-blue-600 transition-colors">About</a>
-            <a href="#contact" className="text-gray-600 hover:text-blue-600 transition-colors">Contact</a>
+            <a href="/" className="text-gray-600 hover:text-blue-600 transition-colors font-bold">Home</a>
+            <a href="/catalog" className="text-gray-600 hover:text-blue-600 transition-colors font-bold">Catalog</a>
+            <a href="/#services" className="text-gray-600 hover:text-blue-600 transition-colors font-bold">Services</a>
+            <a href="/#about" className="text-gray-600 hover:text-blue-600 transition-colors font-bold">About</a>
+            <a href="/#contact" className="text-gray-600 hover:text-blue-600 transition-colors font-bold">Contact</a>
           </div>
 
           {/* Action Buttons - Right Side (Hidden on mobile) */}
           <div className="hidden md:flex items-center space-x-4">
-            <button className="text-gray-600 hover:text-blue-600 transition-colors">Login</button>
-            <button className="text-gray-600 hover:text-blue-600 transition-colors">Signup</button>
+            <button className="text-gray-600 hover:text-blue-600 transition-colors font-bold">Login</button>
+            <button className="text-gray-600 hover:text-blue-600 transition-colors font-bold">Signup</button>
             <button 
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              onClick={() => window.location.href = '/#contact'}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-bold"
             >
               Get a Quote
             </button>
@@ -61,16 +62,17 @@ const Navbar: React.FC = () => {
         {isMenuOpen && (
           <div className="md:hidden border-t border-gray-100">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <a href="#home" className="block px-3 py-2 text-gray-600 hover:text-blue-600">Home</a>
-              <a href="/catalog" className="block px-3 py-2 text-gray-600 hover:text-blue-600">Catalog</a>
-              <a href="#about" className="block px-3 py-2 text-gray-600 hover:text-blue-600">About</a>
-              <a href="#contact" className="block px-3 py-2 text-gray-600 hover:text-blue-600">Contact</a>
+              <a href="/" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Home</a>
+              <a href="/catalog" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Catalog</a>
+              <a href="/#services" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Services</a>
+              <a href="/#about" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">About</a>
+              <a href="/#contact" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Contact</a>
               <div className="border-t border-gray-100 pt-2 mt-2">
-                <button className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600">Login</button>
-                <button className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600">Signup</button>
+                <button className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Login</button>
+                <button className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Signup</button>
                 <button 
-                  onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="w-full text-left bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 mt-2"
+                  onClick={() => window.location.href = '/#contact'}
+                  className="w-full text-left bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 mt-2 font-bold"
                 >
                   Get a Quote
                 </button>

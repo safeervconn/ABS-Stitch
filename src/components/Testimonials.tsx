@@ -2,17 +2,17 @@
  * Testimonials Component
  * 
  * Features:
- * - Customer testimonials carousel
- * - Simple click-through navigation
- * - Customer photos and ratings
+ * - Continuous sliding carousel with 3-4 visible cards
+ * - Smooth right-to-left animation
+ * - Auto-play functionality
  * - Responsive design
  */
 
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
+import { Star, Quote } from 'lucide-react';
 
 const Testimonials: React.FC = () => {
-  // Sample testimonials data
+  // Extended testimonials data for continuous carousel
   const testimonials = [
     {
       id: 1,
@@ -20,7 +20,7 @@ const Testimonials: React.FC = () => {
       company: "Fashion Startup",
       image: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150",
       rating: 5,
-      text: "ArtistryDigital transformed my rough sketches into beautiful t-shirt designs. The quality exceeded my expectations and the turnaround time was incredible!"
+      text: "ArtistryDigital transformed my rough sketches into beautiful t-shirt designs. The quality exceeded my expectations!"
     },
     {
       id: 2,
@@ -28,7 +28,7 @@ const Testimonials: React.FC = () => {
       company: "Tech Company",
       image: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150",
       rating: 5,
-      text: "I needed a logo for my startup and they delivered multiple concepts quickly. The final design perfectly captures our brand identity. Highly recommended!"
+      text: "I needed a logo for my startup and they delivered multiple concepts quickly. Perfect brand identity!"
     },
     {
       id: 3,
@@ -36,7 +36,7 @@ const Testimonials: React.FC = () => {
       company: "Local Business",
       image: "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=150",
       rating: 4,
-      text: "Professional service and great communication throughout the project. They took my vision and made it even better than I imagined."
+      text: "Professional service and great communication. They made my vision even better than I imagined."
     },
     {
       id: 4,
@@ -44,41 +44,48 @@ const Testimonials: React.FC = () => {
       company: "Marketing Agency",
       image: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150",
       rating: 5,
-      text: "We use ArtistryDigital for all our client projects. Consistent quality, fair pricing, and always on time. They're an essential part of our team."
+      text: "Consistent quality, fair pricing, and always on time. They're an essential part of our team."
+    },
+    {
+      id: 5,
+      name: "Lisa Thompson",
+      company: "E-commerce Store",
+      image: "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=150",
+      rating: 5,
+      text: "Amazing artwork for our product line. Sales increased 40% after using their designs!"
+    },
+    {
+      id: 6,
+      name: "James Wilson",
+      company: "Restaurant Chain",
+      image: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=150",
+      rating: 4,
+      text: "Creative menu designs and branding materials. Our customers love the new look!"
     }
   ];
 
-  // State to track current testimonial
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  // Duplicate testimonials for seamless loop
+  const extendedTestimonials = [...testimonials, ...testimonials];
+  
+  const [currentOffset, setCurrentOffset] = useState(0);
+  const cardWidth = 320; // Width of each card including margin
+  const visibleCards = 3; // Number of cards visible at once
 
-  // Auto-advance slideshow
+  // Auto-slide effect
   useEffect(() => {
     const interval = setInterval(() => {
-      goToNext();
-    }, 5000); // Change slide every 5 seconds
+      setCurrentOffset(prev => {
+        const newOffset = prev + 1;
+        // Reset to beginning when we've moved through all original cards
+        if (newOffset >= testimonials.length) {
+          return 0;
+        }
+        return newOffset;
+      });
+    }, 3000); // Move every 3 seconds
 
     return () => clearInterval(interval);
-  }, []);
-
-  // Navigation functions
-  const goToPrevious = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
-      setIsTransitioning(false);
-    }, 150);
-  };
-
-  const goToNext = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
-      setIsTransitioning(false);
-    }, 150);
-  };
+  }, [testimonials.length]);
 
   return (
     <section className="py-16 bg-gradient-to-b from-white to-gray-50">
@@ -94,100 +101,71 @@ const Testimonials: React.FC = () => {
           </p>
         </div>
 
-        {/* Testimonial Carousel */}
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 md:p-8 relative shadow-lg overflow-hidden">
-            
-            {/* Quote Icon */}
-            <div className="absolute top-6 left-6 text-blue-200">
-              <Quote className="h-8 w-8" />
-            </div>
-
-            {/* Testimonials Container */}
-            <div className="relative h-80 md:h-72">
+        {/* Continuous Carousel Container */}
+        <div className="relative overflow-hidden">
+          <div 
+            className="flex transition-transform duration-1000 ease-in-out"
+            style={{ 
+              transform: `translateX(-${currentOffset * cardWidth}px)`,
+              width: `${extendedTestimonials.length * cardWidth}px`
+            }}
+          >
+            {extendedTestimonials.map((testimonial, index) => (
               <div 
-                className="flex transition-transform duration-500 ease-in-out h-full"
-                style={{ 
-                  transform: `translateX(-${currentIndex * 100}%)`,
-                  width: `${testimonials.length * 100}%`
-                }}
+                key={`${testimonial.id}-${Math.floor(index / testimonials.length)}`}
+                className="flex-shrink-0 px-3"
+                style={{ width: `${cardWidth}px` }}
               >
-                {testimonials.map((testimonial, index) => (
-                  <div 
-                    key={testimonial.id}
-                    className="w-full flex-shrink-0 text-center px-4"
-                    style={{ width: `${100 / testimonials.length}%` }}
-                  >
-                    {/* Customer Photo */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 shadow-sm h-80 flex flex-col">
+                  
+                  {/* Quote Icon */}
+                  <div className="text-blue-200 mb-3">
+                    <Quote className="h-6 w-6" />
+                  </div>
+
+                  {/* Customer Photo */}
+                  <div className="flex items-center mb-4">
                     <img 
                       src={testimonial.image} 
                       alt={testimonial.name}
-                      className="w-16 h-16 rounded-full mx-auto mb-4 object-cover"
+                      className="w-12 h-12 rounded-full object-cover mr-3"
                     />
-
-                    {/* Rating */}
-                    <div className="flex justify-center mb-3">
-                      {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`h-4 w-4 ${i < testimonial.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                        />
-                      ))}
-                    </div>
-
-                    {/* Testimonial Text */}
-                    <blockquote className="text-base md:text-lg text-gray-700 mb-4 italic leading-relaxed font-medium">
-                      "{testimonial.text}"
-                    </blockquote>
-
-                    {/* Customer Info */}
                     <div>
-                      <p className="font-bold text-gray-800">{testimonial.name}</p>
-                      <p className="text-gray-500 text-sm">{testimonial.company}</p>
+                      <p className="font-bold text-gray-800 text-sm">{testimonial.name}</p>
+                      <p className="text-gray-500 text-xs">{testimonial.company}</p>
                     </div>
                   </div>
-                ))}
+
+                  {/* Rating */}
+                  <div className="flex mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`h-4 w-4 ${i < testimonial.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Testimonial Text */}
+                  <blockquote className="text-gray-700 text-sm leading-relaxed flex-grow">
+                    "{testimonial.text}"
+                  </blockquote>
+                </div>
               </div>
-            </div>
-
-            {/* Navigation Arrows */}
-            <button 
-              onClick={goToPrevious}
-              disabled={isTransitioning}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors disabled:opacity-50"
-            >
-              <ChevronLeft className="h-6 w-6 text-gray-600" />
-            </button>
-            
-            <button 
-              onClick={goToNext}
-              disabled={isTransitioning}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors disabled:opacity-50"
-            >
-              <ChevronRight className="h-6 w-6 text-gray-600" />
-            </button>
-          </div>
-
-          {/* Dots Indicator */}
-          <div className="flex justify-center mt-6 space-x-2">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  if (!isTransitioning) {
-                    setIsTransitioning(true);
-                    setTimeout(() => {
-                      setCurrentIndex(index);
-                      setIsTransitioning(false);
-                    }, 150);
-                  }
-                }}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  index === currentIndex ? 'bg-blue-600' : 'bg-gray-300'
-                }`}
-              />
             ))}
           </div>
+        </div>
+
+        {/* Progress Indicators */}
+        <div className="flex justify-center mt-8 space-x-2">
+          {testimonials.map((_, index) => (
+            <div
+              key={index}
+              className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                index === (currentOffset % testimonials.length) ? 'bg-blue-600' : 'bg-gray-300'
+              }`}
+            />
+          ))}
         </div>
       </div>
     </section>
