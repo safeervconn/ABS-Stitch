@@ -12,11 +12,11 @@ import Hero from './components/Hero';
 import CatalogPreview from './components/CatalogPreview';
 import Services from './components/Services';
 import Testimonials from './components/Testimonials';
-import About from './components/About';
 import QuoteForm from './components/QuoteForm';
 import ContactInfo from './components/ContactInfo';
 import Footer from './components/Footer';
 import Catalog from './pages/Catalog';
+import About from './pages/About';
 
 function App() {
   return (
@@ -37,9 +37,6 @@ function App() {
               
               {/* Services offered by the business */}
               <Services />
-              
-              {/* About section */}
-              <About />
               
               {/* Customer testimonials */}
               <Testimonials />
@@ -65,6 +62,9 @@ function App() {
           
           {/* Catalog Page Route */}
           <Route path="/catalog" element={<Catalog />} />
+          
+          {/* About Page Route */}
+          <Route path="/about" element={<About />} />
         </Routes>
         
         {/* Footer - company info and links */}

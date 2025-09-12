@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
             <a href="/" className="text-gray-600 hover:text-blue-600 transition-colors font-bold">Home</a>
             <a href="/catalog" className="text-gray-600 hover:text-blue-600 transition-colors font-bold">Catalog</a>
             <a href="/#services" className="text-gray-600 hover:text-blue-600 transition-colors font-bold">Services</a>
-            <a href="/#about" className="text-gray-600 hover:text-blue-600 transition-colors font-bold">About</a>
+            <a href="/about" className="text-gray-600 hover:text-blue-600 transition-colors font-bold">About</a>
             <a href="/#contact" className="text-gray-600 hover:text-blue-600 transition-colors font-bold">Contact</a>
           </div>
 
@@ -65,7 +65,7 @@ const Navbar: React.FC = () => {
               <a href="/" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Home</a>
               <a href="/catalog" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Catalog</a>
               <a href="/#services" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Services</a>
-              <a href="/#about" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">About</a>
+              <a href="/about" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">About</a>
               <a href="/#contact" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Contact</a>
               <div className="border-t border-gray-100 pt-2 mt-2">
                 <button className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Login</button>

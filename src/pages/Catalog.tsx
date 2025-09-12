@@ -10,7 +10,7 @@
 + */
 
 import React, { useState } from 'react';
-import { ArrowLeft, Search, Filter, Star, Eye, Heart, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Search, Filter, Star, ShoppingCart } from 'lucide-react';
 
 const Catalog: React.FC = () => {
   // Sample artwork data - expanded for full catalog
@@ -262,14 +262,6 @@ const Catalog: React.FC = () => {
                 />
                 
                 {/* Overlay Actions */}
-                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-3">
-                  <button className="bg-white text-gray-800 p-2 rounded-full hover:bg-gray-100 transition-colors">
-                    <Eye className="h-5 w-5" />
-                  </button>
-                  <button className="bg-white text-gray-800 p-2 rounded-full hover:bg-gray-100 transition-colors">
-                    <Heart className="h-5 w-5" />
-                  </button>
-                </div>
 
                 {/* Sale Badge */}
                 {artwork.originalPrice && (
@@ -319,10 +311,22 @@ const Catalog: React.FC = () => {
           ))}
         </div>
 
-        {/* Load More / Pagination */}
-        <div className="text-center mt-12">
-          <button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold">
-            Load More Artwork
+        {/* Pagination */}
+        <div className="flex justify-center items-center space-x-4 mt-12">
+          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            Previous
+          </button>
+          
+          <div className="flex space-x-2">
+            <button className="px-3 py-2 bg-blue-600 text-white rounded-lg">1</button>
+            <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">2</button>
+            <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">3</button>
+            <span className="px-3 py-2 text-gray-500">...</span>
+            <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">8</button>
+          </div>
+          
+          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            Next
           </button>
         </div>
       </div>

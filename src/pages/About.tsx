@@ -1,5 +1,5 @@
 /**
- * About Section Component
+ * About Page Component
  * 
  * Features:
  * - Company story and mission
@@ -9,23 +9,32 @@
  */
 
 import React from 'react';
-import { Users, Award, Clock, Heart } from 'lucide-react';
+import { ArrowLeft, Users, Award, Clock, Heart } from 'lucide-react';
 
 const About: React.FC = () => {
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white" id="about">
-      <div className="container mx-auto px-4">
-        
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-4">
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-12">
+        <div className="container mx-auto px-4">
+          <button 
+            onClick={() => window.location.href = '/'}
+            className="flex items-center space-x-2 mb-4 hover:text-blue-200 transition-colors"
+          >
+            <ArrowLeft className="h-5 w-5" />
+            <span>Back to Homepage</span>
+          </button>
+          
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
             About ArtistryDigital
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          </h1>
+          <p className="text-xl text-blue-100">
             We're passionate about transforming creative ideas into stunning digital artwork that makes an impact
           </p>
         </div>
+      </div>
 
+      <div className="container mx-auto px-4 py-16">
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
           
           {/* Company Story */}
@@ -84,7 +93,7 @@ const About: React.FC = () => {
           <h3 className="text-2xl font-bold text-gray-800 mb-8">Why Choose ArtistryDigital?</h3>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
           <div className="text-center">
             <div className="bg-gradient-to-r from-blue-500 to-cyan-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <Clock className="h-8 w-8 text-white" />
@@ -117,7 +126,7 @@ const About: React.FC = () => {
         </div>
 
         {/* Stats */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-8 mt-16">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-8 mb-16">
           <div className="grid md:grid-cols-4 gap-8 text-center text-white">
             <div>
               <div className="text-3xl font-bold mb-2">500+</div>
@@ -137,8 +146,77 @@ const About: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Team Section */}
+        <div className="text-center mb-12">
+          <h3 className="text-2xl font-bold text-gray-800 mb-8">Meet Our Team</h3>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="text-center">
+            <img 
+              src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=300" 
+              alt="Sarah Johnson"
+              className="w-32 h-32 rounded-full object-cover mx-auto mb-4"
+            />
+            <h4 className="text-xl font-bold text-gray-800 mb-2">Sarah Johnson</h4>
+            <p className="text-blue-600 font-medium mb-2">Creative Director</p>
+            <p className="text-gray-600 text-sm">
+              10+ years of experience in digital design and brand identity creation.
+            </p>
+          </div>
+
+          <div className="text-center">
+            <img 
+              src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=300" 
+              alt="Mike Chen"
+              className="w-32 h-32 rounded-full object-cover mx-auto mb-4"
+            />
+            <h4 className="text-xl font-bold text-gray-800 mb-2">Mike Chen</h4>
+            <p className="text-blue-600 font-medium mb-2">Lead Designer</p>
+            <p className="text-gray-600 text-sm">
+              Specializes in apparel design and digital illustrations with a modern aesthetic.
+            </p>
+          </div>
+
+          <div className="text-center">
+            <img 
+              src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=300" 
+              alt="Emily Rodriguez"
+              className="w-32 h-32 rounded-full object-cover mx-auto mb-4"
+            />
+            <h4 className="text-xl font-bold text-gray-800 mb-2">Emily Rodriguez</h4>
+            <p className="text-blue-600 font-medium mb-2">Client Relations Manager</p>
+            <p className="text-gray-600 text-sm">
+              Ensures every client receives personalized attention and exceptional service.
+            </p>
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <div className="text-center bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8">
+          <h3 className="text-2xl font-bold text-gray-800 mb-4">Ready to Work With Us?</h3>
+          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            Let's bring your creative vision to life. Contact us today to discuss your project 
+            and see how we can help you stand out from the competition.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button 
+              onClick={() => window.location.href = '/#contact'}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold"
+            >
+              Get Started Today
+            </button>
+            <button 
+              onClick={() => window.location.href = '/catalog'}
+              className="border-2 border-gray-300 text-gray-700 px-8 py-3 rounded-lg hover:border-blue-600 hover:text-blue-600 transition-colors font-semibold"
+            >
+              Browse Our Work
+            </button>
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
   );
 };
 
