@@ -17,6 +17,8 @@ import ContactInfo from './components/ContactInfo';
 import Footer from './components/Footer';
 import Catalog from './pages/Catalog';
 import About from './pages/About';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 
 function App() {
   return (
@@ -65,6 +67,10 @@ function App() {
           
           {/* About Page Route */}
           <Route path="/about" element={<About />} />
+          
+          {/* Authentication Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
         
         {/* Footer - company info and links */}
