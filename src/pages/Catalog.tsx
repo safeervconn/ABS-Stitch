@@ -11,8 +11,11 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Search, Filter, Star, ShoppingCart } from 'lucide-react';
+import { useCart } from '../contexts/CartContext';
 
 const Catalog: React.FC = () => {
+  const { addToCart } = useCart();
+
   // Sample artwork data - expanded for full catalog
   const allArtwork = [
     {
@@ -303,6 +306,16 @@ const Catalog: React.FC = () => {
                 
                 {/* Add to Cart Button */}
                 <button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2">
+                <button 
+                  onClick={() => addToCart({
+                    id: artwork.id.toString(),
+                    title: artwork.title,
+                    price: artwork.price,
+                    image: artwork.image,
+                    category: artwork.category
+                  })}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2"
+                >
                   <ShoppingCart className="h-4 w-4" />
                   <span>Add to Cart</span>
                 </button>

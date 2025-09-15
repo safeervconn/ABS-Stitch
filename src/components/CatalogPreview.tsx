@@ -10,8 +10,11 @@
 
 import React from 'react';
 import { Eye, Star } from 'lucide-react';
+import { useCart } from '../contexts/CartContext';
 
 const CatalogPreview: React.FC = () => {
+  const { addToCart } = useCart();
+
   // Sample artwork data - in a real app, this would come from an API
   const sampleArtwork = [
     {
@@ -119,6 +122,20 @@ const CatalogPreview: React.FC = () => {
                   ))}
                   <span className="text-gray-500 text-sm ml-2">({artwork.rating}.0)</span>
                 </div>
+                
+                {/* Add to Cart Button */}
+                <button 
+                  onClick={() => addToCart({
+                    id: artwork.id.toString(),
+                    title: artwork.title,
+                    price: artwork.price,
+                    image: artwork.image,
+                    category: artwork.category
+                  })}
+                  className="w-full mt-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2 text-sm"
+                >
+                  <span>Add to Cart</span>
+                </button>
               </div>
             </div>
           ))}

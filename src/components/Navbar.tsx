@@ -10,6 +10,7 @@
 
 import React, { useState } from 'react';
 import { Menu, X, Palette } from 'lucide-react';
+import CartDropdown from './CartDropdown';
 
 const Navbar: React.FC = () => {
   // State to control mobile menu visibility
@@ -39,6 +40,7 @@ const Navbar: React.FC = () => {
 
           {/* Action Buttons - Right Side (Hidden on mobile) */}
           <div className="hidden md:flex items-center space-x-4">
+            <CartDropdown />
             <button 
               onClick={() => window.location.href = '/login'}
               className="text-gray-600 hover:text-blue-600 transition-colors font-bold"
@@ -78,6 +80,9 @@ const Navbar: React.FC = () => {
               <a href="/about" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">About</a>
               <a href="/#contact" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Contact</a>
               <div className="border-t border-gray-100 pt-2 mt-2">
+                <div className="px-3 py-2">
+                  <CartDropdown />
+                </div>
                 <button 
                   onClick={() => window.location.href = '/login'}
                   className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 font-bold"

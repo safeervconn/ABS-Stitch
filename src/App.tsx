@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { CartProvider } from './contexts/CartContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import CatalogPreview from './components/CatalogPreview';
@@ -22,61 +23,63 @@ import Signup from './pages/Signup';
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-        {/* Navigation bar - stays at top of page */}
-        <Navbar />
-        
-        <Routes>
-          {/* Homepage Route */}
-          <Route path="/" element={
-            <main>
-              {/* Hero banner section */}
-              <Hero />
-              
-              {/* Preview of artwork catalog */}
-              <CatalogPreview />
-              
-              {/* Services offered by the business */}
-              <Services />
-              
-              {/* Customer testimonials */}
-              <Testimonials />
-              
-              {/* Quote request and contact form section */}
-              <section className="py-16 bg-gradient-to-b from-gray-50 to-white" id="contact">
-                <div className="container mx-auto px-4">
-                  <div className="grid lg:grid-cols-3 gap-8">
-                    {/* Quote/Contact Form - takes up 2 columns */}
-                    <div className="lg:col-span-2">
-                      <QuoteForm />
-                    </div>
-                    
-                    {/* Contact Information Card - takes up 1 column */}
-                    <div className="lg:col-span-1">
-                      <ContactInfo />
+    <CartProvider>
+      <Router>
+        <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+          {/* Navigation bar - stays at top of page */}
+          <Navbar />
+          
+          <Routes>
+            {/* Homepage Route */}
+            <Route path="/" element={
+              <main>
+                {/* Hero banner section */}
+                <Hero />
+                
+                {/* Preview of artwork catalog */}
+                <CatalogPreview />
+                
+                {/* Services offered by the business */}
+                <Services />
+                
+                {/* Customer testimonials */}
+                <Testimonials />
+                
+                {/* Quote request and contact form section */}
+                <section className="py-16 bg-gradient-to-b from-gray-50 to-white" id="contact">
+                  <div className="container mx-auto px-4">
+                    <div className="grid lg:grid-cols-3 gap-8">
+                      {/* Quote/Contact Form - takes up 2 columns */}
+                      <div className="lg:col-span-2">
+                        <QuoteForm />
+                      </div>
+                      
+                      {/* Contact Information Card - takes up 1 column */}
+                      <div className="lg:col-span-1">
+                        <ContactInfo />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </section>
-            </main>
-          } />
+                </section>
+              </main>
+            } />
+            
+            {/* Catalog Page Route */}
+            <Route path="/catalog" element={<Catalog />} />
+            
+            {/* About Page Route */}
+            <Route path="/about" element={<About />} />
+            
+            {/* Authentication Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Routes>
           
-          {/* Catalog Page Route */}
-          <Route path="/catalog" element={<Catalog />} />
-          
-          {/* About Page Route */}
-          <Route path="/about" element={<About />} />
-          
-          {/* Authentication Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-        </Routes>
-        
-        {/* Footer - company info and links */}
-        <Footer />
-      </div>
-    </Router>
+          {/* Footer - company info and links */}
+          <Footer />
+        </div>
+      </Router>
+    </CartProvider>
   );
 }
 
