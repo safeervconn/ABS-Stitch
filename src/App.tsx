@@ -20,6 +20,10 @@ import Catalog from './pages/Catalog';
 import About from './pages/About';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import AdminDashboard from './pages/AdminDashboard';
+import SalesRepDashboard from './pages/SalesRepDashboard';
+import DesignerDashboard from './pages/DesignerDashboard';
+import CustomerDashboard from './pages/CustomerDashboard';
 
 function App() {
   return (
@@ -73,6 +77,12 @@ function App() {
             {/* Authentication Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            
+            {/* Dashboard Routes */}
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/sales/dashboard" element={<SalesRepDashboard />} />
+            <Route path="/designer/dashboard" element={<DesignerDashboard />} />
+            <Route path="/customer/dashboard" element={<CustomerDashboard />} />
           </Routes>
           
           {/* Footer - company info and links */}

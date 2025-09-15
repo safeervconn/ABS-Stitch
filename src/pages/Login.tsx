@@ -11,7 +11,7 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
-import { signIn, getUserProfile } from '../lib/supabase';
+import { tempLogin, getDashboardRoute } from '../lib/auth';
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -34,31 +34,13 @@ const Login: React.FC = () => {
     setError('');
 
     try {
-      const { user } = await signIn(formData.email, formData.password);
+      const user = await tempLogin(formData.email, formData.password);
       
       if (user) {
-        // Get user profile to determine role and redirect
-        const profile = await getUserProfile(user.id);
-        
-        if (profile) {
-          // Redirect based on role
-          switch (profile.role) {
-            case 'admin':
-              window.location.href = '/admin/dashboard';
-              break;
-            case 'sales_rep':
-              window.location.href = '/sales/dashboard';
-              break;
-            case 'designer':
-              window.location.href = '/designer/dashboard';
-              break;
-            case 'customer':
-              window.location.href = '/customer/dashboard';
-              break;
-            default:
-              window.location.href = '/';
-          }
-        }
+        // Redirect to appropriate dashboard based on role
+        window.location.href = getDashboardRoute(user.role);
+      } else {
+        setError('Invalid email or password. Please try again.');
       }
     } catch (err: any) {
       setError(err.message || 'Login failed. Please try again.');
