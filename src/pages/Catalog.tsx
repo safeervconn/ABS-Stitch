@@ -305,7 +305,6 @@ const Catalog: React.FC = () => {
                 </div>
                 
                 {/* Add to Cart Button */}
-                <button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2">
                 <button 
                   onClick={() => addToCart({
                     id: artwork.id.toString(),
