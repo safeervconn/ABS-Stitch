@@ -95,12 +95,6 @@ const CatalogPreview: React.FC = () => {
                 />
                 
                 {/* Overlay on Hover */}
-                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button className="bg-white text-gray-800 px-4 py-2 rounded-lg flex items-center space-x-2">
-                    <Eye className="h-4 w-4" />
-                    <span>View Details</span>
-                  </button>
-                </div>
               </div>
 
               {/* Artwork Info */}
@@ -132,7 +126,7 @@ const CatalogPreview: React.FC = () => {
                     image: artwork.image,
                     category: artwork.category
                   })}
-                  className="w-full mt-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2 text-sm"
+                  className="w-full mt-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2 text-sm shadow-lg"
                 >
                   <span>Add to Cart</span>
                 </button>
@@ -145,7 +139,7 @@ const CatalogPreview: React.FC = () => {
         <div className="text-center">
           <button 
             onClick={() => window.location.href = '/catalog'}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg font-semibold"
           >
             View All Artwork
           </button>

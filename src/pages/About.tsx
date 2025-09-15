@@ -203,13 +203,13 @@ const About: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button 
               onClick={() => window.location.href = '/#contact'}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold"
+              className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg font-semibold"
             >
               Get Started Today
             </button>
             <button 
               onClick={() => window.location.href = '/catalog'}
-              className="border-2 border-gray-300 text-gray-700 px-8 py-3 rounded-lg hover:border-blue-600 hover:text-blue-600 transition-colors font-semibold"
+              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg font-semibold"
             >
               Browse Our Work
             </button>

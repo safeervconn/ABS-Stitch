@@ -141,7 +141,7 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -158,7 +158,7 @@ const Login: React.FC = () => {
           <div className="mt-8 text-center">
             <p className="text-gray-600">
               Don't have an account?{' '}
-              <a href="/signup" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
+              <a href="/signup" className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-indigo-700 font-semibold transition-all">
                 Create Account
               </a>
             </p>

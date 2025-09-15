@@ -60,15 +60,15 @@ body {
 /* Smooth hover effects */
 .hover-lift:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 /* Loading spinner optimization */
 .spinner {
-  border: 2px solid #f3f4f6;
-  border-top: 2px solid #3b82f6;
+  background: conic-gradient(from 0deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  mask: radial-gradient(circle at center, transparent 40%, black 42%);
 }
 
 @keyframes spin {
@@ -86,4 +86,21 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* Enhanced gradient button effects */
+.gradient-button {
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+  background-size: 300% 300%;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-button:hover {
+  animation-duration: 1s;
 }

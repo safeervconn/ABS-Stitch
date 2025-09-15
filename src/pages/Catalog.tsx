@@ -261,11 +261,9 @@ const Catalog: React.FC = () => {
                 <img 
                   src={artwork.image} 
                   alt={artwork.title}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-48 object-cover"
                 />
                 
-                {/* Overlay Actions */}
-
                 {/* Sale Badge */}
                 {artwork.originalPrice && (
                   <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
@@ -313,7 +311,7 @@ const Catalog: React.FC = () => {
                     image: artwork.image,
                     category: artwork.category
                   })}
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2"
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2 shadow-lg"
                 >
                   <ShoppingCart className="h-4 w-4" />
                   <span>Add to Cart</span>
@@ -325,19 +323,19 @@ const Catalog: React.FC = () => {
 
         {/* Pagination */}
         <div className="flex justify-center items-center space-x-4 mt-12">
-          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          <button className="px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg">
             Previous
           </button>
           
           <div className="flex space-x-2">
-            <button className="px-3 py-2 bg-blue-600 text-white rounded-lg">1</button>
-            <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">2</button>
-            <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">3</button>
+            <button className="px-3 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg shadow-lg">1</button>
+            <button className="px-3 py-2 bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-lg hover:from-gray-500 hover:to-gray-600 transition-all shadow-lg">2</button>
+            <button className="px-3 py-2 bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-lg hover:from-gray-500 hover:to-gray-600 transition-all shadow-lg">3</button>
             <span className="px-3 py-2 text-gray-500">...</span>
-            <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">8</button>
+            <button className="px-3 py-2 bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-lg hover:from-gray-500 hover:to-gray-600 transition-all shadow-lg">8</button>
           </div>
           
-          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+          <button className="px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all shadow-lg">
             Next
           </button>
         </div>

@@ -180,23 +180,23 @@ const CustomerDashboard: React.FC = () => {
             <div className="p-6 space-y-4">
               <button 
                 onClick={() => window.location.href = '/#contact'}
-                className="w-full flex items-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors text-left"
+                className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 rounded-lg transition-all text-left shadow-sm"
               >
                 <Plus className="h-5 w-5 text-blue-600" />
                 <span className="font-medium text-gray-900">New Order</span>
               </button>
               <button 
                 onClick={() => window.location.href = '/catalog'}
-                className="w-full flex items-center space-x-3 p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors text-left"
+                className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 rounded-lg transition-all text-left shadow-sm"
               >
                 <Eye className="h-5 w-5 text-green-600" />
                 <span className="font-medium text-gray-900">Browse Catalog</span>
               </button>
-              <button className="w-full flex items-center space-x-3 p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors text-left">
+              <button className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 rounded-lg transition-all text-left shadow-sm">
                 <MessageCircle className="h-5 w-5 text-purple-600" />
                 <span className="font-medium text-gray-900">Contact Support</span>
               </button>
-              <button className="w-full flex items-center space-x-3 p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors text-left">
+              <button className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-orange-50 to-red-50 hover:from-orange-100 hover:to-red-100 rounded-lg transition-all text-left shadow-sm">
                 <Download className="h-5 w-5 text-orange-600" />
                 <span className="font-medium text-gray-900">Download Files</span>
               </button>

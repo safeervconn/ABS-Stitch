@@ -26,35 +26,35 @@ const Services: React.FC = () => {
       title: "Logo & Brand Identity",
       description: "Professional logos that represent your business",
       icon: Award,
-      color: "from-purple-500 to-pink-500"
+      color: "from-purple-600 to-pink-600"
     },
     {
       id: 3,
       title: "Digital Illustrations",
       description: "Custom artwork for any purpose or platform",
       icon: Palette,
-      color: "from-green-500 to-emerald-500"
+      color: "from-green-600 to-emerald-600"
     },
     {
       id: 4,
       title: "Quick Turnaround",
       description: "Fast delivery without compromising quality",
       icon: Zap,
-      color: "from-yellow-500 to-orange-500"
+      color: "from-yellow-600 to-orange-600"
     },
     {
       id: 5,
       title: "Team Collaboration",
       description: "Work directly with our creative professionals",
       icon: Users,
-      color: "from-indigo-500 to-blue-500"
+      color: "from-indigo-600 to-blue-600"
     },
     {
       id: 6,
       title: "Premium Quality",
       description: "High-resolution, print-ready artwork",
       icon: Sparkles,
-      color: "from-pink-500 to-rose-500"
+      color: "from-pink-600 to-rose-600"
     }
   ];
 
