@@ -1,13 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
-}
+// Create a mock client when not using real Supabase
+const isSupabaseConfigured = supabaseUrl !== 'https://placeholder.supabase.co' && supabaseAnonKey !== 'placeholder-key';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = isSupabaseConfigured 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
 
 // Database types
 export interface UserProfile {
@@ -73,6 +74,19 @@ export const signUp = async (email: string, password: string, userData: {
   role?: 'customer' | 'sales_rep' | 'designer';
   phone?: string;
 }) => {
+  if (!supabase) {
+    // Mock response for development
+    return {
+      data: {
+        user: {
+          id: 'mock-user-id',
+          email,
+          user_metadata: userData
+        }
+      }
+    };
+  }
+  
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -86,6 +100,18 @@ export const signUp = async (email: string, password: string, userData: {
 };
 
 export const signIn = async (email: string, password: string) => {
+  if (!supabase) {
+    // Mock response for development
+    return {
+      data: {
+        user: {
+          id: 'mock-user-id',
+          email
+        }
+      }
+    };
+  }
+  
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password
@@ -96,16 +122,40 @@ export const signIn = async (email: string, password: string) => {
 };
 
 export const signOut = async () => {
+  if (!supabase) {
+    // Mock response for development
+    return;
+  }
+  
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
 };
 
 export const getCurrentUser = async () => {
+  if (!supabase) {
+    // Mock response for development
+    return null;
+  }
+  
   const { data: { user } } = await supabase.auth.getUser();
   return user;
 };
 
 export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
+  if (!supabase) {
+    // Mock response for development
+    return {
+      id: userId,
+      email: 'mock@example.com',
+      full_name: 'Mock User',
+      role: 'customer',
+      is_active: true,
+      notification_preferences: { email: true, push: true },
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+  }
+  
   const { data, error } = await supabase
     .from('user_profiles')
     .select('*')
@@ -117,6 +167,16 @@ export const getUserProfile = async (userId: string): Promise<UserProfile | null
 };
 
 export const createUserProfile = async (profile: Partial<UserProfile>) => {
+  if (!supabase) {
+    // Mock response for development
+    return {
+      id: 'mock-user-id',
+      ...profile,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+  }
+  
   const { data, error } = await supabase
     .from('user_profiles')
     .insert([profile])
