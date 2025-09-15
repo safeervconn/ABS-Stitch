@@ -14,12 +14,18 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Users, ShoppingBag, TrendingUp, Settings, LogOut, Bell, BarChart3, UserCheck, Package } from 'lucide-react';
+import { Users, ShoppingBag, TrendingUp, Settings, LogOut, Bell, BarChart3, UserCheck, Package, Eye } from 'lucide-react';
 import { tempSignOut, validateUserSession } from '../lib/auth';
+import { useOrders } from '../contexts/OrderContext';
+import OrderDetailsModal from '../components/OrderDetailsModal';
 
 const AdminDashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
+  
+  const { orders, addComment } = useOrders();
 
   useEffect(() => {
     // Validate user session and ensure admin role
@@ -53,10 +59,32 @@ const AdminDashboard: React.FC = () => {
   // Mock data for demonstration
   const stats = [
     { title: 'Total Users', value: '1,234', change: '+12%', icon: Users, color: 'blue' },
-    { title: 'Active Orders', value: '89', change: '+5%', icon: ShoppingBag, color: 'green' },
+    { title: 'Active Orders', value: orders.filter(o => !['completed', 'delivered', 'cancelled'].includes(o.status)).length.toString(), change: '+5%', icon: ShoppingBag, color: 'green' },
     { title: 'Revenue', value: '$45,678', change: '+18%', icon: TrendingUp, color: 'purple' },
     { title: 'Products', value: '156', change: '+3%', icon: Package, color: 'orange' }
   ];
+
+  const handleViewOrder = (order: any) => {
+    setSelectedOrder(order);
+    setIsOrderDetailsOpen(true);
+  };
+
+  const handleAddComment = (orderId: string, comment: string) => {
+    addComment(orderId, comment);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'assigned': return 'bg-blue-100 text-blue-800';
+      case 'in_progress': return 'bg-purple-100 text-purple-800';
+      case 'review': return 'bg-orange-100 text-orange-800';
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'delivered': return 'bg-emerald-100 text-emerald-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -133,26 +161,35 @@ const AdminDashboard: React.FC = () => {
           {/* Recent Orders */}
           <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="p-6 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
+              <h3 className="text-lg font-semibold text-gray-900">All Orders</h3>
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {[1, 2, 3, 4].map((order) => (
-                  <div key={order} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                {orders.slice(0, 5).map((order) => (
+                  <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center space-x-4">
                       <div className="bg-blue-100 p-2 rounded-lg">
                         <ShoppingBag className="h-5 w-5 text-blue-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">Order #ORD-{20250101 + order}</p>
-                        <p className="text-sm text-gray-500">Customer Name {order}</p>
+                        <p className="font-medium text-gray-900">{order.orderNumber}</p>
+                        <p className="text-sm text-gray-500">{order.customer}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-gray-900">${(Math.random() * 100 + 50).toFixed(2)}</p>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Completed
-                      </span>
+                    <div className="flex items-center space-x-3">
+                      <div className="text-right">
+                        <p className="font-semibold text-gray-900">{order.amount}</p>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                          {order.status.replace('_', ' ')}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => handleViewOrder(order)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="View Details"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -186,6 +223,14 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {/* Order Details Modal */}
+      <OrderDetailsModal
+        isOpen={isOrderDetailsOpen}
+        onClose={() => setIsOrderDetailsOpen(false)}
+        order={selectedOrder}
+        onAddComment={handleAddComment}
+      />
     </div>
   );
 };

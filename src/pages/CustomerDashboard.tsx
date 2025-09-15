@@ -14,12 +14,21 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, User, CreditCard, LogOut, Bell, Plus, Eye, MessageCircle, Download } from 'lucide-react';
+import { ShoppingBag, User, CreditCard, LogOut, Bell, Plus, Eye, MessageCircle, Download, Package } from 'lucide-react';
 import { tempSignOut, validateUserSession } from '../lib/auth';
+import { useOrders } from '../contexts/OrderContext';
+import OrderDetailsModal from '../components/OrderDetailsModal';
+import PlaceOrderModal from '../components/PlaceOrderModal';
 
 const CustomerDashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
+  const [isPlaceOrderOpen, setIsPlaceOrderOpen] = useState(false);
+  
+  const { getOrdersByRole, addOrder, addComment } = useOrders();
+  const customerOrders = getOrdersByRole();
 
   useEffect(() => {
     // Validate user session and ensure customer role
@@ -52,18 +61,39 @@ const CustomerDashboard: React.FC = () => {
 
   // Mock data for demonstration
   const stats = [
-    { title: 'Total Orders', value: '12', change: '+2', icon: ShoppingBag, color: 'blue' },
-    { title: 'In Progress', value: '3', change: '0', icon: User, color: 'yellow' },
-    { title: 'Completed', value: '9', change: '+2', icon: ShoppingBag, color: 'green' },
+    { title: 'Total Orders', value: customerOrders.length.toString(), change: '+2', icon: ShoppingBag, color: 'blue' },
+    { title: 'In Progress', value: customerOrders.filter(o => ['assigned', 'in_progress', 'review'].includes(o.status)).length.toString(), change: '0', icon: Package, color: 'yellow' },
+    { title: 'Completed', value: customerOrders.filter(o => ['completed', 'delivered'].includes(o.status)).length.toString(), change: '+2', icon: ShoppingBag, color: 'green' },
     { title: 'Total Spent', value: '$1,245', change: '+$180', icon: CreditCard, color: 'purple' }
   ];
 
-  const recentOrders = [
-    { id: 'ORD-20250101', title: 'Custom T-Shirt Design', status: 'in_progress', date: '2 days ago', amount: '$85' },
-    { id: 'ORD-20250102', title: 'Logo Design Package', status: 'completed', date: '1 week ago', amount: '$150' },
-    { id: 'ORD-20250103', title: 'Marketing Materials', status: 'delivered', date: '2 weeks ago', amount: '$120' },
-    { id: 'ORD-20250104', title: 'Brand Identity', status: 'completed', date: '3 weeks ago', amount: '$200' }
-  ];
+  const handleViewOrder = (order: any) => {
+    setSelectedOrder(order);
+    setIsOrderDetailsOpen(true);
+  };
+
+  const handlePlaceOrder = (orderData: any) => {
+    addOrder(orderData);
+    setIsPlaceOrderOpen(false);
+    alert('Order placed successfully!');
+  };
+
+  const handleAddComment = (orderId: string, comment: string) => {
+    addComment(orderId, comment);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'assigned': return 'bg-blue-100 text-blue-800';
+      case 'in_progress': return 'bg-purple-100 text-purple-800';
+      case 'review': return 'bg-orange-100 text-orange-800';
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'delivered': return 'bg-emerald-100 text-emerald-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -140,34 +170,55 @@ const CustomerDashboard: React.FC = () => {
           {/* Recent Orders */}
           <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="p-6 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900">My Orders</h3>
+                <button
+                  onClick={() => setIsPlaceOrderOpen(true)}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg font-semibold text-sm"
+                >
+                  Place Order
+                </button>
+              </div>
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {recentOrders.map((order, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                {customerOrders.length > 0 ? customerOrders.map((order) => (
+                  <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center space-x-4">
                       <div className="bg-blue-100 p-2 rounded-lg">
                         <ShoppingBag className="h-5 w-5 text-blue-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{order.title}</p>
-                        <p className="text-sm text-gray-500">{order.id} • {order.date}</p>
+                        <p className="font-medium text-gray-900">{order.orderNumber}</p>
+                        <p className="text-sm text-gray-500">{order.type === 'custom' ? 'Custom Design' : 'Catalog Item'} • {order.date}</p>
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="flex items-center space-x-3">
                       <p className="font-semibold text-gray-900">{order.amount}</p>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        order.status === 'completed' ? 'bg-green-100 text-green-800' :
-                        order.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                        order.status === 'delivered' ? 'bg-purple-100 text-purple-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
                         {order.status.replace('_', ' ')}
                       </span>
+                      <button
+                        onClick={() => handleViewOrder(order)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="View Details"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <div className="text-center py-8">
+                    <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500 mb-4">No orders yet</p>
+                    <button
+                      onClick={() => setIsPlaceOrderOpen(true)}
+                      className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold"
+                    >
+                      Place Your First Order
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -179,7 +230,7 @@ const CustomerDashboard: React.FC = () => {
             </div>
             <div className="p-6 space-y-4">
               <button 
-                onClick={() => window.location.href = '/#contact'}
+                onClick={() => setIsPlaceOrderOpen(true)}
                 className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 rounded-lg transition-all text-left shadow-sm"
               >
                 <Plus className="h-5 w-5 text-blue-600" />
@@ -204,6 +255,21 @@ const CustomerDashboard: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {/* Order Details Modal */}
+      <OrderDetailsModal
+        isOpen={isOrderDetailsOpen}
+        onClose={() => setIsOrderDetailsOpen(false)}
+        order={selectedOrder}
+        onAddComment={handleAddComment}
+      />
+
+      {/* Place Order Modal */}
+      <PlaceOrderModal
+        isOpen={isPlaceOrderOpen}
+        onClose={() => setIsPlaceOrderOpen(false)}
+        onSubmit={handlePlaceOrder}
+      />
     </div>
   );
 };

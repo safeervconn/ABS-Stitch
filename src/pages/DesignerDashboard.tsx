@@ -14,12 +14,19 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Palette, Clock, CheckCircle, LogOut, Bell, Upload, MessageSquare, Award, Briefcase } from 'lucide-react';
+import { Palette, Clock, CheckCircle, LogOut, Bell, Upload, MessageSquare, Award, Briefcase, Eye } from 'lucide-react';
 import { tempSignOut, validateUserSession } from '../lib/auth';
+import { useOrders } from '../contexts/OrderContext';
+import OrderDetailsModal from '../components/OrderDetailsModal';
 
 const DesignerDashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
+  
+  const { getOrdersByRole, updateOrderStatus, addComment } = useOrders();
+  const designerOrders = getOrdersByRole();
 
   useEffect(() => {
     // Validate user session and ensure designer role
@@ -52,18 +59,46 @@ const DesignerDashboard: React.FC = () => {
 
   // Mock data for demonstration
   const stats = [
-    { title: 'Active Projects', value: '8', change: '+2', icon: Briefcase, color: 'blue' },
-    { title: 'Pending Review', value: '3', change: '0', icon: Clock, color: 'yellow' },
-    { title: 'Completed', value: '24', change: '+4', icon: CheckCircle, color: 'green' },
+    { title: 'Active Projects', value: designerOrders.filter(o => ['assigned', 'in_progress'].includes(o.status)).length.toString(), change: '+2', icon: Briefcase, color: 'blue' },
+    { title: 'Pending Review', value: designerOrders.filter(o => o.status === 'review').length.toString(), change: '0', icon: Clock, color: 'yellow' },
+    { title: 'Completed', value: designerOrders.filter(o => ['completed', 'delivered'].includes(o.status)).length.toString(), change: '+4', icon: CheckCircle, color: 'green' },
     { title: 'Rating', value: '4.9', change: '+0.1', icon: Award, color: 'purple' }
   ];
 
-  const activeProjects = [
-    { title: 'T-Shirt Design for Fashion Startup', client: 'Sarah Johnson', deadline: '2 days', status: 'in_progress', priority: 'high' },
-    { title: 'Logo Design for Tech Company', client: 'Mike Chen', deadline: '5 days', status: 'review', priority: 'medium' },
-    { title: 'Marketing Materials', client: 'Emily Rodriguez', deadline: '1 week', status: 'assigned', priority: 'low' },
-    { title: 'Brand Identity Package', client: 'David Park', deadline: '3 days', status: 'in_progress', priority: 'high' }
-  ];
+  const handleViewOrder = (order: any) => {
+    setSelectedOrder(order);
+    setIsOrderDetailsOpen(true);
+  };
+
+  const handleStatusChange = (orderId: string, newStatus: string) => {
+    updateOrderStatus(orderId, newStatus as any);
+  };
+
+  const handleAddComment = (orderId: string, comment: string) => {
+    addComment(orderId, comment);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'assigned': return 'bg-blue-100 text-blue-800';
+      case 'in_progress': return 'bg-purple-100 text-purple-800';
+      case 'review': return 'bg-orange-100 text-orange-800';
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'delivered': return 'bg-emerald-100 text-emerald-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return 'bg-red-100 text-red-800';
+      case 'medium': return 'bg-yellow-100 text-yellow-800';
+      case 'low': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -137,41 +172,57 @@ const DesignerDashboard: React.FC = () => {
         {/* Dashboard Grid */}
         <div className="grid lg:grid-cols-3 gap-8">
           
-          {/* Active Projects */}
+          {/* Assigned Orders */}
           <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="p-6 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900">Active Projects</h3>
+              <h3 className="text-lg font-semibold text-gray-900">My Assigned Orders</h3>
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {activeProjects.map((project, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                {designerOrders.map((order) => (
+                  <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center space-x-4">
                       <div className="bg-purple-100 p-2 rounded-lg">
                         <Palette className="h-5 w-5 text-purple-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{project.title}</p>
-                        <p className="text-sm text-gray-500">Client: {project.client}</p>
+                        <p className="font-medium text-gray-900">{order.orderNumber}</p>
+                        <p className="text-sm text-gray-500">Client: {order.customer}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-600">Due in {project.deadline}</p>
+                    <div className="flex items-center space-x-3">
+                      <div className="text-right">
+                        <p className="text-sm text-gray-600">{order.date}</p>
+                        <p className="font-semibold text-gray-900">{order.amount}</p>
+                      </div>
+                      
                       <div className="flex items-center space-x-2">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                          project.status === 'review' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {project.status.replace('_', ' ')}
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                          {order.status.replace('_', ' ')}
                         </span>
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                          project.priority === 'high' ? 'bg-red-100 text-red-800' :
-                          project.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-green-100 text-green-800'
-                        }`}>
-                          {project.priority}
-                        </span>
+                      </div>
+                      
+                      {/* Status Update Dropdown */}
+                      {['assigned', 'in_progress'].includes(order.status) && (
+                        <select
+                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                          className="text-xs border border-gray-300 rounded px-2 py-1"
+                          defaultValue={order.status}
+                        >
+                          <option value="assigned">Assigned</option>
+                          <option value="in_progress">In Progress</option>
+                          <option value="review">Send to Review</option>
+                          <option value="completed">Completed</option>
+                        </select>
+                      )}
+                      
+                      <button
+                        onClick={() => handleViewOrder(order)}
+                        className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                        title="View Details"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
                       </div>
                     </div>
                   </div>
@@ -206,6 +257,14 @@ const DesignerDashboard: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {/* Order Details Modal */}
+      <OrderDetailsModal
+        isOpen={isOrderDetailsOpen}
+        onClose={() => setIsOrderDetailsOpen(false)}
+        order={selectedOrder}
+        onAddComment={handleAddComment}
+      />
     </div>
   );
 };

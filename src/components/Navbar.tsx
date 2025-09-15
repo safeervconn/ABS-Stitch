@@ -92,7 +92,7 @@ const Navbar: React.FC = () => {
                       className="fixed inset-0 z-40" 
                       onClick={() => setIsProfileOpen(false)}
                     />
-                    <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-[60]">
                       <div className="p-2">
                         <button
                           onClick={() => window.location.href = '/profile'}

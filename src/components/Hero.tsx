@@ -10,8 +10,11 @@
 
 import React from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import { getTempCurrentUser } from '../lib/auth';
 
 const Hero: React.FC = () => {
+  const currentUser = getTempCurrentUser();
+
   return (
     <section className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-20" id="home">
       <div className="container mx-auto px-4">
@@ -38,13 +41,26 @@ const Hero: React.FC = () => {
 
           {/* Call to Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center shadow-lg font-semibold"
-            >
-              Get Custom Artwork
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </button>
+            {currentUser && currentUser.role === 'customer' ? (
+              <button 
+                onClick={() => {
+                  const event = new CustomEvent('openPlaceOrderModal');
+                  window.dispatchEvent(event);
+                }}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all flex items-center justify-center shadow-lg font-semibold"
+              >
+                Place Order
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </button>
+            ) : (
+              <button 
+                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center shadow-lg font-semibold"
+              >
+                Get Custom Artwork
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </button>
+            )}
             <button 
               onClick={() => window.location.href = '/catalog'}
               className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg font-semibold"
