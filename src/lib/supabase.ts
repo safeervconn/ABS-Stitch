@@ -127,107 +127,66 @@ export const createUserProfile = async (profile: Partial<UserProfile>) => {
   return data;
 };
 
-// Initialize demo users in Supabase
-export const initializeDemoUsers = async () => {
+// Get dashboard route based on user role
+export const getDashboardRoute = (role: string): string => {
+  switch (role) {
+    case 'admin':
+      return '/admin/dashboard';
+    case 'sales_rep':
+      return '/sales/dashboard';
+    case 'designer':
+      return '/designer/dashboard';
+    case 'customer':
+      return '/customer/dashboard';
+    default:
+      return '/';
+  }
+};
+// Create demo users for testing
+export const createDemoUsers = async () => {
   const demoUsers = [
     {
       email: 'admin@absstitch.com',
-      password: 'demo123',
+      password: 'SecureAdmin123!',
       full_name: 'System Administrator',
       role: 'admin' as const
     },
     {
       email: 'sales@absstitch.com',
-      password: 'demo123',
+      password: 'SecureSales123!',
       full_name: 'John Sales',
       role: 'sales_rep' as const
     },
     {
       email: 'designer@absstitch.com',
-      password: 'demo123',
+      password: 'SecureDesign123!',
       full_name: 'Jane Designer',
       role: 'designer' as const
     },
     {
       email: 'customer@absstitch.com',
-      password: 'demo123',
+      password: 'SecureCustomer123!',
       full_name: 'Sarah Johnson',
       role: 'customer' as const
     }
   ];
 
+  console.log('Creating demo users for production testing...');
+  
   for (const user of demoUsers) {
     try {
-      // Check if user already exists
-      const { data: existingProfile } = await supabase
-        .from('user_profiles')
-        .select('id')
-        .eq('email', user.email)
-        .single();
-
-      if (!existingProfile) {
-        // Sign up the user
-        const { data: authData, error: signUpError } = await supabase.auth.signUp({
-          email: user.email,
-          password: user.password,
-          options: {
-            data: {
-              full_name: user.full_name,
-              role: user.role
-            }
-          }
-        });
-
-        if (signUpError) {
-          console.error(`Error creating user ${user.email}:`, signUpError);
-          continue;
-        }
-
-        if (authData.user) {
-          // Create user profile
-          await createUserProfile({
-            id: authData.user.id,
-            email: user.email,
-            full_name: user.full_name,
-            role: user.role,
-            is_active: true,
-            notification_preferences: { email: true, push: true }
-          });
-
-          // Create role-specific records
-          if (user.role === 'customer') {
-            await supabase.from('customers').insert({
-              id: authData.user.id,
-              total_orders: 0,
-              total_spent: 0
-            });
-          } else if (user.role === 'sales_rep') {
-            await supabase.from('sales_reps').insert({
-              id: authData.user.id,
-              employee_id: 'SR001',
-              department: 'Sales',
-              commission_rate: 10.0,
-              total_sales: 0,
-              active_customers: 0
-            });
-          } else if (user.role === 'designer') {
-            await supabase.from('designers').insert({
-              id: authData.user.id,
-              employee_id: 'DS001',
-              specialties: ['Embroidery', 'Logo Stitching'],
-              hourly_rate: 50.0,
-              total_completed: 0,
-              average_rating: 0
-            });
-          }
-
-          console.log(`Demo user created: ${user.email}`);
-        }
+      const { data, error } = await signUp(user.email, user.password, {
+        full_name: user.full_name,
+        role: user.role
+      });
+      
+      if (error) {
+        console.error(`Error creating ${user.role}:`, error.message);
       } else {
-        console.log(`Demo user already exists: ${user.email}`);
+        console.log(`✓ Created ${user.role}: ${user.email}`);
       }
     } catch (error) {
-      console.error(`Error processing user ${user.email}:`, error);
+      console.error(`Error creating ${user.role}:`, error);
     }
   }
 };

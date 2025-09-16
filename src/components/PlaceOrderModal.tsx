@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Send, Paperclip } from 'lucide-react';
-import { getTempCurrentUser } from '../lib/auth';
+import { getCurrentUser, getUserProfile } from '../lib/supabase';
 
 interface PlaceOrderModalProps {
   isOpen: boolean;
@@ -22,17 +22,32 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose, onSu
     file: null as File | null
   });
 
-  const currentUser = getTempCurrentUser();
+  const [currentUser, setCurrentUser] = React.useState<any>(null);
 
   React.useEffect(() => {
-    if (currentUser) {
-      setFormData(prev => ({
-        ...prev,
-        fullName: currentUser.full_name || '',
-        email: currentUser.email || ''
-      }));
+    const checkUser = async () => {
+      try {
+        const user = await getCurrentUser();
+        if (user) {
+          const profile = await getUserProfile(user.id);
+          if (profile) {
+            setCurrentUser(profile);
+            setFormData(prev => ({
+              ...prev,
+              fullName: profile.full_name || '',
+              email: profile.email || ''
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('Error checking user:', error);
+      }
+    };
+    
+    if (isOpen) {
+      checkUser();
     }
-  }, [currentUser]);
+  }, [isOpen]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

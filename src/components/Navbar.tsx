@@ -12,8 +12,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Palette, User, Settings, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react';
 import CartDropdown from './CartDropdown';
-import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
-import { getDashboardRoute } from '../lib/auth';
+import { signOut, getCurrentUser, getUserProfile, getDashboardRoute } from '../lib/supabase';
 
 const Navbar: React.FC = () => {
   // State to control mobile menu visibility
@@ -39,11 +38,7 @@ const Navbar: React.FC = () => {
           }
         }
       } catch (error) {
-        // Check localStorage for session
-        const session = localStorage.getItem('supabase_user_session');
-        if (session) {
-          setCurrentUser(JSON.parse(session));
-        }
+        console.error('Error checking user:', error);
       }
     };
     
@@ -53,7 +48,6 @@ const Navbar: React.FC = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
-      localStorage.removeItem('supabase_user_session');
       setCurrentUser(null);
       window.location.href = '/';
     } catch (error) {

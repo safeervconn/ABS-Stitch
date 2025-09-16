@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { getTempCurrentUser } from '../lib/auth';
+import { getCurrentUser, getUserProfile } from '../lib/supabase';
 
 export interface Order {
   id: string;
@@ -139,30 +139,37 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     }
   ]);
 
-  const addOrder = (orderData: any) => {
-    const currentUser = getTempCurrentUser();
-    if (!currentUser) return;
+  const addOrder = async (orderData: any) => {
+    try {
+      const user = await getCurrentUser();
+      if (!user) return;
+      
+      const profile = await getUserProfile(user.id);
+      if (!profile) return;
 
-    const newOrder: Order = {
-      id: Date.now().toString(),
-      orderNumber: `ORD-${Date.now()}`,
-      customer: currentUser.full_name,
-      customerId: currentUser.id,
-      type: 'custom',
-      status: 'pending',
-      amount: '$75', // Default amount - would be calculated based on requirements
-      date: 'Just now',
-      email: orderData.email,
-      phone: `${orderData.countryCode} ${orderData.phoneNumber}`,
-      designSize: orderData.designSize,
-      apparelType: orderData.apparelType,
-      customWidth: orderData.customWidth,
-      customHeight: orderData.customHeight,
-      designInstructions: orderData.designInstructions,
-      comments: []
-    };
+      const newOrder: Order = {
+        id: Date.now().toString(),
+        orderNumber: `ORD-${Date.now()}`,
+        customer: profile.full_name,
+        customerId: profile.id,
+        type: 'custom',
+        status: 'pending',
+        amount: '$75', // Default amount - would be calculated based on requirements
+        date: 'Just now',
+        email: orderData.email,
+        phone: `${orderData.countryCode} ${orderData.phoneNumber}`,
+        designSize: orderData.designSize,
+        apparelType: orderData.apparelType,
+        customWidth: orderData.customWidth,
+        customHeight: orderData.customHeight,
+        designInstructions: orderData.designInstructions,
+        comments: []
+      };
 
-    setOrders(prev => [newOrder, ...prev]);
+      setOrders(prev => [newOrder, ...prev]);
+    } catch (error) {
+      console.error('Error adding order:', error);
+    }
   };
 
   const updateOrderStatus = (orderId: string, status: Order['status']) => {
@@ -179,40 +186,55 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     ));
   };
 
-  const addComment = (orderId: string, comment: string) => {
-    const currentUser = getTempCurrentUser();
-    if (!currentUser) return;
+  const addComment = async (orderId: string, comment: string) => {
+    try {
+      const user = await getCurrentUser();
+      if (!user) return;
+      
+      const profile = await getUserProfile(user.id);
+      if (!profile) return;
 
-    const newComment = {
-      id: Date.now().toString(),
-      author: currentUser.full_name,
-      authorId: currentUser.id,
-      text: comment,
-      date: 'Just now'
-    };
+      const newComment = {
+        id: Date.now().toString(),
+        author: profile.full_name,
+        authorId: profile.id,
+        text: comment,
+        date: 'Just now'
+      };
 
-    setOrders(prev => prev.map(order => 
-      order.id === orderId 
-        ? { ...order, comments: [...order.comments, newComment] }
-        : order
-    ));
+      setOrders(prev => prev.map(order => 
+        order.id === orderId 
+          ? { ...order, comments: [...order.comments, newComment] }
+          : order
+      ));
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
   };
 
-  const getOrdersByRole = (): Order[] => {
-    const currentUser = getTempCurrentUser();
-    if (!currentUser) return [];
+  const getOrdersByRole = async (): Promise<Order[]> => {
+    try {
+      const user = await getCurrentUser();
+      if (!user) return [];
+      
+      const profile = await getUserProfile(user.id);
+      if (!profile) return [];
 
-    switch (currentUser.role) {
-      case 'admin':
-        return orders;
-      case 'sales_rep':
-        return orders.filter(order => order.salesRepId === currentUser.id);
-      case 'designer':
-        return orders.filter(order => order.designerId === currentUser.id);
-      case 'customer':
-        return orders.filter(order => order.customerId === currentUser.id);
-      default:
-        return [];
+      switch (profile.role) {
+        case 'admin':
+          return orders;
+        case 'sales_rep':
+          return orders.filter(order => order.salesRepId === profile.id);
+        case 'designer':
+          return orders.filter(order => order.designerId === profile.id);
+        case 'customer':
+          return orders.filter(order => order.customerId === profile.id);
+        default:
+          return [];
+      }
+    } catch (error) {
+      console.error('Error getting orders by role:', error);
+      return [];
     }
   };
 
@@ -222,7 +244,10 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     updateOrderStatus,
     assignDesigner,
     addComment,
-    getOrdersByRole
+    getOrdersByRole: () => {
+      // For synchronous usage, return empty array and handle async in components
+      return orders;
+    }
   };
 
   return (

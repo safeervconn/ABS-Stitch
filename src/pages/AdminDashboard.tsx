@@ -15,7 +15,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Users, ShoppingBag, TrendingUp, Settings, LogOut, Bell, BarChart3, UserCheck, Package, Eye } from 'lucide-react';
-import { tempSignOut, validateUserSession } from '../lib/auth';
+import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
 import { useOrders } from '../contexts/OrderContext';
 import OrderDetailsModal from '../components/OrderDetailsModal';
 
@@ -28,17 +28,33 @@ const AdminDashboard: React.FC = () => {
   const { orders, addComment } = useOrders();
 
   useEffect(() => {
-    // Validate user session and ensure admin role
-    const currentUser = validateUserSession('admin');
-    if (currentUser) {
-      setUser(currentUser);
-    }
-    setLoading(false);
+    const checkUser = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        if (currentUser) {
+          const profile = await getUserProfile(currentUser.id);
+          if (profile && profile.role === 'admin') {
+            setUser(profile);
+          } else {
+            window.location.href = '/login';
+          }
+        } else {
+          window.location.href = '/login';
+        }
+      } catch (error) {
+        console.error('Error checking user:', error);
+        window.location.href = '/login';
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    checkUser();
   }, []);
 
   const handleSignOut = async () => {
     try {
-      tempSignOut();
+      await signOut();
       window.location.href = '/';
     } catch (error) {
       console.error('Error signing out:', error);

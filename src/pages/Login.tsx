@@ -11,8 +11,7 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
-import { signIn, getUserProfile } from '../lib/supabase';
-import { getDashboardRoute } from '../lib/auth';
+import { signIn, getUserProfile, getDashboardRoute } from '../lib/supabase';
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -41,15 +40,6 @@ const Login: React.FC = () => {
         // Get user profile to determine role
         const profile = await getUserProfile(user.id);
         if (profile) {
-          // Store user session
-          localStorage.setItem('supabase_user_session', JSON.stringify({
-            id: user.id,
-            email: user.email,
-            full_name: profile.full_name,
-            role: profile.role,
-            avatar_url: profile.avatar_url
-          }));
-          
           // Redirect to appropriate dashboard based on role
           window.location.href = getDashboardRoute(profile.role);
         }
@@ -64,7 +54,14 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center py-12 px-4 relative overflow-hidden">
+      {/* Background spotlight effects */}
+      <div className="absolute inset-0">
+        <div className="spotlight spotlight-1"></div>
+        <div className="spotlight spotlight-2"></div>
+        <div className="spotlight spotlight-3"></div>
+      </div>
+      
       <div className="max-w-md w-full">
         
         {/* Back to Homepage */}
@@ -77,11 +74,11 @@ const Login: React.FC = () => {
         </button>
 
         {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="glass rounded-2xl shadow-2xl p-8 relative z-10">
           
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-gradient-to-r from-blue-100 to-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <Lock className="h-8 w-8 text-blue-600" />
             </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
@@ -112,7 +109,7 @@ const Login: React.FC = () => {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
                   placeholder="Enter your email"
                 />
               </div>
@@ -131,7 +128,7 @@ const Login: React.FC = () => {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
                   placeholder="Enter your password"
                 />
                 <button
@@ -155,7 +152,7 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-6 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all shadow-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -178,17 +175,6 @@ const Login: React.FC = () => {
             </p>
           </div>
 
-          {/* Demo Accounts */}
-          <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm font-medium text-gray-700 mb-2">Demo Accounts:</p>
-            <div className="text-xs text-gray-600 space-y-1">
-              <p><strong>Admin:</strong> admin@absstitch.com</p>
-              <p><strong>Sales Rep:</strong> sales@absstitch.com</p>
-              <p><strong>Designer:</strong> designer@absstitch.com</p>
-              <p><strong>Customer:</strong> customer@absstitch.com</p>
-              <p className="text-gray-500 mt-2">Password: demo123 (for all demo accounts)</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>

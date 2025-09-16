@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, MessageCircle, Send, Calendar, User, Package, FileText } from 'lucide-react';
-import { getTempCurrentUser } from '../lib/auth';
+import { getCurrentUser, getUserProfile } from '../lib/supabase';
 
 interface OrderDetailsModalProps {
   isOpen: boolean;
@@ -16,7 +16,27 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
   onAddComment 
 }) => {
   const [newComment, setNewComment] = useState('');
-  const currentUser = getTempCurrentUser();
+  const [currentUser, setCurrentUser] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const user = await getCurrentUser();
+        if (user) {
+          const profile = await getUserProfile(user.id);
+          if (profile) {
+            setCurrentUser(profile);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking user:', error);
+      }
+    };
+    
+    if (isOpen) {
+      checkUser();
+    }
+  }, [isOpen]);
 
   const handleAddComment = (e: React.FormEvent) => {
     e.preventDefault();

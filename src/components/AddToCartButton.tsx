@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
-import { getTempCurrentUser } from '../lib/auth';
+import { getCurrentUser } from '../lib/supabase';
 
 interface AddToCartButtonProps {
   item: {
@@ -16,9 +16,9 @@ interface AddToCartButtonProps {
 
 const AddToCartButton: React.FC<AddToCartButtonProps> = ({ item, className = "" }) => {
   const { addToCart } = useCart();
-  const currentUser = getTempCurrentUser();
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    const currentUser = await getCurrentUser();
     if (!currentUser) {
       // Redirect unauthenticated users to sign-in page
       window.location.href = '/login';

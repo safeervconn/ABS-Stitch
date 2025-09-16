@@ -15,7 +15,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ShoppingBag, User, CreditCard, LogOut, Bell, Plus, Eye, MessageCircle, Download, Package } from 'lucide-react';
-import { tempSignOut, validateUserSession } from '../lib/auth';
+import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
 import { useOrders } from '../contexts/OrderContext';
 import OrderDetailsModal from '../components/OrderDetailsModal';
 import PlaceOrderModal from '../components/PlaceOrderModal';
@@ -31,17 +31,33 @@ const CustomerDashboard: React.FC = () => {
   const customerOrders = getOrdersByRole();
 
   useEffect(() => {
-    // Validate user session and ensure customer role
-    const currentUser = validateUserSession('customer');
-    if (currentUser) {
-      setUser(currentUser);
-    }
-    setLoading(false);
+    const checkUser = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        if (currentUser) {
+          const profile = await getUserProfile(currentUser.id);
+          if (profile && profile.role === 'customer') {
+            setUser(profile);
+          } else {
+            window.location.href = '/login';
+          }
+        } else {
+          window.location.href = '/login';
+        }
+      } catch (error) {
+        console.error('Error checking user:', error);
+        window.location.href = '/login';
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    checkUser();
   }, []);
 
   const handleSignOut = async () => {
     try {
-      tempSignOut();
+      await signOut();
       window.location.href = '/';
     } catch (error) {
       console.error('Error signing out:', error);
