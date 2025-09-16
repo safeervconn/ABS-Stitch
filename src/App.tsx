@@ -92,11 +92,6 @@ const Homepage: React.FC = () => {
 };
 
 function App() {
-  React.useEffect(() => {
-    // Initialize demo users when the app starts
-    initializeDemoUsers().catch(console.error);
-  }, []);
-
   return (
     <CartProvider>
       <OrderProvider>
