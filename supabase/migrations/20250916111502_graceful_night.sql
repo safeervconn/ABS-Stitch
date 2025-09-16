@@ -137,19 +137,19 @@ ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE order_comments ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for user_profiles
-CREATE POLICY "Users can read own profile"
+create policy if not exists"Users can read own profile"
   ON user_profiles
   FOR SELECT
   TO authenticated
   USING (auth.uid() = id);
 
-CREATE POLICY "Users can update own profile"
+create policy if not exists"Users can update own profile"
   ON user_profiles
   FOR UPDATE
   TO authenticated
   USING (auth.uid() = id);
 
-CREATE POLICY "Admins can read all profiles"
+create policy if not exists"Admins can read all profiles"
   ON user_profiles
   FOR SELECT
   TO authenticated
@@ -161,13 +161,13 @@ CREATE POLICY "Admins can read all profiles"
   );
 
 -- RLS Policies for customers
-CREATE POLICY "Customers can read own data"
+create policy if not exists"Customers can read own data"
   ON customers
   FOR SELECT
   TO authenticated
   USING (auth.uid() = id);
 
-CREATE POLICY "Sales reps can read assigned customers"
+create policy if not exists"Sales reps can read assigned customers"
   ON customers
   FOR SELECT
   TO authenticated
@@ -180,13 +180,13 @@ CREATE POLICY "Sales reps can read assigned customers"
   );
 
 -- RLS Policies for sales_reps
-CREATE POLICY "Sales reps can read own data"
+create policy if not exists"Sales reps can read own data"
   ON sales_reps
   FOR SELECT
   TO authenticated
   USING (auth.uid() = id);
 
-CREATE POLICY "Admins can read all sales reps"
+create policy if not exists"Admins can read all sales reps"
   ON sales_reps
   FOR SELECT
   TO authenticated
@@ -198,13 +198,13 @@ CREATE POLICY "Admins can read all sales reps"
   );
 
 -- RLS Policies for designers
-CREATE POLICY "Designers can read own data"
+create policy if not exists"Designers can read own data"
   ON designers
   FOR SELECT
   TO authenticated
   USING (auth.uid() = id);
 
-CREATE POLICY "Admins and sales reps can read all designers"
+create policy if not exists"Admins and sales reps can read all designers"
   ON designers
   FOR SELECT
   TO authenticated
@@ -216,13 +216,13 @@ CREATE POLICY "Admins and sales reps can read all designers"
   );
 
 -- RLS Policies for products
-CREATE POLICY "Anyone can read active products"
+create policy if not exists"Anyone can read active products"
   ON products
   FOR SELECT
   TO authenticated
   USING (is_active = true);
 
-CREATE POLICY "Admins and designers can manage products"
+create policy if not exists"Admins and designers can manage products"
   ON products
   FOR ALL
   TO authenticated
@@ -234,7 +234,7 @@ CREATE POLICY "Admins and designers can manage products"
   );
 
 -- RLS Policies for orders
-CREATE POLICY "Customers can read own orders"
+create policy if not exists"Customers can read own orders"
   ON orders
   FOR SELECT
   TO authenticated
@@ -248,13 +248,13 @@ CREATE POLICY "Customers can read own orders"
     )
   );
 
-CREATE POLICY "Customers can create orders"
+create policy if not exists"Customers can create orders"
   ON orders
   FOR INSERT
   TO authenticated
   WITH CHECK (customer_id = auth.uid());
 
-CREATE POLICY "Sales reps and admins can update orders"
+create policy if not exists"Sales reps and admins can update orders"
   ON orders
   FOR UPDATE
   TO authenticated
@@ -268,7 +268,7 @@ CREATE POLICY "Sales reps and admins can update orders"
   );
 
 -- RLS Policies for order_items
-CREATE POLICY "Users can read order items for accessible orders"
+create policy if not exists"Users can read order items for accessible orders"
   ON order_items
   FOR SELECT
   TO authenticated
@@ -289,7 +289,7 @@ CREATE POLICY "Users can read order items for accessible orders"
   );
 
 -- RLS Policies for order_comments
-CREATE POLICY "Users can read comments for accessible orders"
+create policy if not exists"Users can read comments for accessible orders"
   ON order_comments
   FOR SELECT
   TO authenticated
@@ -309,7 +309,7 @@ CREATE POLICY "Users can read comments for accessible orders"
     )
   );
 
-CREATE POLICY "Users can create comments for accessible orders"
+create policy if not exists"Users can create comments for accessible orders"
   ON order_comments
   FOR INSERT
   TO authenticated
