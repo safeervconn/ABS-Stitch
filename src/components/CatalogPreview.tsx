@@ -73,10 +73,10 @@ const CatalogPreview: React.FC = () => {
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-4">
-            Ready-Made Digital Artwork
+            Ready-Made Embroidery Designs
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Browse our collection of professionally designed digital artwork, ready for immediate download and use.
+            Browse our collection of professionally designed embroidery patterns, ready for immediate stitching.
           </p>
         </div>
 
@@ -138,7 +138,7 @@ const CatalogPreview: React.FC = () => {
             onClick={() => window.location.href = '/catalog'}
             className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg font-semibold"
           >
-            View All Artwork
+            View All Designs
           </button>
         </div>
       </div>

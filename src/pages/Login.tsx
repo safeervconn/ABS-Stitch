@@ -11,7 +11,8 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
-import { tempLogin, getDashboardRoute } from '../lib/auth';
+import { signIn, getUserProfile } from '../lib/supabase';
+import { getDashboardRoute } from '../lib/auth';
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -34,11 +35,24 @@ const Login: React.FC = () => {
     setError('');
 
     try {
-      const user = await tempLogin(formData.email, formData.password);
+      const { user } = await signIn(formData.email, formData.password);
       
       if (user) {
-        // Redirect to appropriate dashboard based on role
-        window.location.href = getDashboardRoute(user.role);
+        // Get user profile to determine role
+        const profile = await getUserProfile(user.id);
+        if (profile) {
+          // Store user session
+          localStorage.setItem('supabase_user_session', JSON.stringify({
+            id: user.id,
+            email: user.email,
+            full_name: profile.full_name,
+            role: profile.role,
+            avatar_url: profile.avatar_url
+          }));
+          
+          // Redirect to appropriate dashboard based on role
+          window.location.href = getDashboardRoute(profile.role);
+        }
       } else {
         setError('Invalid email or password. Please try again.');
       }
@@ -71,7 +85,7 @@ const Login: React.FC = () => {
               <Lock className="h-8 w-8 text-blue-600" />
             </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
-            <p className="text-gray-600">Sign in to your ArtistryDigital account</p>
+            <p className="text-gray-600">Sign in to your ABS STITCH account</p>
           </div>
 
           {/* Error Message */}
@@ -168,9 +182,10 @@ const Login: React.FC = () => {
           <div className="mt-8 p-4 bg-gray-50 rounded-lg">
             <p className="text-sm font-medium text-gray-700 mb-2">Demo Accounts:</p>
             <div className="text-xs text-gray-600 space-y-1">
-              <p><strong>Admin:</strong> admin@artistrydigital.com</p>
-              <p><strong>Sales Rep:</strong> sales@artistrydigital.com</p>
-              <p><strong>Designer:</strong> designer@artistrydigital.com</p>
+              <p><strong>Admin:</strong> admin@absstitch.com</p>
+              <p><strong>Sales Rep:</strong> sales@absstitch.com</p>
+              <p><strong>Designer:</strong> designer@absstitch.com</p>
+              <p><strong>Customer:</strong> customer@absstitch.com</p>
               <p className="text-gray-500 mt-2">Password: demo123 (for all demo accounts)</p>
             </div>
           </div>

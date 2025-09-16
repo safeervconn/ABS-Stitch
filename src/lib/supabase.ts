@@ -1,14 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Create a mock client when not using real Supabase
-const isSupabaseConfigured = supabaseUrl !== 'https://placeholder.supabase.co' && supabaseAnonKey !== 'placeholder-key';
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables. Please check your .env file.');
+}
 
-export const supabase = isSupabaseConfigured 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Database types
 export interface UserProfile {
@@ -74,19 +73,6 @@ export const signUp = async (email: string, password: string, userData: {
   role?: 'customer' | 'sales_rep' | 'designer';
   phone?: string;
 }) => {
-  if (!supabase) {
-    // Mock response for development
-    return {
-      data: {
-        user: {
-          id: 'mock-user-id',
-          email,
-          user_metadata: userData
-        }
-      }
-    };
-  }
-  
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -100,18 +86,6 @@ export const signUp = async (email: string, password: string, userData: {
 };
 
 export const signIn = async (email: string, password: string) => {
-  if (!supabase) {
-    // Mock response for development
-    return {
-      data: {
-        user: {
-          id: 'mock-user-id',
-          email
-        }
-      }
-    };
-  }
-  
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password
@@ -122,40 +96,16 @@ export const signIn = async (email: string, password: string) => {
 };
 
 export const signOut = async () => {
-  if (!supabase) {
-    // Mock response for development
-    return;
-  }
-  
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
 };
 
 export const getCurrentUser = async () => {
-  if (!supabase) {
-    // Mock response for development
-    return null;
-  }
-  
   const { data: { user } } = await supabase.auth.getUser();
   return user;
 };
 
 export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
-  if (!supabase) {
-    // Mock response for development
-    return {
-      id: userId,
-      email: 'mock@example.com',
-      full_name: 'Mock User',
-      role: 'customer',
-      is_active: true,
-      notification_preferences: { email: true, push: true },
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-  }
-  
   const { data, error } = await supabase
     .from('user_profiles')
     .select('*')
@@ -167,16 +117,6 @@ export const getUserProfile = async (userId: string): Promise<UserProfile | null
 };
 
 export const createUserProfile = async (profile: Partial<UserProfile>) => {
-  if (!supabase) {
-    // Mock response for development
-    return {
-      id: 'mock-user-id',
-      ...profile,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-  }
-  
   const { data, error } = await supabase
     .from('user_profiles')
     .insert([profile])
@@ -185,4 +125,109 @@ export const createUserProfile = async (profile: Partial<UserProfile>) => {
   
   if (error) throw error;
   return data;
+};
+
+// Initialize demo users in Supabase
+export const initializeDemoUsers = async () => {
+  const demoUsers = [
+    {
+      email: 'admin@absstitch.com',
+      password: 'demo123',
+      full_name: 'System Administrator',
+      role: 'admin' as const
+    },
+    {
+      email: 'sales@absstitch.com',
+      password: 'demo123',
+      full_name: 'John Sales',
+      role: 'sales_rep' as const
+    },
+    {
+      email: 'designer@absstitch.com',
+      password: 'demo123',
+      full_name: 'Jane Designer',
+      role: 'designer' as const
+    },
+    {
+      email: 'customer@absstitch.com',
+      password: 'demo123',
+      full_name: 'Sarah Johnson',
+      role: 'customer' as const
+    }
+  ];
+
+  for (const user of demoUsers) {
+    try {
+      // Check if user already exists
+      const { data: existingProfile } = await supabase
+        .from('user_profiles')
+        .select('id')
+        .eq('email', user.email)
+        .single();
+
+      if (!existingProfile) {
+        // Sign up the user
+        const { data: authData, error: signUpError } = await supabase.auth.signUp({
+          email: user.email,
+          password: user.password,
+          options: {
+            data: {
+              full_name: user.full_name,
+              role: user.role
+            }
+          }
+        });
+
+        if (signUpError) {
+          console.error(`Error creating user ${user.email}:`, signUpError);
+          continue;
+        }
+
+        if (authData.user) {
+          // Create user profile
+          await createUserProfile({
+            id: authData.user.id,
+            email: user.email,
+            full_name: user.full_name,
+            role: user.role,
+            is_active: true,
+            notification_preferences: { email: true, push: true }
+          });
+
+          // Create role-specific records
+          if (user.role === 'customer') {
+            await supabase.from('customers').insert({
+              id: authData.user.id,
+              total_orders: 0,
+              total_spent: 0
+            });
+          } else if (user.role === 'sales_rep') {
+            await supabase.from('sales_reps').insert({
+              id: authData.user.id,
+              employee_id: 'SR001',
+              department: 'Sales',
+              commission_rate: 10.0,
+              total_sales: 0,
+              active_customers: 0
+            });
+          } else if (user.role === 'designer') {
+            await supabase.from('designers').insert({
+              id: authData.user.id,
+              employee_id: 'DS001',
+              specialties: ['Embroidery', 'Logo Stitching'],
+              hourly_rate: 50.0,
+              total_completed: 0,
+              average_rating: 0
+            });
+          }
+
+          console.log(`Demo user created: ${user.email}`);
+        }
+      } else {
+        console.log(`Demo user already exists: ${user.email}`);
+      }
+    } catch (error) {
+      console.error(`Error processing user ${user.email}:`, error);
+    }
+  }
 };

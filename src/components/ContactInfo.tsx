@@ -55,7 +55,7 @@ const ContactInfo: React.FC = () => {
               href="mailto:hello@artistrydigital.com" 
               className="text-gray-800 hover:text-blue-600 transition-colors"
             >
-              hello@artistrydigital.com
+              hello@absstitch.com
             </a>
           </div>
         </div>

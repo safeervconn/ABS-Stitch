@@ -26,10 +26,10 @@ const About: React.FC = () => {
           </button>
           
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
-            About ArtistryDigital
+            About ABS STITCH
           </h1>
           <p className="text-xl text-blue-100">
-            We're passionate about transforming creative ideas into stunning digital artwork that makes an impact
+            We're passionate about transforming creative ideas into stunning custom embroidery that makes an impact
           </p>
         </div>
       </div>
@@ -42,17 +42,17 @@ const About: React.FC = () => {
             <h3 className="text-2xl font-bold text-gray-800 mb-6">Our Story</h3>
             <div className="space-y-4 text-gray-600 leading-relaxed">
               <p>
-                Founded in 2020, ArtistryDigital began as a small creative studio with a simple mission: 
-                to make professional digital artwork accessible to businesses and individuals of all sizes.
+                Founded in 2020, ABS STITCH began as a small embroidery studio with a simple mission: 
+                to make professional custom stitching accessible to businesses and individuals of all sizes.
               </p>
               <p>
                 What started as a passion project has grown into a trusted partner for hundreds of clients 
-                worldwide. We've helped startups create their first logos, assisted established businesses 
-                in rebranding, and brought countless creative visions to life.
+                worldwide. We've helped startups create their first embroidered logos, assisted established businesses 
+                in custom branding, and brought countless creative visions to life through precision stitching.
               </p>
               <p>
-                Our team combines artistic talent with technical expertise to deliver artwork that not only 
-                looks amazing but also serves its intended purpose perfectly.
+                Our team combines artistic talent with technical expertise to deliver embroidery that not only 
+                looks amazing but also stands the test of time with superior quality.
               </p>
             </div>
           </div>
@@ -61,7 +61,7 @@ const About: React.FC = () => {
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8">
             <h3 className="text-2xl font-bold text-gray-800 mb-6">Our Mission</h3>
             <p className="text-gray-600 mb-6 leading-relaxed">
-              To empower businesses and individuals with exceptional digital artwork that communicates 
+              To empower businesses and individuals with exceptional custom embroidery that communicates 
               their unique story and helps them stand out in a crowded marketplace.
             </p>
             
@@ -90,7 +90,7 @@ const About: React.FC = () => {
 
         {/* Why Choose Us */}
         <div className="text-center mb-8">
-          <h3 className="text-2xl font-bold text-gray-800 mb-8">Why Choose ArtistryDigital?</h3>
+          <h3 className="text-2xl font-bold text-gray-800 mb-8">Why Choose ABS STITCH?</h3>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 mb-16">
@@ -110,7 +110,7 @@ const About: React.FC = () => {
             </div>
             <h4 className="text-xl font-bold text-gray-800 mb-3">Professional Quality</h4>
             <p className="text-gray-600">
-              High-resolution, print-ready artwork created by experienced designers.
+              High-quality, durable embroidery created by experienced craftspeople.
             </p>
           </div>
 

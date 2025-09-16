@@ -16,7 +16,7 @@
 const TEMP_USERS = [
   {
     id: 'admin-001',
-    email: 'admin@artistrydigital.com',
+    email: 'admin@absstitch.com',
     password: 'demo123',
     full_name: 'System Administrator',
     role: 'admin',
@@ -24,7 +24,7 @@ const TEMP_USERS = [
   },
   {
     id: 'sales-001',
-    email: 'sales@artistrydigital.com',
+    email: 'sales@absstitch.com',
     password: 'demo123',
     full_name: 'John Sales',
     role: 'sales_rep',
@@ -32,7 +32,7 @@ const TEMP_USERS = [
   },
   {
     id: 'designer-001',
-    email: 'designer@artistrydigital.com',
+    email: 'designer@absstitch.com',
     password: 'demo123',
     full_name: 'Jane Designer',
     role: 'designer',
@@ -40,7 +40,7 @@ const TEMP_USERS = [
   },
   {
     id: 'customer-001',
-    email: 'customer@example.com',
+    email: 'customer@absstitch.com',
     password: 'demo123',
     full_name: 'Sarah Johnson',
     role: 'customer',

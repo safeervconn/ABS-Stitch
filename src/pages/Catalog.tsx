@@ -195,10 +195,10 @@ const Catalog: React.FC = () => {
           </button>
           
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
-            Digital Artwork Catalog
+            Embroidery Design Catalog
           </h1>
           <p className="text-xl text-blue-100">
-            Browse our complete collection of professional digital artwork
+            Browse our complete collection of professional embroidery designs
           </p>
         </div>
       </div>
@@ -212,7 +212,7 @@ const Catalog: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               <input
                 type="text"
-                placeholder="Search artwork..."
+                placeholder="Search designs..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

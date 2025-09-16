@@ -11,7 +11,7 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Eye, EyeOff, User, Mail, Phone, AlertCircle, CheckCircle } from 'lucide-react';
-import { signUp, createUserProfile } from '../lib/supabase';
+import { signUp, createUserProfile, supabase } from '../lib/supabase';
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -120,6 +120,33 @@ const Signup: React.FC = () => {
           notification_preferences: { email: true, push: true }
         });
 
+        // Create role-specific records
+        if (formData.role === 'customer') {
+          await supabase.from('customers').insert({
+            id: user.id,
+            company_name: formData.company_name || null,
+            total_orders: 0,
+            total_spent: 0
+          });
+        } else if (formData.role === 'sales_rep') {
+          await supabase.from('sales_reps').insert({
+            id: user.id,
+            employee_id: `SR${Date.now()}`,
+            department: 'Sales',
+            commission_rate: 10.0,
+            total_sales: 0,
+            active_customers: 0
+          });
+        } else if (formData.role === 'designer') {
+          await supabase.from('designers').insert({
+            id: user.id,
+            employee_id: `DS${Date.now()}`,
+            specialties: ['Embroidery', 'Custom Stitching'],
+            hourly_rate: 50.0,
+            total_completed: 0,
+            average_rating: 0
+          });
+        }
         setSuccess(true);
       }
     } catch (err: any) {
@@ -175,7 +202,7 @@ const Signup: React.FC = () => {
               <User className="h-8 w-8 text-blue-600" />
             </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h1>
-            <p className="text-gray-600">Join ArtistryDigital today</p>
+            <p className="text-gray-600">Join ABS STITCH today</p>
           </div>
 
           {/* Error Message */}

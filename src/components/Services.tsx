@@ -16,22 +16,22 @@ const Services: React.FC = () => {
   const services = [
     {
       id: 1,
-      title: "Custom T-Shirt Designs",
-      description: "Unique designs tailored to your vision and brand",
+      title: "Custom Embroidery",
+      description: "Precision embroidery tailored to your vision and brand",
       icon: Shirt,
       color: "from-blue-500 to-cyan-500"
     },
     {
       id: 2,
-      title: "Logo & Brand Identity",
-      description: "Professional logos that represent your business",
+      title: "Logo Stitching",
+      description: "Professional logo embroidery that represents your business",
       icon: Award,
       color: "from-purple-600 to-pink-600"
     },
     {
       id: 3,
-      title: "Digital Illustrations",
-      description: "Custom artwork for any purpose or platform",
+      title: "Apparel Customization",
+      description: "Custom stitching for any garment or textile",
       icon: Palette,
       color: "from-green-600 to-emerald-600"
     },
@@ -68,7 +68,7 @@ const Services: React.FC = () => {
             Our Services
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            We offer comprehensive digital artwork services to bring your creative vision to life
+            We offer comprehensive embroidery and stitching services to bring your creative vision to life
           </p>
         </div>
 

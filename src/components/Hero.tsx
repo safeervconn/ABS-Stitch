@@ -28,15 +28,15 @@ const Hero: React.FC = () => {
           </div>
           
           <h1 className="text-4xl md:text-6xl font-extrabold text-gray-800 mb-6">
-            Transform Your Ideas Into
-            <span className="text-blue-600 block">Digital Masterpieces</span>
+            Where We Stitch
+            <span className="text-blue-600 block">Perfection!</span>
           </h1>
 
           {/* Description */}
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            We specialize in creating stunning digital artwork for apparel, marketing materials, 
-            and personal projects. Submit your vision and watch it come to life, or browse our 
-            collection of ready-made designs.
+            We specialize in creating stunning custom embroidery and stitching for apparel, 
+            promotional items, and personal projects. Submit your vision and watch it come to life 
+            with our precision stitching services.
           </p>
 
           {/* Call to Action Buttons */}

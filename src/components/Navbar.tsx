@@ -12,7 +12,8 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Palette, User, Settings, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react';
 import CartDropdown from './CartDropdown';
-import { getTempCurrentUser, tempSignOut, getDashboardRoute } from '../lib/auth';
+import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
+import { getDashboardRoute } from '../lib/auth';
 
 const Navbar: React.FC = () => {
   // State to control mobile menu visibility
@@ -22,14 +23,42 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     // Check for current user on component mount
-    const user = getTempCurrentUser();
-    setCurrentUser(user);
+    const checkUser = async () => {
+      try {
+        const user = await getCurrentUser();
+        if (user) {
+          const profile = await getUserProfile(user.id);
+          if (profile) {
+            setCurrentUser({
+              id: user.id,
+              email: user.email,
+              full_name: profile.full_name,
+              role: profile.role,
+              avatar_url: profile.avatar_url
+            });
+          }
+        }
+      } catch (error) {
+        // Check localStorage for session
+        const session = localStorage.getItem('supabase_user_session');
+        if (session) {
+          setCurrentUser(JSON.parse(session));
+        }
+      }
+    };
+    
+    checkUser();
   }, []);
 
-  const handleSignOut = () => {
-    tempSignOut();
-    setCurrentUser(null);
-    window.location.href = '/';
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      localStorage.removeItem('supabase_user_session');
+      setCurrentUser(null);
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   // Check if cart should be visible (only for customers on relevant pages)
@@ -52,7 +81,7 @@ const Navbar: React.FC = () => {
               <Palette className="h-6 w-6 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              ArtistryDigital
+              ABS STITCH
             </span>
           </div>
 

@@ -26,10 +26,10 @@ const Footer: React.FC = () => {
               <div className="bg-blue-600 p-2 rounded-lg">
                 <Palette className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">ArtistryDigital</span>
+              <span className="text-xl font-bold text-white">ABS STITCH</span>
             </div>
             <p className="text-gray-400 mb-4 leading-relaxed">
-              Transforming your creative vision into stunning digital artwork for apparel, marketing, and personal projects.
+              Where We Stitch Perfection! Transforming your creative vision into stunning custom embroidery and stitching for apparel, promotional items, and personal projects.
             </p>
             <div className="flex space-x-4">
               {/* Social media links would go here */}
@@ -62,13 +62,13 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">Our Services</h3>
             <ul className="space-y-2">
-              <li>Custom T-Shirt Designs</li>
-              <li>Logo & Brand Identity</li>
-              <li>Digital Illustrations</li>
-              <li>Apparel Graphics</li>
-              <li>Marketing Materials</li>
-              <li>Icon & Symbol Design</li>
-              <li>Print-Ready Artwork</li>
+              <li>Custom Embroidery</li>
+              <li>Logo Stitching</li>
+              <li>Apparel Customization</li>
+              <li>Promotional Items</li>
+              <li>Corporate Branding</li>
+              <li>Patches & Badges</li>
+              <li>Monogramming</li>
               <li>Design Consultations</li>
             </ul>
           </div>
@@ -83,7 +83,7 @@ const Footer: React.FC = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-4 w-4 text-blue-400" />
-                <span>hello@artistrydigital.com</span>
+                <span>hello@absstitch.com</span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="h-4 w-4 text-blue-400" />
@@ -104,7 +104,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 pt-6">
           <div className="md:flex justify-between items-center">
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
-              © 2025 ArtistryDigital. All rights reserved.
+              © 2025 ABS STITCH. All rights reserved.
             </p>
             <div className="flex space-x-6 text-sm">
               <a href="#" className="hover:text-blue-400 transition-colors">Privacy Policy</a>
