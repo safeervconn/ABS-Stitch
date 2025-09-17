@@ -9,62 +9,28 @@
  */
 
 import React from 'react';
-import { Eye, Star } from 'lucide-react';
+import { Star, Loader } from 'lucide-react';
 import AddToCartButton from './AddToCartButton';
+import { getProducts } from '../lib/supabase';
 
 const CatalogPreview: React.FC = () => {
+  const [products, setProducts] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
 
-  // Sample artwork data - in a real app, this would come from an API
-  const sampleArtwork = [
-    {
-      id: 1,
-      title: "Abstract Waves",
-      category: "Digital Art",
-      price: "$25",
-      rating: 5,
-      image: "https://images.pexels.com/photos/1269968/pexels-photo-1269968.jpeg?auto=compress&cs=tinysrgb&w=400"
-    },
-    {
-      id: 2,
-      title: "Geometric Patterns",
-      category: "T-Shirt Design",
-      price: "$30",
-      rating: 5,
-      image: "https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=400"
-    },
-    {
-      id: 3,
-      title: "Nature Inspired",
-      category: "Logo Design",
-      price: "$35",
-      rating: 4,
-      image: "https://images.pexels.com/photos/1070534/pexels-photo-1070534.jpeg?auto=compress&cs=tinysrgb&w=400"
-    },
-    {
-      id: 4,
-      title: "Minimalist Icons",
-      category: "Icon Set",
-      price: "$20",
-      rating: 5,
-      image: "https://images.pexels.com/photos/1194713/pexels-photo-1194713.jpeg?auto=compress&cs=tinysrgb&w=400"
-    },
-    {
-      id: 5,
-      title: "Vintage Typography",
-      category: "T-Shirt Design",
-      price: "$28",
-      rating: 4,
-      image: "https://images.pexels.com/photos/1070542/pexels-photo-1070542.jpeg?auto=compress&cs=tinysrgb&w=400"
-    },
-    {
-      id: 6,
-      title: "Modern Landscapes",
-      category: "Wall Art",
-      price: "$40",
-      rating: 5,
-      image: "https://images.pexels.com/photos/1194775/pexels-photo-1194775.jpeg?auto=compress&cs=tinysrgb&w=400"
-    }
-  ];
+  React.useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await getProducts({ limit: 6 });
+        setProducts(data || []);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   return (
     <section className="py-16 bg-gradient-to-b from-white to-gray-50" id="catalog">
@@ -80,57 +46,82 @@ const CatalogPreview: React.FC = () => {
           </p>
         </div>
 
-        {/* Artwork Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {sampleArtwork.map((artwork) => (
-            <div key={artwork.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-              
-              {/* Artwork Image */}
-              <div className="relative group">
-                <img 
-                  src={artwork.image} 
-                  alt={artwork.title}
-                  className="w-full h-48 object-cover"
-                />
-                
-                {/* Overlay on Hover */}
-              </div>
-
-              {/* Artwork Info */}
-              <div className="p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold text-gray-800">{artwork.title}</h3>
-                  <span className="text-blue-600 font-bold">{artwork.price}</span>
-                </div>
-                
-                <p className="text-gray-500 text-sm mb-3">{artwork.category}</p>
-                
-                {/* Rating */}
-                <div className="flex items-center space-x-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star 
-                      key={i} 
-                      className={`h-4 w-4 ${i < artwork.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                    />
-                  ))}
-                  <span className="text-gray-500 text-sm ml-2">({artwork.rating}.0)</span>
-                </div>
-                
-                {/* Add to Cart Button */}
-                <AddToCartButton
-                  item={{
-                    id: artwork.id.toString(),
-                    title: artwork.title,
-                    price: artwork.price,
-                    image: artwork.image,
-                    category: artwork.category
-                  }}
-                  className="w-full mt-3 text-sm"
-                />
-              </div>
+        {/* Loading State */}
+        {loading && (
+          <div className="flex items-center justify-center py-16">
+            <div className="text-center">
+              <Loader className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+              <p className="text-gray-600 font-medium">Loading designs...</p>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
+
+        {/* Products Grid */}
+        {!loading && (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {products.map((product) => (
+              <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                
+                {/* Product Image */}
+                <div className="relative group">
+                  <img 
+                    src={product.image_url} 
+                    alt={product.title}
+                    className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=400';
+                    }}
+                  />
+                  
+                  {/* Sale Badge */}
+                  {product.original_price && product.original_price > product.price && (
+                    <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
+                      SALE
+                    </div>
+                  )}
+                </div>
+
+                {/* Product Info */}
+                <div className="p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-semibold text-gray-800">{product.title}</h3>
+                    <div className="text-right">
+                      <span className="text-blue-600 font-bold">${product.price.toFixed(2)}</span>
+                      {product.original_price && product.original_price > product.price && (
+                        <span className="text-gray-400 line-through text-sm ml-1">${product.original_price.toFixed(2)}</span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-500 text-sm mb-3">{product.category}</p>
+                  
+                  {/* Rating */}
+                  <div className="flex items-center space-x-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`h-4 w-4 ${i < 5 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                      />
+                    ))}
+                    <span className="text-gray-500 text-sm ml-2">(5.0)</span>
+                  </div>
+                  
+                  {/* Add to Cart Button */}
+                  <AddToCartButton
+                    item={{
+                      id: product.id,
+                      title: product.title,
+                      price: `$${product.price.toFixed(2)}`,
+                      image: product.image_url,
+                      category: product.category
+                    }}
+                    className="w-full mt-3 text-sm"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* View All Button */}
         <div className="text-center">

@@ -190,3 +190,78 @@ export const createDemoUsers = async () => {
     }
   }
 };
+
+// Product database functions
+export const getProducts = async (filters?: {
+  category?: string;
+  search?: string;
+  sortBy?: string;
+  limit?: number;
+  offset?: number;
+}) => {
+  let query = supabase
+    .from('products')
+    .select('*')
+    .eq('is_active', true);
+
+  // Apply filters
+  if (filters?.category && filters.category !== 'All') {
+    query = query.eq('category', filters.category);
+  }
+
+  if (filters?.search) {
+    query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%,tags.cs.{${filters.search}}`);
+  }
+
+  // Apply sorting
+  switch (filters?.sortBy) {
+    case 'price-low':
+      query = query.order('price', { ascending: true });
+      break;
+    case 'price-high':
+      query = query.order('price', { ascending: false });
+      break;
+    case 'title':
+      query = query.order('title', { ascending: true });
+      break;
+    default:
+      query = query.order('created_at', { ascending: false });
+  }
+
+  // Apply pagination
+  if (filters?.limit) {
+    query = query.limit(filters.limit);
+  }
+  if (filters?.offset) {
+    query = query.range(filters.offset, filters.offset + (filters.limit || 10) - 1);
+  }
+
+  const { data, error } = await query;
+  
+  if (error) throw error;
+  return data;
+};
+
+export const getProductCategories = async () => {
+  const { data, error } = await supabase
+    .from('products')
+    .select('category')
+    .eq('is_active', true);
+  
+  if (error) throw error;
+  
+  const categories = [...new Set(data.map(item => item.category))];
+  return ['All', ...categories];
+};
+
+export const getProductById = async (id: string) => {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('id', id)
+    .eq('is_active', true)
+    .single();
+  
+  if (error) throw error;
+  return data;
+};

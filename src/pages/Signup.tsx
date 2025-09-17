@@ -7,10 +7,11 @@
  * - Password strength indicator
  * - Terms and conditions acceptance
  * - Automatic profile creation
+ * - Matches sign-in page design exactly
  */
 
 import React, { useState } from 'react';
-import { ArrowLeft, Eye, EyeOff, User, Mail, Phone, AlertCircle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, User, Mail, Phone, AlertCircle, CheckCircle, Lock } from 'lucide-react';
 import { signUp, createUserProfile, supabase } from '../lib/supabase';
 
 const Signup: React.FC = () => {
@@ -158,19 +159,26 @@ const Signup: React.FC = () => {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center py-12 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center py-12 px-4 relative overflow-hidden">
+        {/* Background spotlight effects */}
+        <div className="absolute inset-0">
+          <div className="spotlight spotlight-1"></div>
+          <div className="spotlight spotlight-2"></div>
+          <div className="spotlight spotlight-3"></div>
+        </div>
+        
         <div className="max-w-md w-full">
-          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-            <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="glass rounded-2xl shadow-2xl p-8 text-center relative z-10">
+            <div className="bg-gradient-to-r from-green-100 to-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-4">Account Created!</h1>
             <p className="text-gray-600 mb-6">
-              Your account has been successfully created. Please check your email to verify your account before signing in.
+              Your account has been successfully created. You can now sign in to access your dashboard.
             </p>
             <button
               onClick={() => window.location.href = '/login'}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-6 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all shadow-xl font-semibold transform hover:scale-105"
             >
               Go to Login
             </button>
@@ -181,8 +189,15 @@ const Signup: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-12 px-4">
-      <div className="max-w-md mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center py-12 px-4 relative overflow-hidden">
+      {/* Background spotlight effects */}
+      <div className="absolute inset-0">
+        <div className="spotlight spotlight-1"></div>
+        <div className="spotlight spotlight-2"></div>
+        <div className="spotlight spotlight-3"></div>
+      </div>
+      
+      <div className="max-w-md w-full">
         
         {/* Back to Homepage */}
         <button 
@@ -194,11 +209,11 @@ const Signup: React.FC = () => {
         </button>
 
         {/* Signup Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="glass rounded-2xl shadow-2xl p-8 relative z-10">
           
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-gradient-to-r from-blue-100 to-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <User className="h-8 w-8 text-blue-600" />
             </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h1>
@@ -219,7 +234,7 @@ const Signup: React.FC = () => {
             {/* Full Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Full Name *
+                Full Name
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -229,7 +244,7 @@ const Signup: React.FC = () => {
                   required
                   value={formData.full_name}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -238,7 +253,7 @@ const Signup: React.FC = () => {
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address *
+                Email Address
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -248,7 +263,7 @@ const Signup: React.FC = () => {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
                   placeholder="Enter your email"
                 />
               </div>
@@ -266,7 +281,7 @@ const Signup: React.FC = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
                   placeholder="Enter your phone number"
                 />
               </div>
@@ -275,13 +290,13 @@ const Signup: React.FC = () => {
             {/* Role Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Account Type *
+                Account Type
               </label>
               <select
                 name="role"
                 value={formData.role}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
               >
                 <option value="customer">Customer - Browse and order artwork</option>
                 <option value="sales_rep">Sales Representative - Manage customer relationships</option>
@@ -300,7 +315,7 @@ const Signup: React.FC = () => {
                   name="company_name"
                   value={formData.company_name}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
                   placeholder="Enter your company name"
                 />
               </div>
@@ -309,16 +324,17 @@ const Signup: React.FC = () => {
             {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password *
+                Password
               </label>
               <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full px-4 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
                   placeholder="Create a password"
                 />
                 <button
@@ -351,16 +367,17 @@ const Signup: React.FC = () => {
             {/* Confirm Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password *
+                Confirm Password
               </label>
               <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type={showConfirmPassword ? 'text' : 'password'}
                   name="confirmPassword"
                   required
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="w-full px-4 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
                   placeholder="Confirm your password"
                 />
                 <button
@@ -395,7 +412,7 @@ const Signup: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-6 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all shadow-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -417,6 +434,7 @@ const Signup: React.FC = () => {
               </a>
             </p>
           </div>
+
         </div>
       </div>
     </div>
