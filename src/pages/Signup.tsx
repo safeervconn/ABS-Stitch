@@ -21,7 +21,7 @@ const Signup: React.FC = () => {
     phone: '',
     password: '',
     confirmPassword: '',
-    role: 'customer' as 'customer' | 'sales_rep' | 'designer',
+    role: 'customer' as 'customer',
     company_name: '',
     acceptTerms: false
   });
@@ -312,16 +312,10 @@ const Signup: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Account Type
               </label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
-              >
-                <option value="customer">Customer - Browse and order artwork</option>
-                <option value="sales_rep">Sales Representative</option>
-                <option value="designer">Designer</option>
-              </select>
+              <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-700">
+                Customer - Browse and order artwork
+              </div>
+              <input type="hidden" name="role" value="customer" />
               {formData.email === 'admin@absstitch.com' && (
                 <p className="mt-2 text-sm text-blue-600 bg-blue-50 p-2 rounded">
                   <strong>Admin Account:</strong> This email will automatically create an admin account with full system access.
