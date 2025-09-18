@@ -155,16 +155,7 @@ const CatalogPreview: React.FC = () => {
           </div>
         )}
         
-        {/* Always show View All button if no products to encourage catalog visit */}
-        {!loading && products.length === 0 && (
-          <div className="text-center mt-8">
-            <button 
-              onClick={() => window.location.href = '/catalog'}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg font-semibold"
-            >
-              Visit Full Catalog
-            </button>
-          </div>
+        
         )}
       </div>
     </section>
