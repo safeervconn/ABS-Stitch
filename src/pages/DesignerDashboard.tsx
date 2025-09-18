@@ -26,6 +26,7 @@ const DesignerDashboard: React.FC = () => {
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
   
   const { getOrdersByRole, updateOrderStatus, addComment } = useOrders();
+  const { getOrdersByRole, updateOrderStatus } = useOrders();
   const designerOrders = getOrdersByRole();
 
   useEffect(() => {
@@ -91,7 +92,7 @@ const DesignerDashboard: React.FC = () => {
   };
 
   const handleAddComment = (orderId: string, comment: string) => {
-    addComment(orderId, comment);
+    // Comment functionality removed - implement if needed
   };
 
   const getStatusColor = (status: string) => {
@@ -279,7 +280,6 @@ const DesignerDashboard: React.FC = () => {
         isOpen={isOrderDetailsOpen}
         onClose={() => setIsOrderDetailsOpen(false)}
         order={selectedOrder}
-        onAddComment={handleAddComment}
       />
     </div>
   );

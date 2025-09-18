@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
-import { X, MessageCircle, Send, Calendar, User, Package, FileText } from 'lucide-react';
+import { X, Calendar, User, Package, FileText } from 'lucide-react';
 import { getCurrentUser, getUserProfile } from '../lib/supabase';
 
 interface OrderDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   order: any;
-  onAddComment: (orderId: string, comment: string) => void;
 }
 
 const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ 
   isOpen, 
   onClose, 
-  order, 
-  onAddComment 
+  order
 }) => {
-  const [newComment, setNewComment] = useState('');
   const [currentUser, setCurrentUser] = React.useState<any>(null);
 
   React.useEffect(() => {
@@ -37,14 +34,6 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       checkUser();
     }
   }, [isOpen]);
-
-  const handleAddComment = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newComment.trim()) {
-      onAddComment(order.id, newComment.trim());
-      setNewComment('');
-    }
-  };
 
   if (!isOpen || !order) return null;
 
@@ -165,48 +154,6 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   </div>
                 </div>
 
-                {/* Comments Section */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Comments</h3>
-                  <div className="space-y-4">
-                    {order.comments && order.comments.length > 0 ? (
-                      order.comments.map((comment: any, index: number) => (
-                        <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium text-gray-800">{comment.author}</span>
-                            <span className="text-sm text-gray-500">{comment.date}</span>
-                          </div>
-                          <p className="text-gray-700">{comment.text}</p>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-gray-500 text-center py-4">No comments yet</p>
-                    )}
-                  </div>
-
-                  {/* Add Comment Form */}
-                  <form onSubmit={handleAddComment} className="mt-4">
-                    <div className="flex space-x-3">
-                      <div className="flex-1">
-                        <textarea
-                          value={newComment}
-                          onChange={(e) => setNewComment(e.target.value)}
-                          placeholder="Add a comment..."
-                          rows={3}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </div>
-                      <button
-                        type="submit"
-                        disabled={!newComment.trim()}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-                      >
-                        <Send className="h-4 w-4" />
-                        <span>Send</span>
-                      </button>
-                    </div>
-                  </form>
-                </div>
               </div>
 
               {/* Sidebar */}

@@ -21,13 +21,6 @@ export interface Order {
   customWidth?: string;
   customHeight?: string;
   designInstructions?: string;
-  comments: Array<{
-    id: string;
-    author: string;
-    authorId: string;
-    text: string;
-    date: string;
-  }>;
 }
 
 interface OrderContextType {
@@ -35,7 +28,6 @@ interface OrderContextType {
   addOrder: (orderData: any) => void;
   updateOrderStatus: (orderId: string, status: Order['status']) => void;
   assignDesigner: (orderId: string, designerId: string, designerName: string) => void;
-  addComment: (orderId: string, comment: string) => void;
   getOrdersByRole: () => Order[];
 }
 
@@ -145,7 +137,6 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         email: order.customer?.user_profiles?.email || '',
         phone: order.customer?.user_profiles?.phone || '',
         designInstructions: order.custom_instructions,
-        comments: [] // Would need separate query for comments
       }));
       
       setOrders(transformedOrders);
@@ -179,32 +170,6 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       .then(() => fetchOrders());
   };
 
-  const addComment = async (orderId: string, comment: string) => {
-    try {
-      const user = await getCurrentUser();
-      if (!user) return;
-      
-      const profile = await getUserProfile(user.id);
-      if (!profile) return;
-
-      // Add comment to database
-      const { error } = await supabase
-        .from('order_comments')
-        .insert({
-          order_id: orderId,
-          author_id: profile.id,
-          comment_text: comment
-        });
-
-      if (error) throw error;
-      
-      // Refresh orders to get updated comments
-      await fetchOrders();
-    } catch (error) {
-      console.error('Error adding comment:', error);
-    }
-  };
-
   const getOrdersByRole = (): Order[] => {
     return orders; // Orders are already filtered by role in fetchOrders
   };
@@ -214,7 +179,6 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     addOrder,
     updateOrderStatus,
     assignDesigner,
-    addComment,
     getOrdersByRole
   };
 

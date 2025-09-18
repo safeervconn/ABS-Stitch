@@ -28,6 +28,7 @@ const CustomerDashboard: React.FC = () => {
   const [isPlaceOrderOpen, setIsPlaceOrderOpen] = useState(false);
   
   const { getOrdersByRole, addOrder, addComment } = useOrders();
+  const { getOrdersByRole, addOrder } = useOrders();
   const customerOrders = getOrdersByRole();
 
   useEffect(() => {
@@ -95,7 +96,7 @@ const CustomerDashboard: React.FC = () => {
   };
 
   const handleAddComment = (orderId: string, comment: string) => {
-    addComment(orderId, comment);
+    // Comment functionality removed - implement if needed
   };
 
   const getStatusColor = (status: string) => {
@@ -277,7 +278,6 @@ const CustomerDashboard: React.FC = () => {
         isOpen={isOrderDetailsOpen}
         onClose={() => setIsOrderDetailsOpen(false)}
         order={selectedOrder}
-        onAddComment={handleAddComment}
       />
 
       {/* Place Order Modal */}

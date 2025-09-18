@@ -86,7 +86,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleAddComment = (orderId: string, comment: string) => {
-    addComment(orderId, comment);
+    // Comment functionality removed - implement if needed
   };
 
   const getStatusColor = (status: string) => {
@@ -245,7 +245,6 @@ const AdminDashboard: React.FC = () => {
         isOpen={isOrderDetailsOpen}
         onClose={() => setIsOrderDetailsOpen(false)}
         order={selectedOrder}
-        onAddComment={handleAddComment}
       />
     </div>
   );

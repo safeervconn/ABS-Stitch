@@ -79,8 +79,7 @@ export const signUp = async (email: string, password: string, userData: {
     email,
     password,
     options: {
-      data: userData,
-      emailRedirectTo: undefined // Disable email confirmation for development
+      data: userData
     }
   });
   
@@ -235,39 +234,3 @@ export const getProductById = async (id: string) => {
   }
   return data;
 };
-
-// Development helper functions
-export const testConnection = async () => {
-  try {
-    const { data, error } = await supabase
-      .from('user_profiles')
-      .select('count')
-      .limit(1);
-    
-    if (error) {
-      console.error('Database connection test failed:', error);
-      return false;
-    }
-    
-    console.log('Database connection successful');
-    return true;
-  } catch (err) {
-    console.error('Database connection test error:', err);
-    return false;
-  }
-};
-
-// Get all demo users (for development/testing)
-export const getDemoUsers = async () => {
-  const { data, error } = await supabase
-    .from('user_profiles')
-    .select('*')
-    .order('role');
-  
-  if (error) {
-    console.error('Error fetching demo users:', error);
-    return [];
-  }
-  
-  return data;
-}
