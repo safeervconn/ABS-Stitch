@@ -147,25 +147,25 @@ export const getDashboardRoute = (role: string): string => {
 export const createDemoUsers = async () => {
   const demoUsers = [
     {
-      email: 'admin@absstitch.com',
+      email: 'admin@gmail.com',
       password: 'SecureAdmin123!',
       full_name: 'System Administrator',
       role: 'admin' as const
     },
     {
-      email: 'sales@absstitch.com',
+      email: 'sales@gmail.com',
       password: 'SecureSales123!',
       full_name: 'John Sales',
       role: 'sales_rep' as const
     },
     {
-      email: 'designer@absstitch.com',
+      email: 'designer@gmail.com',
       password: 'SecureDesign123!',
       full_name: 'Jane Designer',
       role: 'designer' as const
     },
     {
-      email: 'customer@absstitch.com',
+      email: 'customer@gmail.com',
       password: 'SecureCustomer123!',
       full_name: 'Sarah Johnson',
       role: 'customer' as const
@@ -173,10 +173,10 @@ export const createDemoUsers = async () => {
   ];
 
   console.log('Demo user credentials:');
-  console.log('Admin: admin@absstitch.com / SecureAdmin123!');
-  console.log('Sales Rep: sales@absstitch.com / SecureSales123!');
-  console.log('Designer: designer@absstitch.com / SecureDesign123!');
-  console.log('Customer: customer@absstitch.com / SecureCustomer123!');
+  console.log('Admin: admin@gmail.com / SecureAdmin123!');
+  console.log('Sales Rep: sales@gmail.com / SecureSales123!');
+  console.log('Designer: designer@gmail.com / SecureDesign123!');
+  console.log('Customer: customer@gmail.com / SecureCustomer123!');
   
   for (const user of demoUsers) {
     try {
