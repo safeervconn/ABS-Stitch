@@ -4,7 +4,9 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables. Please check your .env file.');
+  console.error('Missing Supabase environment variables. Please check your .env file.');
+  console.error('Required variables: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY');
+  throw new Error('Missing Supabase environment variables. Please check your .env file and restart the dev server.');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -78,7 +80,7 @@ export const signUp = async (email: string, password: string, userData: {
     password,
     options: {
       data: userData,
-      emailRedirectTo: undefined // Disable email confirmation
+      emailRedirectTo: undefined // Disable email confirmation for development
     }
   });
   
@@ -113,7 +115,10 @@ export const getUserProfile = async (userId: string): Promise<UserProfile | null
     .eq('id', userId)
     .single();
   
-  if (error) throw error;
+  if (error) {
+    console.error('Error fetching user profile:', error);
+    throw error;
+  }
   return data;
 };
 
@@ -124,7 +129,10 @@ export const createUserProfile = async (profile: Partial<UserProfile>) => {
     .select()
     .single();
   
-  if (error) throw error;
+  if (error) {
+    console.error('Error creating user profile:', error);
+    throw error;
+  }
   return data;
 };
 
@@ -191,7 +199,10 @@ export const getProducts = async (filters?: {
 
   const { data, error } = await query;
   
-  if (error) throw error;
+  if (error) {
+    console.error('Error fetching products:', error);
+    return []; // Return empty array instead of throwing for better UX
+  }
   return data;
 };
 
@@ -201,7 +212,10 @@ export const getProductCategories = async () => {
     .select('category')
     .eq('is_active', true);
   
-  if (error) throw error;
+  if (error) {
+    console.error('Error fetching categories:', error);
+    return ['All']; // Return default categories
+  }
   
   const categories = [...new Set(data.map(item => item.category))];
   return ['All', ...categories];
@@ -215,6 +229,45 @@ export const getProductById = async (id: string) => {
     .eq('is_active', true)
     .single();
   
-  if (error) throw error;
+  if (error) {
+    console.error('Error fetching product:', error);
+    throw error;
+  }
+  return data;
+};
+
+// Development helper functions
+export const testConnection = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('count')
+      .limit(1);
+    
+    if (error) {
+      console.error('Database connection test failed:', error);
+      return false;
+    }
+    
+    console.log('Database connection successful');
+    return true;
+  } catch (err) {
+    console.error('Database connection test error:', err);
+    return false;
+  }
+};
+
+// Get all demo users (for development/testing)
+export const getDemoUsers = async () => {
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .select('*')
+    .order('role');
+  
+  if (error) {
+    console.error('Error fetching demo users:', error);
+    return [];
+  }
+  
   return data;
 };
