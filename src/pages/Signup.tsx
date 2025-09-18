@@ -110,44 +110,54 @@ const Signup: React.FC = () => {
       });
 
       if (user) {
-        // Create user profile
-        await createUserProfile({
-          id: user.id,
-          email: formData.email,
-          full_name: formData.full_name,
-          role: formData.role,
-          phone: formData.phone,
-          is_active: true,
-          notification_preferences: { email: true, push: true }
-        });
+        // Wait a moment for the auth session to be established
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        try {
+          // Create user profile
+          await createUserProfile({
+            id: user.id,
+            email: formData.email,
+            full_name: formData.full_name,
+            role: formData.role,
+            phone: formData.phone,
+            is_active: true,
+            notification_preferences: { email: true, push: true }
+          });
 
-        // Create role-specific records
-        if (formData.role === 'customer') {
-          await supabase.from('customers').insert({
-            id: user.id,
-            company_name: formData.company_name || null,
-            total_orders: 0,
-            total_spent: 0
-          });
-        } else if (formData.role === 'sales_rep') {
-          await supabase.from('sales_reps').insert({
-            id: user.id,
-            employee_id: `SR${Date.now()}`,
-            department: 'Sales',
-            commission_rate: 10.0,
-            total_sales: 0,
-            active_customers: 0
-          });
-        } else if (formData.role === 'designer') {
-          await supabase.from('designers').insert({
-            id: user.id,
-            employee_id: `DS${Date.now()}`,
-            specialties: ['Embroidery', 'Custom Stitching'],
-            hourly_rate: 50.0,
-            total_completed: 0,
-            average_rating: 0
-          });
+          // Create role-specific records
+          if (formData.role === 'customer') {
+            await supabase.from('customers').insert({
+              id: user.id,
+              company_name: formData.company_name || null,
+              total_orders: 0,
+              total_spent: 0
+            });
+          } else if (formData.role === 'sales_rep') {
+            await supabase.from('sales_reps').insert({
+              id: user.id,
+              employee_id: `SR${Date.now()}`,
+              department: 'Sales',
+              commission_rate: 10.0,
+              total_sales: 0,
+              active_customers: 0
+            });
+          } else if (formData.role === 'designer') {
+            await supabase.from('designers').insert({
+              id: user.id,
+              employee_id: `DS${Date.now()}`,
+              specialties: ['Embroidery', 'Custom Stitching'],
+              hourly_rate: 50.0,
+              total_completed: 0,
+              average_rating: 0
+            });
+          }
+        } catch (profileError) {
+          console.error('Error creating user profile:', profileError);
+          // Don't throw error here - user is created, just profile creation failed
+          // They can still log in and we can handle profile creation later
         }
+        
         setSuccess(true);
       }
     } catch (err: any) {

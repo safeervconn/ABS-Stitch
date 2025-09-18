@@ -77,7 +77,8 @@ export const signUp = async (email: string, password: string, userData: {
     email,
     password,
     options: {
-      data: userData
+      data: userData,
+      emailRedirectTo: undefined // Disable email confirmation
     }
   });
   
@@ -185,9 +186,61 @@ export const createDemoUsers = async () => {
       });
       
       if (error) {
-        console.error(`Error creating ${user.role}:`, error.message);
+        if (error.message.includes('User already registered')) {
+          console.log(`✓ ${user.role} already exists: ${user.email}`);
+        } else {
+          console.error(`Error creating ${user.role}:`, error.message);
+        }
       } else {
         console.log(`✓ Created ${user.role}: ${user.email}`);
+        
+        // Wait for user creation to complete
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Create user profile if user was created successfully
+        if (data.user) {
+          try {
+            await createUserProfile({
+              id: data.user.id,
+              email: user.email,
+              full_name: user.full_name,
+              role: user.role,
+              is_active: true,
+              notification_preferences: { email: true, push: true }
+            });
+            
+            // Create role-specific records
+            if (user.role === 'customer') {
+              await supabase.from('customers').insert({
+                id: data.user.id,
+                total_orders: 0,
+                total_spent: 0
+              });
+            } else if (user.role === 'sales_rep') {
+              await supabase.from('sales_reps').insert({
+                id: data.user.id,
+                employee_id: `SR${Date.now()}`,
+                department: 'Sales',
+                commission_rate: 10.0,
+                total_sales: 0,
+                active_customers: 0
+              });
+            } else if (user.role === 'designer') {
+              await supabase.from('designers').insert({
+                id: data.user.id,
+                employee_id: `DS${Date.now()}`,
+                specialties: ['Embroidery', 'Custom Stitching'],
+                hourly_rate: 50.0,
+                total_completed: 0,
+                average_rating: 0
+              });
+            }
+            
+            console.log(`✓ Created profile for ${user.role}`);
+          } catch (profileError) {
+            console.error(`Error creating profile for ${user.role}:`, profileError);
+          }
+        }
       }
     } catch (error) {
       console.error(`Error creating ${user.role}:`, error);

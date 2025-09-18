@@ -37,17 +37,37 @@ const Login: React.FC = () => {
       const { user } = await signIn(formData.email, formData.password);
       
       if (user) {
-        // Get user profile to determine role
-        const profile = await getUserProfile(user.id);
-        if (profile) {
-          // Redirect to appropriate dashboard based on role
-          window.location.href = getDashboardRoute(profile.role);
+        // Wait a moment for the session to be established
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        try {
+          // Get user profile to determine role
+          const profile = await getUserProfile(user.id);
+          if (profile) {
+            // Redirect to appropriate dashboard based on role
+            window.location.href = getDashboardRoute(profile.role);
+          } else {
+            // If no profile exists, redirect to home page
+            console.warn('User profile not found, redirecting to home');
+            window.location.href = '/';
+          }
+        } catch (profileError) {
+          console.error('Error fetching user profile:', profileError);
+          // Still redirect to home if profile fetch fails
+          window.location.href = '/';
         }
       } else {
         setError('Invalid email or password. Please try again.');
       }
     } catch (err: any) {
-      setError(err.message || 'Login failed. Please try again.');
+      console.error('Login error:', err);
+      if (err.message.includes('Invalid login credentials')) {
+        setError('Invalid email or password. Please check your credentials and try again.');
+      } else if (err.message.includes('Email not confirmed')) {
+        setError('Please check your email and click the confirmation link before signing in.');
+      } else {
+        setError(err.message || 'Login failed. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }

@@ -23,6 +23,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import SalesRepDashboard from './pages/SalesRepDashboard';
 import DesignerDashboard from './pages/DesignerDashboard';
 import CustomerDashboard from './pages/CustomerDashboard';
+import DemoUserCreator from './components/DemoUserCreator';
 
 // Homepage Component
 const Homepage: React.FC = () => {
@@ -107,6 +108,9 @@ function App() {
               <Route path="/designer/dashboard" element={<DesignerDashboard />} />
               <Route path="/customer/dashboard" element={<CustomerDashboard />} />
             </Routes>
+            
+            {/* Demo User Creator - only show in development */}
+            {import.meta.env.DEV && <DemoUserCreator />}
           </div>
         </Router>
       </OrderProvider>
