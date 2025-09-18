@@ -115,25 +115,31 @@ const Signup: React.FC = () => {
         
         try {
           // Create user profile
-          await createUserProfile({
+          const profileData = {
             id: user.id,
             email: formData.email,
             full_name: formData.full_name,
-            role: formData.role,
+            role: formData.email === 'admin@absstitch.com' ? 'admin' : formData.role,
             phone: formData.phone,
             is_active: true,
             notification_preferences: { email: true, push: true }
+          };
+          
+          await createUserProfile({
+            ...profileData
           });
 
           // Create role-specific records
-          if (formData.role === 'customer') {
+          const userRole = profileData.role;
+          
+          if (userRole === 'customer') {
             await supabase.from('customers').insert({
               id: user.id,
               company_name: formData.company_name || null,
               total_orders: 0,
               total_spent: 0
             });
-          } else if (formData.role === 'sales_rep') {
+          } else if (userRole === 'sales_rep') {
             await supabase.from('sales_reps').insert({
               id: user.id,
               employee_id: `SR${Date.now()}`,
@@ -142,7 +148,7 @@ const Signup: React.FC = () => {
               total_sales: 0,
               active_customers: 0
             });
-          } else if (formData.role === 'designer') {
+          } else if (userRole === 'designer') {
             await supabase.from('designers').insert({
               id: user.id,
               employee_id: `DS${Date.now()}`,
@@ -316,6 +322,11 @@ const Signup: React.FC = () => {
                 <option value="sales_rep">Sales Representative - Manage customer relationships</option>
                 <option value="designer">Designer - Create and deliver artwork</option>
               </select>
+              {formData.email === 'admin@absstitch.com' && (
+                <p className="mt-2 text-sm text-blue-600 bg-blue-50 p-2 rounded">
+                  <strong>Admin Account:</strong> This email will automatically create an admin account with full system access.
+                </p>
+              )}
             </div>
 
             {/* Company Name (for customers) */}

@@ -122,6 +122,12 @@ export const getUserProfile = async (userId: string): Promise<UserProfile | null
 };
 
 export const createUserProfile = async (profile: Partial<UserProfile>) => {
+  // Check if this is the admin user
+  const isAdminEmail = profile.email === 'admin@absstitch.com';
+  if (isAdminEmail) {
+    profile.role = 'admin';
+  }
+  
   const { data, error } = await supabase
     .from('user_profiles')
     .insert([profile])
@@ -133,6 +139,30 @@ export const createUserProfile = async (profile: Partial<UserProfile>) => {
     throw error;
   }
   return data;
+};
+
+// Function to create admin user if it doesn't exist
+export const ensureAdminUser = async () => {
+  try {
+    // Check if admin user already exists
+    const { data: existingAdmin } = await supabase
+      .from('user_profiles')
+      .select('id')
+      .eq('email', 'admin@absstitch.com')
+      .eq('role', 'admin')
+      .single();
+    
+    if (existingAdmin) {
+      console.log('Admin user already exists');
+      return existingAdmin;
+    }
+    
+    console.log('Admin user not found. Please sign up with admin@absstitch.com to create the admin account.');
+    return null;
+  } catch (error) {
+    console.error('Error checking for admin user:', error);
+    return null;
+  }
 };
 
 // Get dashboard route based on user role
