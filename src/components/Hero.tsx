@@ -107,7 +107,7 @@ const Hero: React.FC = () => {
                 <span className="text-purple-600 font-bold">⚡</span>
               </div>
               <h3 className="font-semibold text-gray-800 mb-2">High Quality</h3>
-              <p className="text-gray-600">Professional-grade artwork ready for any application</p>
+              <p className="text-gray-600">Professional-grade artwork ready for your apparel</p>
             </div>
             
             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/20">
