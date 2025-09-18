@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { getCurrentUser, getUserProfile } from '../lib/supabase';
+import { getCurrentUser, getUserProfile, supabase } from '../lib/supabase';
 
 export interface Order {
   id: string;
@@ -54,90 +54,7 @@ interface OrderProviderProps {
 }
 
 export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
-  // Mock orders data - in a real app, this would come from a database
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: '1',
-      orderNumber: 'ORD-20250101',
-      customer: 'Sarah Johnson',
-      customerId: 'customer-001',
-      salesRep: 'John Sales',
-      salesRepId: 'sales-001',
-      designer: 'Jane Designer',
-      designerId: 'designer-001',
-      type: 'custom',
-      status: 'in_progress',
-      amount: '$85',
-      date: '2 days ago',
-      email: 'sarah@example.com',
-      phone: '+1 (555) 123-4567',
-      designSize: 'large',
-      apparelType: 't-shirt',
-      designInstructions: 'I need a modern logo design for my fitness brand. The design should be bold and energetic with blue and orange colors.',
-      comments: [
-        {
-          id: '1',
-          author: 'Sarah Johnson',
-          authorId: 'customer-001',
-          text: 'Looking forward to seeing the initial concepts!',
-          date: '1 day ago'
-        }
-      ]
-    },
-    {
-      id: '2',
-      orderNumber: 'ORD-20250102',
-      customer: 'Mike Chen',
-      customerId: 'customer-002',
-      salesRep: 'John Sales',
-      salesRepId: 'sales-001',
-      type: 'custom',
-      status: 'pending',
-      amount: '$150',
-      date: '1 week ago',
-      email: 'mike@techcompany.com',
-      phone: '+1 (555) 987-6543',
-      designSize: 'medium',
-      apparelType: 'jacket',
-      designInstructions: 'Corporate logo design for tech startup. Clean, professional, minimalist style preferred.',
-      comments: []
-    },
-    {
-      id: '3',
-      orderNumber: 'ORD-20250103',
-      customer: 'Emily Rodriguez',
-      customerId: 'customer-003',
-      salesRep: 'John Sales',
-      salesRepId: 'sales-001',
-      designer: 'Jane Designer',
-      designerId: 'designer-001',
-      type: 'custom',
-      status: 'completed',
-      amount: '$120',
-      date: '2 weeks ago',
-      email: 'emily@localbusiness.com',
-      phone: '+1 (555) 456-7890',
-      designSize: 'small',
-      apparelType: 'cap',
-      designInstructions: 'Marketing materials for local restaurant. Warm, inviting colors.',
-      comments: [
-        {
-          id: '2',
-          author: 'Jane Designer',
-          authorId: 'designer-001',
-          text: 'Initial designs are ready for review.',
-          date: '1 week ago'
-        },
-        {
-          id: '3',
-          author: 'Emily Rodriguez',
-          authorId: 'customer-003',
-          text: 'Looks perfect! Thank you.',
-          date: '1 week ago'
-        }
-      ]
-    }
-  ]);
+  const [orders, setOrders] = useState<Order[]>([]);
 
   const addOrder = async (orderData: any) => {
     try {
@@ -147,43 +64,119 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       const profile = await getUserProfile(user.id);
       if (!profile) return;
 
-      const newOrder: Order = {
-        id: Date.now().toString(),
-        orderNumber: `ORD-${Date.now()}`,
-        customer: profile.full_name,
-        customerId: profile.id,
-        type: 'custom',
-        status: 'pending',
-        amount: '$75', // Default amount - would be calculated based on requirements
-        date: 'Just now',
-        email: orderData.email,
-        phone: `${orderData.countryCode} ${orderData.phoneNumber}`,
-        designSize: orderData.designSize,
-        apparelType: orderData.apparelType,
-        customWidth: orderData.customWidth,
-        customHeight: orderData.customHeight,
-        designInstructions: orderData.designInstructions,
-        comments: []
-      };
+      // Create order in database
+      const { data: order, error } = await supabase
+        .from('orders')
+        .insert({
+          order_number: `ORD-${Date.now()}`,
+          customer_id: profile.id,
+          order_type: 'custom',
+          status: 'pending',
+          total_amount: 75.00,
+          custom_instructions: orderData.designInstructions,
+          design_requirements: {
+            designSize: orderData.designSize,
+            apparelType: orderData.apparelType,
+            customWidth: orderData.customWidth,
+            customHeight: orderData.customHeight
+          }
+        })
+        .select()
+        .single();
 
-      setOrders(prev => [newOrder, ...prev]);
+      if (error) throw error;
+      
+      // Refresh orders list
+      await fetchOrders();
     } catch (error) {
       console.error('Error adding order:', error);
     }
   };
 
+  const fetchOrders = async () => {
+    try {
+      const user = await getCurrentUser();
+      if (!user) return;
+      
+      const profile = await getUserProfile(user.id);
+      if (!profile) return;
+
+      let query = supabase
+        .from('orders')
+        .select(`
+          *,
+          customer:customers!inner(user_profiles!inner(full_name, email, phone)),
+          sales_rep:sales_reps(user_profiles!inner(full_name)),
+          designer:designers(user_profiles!inner(full_name))
+        `);
+
+      // Apply role-based filtering
+      switch (profile.role) {
+        case 'customer':
+          query = query.eq('customer_id', profile.id);
+          break;
+        case 'sales_rep':
+          query = query.eq('sales_rep_id', profile.id);
+          break;
+        case 'designer':
+          query = query.eq('assigned_designer_id', profile.id);
+          break;
+        // Admin sees all orders
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      // Transform data to match Order interface
+      const transformedOrders: Order[] = (data || []).map(order => ({
+        id: order.id,
+        orderNumber: order.order_number,
+        customer: order.customer?.user_profiles?.full_name || 'Unknown',
+        customerId: order.customer_id,
+        salesRep: order.sales_rep?.user_profiles?.full_name,
+        salesRepId: order.sales_rep_id,
+        designer: order.designer?.user_profiles?.full_name,
+        designerId: order.assigned_designer_id,
+        type: order.order_type,
+        status: order.status,
+        amount: `$${order.total_amount.toFixed(2)}`,
+        date: new Date(order.created_at).toLocaleDateString(),
+        email: order.customer?.user_profiles?.email || '',
+        phone: order.customer?.user_profiles?.phone || '',
+        designInstructions: order.custom_instructions,
+        comments: [] // Would need separate query for comments
+      }));
+      
+      setOrders(transformedOrders);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchOrders();
+  }, []);
+
   const updateOrderStatus = (orderId: string, status: Order['status']) => {
-    setOrders(prev => prev.map(order => 
-      order.id === orderId ? { ...order, status } : order
-    ));
+    // Update in database and refresh
+    supabase
+      .from('orders')
+      .update({ status })
+      .eq('id', orderId)
+      .then(() => fetchOrders());
   };
 
   const assignDesigner = (orderId: string, designerId: string, designerName: string) => {
-    setOrders(prev => prev.map(order => 
-      order.id === orderId 
-        ? { ...order, designerId, designer: designerName, status: 'assigned' }
-        : order
-    ));
+    // Update in database and refresh
+    supabase
+      .from('orders')
+      .update({ 
+        assigned_designer_id: designerId,
+        status: 'assigned'
+      })
+      .eq('id', orderId)
+      .then(() => fetchOrders());
   };
 
   const addComment = async (orderId: string, comment: string) => {
@@ -194,48 +187,26 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       const profile = await getUserProfile(user.id);
       if (!profile) return;
 
-      const newComment = {
-        id: Date.now().toString(),
-        author: profile.full_name,
-        authorId: profile.id,
-        text: comment,
-        date: 'Just now'
-      };
+      // Add comment to database
+      const { error } = await supabase
+        .from('order_comments')
+        .insert({
+          order_id: orderId,
+          author_id: profile.id,
+          comment_text: comment
+        });
 
-      setOrders(prev => prev.map(order => 
-        order.id === orderId 
-          ? { ...order, comments: [...order.comments, newComment] }
-          : order
-      ));
+      if (error) throw error;
+      
+      // Refresh orders to get updated comments
+      await fetchOrders();
     } catch (error) {
       console.error('Error adding comment:', error);
     }
   };
 
-  const getOrdersByRole = async (): Promise<Order[]> => {
-    try {
-      const user = await getCurrentUser();
-      if (!user) return [];
-      
-      const profile = await getUserProfile(user.id);
-      if (!profile) return [];
-
-      switch (profile.role) {
-        case 'admin':
-          return orders;
-        case 'sales_rep':
-          return orders.filter(order => order.salesRepId === profile.id);
-        case 'designer':
-          return orders.filter(order => order.designerId === profile.id);
-        case 'customer':
-          return orders.filter(order => order.customerId === profile.id);
-        default:
-          return [];
-      }
-    } catch (error) {
-      console.error('Error getting orders by role:', error);
-      return [];
-    }
+  const getOrdersByRole = (): Order[] => {
+    return orders; // Orders are already filtered by role in fetchOrders
   };
 
   const value: OrderContextType = {
@@ -244,10 +215,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     updateOrderStatus,
     assignDesigner,
     addComment,
-    getOrdersByRole: () => {
-      // For synchronous usage, return empty array and handle async in components
-      return orders;
-    }
+    getOrdersByRole
   };
 
   return (
