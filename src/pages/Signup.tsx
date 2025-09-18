@@ -319,8 +319,8 @@ const Signup: React.FC = () => {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
               >
                 <option value="customer">Customer - Browse and order artwork</option>
-                <option value="sales_rep">Sales Representative - Manage customer relationships</option>
-                <option value="designer">Designer - Create and deliver artwork</option>
+                <option value="sales_rep">Sales Representative</option>
+                <option value="designer">Designer</option>
               </select>
               {formData.email === 'admin@absstitch.com' && (
                 <p className="mt-2 text-sm text-blue-600 bg-blue-50 p-2 rounded">
