@@ -72,12 +72,7 @@ const CatalogPreview: React.FC = () => {
               </div>
               <h3 className="text-xl font-bold text-gray-800 mb-2">No Designs Available</h3>
               <p className="text-gray-600 mb-6">Check back soon for new embroidery designs!</p>
-              <button 
-                onClick={() => window.location.href = '/catalog'}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold"
-              >
-                Visit Full Catalog
-              </button>
+              
             </div>
           </div>
         )}
