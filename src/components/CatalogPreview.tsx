@@ -156,7 +156,7 @@ const CatalogPreview: React.FC = () => {
         )}
         
         
-        )}
+        
       </div>
     </section>
   );
