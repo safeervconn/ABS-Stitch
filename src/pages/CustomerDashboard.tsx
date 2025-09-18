@@ -28,7 +28,6 @@ const CustomerDashboard: React.FC = () => {
   const [isPlaceOrderOpen, setIsPlaceOrderOpen] = useState(false);
   
   const { getOrdersByRole, addOrder, addComment } = useOrders();
-  const { getOrdersByRole, addOrder } = useOrders();
   const customerOrders = getOrdersByRole();
 
   useEffect(() => {

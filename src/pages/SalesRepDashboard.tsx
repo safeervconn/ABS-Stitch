@@ -26,7 +26,6 @@ const SalesRepDashboard: React.FC = () => {
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
   
   const { getOrdersByRole, assignDesigner, addComment } = useOrders();
-  const { getOrdersByRole, assignDesigner } = useOrders();
   const salesOrders = getOrdersByRole();
 
   useEffect(() => {

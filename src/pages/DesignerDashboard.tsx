@@ -26,7 +26,6 @@ const DesignerDashboard: React.FC = () => {
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
   
   const { getOrdersByRole, updateOrderStatus, addComment } = useOrders();
-  const { getOrdersByRole, updateOrderStatus } = useOrders();
   const designerOrders = getOrdersByRole();
 
   useEffect(() => {
