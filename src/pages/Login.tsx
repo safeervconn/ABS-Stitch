@@ -63,6 +63,15 @@ const Login: React.FC = () => {
       </div>
       
       <div className="max-w-md w-full">
+
+
+        <button 
+            onClick={() => window.location.href = '/'}
+            className="flex items-center space-x-2 mb-4 hover:text-blue-200 transition-colors"
+          >
+            <ArrowLeft className="h-5 w-5" />
+            <span>Back to Homepage</span>
+          </button>
         
         {/* Back to Homepage */}
         <button 
