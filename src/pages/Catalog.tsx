@@ -11,6 +11,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Search, Filter, Star, Loader } from 'lucide-react';
+import Navbar from '../components/Navbar';
 import AddToCartButton from '../components/AddToCartButton';
 import { getProducts, getProductCategories } from '../lib/supabase';
 
@@ -87,29 +88,24 @@ const Catalog: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      {/* Navigation */}
+      <Navbar />
+      
       {/* Background spotlight effects */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 -z-10">
         <div className="spotlight spotlight-1"></div>
         <div className="spotlight spotlight-2"></div>
         <div className="spotlight spotlight-3"></div>
       </div>
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-12 relative z-10 shadow-2xl">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-8 relative z-10 shadow-2xl">
         <div className="container mx-auto px-4">
-          <button 
-            onClick={() => window.location.href = '/'}
-            className="flex items-center space-x-2 mb-4 hover:text-blue-200 transition-colors"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span>Back to Homepage</span>
-          </button>
-          
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+          <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
             Embroidery Design Catalog
           </h1>
-          <p className="text-xl text-blue-100">
+          <p className="text-lg text-blue-100">
             Browse our complete collection of professional embroidery designs
           </p>
         </div>

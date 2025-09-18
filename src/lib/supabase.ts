@@ -171,7 +171,11 @@ export const createDemoUsers = async () => {
     }
   ];
 
-  console.log('Creating demo users for production testing...');
+  console.log('Demo user credentials:');
+  console.log('Admin: admin@absstitch.com / SecureAdmin123!');
+  console.log('Sales Rep: sales@absstitch.com / SecureSales123!');
+  console.log('Designer: designer@absstitch.com / SecureDesign123!');
+  console.log('Customer: customer@absstitch.com / SecureCustomer123!');
   
   for (const user of demoUsers) {
     try {

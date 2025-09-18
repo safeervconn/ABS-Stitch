@@ -53,6 +53,10 @@ const Login: React.FC = () => {
     }
   };
 
+  const handleBackToHome = () => {
+    window.location.href = '/';
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center py-12 px-4 relative overflow-hidden">
       {/* Background spotlight effects */}
@@ -65,18 +69,10 @@ const Login: React.FC = () => {
       <div className="max-w-md w-full">
 
 
-        <button 
-            onClick={() => window.location.href = '/'}
-            className="flex items-center space-x-2 mb-4 hover:text-blue-200 transition-colors"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span>Back to Homepage</span>
-          </button>
-        
         {/* Back to Homepage */}
         <button 
-          onClick={() => window.location.href = '/'}
-          className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors mb-8"
+          onClick={handleBackToHome}
+          className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors mb-8 relative z-10"
         >
           <ArrowLeft className="h-5 w-5" />
           <span>Back to Homepage</span>

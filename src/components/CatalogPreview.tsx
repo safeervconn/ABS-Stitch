@@ -20,10 +20,15 @@ const CatalogPreview: React.FC = () => {
   React.useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await getProducts({ limit: 6 });
+        const data = await getProducts({ 
+          limit: 6,
+          sortBy: 'newest'
+        });
         setProducts(data || []);
       } catch (error) {
         console.error('Error fetching products:', error);
+        // Set fallback data if database fails
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -56,8 +61,28 @@ const CatalogPreview: React.FC = () => {
           </div>
         )}
 
+        {/* No Products State */}
+        {!loading && products.length === 0 && (
+          <div className="text-center py-16">
+            <div className="bg-white rounded-xl shadow-lg p-8 max-w-md mx-auto">
+              <div className="text-gray-300 mb-4">
+                <svg className="h-16 w-16 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">No Designs Available</h3>
+              <p className="text-gray-600 mb-6">Check back soon for new embroidery designs!</p>
+              <button 
+                onClick={() => window.location.href = '/catalog'}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold"
+              >
+                Visit Full Catalog
+              </button>
+            </div>
+          </div>
+        )}
         {/* Products Grid */}
-        {!loading && (
+        {!loading && products.length > 0 && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {products.map((product) => (
               <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
@@ -124,14 +149,28 @@ const CatalogPreview: React.FC = () => {
         )}
 
         {/* View All Button */}
-        <div className="text-center">
-          <button 
-            onClick={() => window.location.href = '/catalog'}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg font-semibold"
-          >
-            View All Designs
-          </button>
-        </div>
+        {!loading && products.length > 0 && (
+          <div className="text-center">
+            <button 
+              onClick={() => window.location.href = '/catalog'}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg font-semibold"
+            >
+              View All Designs
+            </button>
+          </div>
+        )}
+        
+        {/* Always show View All button if no products to encourage catalog visit */}
+        {!loading && products.length === 0 && (
+          <div className="text-center mt-8">
+            <button 
+              onClick={() => window.location.href = '/catalog'}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg font-semibold"
+            >
+              Visit Full Catalog
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
