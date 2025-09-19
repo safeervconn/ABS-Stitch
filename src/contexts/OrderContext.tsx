@@ -93,14 +93,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       const profile = await getUserProfile(user.id);
       if (!profile) return;
 
-      // let query = supabase
-      //   .from('orders')
-      //   .select(`
-      //     *,
-      //     customer:customers!inner(user_profiles!inner(full_name, email, phone)),
-      //     sales_rep:sales_reps(user_profiles!inner(full_name)),
-      //     designer:designers(user_profiles!inner(full_name))
-      //   `);
+     
 let query = supabase
   .from('orders')
   .select(`
