@@ -2,6 +2,7 @@ import React from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { getCurrentUser } from '../lib/supabase';
+import '../styles/material3.css';
 
 interface AddToCartButtonProps {
   item: {
@@ -32,7 +33,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ item, className = "" 
   return (
     <button 
       onClick={handleAddToCart}
-      className={`bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2 shadow-lg ${className}`}
+      className={`md-filled-button md-flex md-items-center md-gap-2 ${className}`}
     >
       <ShoppingCart className="h-4 w-4" />
       <span>Add to Cart</span>
