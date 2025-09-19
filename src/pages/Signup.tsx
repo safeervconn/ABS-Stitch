@@ -21,7 +21,7 @@ const Signup: React.FC = () => {
     phone: '',
     password: '',
     confirmPassword: '',
-    role: 'customer' as 'customer' | 'sales_rep' | 'designer',
+    role: 'customer' as 'customer' | 'sales_rep' | 'designer' | 'admin',
     company_name: '',
     specialties: '',
     acceptTerms: false
@@ -326,6 +326,7 @@ const Signup: React.FC = () => {
                 <option value="customer">Customer - Browse and order artwork</option>
                 <option value="sales_rep">Sales Representative - Manage customer relationships</option>
                 <option value="designer">Designer - Create custom artwork</option>
+                <option value="admin">Administrator - Full system access</option>
               </select>
               {formData.email === 'admin@absstitch.com' && (
                 <p className="mt-2 text-sm text-blue-600 bg-blue-50 p-2 rounded">
@@ -335,10 +336,11 @@ const Signup: React.FC = () => {
             </div>
 
             {/* Company Name (for customers) */}
-            {(formData.role === 'customer' || formData.role === 'sales_rep') && (
+            {(formData.role === 'customer' || formData.role === 'sales_rep' || formData.role === 'admin') && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {formData.role === 'customer' ? 'Company Name (Optional)' : 'Department (Optional)'}
+                  {formData.role === 'customer' ? 'Company Name (Optional)' : 
+                   formData.role === 'admin' ? 'Organization (Optional)' : 'Department (Optional)'}
                 </label>
                 <input
                   type="text"
@@ -346,7 +348,8 @@ const Signup: React.FC = () => {
                   value={formData.company_name}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
-                  placeholder={formData.role === 'customer' ? 'Enter your company name' : 'Enter your department'}
+                  placeholder={formData.role === 'customer' ? 'Enter your company name' : 
+                              formData.role === 'admin' ? 'Enter your organization' : 'Enter your department'}
                 />
               </div>
             )}
