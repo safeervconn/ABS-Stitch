@@ -9,9 +9,8 @@
  */
 
 import React from 'react';
-import { ArrowRight, Palette, Star, CheckCircle } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { getCurrentUser, getUserProfile } from '../lib/supabase';
-import '../styles/material3.css';
 
 const Hero: React.FC = () => {
   const [currentUser, setCurrentUser] = React.useState<any>(null);
@@ -35,90 +34,88 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <section className="md-surface py-20 overflow-hidden" id="home">
-      {/* Material 3 Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-10 left-10 w-32 h-32 md-shape-extra-large" style={{backgroundColor: 'var(--md-sys-color-primary)'}}></div>
-        <div className="absolute top-40 right-20 w-24 h-24 md-shape-medium" style={{backgroundColor: 'var(--md-sys-color-secondary)'}}></div>
-        <div className="absolute bottom-20 left-1/3 w-40 h-40 md-shape-large" style={{backgroundColor: 'var(--md-sys-color-tertiary)'}}></div>
-      </div>
+    <section className="relative bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-20 overflow-hidden" id="home">
+      {/* Background spotlight effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-pink-400/20 blur-3xl"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
       
-      <div className="md-container">
+      <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           
           {/* Main Headline */}
-          <div className="md-flex md-justify-center mb-6">
-            <div className="md-surface-container-high md-p-4 md-shape-full md-elevation-1">
-              <Palette className="h-8 w-8" style={{color: 'var(--md-sys-color-primary)'}} />
+          <div className="flex justify-center mb-6">
+            <div className="bg-gradient-to-r from-blue-100 to-purple-100 p-3 rounded-full shadow-lg">
+              <Sparkles className="h-8 w-8 text-blue-600" />
             </div>
           </div>
           
-          <h1 className="md-display-large mb-6" style={{color: 'var(--md-sys-color-on-surface)'}}>
+          <h1 className="text-4xl md:text-6xl font-extrabold text-gray-800 mb-6">
             Where We Stitch
-            <span className="block" style={{color: 'var(--md-sys-color-primary)'}}>Perfection!</span>
+            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent block">Perfection!</span>
           </h1>
 
           {/* Description */}
-          <p className="md-body-large mb-8 max-w-2xl mx-auto" style={{color: 'var(--md-sys-color-on-surface-variant)'}}>
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
             We specialize in creating stunning custom embroidery and stitching for apparel, 
             promotional items, and personal projects. Submit your vision and watch it come to life 
             with our precision stitching services.
           </p>
 
           {/* Call to Action Buttons */}
-          <div className="md-flex flex-col sm:flex-row md-gap-4 md-justify-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {currentUser ? (
               <button 
                 onClick={() => {
                   const event = new CustomEvent('openPlaceOrderModal');
                   window.dispatchEvent(event);
                 }}
-                className="md-filled-button md-flex md-items-center md-gap-2"
+                className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-3 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all flex items-center justify-center shadow-xl font-semibold transform hover:scale-105"
               >
-                <CheckCircle className="h-5 w-5" />
                 Place Order
+                <ArrowRight className="ml-2 h-5 w-5" />
               </button>
             ) : (
               <button 
                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                className="md-filled-button md-flex md-items-center md-gap-2"
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-8 py-3 rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center shadow-xl font-semibold transform hover:scale-105"
               >
-                <ArrowRight className="h-5 w-5" />
                 Get Custom Artwork
+                <ArrowRight className="ml-2 h-5 w-5" />
               </button>
             )}
             <button 
               onClick={() => window.location.href = '/catalog'}
-              className="md-outlined-button"
+              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all shadow-xl font-semibold transform hover:scale-105"
             >
               Browse Catalog
             </button>
           </div>
 
           {/* Key Benefits */}
-          <div className="md-grid grid-cols-1 md:grid-cols-3 md-gap-6">
-            <div className="md-card md-card-elevated md-p-6 text-center">
-              <div className="md-surface-container-high w-12 h-12 md-shape-medium md-flex md-items-center md-justify-center mx-auto mb-4">
-                <CheckCircle className="h-6 w-6" style={{color: 'var(--md-sys-color-primary)'}} />
+          <div className="grid md:grid-cols-3 gap-6 mt-16">
+            <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/20">
+              <div className="bg-gradient-to-r from-green-100 to-emerald-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <span className="text-green-600 font-bold">✓</span>
               </div>
-              <h3 className="md-title-medium mb-2" style={{color: 'var(--md-sys-color-on-surface)'}}>Quick Turnaround</h3>
-              <p className="md-body-medium" style={{color: 'var(--md-sys-color-on-surface-variant)'}}>Most custom designs completed within 2-3 business days</p>
+              <h3 className="font-semibold text-gray-800 mb-2">Quick Turnaround</h3>
+              <p className="text-gray-600">Most custom designs completed within 2-3 business days</p>
             </div>
             
-            <div className="md-card md-card-elevated md-p-6 text-center">
-              <div className="md-surface-container-high w-12 h-12 md-shape-medium md-flex md-items-center md-justify-center mx-auto mb-4">
-                <Star className="h-6 w-6" style={{color: 'var(--md-sys-color-secondary)'}} />
+            <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/20">
+              <div className="bg-gradient-to-r from-purple-100 to-pink-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <span className="text-purple-600 font-bold">⚡</span>
               </div>
-              <h3 className="md-title-medium mb-2" style={{color: 'var(--md-sys-color-on-surface)'}}>High Quality</h3>
-              <p className="md-body-medium" style={{color: 'var(--md-sys-color-on-surface-variant)'}}>Professional-grade artwork ready for your apparel</p>
+              <h3 className="font-semibold text-gray-800 mb-2">High Quality</h3>
+              <p className="text-gray-600">Professional-grade artwork ready for your apparel</p>
             </div>
             
-            <div className="md-card md-card-elevated md-p-6 text-center">
-              <div className="md-surface-container-high w-12 h-12 md-shape-medium md-flex md-items-center md-justify-center mx-auto mb-4">
-                <ArrowRight className="h-6 w-6" style={{color: 'var(--md-sys-color-tertiary)'}} />
+            <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/20">
+              <div className="bg-gradient-to-r from-orange-100 to-red-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <span className="text-orange-600 font-bold">∞</span>
               </div>
-              <h3 className="md-title-medium mb-2" style={{color: 'var(--md-sys-color-on-surface)'}}>Unlimited Revisions</h3>
-              <p className="md-body-medium" style={{color: 'var(--md-sys-color-on-surface-variant)'}}>We work until you're completely satisfied</p>
+              <h3 className="font-semibold text-gray-800 mb-2">Unlimited Revisions</h3>
+              <p className="text-gray-600">We work until you're completely satisfied</p>
             </div>
           </div>
         </div>
