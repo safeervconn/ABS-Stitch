@@ -9,9 +9,10 @@
  */
 
 import React from 'react';
-import { Star, Loader } from 'lucide-react';
+import { Star, Loader, ShoppingCart } from 'lucide-react';
 import AddToCartButton from './AddToCartButton';
 import { getProducts } from '../lib/supabase';
+import '../styles/material3.css';
 
 const CatalogPreview: React.FC = () => {
   const [products, setProducts] = React.useState<any[]>([]);
@@ -38,25 +39,25 @@ const CatalogPreview: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-16 bg-gradient-to-b from-white to-gray-50" id="catalog">
-      <div className="container mx-auto px-4">
+    <section className="py-16 md-surface-container-lowest" id="catalog">
+      <div className="md-container">
         
         {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-4">
+          <h2 className="md-headline-large mb-4" style={{color: 'var(--md-sys-color-on-surface)'}}>
             Ready-Made Embroidery Designs
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="md-body-large max-w-2xl mx-auto" style={{color: 'var(--md-sys-color-on-surface-variant)'}}>
             Browse our collection of professionally designed embroidery patterns, ready for immediate stitching.
           </p>
         </div>
 
         {/* Loading State */}
         {loading && (
-          <div className="flex items-center justify-center py-16">
+          <div className="md-flex md-items-center md-justify-center py-16">
             <div className="text-center">
-              <Loader className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
-              <p className="text-gray-600 font-medium">Loading designs...</p>
+              <div className="md-circular-progress mx-auto mb-4"></div>
+              <p className="md-body-medium" style={{color: 'var(--md-sys-color-on-surface-variant)'}}>Loading designs...</p>
             </div>
           </div>
         )}
@@ -64,23 +65,23 @@ const CatalogPreview: React.FC = () => {
         {/* No Products State */}
         {!loading && products.length === 0 && (
           <div className="text-center py-16">
-            <div className="bg-white rounded-xl shadow-lg p-8 max-w-md mx-auto">
-              <div className="text-gray-300 mb-4">
+            <div className="md-card md-card-elevated md-p-8 max-w-md mx-auto">
+              <div className="mb-4" style={{color: 'var(--md-sys-color-outline)'}}>
                 <svg className="h-16 w-16 mx-auto" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">No Designs Available</h3>
-              <p className="text-gray-600 mb-6">Check back soon for new embroidery designs!</p>
+              <h3 className="md-title-large mb-2" style={{color: 'var(--md-sys-color-on-surface)'}}>No Designs Available</h3>
+              <p className="md-body-medium mb-6" style={{color: 'var(--md-sys-color-on-surface-variant)'}}>Check back soon for new embroidery designs!</p>
               
             </div>
           </div>
         )}
         {/* Products Grid */}
         {!loading && products.length > 0 && (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div className="md-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 md-gap-6 mb-12">
             {products.map((product) => (
-              <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+              <div key={product.id} className="md-card md-card-elevated overflow-hidden">
                 
                 {/* Product Image */}
                 <div className="relative group">
@@ -95,35 +96,36 @@ const CatalogPreview: React.FC = () => {
                   
                   {/* Sale Badge */}
                   {product.original_price && product.original_price > product.price && (
-                    <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
+                    <div className="absolute top-2 left-2 md-shape-small md-p-2" style={{backgroundColor: 'var(--md-sys-color-error)', color: 'var(--md-sys-color-on-error)'}}>
                       SALE
                     </div>
                   )}
                 </div>
 
                 {/* Product Info */}
-                <div className="p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-gray-800">{product.title}</h3>
+                <div className="md-p-4">
+                  <div className="md-flex md-justify-between items-start mb-2">
+                    <h3 className="md-title-medium" style={{color: 'var(--md-sys-color-on-surface)'}}>{product.title}</h3>
                     <div className="text-right">
-                      <span className="text-blue-600 font-bold">${product.price.toFixed(2)}</span>
+                      <span className="md-title-medium" style={{color: 'var(--md-sys-color-primary)'}}>${product.price.toFixed(2)}</span>
                       {product.original_price && product.original_price > product.price && (
-                        <span className="text-gray-400 line-through text-sm ml-1">${product.original_price.toFixed(2)}</span>
+                        <span className="md-body-small line-through ml-1" style={{color: 'var(--md-sys-color-outline)'}}>${product.original_price.toFixed(2)}</span>
                       )}
                     </div>
                   </div>
                   
-                  <p className="text-gray-500 text-sm mb-3">{product.category}</p>
+                  <p className="md-body-small mb-3" style={{color: 'var(--md-sys-color-secondary)'}}>{product.category}</p>
                   
                   {/* Rating */}
-                  <div className="flex items-center space-x-1">
+                  <div className="md-flex md-items-center md-gap-1">
                     {[...Array(5)].map((_, i) => (
                       <Star 
                         key={i} 
-                        className={`h-4 w-4 ${i < 5 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                        className={`h-4 w-4 ${i < 5 ? 'fill-current' : ''}`}
+                        style={{color: i < 5 ? '#FFC107' : 'var(--md-sys-color-outline)'}}
                       />
                     ))}
-                    <span className="text-gray-500 text-sm ml-2">(5.0)</span>
+                    <span className="md-body-small ml-2" style={{color: 'var(--md-sys-color-on-surface-variant)'}}>(5.0)</span>
                   </div>
                   
                   {/* Add to Cart Button */}
@@ -135,7 +137,7 @@ const CatalogPreview: React.FC = () => {
                       image: product.image_url,
                       category: product.category
                     }}
-                    className="w-full mt-3 text-sm"
+                    className="w-full mt-3"
                   />
                 </div>
               </div>
@@ -148,7 +150,7 @@ const CatalogPreview: React.FC = () => {
           <div className="text-center">
             <button 
               onClick={() => window.location.href = '/catalog'}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg font-semibold"
+              className="md-filled-button"
             >
               View All Designs
             </button>

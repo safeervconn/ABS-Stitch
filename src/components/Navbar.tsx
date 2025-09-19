@@ -10,9 +10,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Palette, User, Settings, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react';
+import { Menu, X, Palette, User, Settings, LayoutDashboard, LogOut, ChevronDown, ShoppingBag } from 'lucide-react';
 import CartDropdown from './CartDropdown';
 import { signOut, getCurrentUser, getUserProfile, getDashboardRoute } from '../lib/supabase';
+import '../styles/material3.css';
 
 const Navbar: React.FC = () => {
   // State to control mobile menu visibility
@@ -65,31 +66,31 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
+    <nav className="md-navigation-bar md-surface md-elevation-1 sticky top-0 z-50">
+      <div className="md-container">
+        <div className="md-flex md-justify-between md-items-center h-16">
           
           {/* Company Logo and Name - Left Side */}
-          <div className="flex items-center space-x-2">
-            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-2 rounded-lg">
-              <Palette className="h-6 w-6 text-white" />
+          <div className="md-flex md-items-center md-gap-3">
+            <div className="md-surface-container-high md-p-2 md-shape-medium">
+              <Palette className="h-6 w-6" style={{color: 'var(--md-sys-color-primary)'}} />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <span className="md-title-large" style={{color: 'var(--md-sys-color-primary)'}}>
               ABS STITCH
             </span>
           </div>
 
           {/* Navigation Links - Center (Hidden on mobile) */}
-          <div className="hidden md:flex space-x-8">
-            <a href="/" className="text-gray-600 hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:bg-clip-text transition-all font-bold">Home</a>
-            <a href="/catalog" className="text-gray-600 hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:bg-clip-text transition-all font-bold">Catalog</a>
-            <a href="/#services" className="text-gray-600 hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:bg-clip-text transition-all font-bold">Services</a>
-            <a href="/about" className="text-gray-600 hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:bg-clip-text transition-all font-bold">About</a>
-            <a href="/#contact" className="text-gray-600 hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:bg-clip-text transition-all font-bold">Contact</a>
+          <div className="hidden md:flex md-gap-6">
+            <a href="/" className="md-text-button">Home</a>
+            <a href="/catalog" className="md-text-button">Catalog</a>
+            <a href="/#services" className="md-text-button">Services</a>
+            <a href="/about" className="md-text-button">About</a>
+            <a href="/#contact" className="md-text-button">Contact</a>
           </div>
 
           {/* Action Buttons - Right Side (Hidden on mobile) */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex md-items-center md-gap-3">
             {/* Cart - Only show for customers on relevant pages */}
             {shouldShowCart() && <CartDropdown />}
             
@@ -99,13 +100,13 @@ const Navbar: React.FC = () => {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="md-flex md-items-center md-gap-2 md-p-2 md-shape-small hover:md-surface-container transition-colors"
                 >
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-                    <User className="h-4 w-4 text-white" />
+                  <div className="w-8 h-8 md-surface-container-high md-shape-full md-flex md-items-center md-justify-center">
+                    <User className="h-4 w-4" style={{color: 'var(--md-sys-color-primary)'}} />
                   </div>
-                  <span className="text-gray-700 font-medium">{currentUser.full_name?.split(' ')[0]}</span>
-                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                  <span className="md-label-large" style={{color: 'var(--md-sys-color-on-surface)'}}>{currentUser.full_name?.split(' ')[0]}</span>
+                  <ChevronDown className="h-4 w-4" style={{color: 'var(--md-sys-color-on-surface-variant)'}} />
                 </button>
 
                 {/* Profile Dropdown Menu */}
@@ -115,26 +116,27 @@ const Navbar: React.FC = () => {
                       className="fixed inset-0 z-40" 
                       onClick={() => setIsProfileOpen(false)}
                     />
-                    <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-[60]">
-                      <div className="p-2">
+                    <div className="absolute right-0 top-full mt-2 w-48 md-surface-container md-shape-medium md-elevation-3 z-[60]">
+                      <div className="md-p-2">
                         <button
                           onClick={() => window.location.href = '/profile'}
-                          className="w-full flex items-center space-x-3 px-3 py-2 text-left hover:bg-gray-100 rounded-lg transition-colors"
+                          className="w-full md-flex md-items-center md-gap-3 md-p-3 text-left hover:md-surface-container-high md-shape-small transition-colors"
                         >
-                          <Settings className="h-4 w-4 text-gray-500" />
-                          <span className="text-gray-700">Profile Settings</span>
+                          <Settings className="h-4 w-4" style={{color: 'var(--md-sys-color-on-surface-variant)'}} />
+                          <span className="md-body-medium" style={{color: 'var(--md-sys-color-on-surface)'}}>Profile Settings</span>
                         </button>
                         <button
                           onClick={() => window.location.href = getDashboardRoute(currentUser.role)}
-                          className="w-full flex items-center space-x-3 px-3 py-2 text-left hover:bg-gray-100 rounded-lg transition-colors"
+                          className="w-full md-flex md-items-center md-gap-3 md-p-3 text-left hover:md-surface-container-high md-shape-small transition-colors"
                         >
-                          <LayoutDashboard className="h-4 w-4 text-gray-500" />
-                          <span className="text-gray-700">Dashboard</span>
+                          <LayoutDashboard className="h-4 w-4" style={{color: 'var(--md-sys-color-on-surface-variant)'}} />
+                          <span className="md-body-medium" style={{color: 'var(--md-sys-color-on-surface)'}}>Dashboard</span>
                         </button>
-                        <hr className="my-2" />
+                        <div className="my-2 h-px" style={{backgroundColor: 'var(--md-sys-color-outline-variant)'}}></div>
                         <button
                           onClick={handleSignOut}
-                          className="w-full flex items-center space-x-3 px-3 py-2 text-left hover:bg-red-50 rounded-lg transition-colors text-red-600"
+                          className="w-full md-flex md-items-center md-gap-3 md-p-3 text-left hover:md-surface-container-high md-shape-small transition-colors"
+                          style={{color: 'var(--md-sys-color-error)'}}
                         >
                           <LogOut className="h-4 w-4" />
                           <span>Sign Out</span>
@@ -148,7 +150,7 @@ const Navbar: React.FC = () => {
               /* Combined Authentication Button for non-signed-in users */
               <button 
                 onClick={() => window.location.href = '/login'}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-bold shadow-lg"
+                className="md-filled-button"
               >
                 Sign In / Sign Up
               </button>
@@ -160,14 +162,14 @@ const Navbar: React.FC = () => {
                   const event = new CustomEvent('openPlaceOrderModal');
                   window.dispatchEvent(event);
                 }}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-bold shadow-lg"
+                className="md-outlined-button"
               >
                 Place Order
               </button>
             ) : (
               <button 
                 onClick={() => window.location.href = '/#contact'}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-bold shadow-lg"
+                className="md-outlined-button"
               >
                 Get a Quote
               </button>
@@ -185,17 +187,17 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Menu (Shows when hamburger is clicked) */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-100">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              <a href="/" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Home</a>
-              <a href="/catalog" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Catalog</a>
-              <a href="/#services" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Services</a>
-              <a href="/about" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">About</a>
-              <a href="/#contact" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Contact</a>
-              <div className="border-t border-gray-100 pt-2 mt-2">
+          <div className="md:hidden" style={{borderTop: '1px solid var(--md-sys-color-outline-variant)'}}>
+            <div className="md-p-2 space-y-1">
+              <a href="/" className="block md-p-3 md-text-button w-full text-left">Home</a>
+              <a href="/catalog" className="block md-p-3 md-text-button w-full text-left">Catalog</a>
+              <a href="/#services" className="block md-p-3 md-text-button w-full text-left">Services</a>
+              <a href="/about" className="block md-p-3 md-text-button w-full text-left">About</a>
+              <a href="/#contact" className="block md-p-3 md-text-button w-full text-left">Contact</a>
+              <div className="pt-2 mt-2" style={{borderTop: '1px solid var(--md-sys-color-outline-variant)'}}>
                 {/* Cart for mobile - Only show for customers on relevant pages */}
                 {shouldShowCart() && (
-                  <div className="px-3 py-2">
+                  <div className="md-p-3">
                     <CartDropdown />
                   </div>
                 )}
@@ -203,24 +205,25 @@ const Navbar: React.FC = () => {
                 {currentUser ? (
                   /* Mobile Profile Menu */
                   <>
-                    <div className="px-3 py-2 text-gray-500 text-sm font-medium">
+                    <div className="md-p-3 md-body-small" style={{color: 'var(--md-sys-color-on-surface-variant)'}}>
                       {currentUser.full_name}
                     </div>
                     <button 
                       onClick={() => window.location.href = '/profile'}
-                      className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 font-bold"
+                      className="block w-full text-left md-p-3 md-text-button"
                     >
                       Profile Settings
                     </button>
                     <button 
                       onClick={() => window.location.href = getDashboardRoute(currentUser.role)}
-                      className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 font-bold"
+                      className="block w-full text-left md-p-3 md-text-button"
                     >
                       Dashboard
                     </button>
                     <button 
                       onClick={handleSignOut}
-                      className="block w-full text-left px-3 py-2 text-red-600 hover:text-red-700 font-bold"
+                      className="block w-full text-left md-p-3 md-text-button"
+                      style={{color: 'var(--md-sys-color-error)'}}
                     >
                       Sign Out
                     </button>
@@ -229,7 +232,7 @@ const Navbar: React.FC = () => {
                   /* Mobile Authentication Button */
                   <button 
                     onClick={() => window.location.href = '/login'}
-                    className="w-full text-left bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 mt-2 font-bold"
+                    className="w-full text-left md-filled-button mt-2"
                   >
                     Sign In / Sign Up
                   </button>
@@ -241,14 +244,14 @@ const Navbar: React.FC = () => {
                       const event = new CustomEvent('openPlaceOrderModal');
                       window.dispatchEvent(event);
                     }}
-                    className="w-full text-left bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 mt-2 font-bold"
+                    className="w-full text-left md-outlined-button mt-2"
                   >
                     Place Order
                   </button>
                 ) : (
                   <button 
                     onClick={() => window.location.href = '/#contact'}
-                    className="w-full text-left bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 mt-2 font-bold"
+                    className="w-full text-left md-outlined-button mt-2"
                   >
                     Get a Quote
                   </button>
