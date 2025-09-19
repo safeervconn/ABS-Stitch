@@ -112,7 +112,7 @@ export const getUserProfile = async (userId: string): Promise<UserProfile | null
     .from('user_profiles')
     .select('*')
     .eq('id', userId)
-    .single();
+    .maybeSingle();
   
   if (error) {
     console.error('Error fetching user profile:', error);
