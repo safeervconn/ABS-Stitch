@@ -21,8 +21,9 @@ const Signup: React.FC = () => {
     phone: '',
     password: '',
     confirmPassword: '',
-    role: 'customer' as 'customer',
+    role: 'customer' as 'customer' | 'sales_rep' | 'designer',
     company_name: '',
+    specialties: '',
     acceptTerms: false
   });
   
@@ -143,16 +144,20 @@ const Signup: React.FC = () => {
             await supabase.from('sales_reps').insert({
               id: user.id,
               employee_id: `SR${Date.now()}`,
-              department: 'Sales',
+              department: formData.company_name || 'Sales',
               commission_rate: 10.0,
               total_sales: 0,
               active_customers: 0
             });
           } else if (userRole === 'designer') {
+            const specialties = formData.specialties 
+              ? formData.specialties.split(',').map(s => s.trim()).filter(s => s.length > 0)
+              : ['Embroidery', 'Custom Stitching'];
+              
             await supabase.from('designers').insert({
               id: user.id,
               employee_id: `DS${Date.now()}`,
-              specialties: ['Embroidery', 'Custom Stitching'],
+              specialties: specialties,
               hourly_rate: 50.0,
               total_completed: 0,
               average_rating: 0
@@ -312,10 +317,16 @@ const Signup: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Account Type
               </label>
-              <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-700">
-                Customer - Browse and order artwork
-              </div>
-              <input type="hidden" name="role" value="customer" />
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
+              >
+                <option value="customer">Customer - Browse and order artwork</option>
+                <option value="sales_rep">Sales Representative - Manage customer relationships</option>
+                <option value="designer">Designer - Create custom artwork</option>
+              </select>
               {formData.email === 'admin@absstitch.com' && (
                 <p className="mt-2 text-sm text-blue-600 bg-blue-50 p-2 rounded">
                   <strong>Admin Account:</strong> This email will automatically create an admin account with full system access.
@@ -324,10 +335,10 @@ const Signup: React.FC = () => {
             </div>
 
             {/* Company Name (for customers) */}
-            {formData.role === 'customer' && (
+            {(formData.role === 'customer' || formData.role === 'sales_rep') && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Company Name (Optional)
+                  {formData.role === 'customer' ? 'Company Name (Optional)' : 'Department (Optional)'}
                 </label>
                 <input
                   type="text"
@@ -335,11 +346,27 @@ const Signup: React.FC = () => {
                   value={formData.company_name}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
-                  placeholder="Enter your company name"
+                  placeholder={formData.role === 'customer' ? 'Enter your company name' : 'Enter your department'}
                 />
               </div>
             )}
 
+            {/* Specialties (for designers) */}
+            {formData.role === 'designer' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Specialties (Optional)
+                </label>
+                <input
+                  type="text"
+                  name="specialties"
+                  value={formData.specialties || ''}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
+                  placeholder="e.g., Logo Design, Embroidery, Custom Artwork"
+                />
+              </div>
+            )}
             {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
