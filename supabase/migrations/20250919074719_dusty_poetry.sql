@@ -149,7 +149,7 @@ BEGIN
     (product_3_id, 'Sports Team Patch', 'Custom sports team patches with team colors and mascot. Perfect for uniforms and fan gear.', 'Patches', 35.00, 40.00, 'https://images.pexels.com/photos/1661471/pexels-photo-1661471.jpeg?auto=compress&cs=tinysrgb&w=400', ARRAY['sports', 'team', 'patch'], true, admin_id, now(), now()),
     (product_4_id, 'Floral Design Embroidery', 'Beautiful floral patterns perfect for decorative clothing and home textiles.', 'Decorative', 30.00, null, 'https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=400', ARRAY['floral', 'decorative', 'elegant'], true, admin_id, now(), now()),
     (product_5_id, 'Corporate Badge Design', 'Professional employee badges and name tags with company branding.', 'Corporate', 20.00, 25.00, 'https://images.pexels.com/photos/1148957/pexels-photo-1148957.jpeg?auto=compress&cs=tinysrgb&w=400', ARRAY['corporate', 'badge', 'employee'], true, admin_id, now(), now()),
-    (product_6_id, 'Custom Artwork Embroidery', 'Turn your artwork into beautiful embroidery. Upload your design and we\'ll stitch it perfectly.', 'Custom Design', 65.00, null, 'https://images.pexels.com/photos/1661471/pexels-photo-1661471.jpeg?auto=compress&cs=tinysrgb&w=400', ARRAY['custom', 'artwork', 'unique'], true, admin_id, now(), now());
+    (product_6_id, 'Custom Artwork Embroidery', 'Turn your artwork into beautiful embroidery. Upload your design and we will stitch it perfectly.', 'Custom Design', 65.00, null, 'https://images.pexels.com/photos/1661471/pexels-photo-1661471.jpeg?auto=compress&cs=tinysrgb&w=400', ARRAY['custom', 'artwork', 'unique'], true, admin_id, now(), now());
 
     -- Insert orders
     INSERT INTO orders (
