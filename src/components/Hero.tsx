@@ -64,7 +64,7 @@ const Hero: React.FC = () => {
 
           {/* Call to Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {currentUser && currentUser.role === 'customer' ? (
+            {currentUser ? (
               <button 
                 onClick={() => {
                   const event = new CustomEvent('openPlaceOrderModal');
