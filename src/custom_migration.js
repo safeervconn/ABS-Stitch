@@ -1,16 +1,8 @@
-import { createClient } from '@supabase/supabase-js'
-const supabaseUrl = 'https://iutxllhudjckcaiwabud.supabase.co'
-const supabaseKey = process.env.SUPABASE_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
+
 
 import { createClient } from '@supabase/supabase-js'
 import { v4 as uuidv4 } from 'uuid'
 
-// 🔑 Use service_role key, NOT anon key
-const supabase = createClient(
-  'https://YOUR_PROJECT_ID.supabase.co',
-  'YOUR_SERVICE_ROLE_KEY'
-)
 
 async function seed() {
   try {
