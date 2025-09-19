@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import "dotenv/config";
 
 // Use service role key here (NOT anon key)
 const supabase = createClient(
