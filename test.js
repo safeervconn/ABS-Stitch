@@ -1,15 +1,14 @@
 import { createClient } from "@supabase/supabase-js";
+import "dotenv/config";
 
-// Use service role key here (NOT anon key)
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY; // anon key
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function seed() {
   console.log("🚀 Starting seeding...");
 
-  // --- 1. Create Users ---
+  // --- 1. Create Users via signUp ---
   const users = [
     { email: "admin@example.com", password: "password123", role: "admin", full_name: "Super Admin" },
     { email: "sales@example.com", password: "password123", role: "sales_rep", full_name: "Sally Sales" },
@@ -20,19 +19,20 @@ async function seed() {
   const createdUsers = [];
 
   for (const u of users) {
-    const { data, error } = await supabase.auth.admin.createUser({
+    const { data, error } = await supabase.auth.signUp({
       email: u.email,
       password: u.password,
-      email_confirm: true,
-      user_metadata: { role: u.role },
+      options: { data: { role: u.role } }, // adds role into user metadata
     });
 
     if (error) {
-      console.error("❌ Error creating user:", u.email, error);
-    } else {
-      console.log("✅ Created user:", u.email);
-      createdUsers.push({ ...u, id: data.user.id });
+      console.error("❌ Error creating user:", u.email, error.message);
+      continue;
     }
+
+    const user = data.user;
+    console.log("✅ Created user:", u.email);
+    createdUsers.push({ ...u, id: user.id });
   }
 
   // --- 2. Insert into user_profiles ---
@@ -43,11 +43,10 @@ async function seed() {
       full_name: u.full_name,
       role: u.role,
     });
-    if (error) console.error("❌ Error inserting profile:", u.email, error);
+    if (error) console.error("❌ Error inserting profile:", u.email, error.message);
     else console.log("✅ Inserted profile:", u.email);
   }
 
-  // Get IDs for convenience
   const admin = createdUsers.find(u => u.role === "admin");
   const salesRep = createdUsers.find(u => u.role === "sales_rep");
   const designer = createdUsers.find(u => u.role === "designer");
@@ -72,9 +71,9 @@ async function seed() {
   ]).select();
 
   if (prodError) {
-    console.error("❌ Error inserting products:", prodError);
+    console.error("❌ Error inserting products:", prodError.message);
   } else {
-    console.log("✅ Inserted products:", products);
+    console.log("✅ Inserted products:", products.length);
   }
 
   // --- 4. Insert Order ---
@@ -89,9 +88,9 @@ async function seed() {
   }).select().single();
 
   if (orderError) {
-    console.error("❌ Error inserting order:", orderError);
+    console.error("❌ Error inserting order:", orderError.message);
   } else {
-    console.log("✅ Inserted order:", order);
+    console.log("✅ Inserted order:", order.order_number);
   }
 
   // --- 5. Insert Order Items ---
@@ -114,7 +113,7 @@ async function seed() {
     ]);
 
     if (itemsError) {
-      console.error("❌ Error inserting order items:", itemsError);
+      console.error("❌ Error inserting order items:", itemsError.message);
     } else {
       console.log("✅ Inserted order items");
     }
