@@ -154,12 +154,24 @@ const Navbar: React.FC = () => {
               </button>
             )}
             
-            <button 
-              onClick={() => window.location.href = '/#contact'}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-bold shadow-lg"
-            >
-              Get a Quote
-            </button>
+            {currentUser ? (
+              <button 
+                onClick={() => {
+                  const event = new CustomEvent('openPlaceOrderModal');
+                  window.dispatchEvent(event);
+                }}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-bold shadow-lg"
+              >
+                Place Order
+              </button>
+            ) : (
+              <button 
+                onClick={() => window.location.href = '/#contact'}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-bold shadow-lg"
+              >
+                Get a Quote
+              </button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -223,12 +235,24 @@ const Navbar: React.FC = () => {
                   </button>
                 )}
                 
-                <button 
-                  onClick={() => window.location.href = '/#contact'}
-                  className="w-full text-left bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 mt-2 font-bold"
-                >
-                  Get a Quote
-                </button>
+                {currentUser ? (
+                  <button 
+                    onClick={() => {
+                      const event = new CustomEvent('openPlaceOrderModal');
+                      window.dispatchEvent(event);
+                    }}
+                    className="w-full text-left bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 mt-2 font-bold"
+                  >
+                    Place Order
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => window.location.href = '/#contact'}
+                    className="w-full text-left bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 mt-2 font-bold"
+                  >
+                    Get a Quote
+                  </button>
+                )}
               </div>
             </div>
           </div>
