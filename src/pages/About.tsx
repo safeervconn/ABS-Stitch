@@ -9,22 +9,18 @@
  */
 
 import React from 'react';
-import { ArrowLeft, Users, Award, Clock, Heart } from 'lucide-react';
+import { Users, Award, Clock, Heart } from 'lucide-react';
+import Navbar from '../components/Navbar';
 
 const About: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      {/* Navigation */}
+      <Navbar />
+      
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-12">
         <div className="container mx-auto px-4">
-          <button 
-            onClick={() => window.location.href = '/'}
-            className="flex items-center space-x-2 mb-4 hover:text-blue-200 transition-colors"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span>Back to Homepage</span>
-          </button>
-          
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
             About ABS STITCH
           </h1>
