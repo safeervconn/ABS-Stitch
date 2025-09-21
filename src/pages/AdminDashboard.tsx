@@ -500,9 +500,6 @@ const AdminDashboard: React.FC = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Quick Actions */}
-              
             </div>
           </>
         )}
