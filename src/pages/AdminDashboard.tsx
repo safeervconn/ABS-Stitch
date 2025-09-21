@@ -502,7 +502,7 @@ const AdminDashboard: React.FC = () => {
               </div>
 
               {/* Quick Actions */}
-              
+            </div>
         )}
 
         {/* User Management Tab */}
