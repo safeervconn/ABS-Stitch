@@ -218,35 +218,36 @@ const AdminDashboard: React.FC = () => {
 
   // Calculate real-time stats
   const stats = [
-    { 
-      title: 'Total Users', 
-      value: users.length.toString(), 
-      change: `+${users.filter(u => new Date(u.created_at) > new Date(Date.now() - 30*24*60*60*1000)).length}`, 
-      icon: Users, 
-      color: 'blue' 
-    },
-    { 
-      title: 'Active Orders', 
-      value: orders.filter(o => !['completed', 'delivered', 'cancelled'].includes(o.status)).length.toString(), 
-      change: `+${orders.filter(o => new Date(o.created_at) > new Date(Date.now() - 7*24*60*60*1000)).length}`, 
-      icon: ShoppingBag, 
-      color: 'green' 
-    },
-    { 
-      title: 'Total Products', 
-      value: products.length.toString(), 
-      change: `+${products.filter(p => new Date(p.created_at) > new Date(Date.now() - 30*24*60*60*1000)).length}`, 
-      icon: Package, 
-      color: 'purple' 
-    },
-    { 
-      title: 'Active Products', 
-      value: products.filter(p => p.is_active).length.toString(), 
-      change: `${Math.round((products.filter(p => p.is_active).length / products.length) * 100) || 0}%`, 
-      icon: TrendingUp, 
-      color: 'orange' 
-    }
-  ];
+  { 
+    title: 'Total Customers', 
+    value: customers.length.toString(), 
+    change: `+${customers.filter(c => new Date(c.created_at) > new Date(Date.now() - 30*24*60*60*1000)).length}`, 
+    icon: Users, 
+    color: 'blue' 
+  },
+  { 
+    title: 'In-Progress Orders', 
+    value: orders.filter(o => !['completed', 'delivered', 'cancelled'].includes(o.status)).length.toString(), 
+    change: `+${orders.filter(o => new Date(o.created_at) > new Date(Date.now() - 7*24*60*60*1000)).length}`, 
+    icon: ShoppingBag, 
+    color: 'green' 
+  },
+  { 
+    title: 'Total Revenue', 
+    value: orders.reduce((sum, o) => sum + (o.total_amount || 0), 0).toLocaleString(), 
+    change: `+${orders.filter(o => new Date(o.created_at) > new Date(Date.now() - 30*24*60*60*1000))
+                          .reduce((sum, o) => sum + (o.total_amount || 0), 0).toLocaleString()}`, 
+    icon: DollarSign, 
+    color: 'purple' 
+  },
+  { 
+    title: 'Active Products', 
+    value: products.filter(p => p.is_active).length.toString(), 
+    change: `${Math.round((products.filter(p => p.is_active).length / (products.length || 1)) * 100)}%`, 
+    icon: Package, 
+    color: 'orange' 
+  }
+];
 
   // Event handlers
   const handleViewOrder = (order: any) => {
