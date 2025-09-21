@@ -463,7 +463,7 @@ const AdminDashboard: React.FC = () => {
             <div className="grid lg:grid-cols-3 gap-8">
               
               {/* Recent Orders */}
-              <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
+              <div className="lg:col-full bg-white rounded-xl shadow-sm border border-gray-100">
                 <div className="p-6 border-b border-gray-100">
                   <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
                 </div>
