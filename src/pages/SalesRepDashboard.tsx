@@ -14,10 +14,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Users, ShoppingBag, DollarSign, LogOut, Bell, Phone, Mail, TrendingUp, Target, Eye, UserPlus } from 'lucide-react';
+import { Users, ShoppingBag, DollarSign, LogOut, Bell, TrendingUp, Target, Eye } from 'lucide-react';
 import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
 import { useOrders } from '../contexts/OrderContext';
 import OrderDetailsModal from '../components/OrderDetailsModal';
+import Navbar from '../components/Navbar';
 
 const SalesRepDashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -119,8 +120,11 @@ const SalesRepDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Navigation */}
+      <Navbar />
+      
       {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
+      <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -186,11 +190,8 @@ const SalesRepDashboard: React.FC = () => {
           })}
         </div>
 
-        {/* Dashboard Grid */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          
-          {/* Orders List */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
+        {/* Orders List */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="p-6 border-b border-gray-100">
               <h3 className="text-lg font-semibold text-gray-900">Customer Orders</h3>
             </div>
@@ -250,32 +251,6 @@ const SalesRepDashboard: React.FC = () => {
                 ))}
               </div>
             </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div className="p-6 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
-            </div>
-            <div className="p-6 space-y-4">
-              <button className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 rounded-lg transition-all text-left shadow-sm">
-                <Phone className="h-5 w-5 text-blue-600" />
-                <span className="font-medium text-gray-900">Call Customer</span>
-              </button>
-              <button className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 rounded-lg transition-all text-left shadow-sm">
-                <Mail className="h-5 w-5 text-green-600" />
-                <span className="font-medium text-gray-900">Send Email</span>
-              </button>
-              <button className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 rounded-lg transition-all text-left shadow-sm">
-                <ShoppingBag className="h-5 w-5 text-purple-600" />
-                <span className="font-medium text-gray-900">Create Order</span>
-              </button>
-              <button className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-orange-50 to-red-50 hover:from-orange-100 hover:to-red-100 rounded-lg transition-all text-left shadow-sm">
-                <TrendingUp className="h-5 w-5 text-orange-600" />
-                <span className="font-medium text-gray-900">View Reports</span>
-              </button>
-            </div>
-          </div>
         </div>
       </main>
 

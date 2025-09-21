@@ -14,10 +14,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Palette, Clock, CheckCircle, LogOut, Bell, Upload, MessageSquare, Award, Briefcase, Eye } from 'lucide-react';
+import { Palette, Clock, CheckCircle, LogOut, Bell, Award, Briefcase, Eye } from 'lucide-react';
 import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
 import { useOrders } from '../contexts/OrderContext';
 import OrderDetailsModal from '../components/OrderDetailsModal';
+import Navbar from '../components/Navbar';
 
 const DesignerDashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -118,8 +119,11 @@ const DesignerDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Navigation */}
+      <Navbar />
+      
       {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
+      <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -185,11 +189,8 @@ const DesignerDashboard: React.FC = () => {
           })}
         </div>
 
-        {/* Dashboard Grid */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          
-          {/* Assigned Orders */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
+        {/* Assigned Orders */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="p-6 border-b border-gray-100">
               <h3 className="text-lg font-semibold text-gray-900">My Assigned Orders</h3>
             </div>
@@ -245,32 +246,6 @@ const DesignerDashboard: React.FC = () => {
                 ))}
               </div>
             </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div className="p-6 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
-            </div>
-            <div className="p-6 space-y-4">
-              <button className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 rounded-lg transition-all text-left shadow-sm">
-                <Upload className="h-5 w-5 text-purple-600" />
-                <span className="font-medium text-gray-900">Upload Work</span>
-              </button>
-              <button className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 rounded-lg transition-all text-left shadow-sm">
-                <MessageSquare className="h-5 w-5 text-blue-600" />
-                <span className="font-medium text-gray-900">Message Client</span>
-              </button>
-              <button className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 rounded-lg transition-all text-left shadow-sm">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <span className="font-medium text-gray-900">Mark Complete</span>
-              </button>
-              <button className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-orange-50 to-red-50 hover:from-orange-100 hover:to-red-100 rounded-lg transition-all text-left shadow-sm">
-                <Clock className="h-5 w-5 text-orange-600" />
-                <span className="font-medium text-gray-900">Time Tracker</span>
-              </button>
-            </div>
-          </div>
         </div>
       </main>
 
