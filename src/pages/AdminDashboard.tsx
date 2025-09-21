@@ -26,7 +26,7 @@ const AdminDashboard: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
   const [stats, setStats] = useState([
-    { title: 'Total Customers', value: '', change: '+0', icon: Users, color: 'blue' },
+    { title: 'Total Customers', value: '0', icon: Users, color: 'blue' },
     { title: 'New Customers', value: '0', change: '+0', icon: UserPlus, color: 'green' },
     { title: 'In-Progress Orders', value: '0', change: '+0', icon: ShoppingBag, color: 'yellow' },
     { title: 'Monthly Revenue', value: '$0', change: '+$0', icon: DollarSign, color: 'purple' },
