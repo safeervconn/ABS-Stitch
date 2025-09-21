@@ -502,7 +502,40 @@ const AdminDashboard: React.FC = () => {
               </div>
 
               {/* Quick Actions */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div className="p-6 border-b border-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
+                </div>
+                <div className="p-6 space-y-4">
+                  <button 
+                    onClick={() => setActiveTab('users')}
+                    className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 rounded-lg transition-all text-left shadow-sm"
+                  >
+                    <UserCheck className="h-5 w-5 text-blue-600" />
+                    <span className="font-medium text-gray-900">Manage Users</span>
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab('products')}
+                    className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 rounded-lg transition-all text-left shadow-sm"
+                  >
+                    <Package className="h-5 w-5 text-green-600" />
+                    <span className="font-medium text-gray-900">Manage Products</span>
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab('orders')}
+                    className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 rounded-lg transition-all text-left shadow-sm"
+                  >
+                    <ShoppingBag className="h-5 w-5 text-purple-600" />
+                    <span className="font-medium text-gray-900">Manage Orders</span>
+                  </button>
+                  <button className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-orange-50 to-red-50 hover:from-orange-100 hover:to-red-100 rounded-lg transition-all text-left shadow-sm">
+                    <Settings className="h-5 w-5 text-orange-600" />
+                    <span className="font-medium text-gray-900">System Settings</span>
+                  </button>
+                </div>
+              </div>
             </div>
+          </>
         )}
 
         {/* User Management Tab */}
