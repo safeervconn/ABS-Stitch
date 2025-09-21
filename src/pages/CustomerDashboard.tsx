@@ -19,6 +19,7 @@ import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
 import { useOrders } from '../contexts/OrderContext';
 import OrderDetailsModal from '../components/OrderDetailsModal';
 import PlaceOrderModal from '../components/PlaceOrderModal';
+import Navbar from '../components/Navbar';
 
 const CustomerDashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -113,6 +114,9 @@ const CustomerDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Homepage Navigation */}
+      <Navbar />
+      
       {/* Header */}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
