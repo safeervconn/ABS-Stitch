@@ -90,9 +90,9 @@ const AdminDashboard: React.FC = () => {
         .from('user_profiles')
         .select(`
           *,
-          customers(company_name),
-          sales_reps(employee_id, department),
-          designers(employee_id, specialties)
+          customers!customers_id_fkey(company_name),
+          sales_reps!sales_reps_id_fkey(employee_id, department),
+          designers!designers_id_fkey(employee_id, specialties)
         `)
         .order('created_at', { ascending: false });
       
