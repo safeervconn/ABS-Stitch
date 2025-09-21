@@ -18,7 +18,6 @@ import { Users, ShoppingBag, DollarSign, LogOut, Bell, Phone, Mail, TrendingUp, 
 import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
 import { useOrders } from '../contexts/OrderContext';
 import OrderDetailsModal from '../components/OrderDetailsModal';
-import Navbar from '../components/Navbar';
 
 const SalesRepDashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -120,9 +119,6 @@ const SalesRepDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Homepage Navigation */}
-      <Navbar />
-      
       {/* Header */}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
