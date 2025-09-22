@@ -48,29 +48,29 @@ interface OrderProviderProps {
 export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const [orders, setOrders] = useState<Order[]>([]);
 
+  // Add new order
   const addOrder = async (orderData: any) => {
     try {
       const user = await getCurrentUser();
       if (!user) return;
-      
+
       const profile = await getUserProfile(user.id);
       if (!profile) return;
 
-      // Create order in database
       const { data: order, error } = await supabase
         .from('orders')
         .insert({
           order_number: `ORD-${Date.now()}`,
           customer_id: profile.id,
-          order_type: 'custom',
+          order_type: orderData.type || 'custom',
           status: 'pending',
-          total_amount: 75.0,
-          custom_instructions: orderData.designInstructions,
+          total_amount: orderData.amount || 75.0,
+          custom_instructions: orderData.designInstructions || '',
           design_requirements: {
-            designSize: orderData.designSize,
-            apparelType: orderData.apparelType,
-            customWidth: orderData.customWidth,
-            customHeight: orderData.customHeight
+            designSize: orderData.designSize || '',
+            apparelType: orderData.apparelType || '',
+            customWidth: orderData.customWidth || '',
+            customHeight: orderData.customHeight || ''
           }
         })
         .select()
@@ -84,6 +84,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     }
   };
 
+  // Fetch orders with correct relationships
   const fetchOrders = async () => {
     try {
       const user = await getCurrentUser();
@@ -92,7 +93,6 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       const profile = await getUserProfile(user.id);
       if (!profile) return;
 
-      // Corrected query based on actual schema
       let query = supabase
         .from('orders')
         .select(`
@@ -102,7 +102,6 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           designer:employees!orders_assigned_designer_id_fkey(id, full_name)
         `);
 
-      // Apply role-based filtering
       switch (profile.role) {
         case 'customer':
           query = query.eq('customer_id', profile.id);
@@ -113,14 +112,12 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         case 'designer':
           query = query.eq('assigned_designer_id', profile.id);
           break;
-        // Admin sees all orders
       }
 
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      // Transform data to match Order interface
       const transformedOrders: Order[] = (data || []).map(order => ({
         id: order.id,
         orderNumber: order.order_number,
@@ -161,7 +158,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       .then(() => fetchOrders());
   };
 
-  const assignDesigner = (orderId: string, designerId: string, designerName: string) => {
+  const assignDesigner = (orderId: string, designerId: string) => {
     supabase
       .from('orders')
       .update({
