@@ -1,15 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, UserCheck, UserX } from 'lucide-react';
 import DataTable from '../components/DataTable';
-import SearchBar from '../components/SearchBar';
+import FilterBar, { FilterConfig } from '../components/FilterBar';
 import CrudModal from '../components/CrudModal';
-import { getUsers, createUser, updateUser, deleteUser } from '../api/supabaseHelpers';
+import { createUser, updateUser, deleteUser, getSalesReps } from '../api/supabaseHelpers';
 import { AdminUser, PaginationParams } from '../types';
+import { usePaginatedData } from '../hooks/useAdminData';
+import { getUsers } from '../api/supabaseHelpers';
 
 const UsersTab: React.FC = () => {
-  const [users, setUsers] = useState<any>({ data: [], total: 0, page: 1, limit: 25, totalPages: 0 });
-  const [loading, setLoading] = useState(true);
-  const [params, setParams] = useState<PaginationParams>({
+  // Use the new paginated data hook
+  const { data: users, params, loading, error, updateParams, refetch } = usePaginatedData(
+    getUsers,
+    {
+      page: 1,
+      limit: 25,
+      search: '',
+      sortBy: 'created_at',
+      sortOrder: 'desc',
+    }
+  );
+
+  // Filter state
+  const [filterValues, setFilterValues] = useState<Record<string, string>>({
+    role: '',
+    status: '',
+    salesRep: '',
+    dateFrom: '',
+    dateTo: '',
+  });
+
+  // Initial params for reset
+  const [initialParams] = useState<PaginationParams>({
     page: 1,
     limit: 25,
     search: '',
@@ -22,28 +44,100 @@ const UsersTab: React.FC = () => {
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const data = await getUsers(params);
-      setUsers(data);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Sales reps for filter
+  const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
 
   useEffect(() => {
-    fetchUsers();
-  }, [params]);
+    // Fetch sales reps for filter
+    const fetchSalesReps = async () => {
+      try {
+        const reps = await getSalesReps();
+        setSalesReps(reps);
+      } catch (error) {
+        console.error('Error fetching sales reps:', error);
+      }
+    };
+    
+    fetchSalesReps();
+  }, []);
 
+  // Filter configurations
+  const filterConfigs: FilterConfig[] = [
+    {
+      key: 'role',
+      label: 'Role',
+      options: [
+        { value: 'admin', label: 'Administrator' },
+        { value: 'sales_rep', label: 'Sales Representative' },
+        { value: 'designer', label: 'Designer' },
+        { value: 'customer', label: 'Customer' },
+      ],
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      options: [
+        { value: 'active', label: 'Active' },
+        { value: 'disabled', label: 'Disabled' },
+      ],
+    },
+    {
+      key: 'salesRep',
+      label: 'Sales Rep',
+      options: salesReps.map(rep => ({
+        value: rep.id,
+        label: rep.full_name,
+      })),
+    },
+    {
+      key: 'dateFrom',
+      label: 'Registered From',
+      type: 'date' as const,
+    },
+    {
+      key: 'dateTo',
+      label: 'Registered To',
+      type: 'date' as const,
+    },
+  ];
   const handleParamsChange = (newParams: Partial<PaginationParams>) => {
-    setParams(prev => ({ ...prev, ...newParams }));
+    updateParams(newParams);
   };
 
   const handleSearch = (search: string) => {
-    setParams(prev => ({ ...prev, search, page: 1 }));
+    updateParams({ search, page: 1 });
+  };
+
+  const handleFilterChange = (key: string, value: string) => {
+    setFilterValues(prev => ({ ...prev, [key]: value }));
+    
+    // Apply filters to search params
+    const newParams: Partial<PaginationParams> = { page: 1 };
+    
+    if (key === 'role' && value) {
+      newParams.role = value;
+    } else if (key === 'status' && value) {
+      newParams.status = value;
+    } else if (key === 'salesRep' && value) {
+      newParams.salesRepId = value;
+    } else if (key === 'dateFrom' && value) {
+      newParams.dateFrom = value;
+    } else if (key === 'dateTo' && value) {
+      newParams.dateTo = value;
+    }
+    
+    updateParams(newParams);
+  };
+
+  const handleClearFilters = () => {
+    setFilterValues({
+      role: '',
+      status: '',
+      salesRep: '',
+      dateFrom: '',
+      dateTo: '',
+    });
+    updateParams(initialParams);
   };
 
   const handleCreateUser = () => {
@@ -74,7 +168,7 @@ const UsersTab: React.FC = () => {
     try {
       const newStatus = user.status === 'active' ? 'disabled' : 'active';
       await updateUser(user.id, { status: newStatus });
-      await fetchUsers();
+      await refetch();
     } catch (error) {
       console.error('Error updating user status:', error);
       alert('Error updating user status. Please try again.');
@@ -88,7 +182,7 @@ const UsersTab: React.FC = () => {
       } else if (selectedUser) {
         await updateUser(selectedUser.id, formData);
       }
-      await fetchUsers();
+      await refetch();
     } catch (error) {
       console.error('Error saving user:', error);
       throw error;
@@ -223,14 +317,25 @@ const UsersTab: React.FC = () => {
         </button>
       </div>
 
-      {/* Search */}
-      <div className="max-w-md">
-        <SearchBar
-          value={params.search || ''}
-          onChange={handleSearch}
-          placeholder="Search users by name or email..."
-        />
-      </div>
+      {/* Enhanced Filter Bar */}
+      <FilterBar
+        searchValue={params.search || ''}
+        onSearchChange={handleSearch}
+        searchPlaceholder="Search users by name or email..."
+        filters={filterConfigs}
+        filterValues={filterValues}
+        onFilterChange={handleFilterChange}
+        onClearFilters={handleClearFilters}
+        resultCount={users.total}
+        loading={loading}
+      />
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <p className="text-red-700">{error}</p>
+        </div>
+      )}
 
       {/* Users Table */}
       <DataTable

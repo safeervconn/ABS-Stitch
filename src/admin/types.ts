@@ -74,6 +74,23 @@ export interface PaginationParams {
   search?: string;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
+  // Order filters
+  status?: string;
+  customerSearch?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  amountMin?: number;
+  amountMax?: number;
+  // User filters
+  role?: string;
+  salesRepId?: string;
+  // Product filters
+  categoryId?: string;
+  isActive?: boolean;
+  priceMin?: number;
+  priceMax?: number;
+  stockMin?: number;
+  stockMax?: number;
 }
 
 export interface PaginatedResponse<T> {

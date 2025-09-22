@@ -1,15 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import DataTable from '../components/DataTable';
-import SearchBar from '../components/SearchBar';
+import FilterBar, { FilterConfig } from '../components/FilterBar';
 import CrudModal from '../components/CrudModal';
-import { getProducts, createProduct, updateProduct, deleteProduct, getCategories, createCategory } from '../api/supabaseHelpers';
+import { createProduct, updateProduct, deleteProduct, getCategories, createCategory } from '../api/supabaseHelpers';
 import { AdminProduct, Category, PaginationParams } from '../types';
+import { usePaginatedData } from '../hooks/useAdminData';
+import { getProducts } from '../api/supabaseHelpers';
 
 const ProductsTab: React.FC = () => {
-  const [products, setProducts] = useState<any>({ data: [], total: 0, page: 1, limit: 25, totalPages: 0 });
-  const [loading, setLoading] = useState(true);
-  const [params, setParams] = useState<PaginationParams>({
+  // Use the new paginated data hook
+  const { data: products, params, loading, error, updateParams, refetch } = usePaginatedData(
+    getProducts,
+    {
+      page: 1,
+      limit: 25,
+      search: '',
+      sortBy: 'created_at',
+      sortOrder: 'desc',
+    }
+  );
+
+  // Filter state
+  const [filterValues, setFilterValues] = useState<Record<string, string>>({
+    category: '',
+    status: '',
+    priceMin: '',
+    priceMax: '',
+    stockMin: '',
+    stockMax: '',
+  });
+
+  // Initial params for reset
+  const [initialParams] = useState<PaginationParams>({
     page: 1,
     limit: 25,
     search: '',
@@ -25,18 +48,6 @@ const ProductsTab: React.FC = () => {
   // Categories
   const [categories, setCategories] = useState<Category[]>([]);
 
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const data = await getProducts(params);
-      setProducts(data);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const fetchCategories = async () => {
     try {
       const data = await getCategories();
@@ -47,19 +58,93 @@ const ProductsTab: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, [params]);
-
-  useEffect(() => {
     fetchCategories();
   }, []);
 
+  // Filter configurations
+  const filterConfigs: FilterConfig[] = [
+    {
+      key: 'category',
+      label: 'Category',
+      options: categories.map(cat => ({
+        value: cat.id,
+        label: cat.name,
+      })),
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      options: [
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' },
+      ],
+    },
+    {
+      key: 'priceMin',
+      label: 'Min Price',
+      type: 'number' as const,
+      placeholder: 'Min $',
+    },
+    {
+      key: 'priceMax',
+      label: 'Max Price',
+      type: 'number' as const,
+      placeholder: 'Max $',
+    },
+    {
+      key: 'stockMin',
+      label: 'Min Stock',
+      type: 'number' as const,
+      placeholder: 'Min qty',
+    },
+    {
+      key: 'stockMax',
+      label: 'Max Stock',
+      type: 'number' as const,
+      placeholder: 'Max qty',
+    },
+  ];
   const handleParamsChange = (newParams: Partial<PaginationParams>) => {
-    setParams(prev => ({ ...prev, ...newParams }));
+    updateParams(newParams);
   };
 
   const handleSearch = (search: string) => {
-    setParams(prev => ({ ...prev, search, page: 1 }));
+    updateParams({ search, page: 1 });
+  };
+
+  const handleFilterChange = (key: string, value: string) => {
+    setFilterValues(prev => ({ ...prev, [key]: value }));
+    
+    // Apply filters to search params
+    const newParams: Partial<PaginationParams> = { page: 1 };
+    
+    if (key === 'category' && value) {
+      newParams.categoryId = value;
+    } else if (key === 'status' && value) {
+      newParams.isActive = value === 'active';
+    } else if (key === 'priceMin' && value) {
+      newParams.priceMin = parseFloat(value);
+    } else if (key === 'priceMax' && value) {
+      newParams.priceMax = parseFloat(value);
+    } else if (key === 'stockMin' && value) {
+      newParams.stockMin = parseInt(value);
+    } else if (key === 'stockMax' && value) {
+      newParams.stockMax = parseInt(value);
+    }
+    
+    updateParams(newParams);
+  };
+
+  const handleClearFilters = () => {
+    setFilterValues({
+      category: '',
+      status: '',
+      priceMin: '',
+      priceMax: '',
+      stockMin: '',
+      stockMax: '',
+    });
+    updateParams(initialParams);
   };
 
   const handleCreateProduct = () => {
@@ -78,7 +163,7 @@ const ProductsTab: React.FC = () => {
     if (window.confirm(`Are you sure you want to delete "${product.title}"?`)) {
       try {
         await deleteProduct(product.id);
-        await fetchProducts();
+        await refetch();
       } catch (error) {
         console.error('Error deleting product:', error);
         alert('Error deleting product. Please try again.');
@@ -89,7 +174,7 @@ const ProductsTab: React.FC = () => {
   const handleToggleStatus = async (product: AdminProduct) => {
     try {
       await updateProduct(product.id, { is_active: !product.is_active });
-      await fetchProducts();
+      await refetch();
     } catch (error) {
       console.error('Error updating product status:', error);
       alert('Error updating product status. Please try again.');
@@ -114,7 +199,7 @@ const ProductsTab: React.FC = () => {
       } else if (selectedProduct) {
         await updateProduct(selectedProduct.id, formData);
       }
-      await fetchProducts();
+      await refetch();
     } catch (error) {
       console.error('Error saving product:', error);
       throw error;
@@ -248,14 +333,25 @@ const ProductsTab: React.FC = () => {
         </button>
       </div>
 
-      {/* Search */}
-      <div className="max-w-md">
-        <SearchBar
-          value={params.search || ''}
-          onChange={handleSearch}
-          placeholder="Search products by name or SKU..."
-        />
-      </div>
+      {/* Enhanced Filter Bar */}
+      <FilterBar
+        searchValue={params.search || ''}
+        onSearchChange={handleSearch}
+        searchPlaceholder="Search products by name or SKU..."
+        filters={filterConfigs}
+        filterValues={filterValues}
+        onFilterChange={handleFilterChange}
+        onClearFilters={handleClearFilters}
+        resultCount={products.total}
+        loading={loading}
+      />
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <p className="text-red-700">{error}</p>
+        </div>
+      )}
 
       {/* Products Table */}
       <DataTable

@@ -1,47 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Users, DollarSign, Package, TrendingUp, Eye } from 'lucide-react';
-import { getAdminStats, getRecentOrders } from '../api/supabaseHelpers';
-import { AdminStats, AdminOrder } from '../types';
+import { useAdminData } from '../hooks/useAdminData';
+import { AdminOrder } from '../types';
 
 interface OverviewTabProps {
   onOrderClick: (order: AdminOrder) => void;
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
-  const [stats, setStats] = useState<AdminStats>({
-    totalOrdersThisMonth: 0,
-    newCustomersThisMonth: 0,
-    totalRevenueThisMonth: 0,
-    inProgressOrders: 0,
-    activeProducts: 0,
-  });
-  const [recentOrders, setRecentOrders] = useState<AdminOrder[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [statsData, ordersData] = await Promise.all([
-          getAdminStats(),
-          getRecentOrders(10),
-        ]);
-        
-        setStats(statsData);
-        setRecentOrders(ordersData);
-      } catch (error) {
-        console.error('Error fetching overview data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-    
-    // Removed auto-refresh to prevent constant updates
-    // const interval = setInterval(fetchData, 30000);
-    // return () => clearInterval(interval);
-  }, []);
+  // Use the admin data hook with manual refresh control
+  const { stats, recentOrders, loading, error, refreshData } = useAdminData();
 
   const statCards = [
     {
@@ -105,8 +73,35 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button
+            onClick={() => refreshData(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="space-y-8">
+      {/* Manual Refresh Button */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-900">Dashboard Overview</h2>
+        <button
+          onClick={() => refreshData(true)}
+          disabled={loading}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+        >
+          {loading ? 'Refreshing...' : 'Refresh Data'}
+        </button>
+      </div>
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {statCards.map((stat, index) => {

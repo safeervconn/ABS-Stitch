@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Users, ShoppingBag, Package, BarChart3, Bell, LogOut } from 'lucide-react';
 import { signOut, getCurrentUser, getUserProfile } from '../../lib/supabase';
-import { getBadgeCounts, updateLastSeen } from '../api/supabaseHelpers';
+import { useAdminData } from '../hooks/useAdminData';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -12,7 +12,9 @@ interface AdminLayoutProps {
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabChange }) => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [badgeCounts, setBadgeCounts] = useState({ users: 0, orders: 0, products: 0 });
+  
+  // Use the new admin data hook (with auto-refresh disabled to fix the bug)
+  const { badgeCounts, clearBadge } = useAdminData({ autoRefresh: false });
 
   useEffect(() => {
     const checkUser = async () => {
@@ -39,29 +41,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
     checkUser();
   }, []);
 
-  useEffect(() => {
-    // Initialize badge counts to 0 to prevent constant refreshing
-    setBadgeCounts({ users: 0, orders: 0, products: 0 });
-    
-    // Uncomment below if you want badge functionality
-    // const fetchBadgeCounts = async () => {
-    //   try {
-    //     const counts = await getBadgeCounts();
-    //     setBadgeCounts(counts);
-    //   } catch (error) {
-    //     console.error('Error fetching badge counts:', error);
-    //   }
-    // };
-    // fetchBadgeCounts();
-  }, []);
-
-  useEffect(() => {
-    // Disable last seen updates to prevent constant refreshing
-    // if (activeTab && ['users', 'orders', 'products'].includes(activeTab)) {
-    //   updateLastSeen(activeTab);
-    //   setBadgeCounts(prev => ({ ...prev, [activeTab]: 0 }));
-    // }
-  }, [activeTab]);
+  // Handle tab changes and clear badges
+  const handleTabChange = (tab: string) => {
+    onTabChange(tab);
+    if (['users', 'orders', 'products'].includes(tab)) {
+      clearBadge(tab as 'users' | 'orders' | 'products');
+    }
+  };
 
   const handleSignOut = async () => {
     try {
@@ -135,7 +121,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
               return (
                 <button
                   key={tab.id}
-                  onClick={() => onTabChange(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                   className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors relative ${
                     isActive
                       ? 'border-blue-500 text-blue-600'

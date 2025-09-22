@@ -1,19 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Eye } from 'lucide-react';
+import { Edit, Eye, Calendar, DollarSign, CreditCard } from 'lucide-react';
 import DataTable from '../components/DataTable';
-import SearchBar from '../components/SearchBar';
+import FilterBar, { FilterConfig } from '../components/FilterBar';
 import CrudModal from '../components/CrudModal';
-import { getOrders, updateOrder, getSalesReps, getDesigners } from '../api/supabaseHelpers';
+import { updateOrder, getSalesReps, getDesigners } from '../api/supabaseHelpers';
 import { AdminOrder, AdminUser, PaginationParams } from '../types';
+import { usePaginatedData } from '../hooks/useAdminData';
+import { getOrders } from '../api/supabaseHelpers';
 
 interface OrdersTabProps {
   onOrderClick: (order: AdminOrder) => void;
 }
 
 const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
-  const [orders, setOrders] = useState<any>({ data: [], total: 0, page: 1, limit: 25, totalPages: 0 });
-  const [loading, setLoading] = useState(true);
-  const [params, setParams] = useState<PaginationParams>({
+  // Use the new paginated data hook
+  const { data: orders, params, loading, error, updateParams, refetch } = usePaginatedData(
+    getOrders,
+    {
+      page: 1,
+      limit: 25,
+      search: '',
+      sortBy: 'created_at',
+      sortOrder: 'desc',
+    }
+  );
+
+  // Filter state
+  const [filterValues, setFilterValues] = useState<Record<string, string>>({
+    status: '',
+    customer: '',
+    dateFrom: '',
+    dateTo: '',
+    amountMin: '',
+    amountMax: '',
+  });
+
+  // Initial params state for compatibility
+  const [initialParams] = useState<PaginationParams>({
     page: 1,
     limit: 25,
     search: '',
@@ -29,18 +52,6 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
   const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
   const [designers, setDesigners] = useState<AdminUser[]>([]);
 
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-      const data = await getOrders(params);
-      setOrders(data);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const fetchAssignmentOptions = async () => {
     try {
       const [salesRepsData, designersData] = await Promise.all([
@@ -55,19 +66,96 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
   };
 
   useEffect(() => {
-    fetchOrders();
-  }, [params]);
-
-  useEffect(() => {
     fetchAssignmentOptions();
   }, []);
 
+  // Filter configurations
+  const filterConfigs: FilterConfig[] = [
+    {
+      key: 'status',
+      label: 'Status',
+      options: [
+        { value: 'pending', label: 'Pending' },
+        { value: 'assigned', label: 'Assigned' },
+        { value: 'in_progress', label: 'In Progress' },
+        { value: 'review', label: 'Review' },
+        { value: 'completed', label: 'Completed' },
+        { value: 'delivered', label: 'Delivered' },
+        { value: 'cancelled', label: 'Cancelled' },
+      ],
+    },
+    {
+      key: 'customer',
+      label: 'Customer',
+      type: 'search' as const,
+      placeholder: 'Search by customer name...',
+    },
+    {
+      key: 'dateFrom',
+      label: 'From Date',
+      type: 'date' as const,
+    },
+    {
+      key: 'dateTo',
+      label: 'To Date',
+      type: 'date' as const,
+    },
+    {
+      key: 'amountMin',
+      label: 'Min Amount',
+      type: 'number' as const,
+      placeholder: 'Min $',
+    },
+    {
+      key: 'amountMax',
+      label: 'Max Amount',
+      type: 'number' as const,
+      placeholder: 'Max $',
+    },
+  ];
+
   const handleParamsChange = (newParams: Partial<PaginationParams>) => {
-    setParams(prev => ({ ...prev, ...newParams }));
+    updateParams(newParams);
   };
 
   const handleSearch = (search: string) => {
-    setParams(prev => ({ ...prev, search, page: 1 }));
+    updateParams({ search, page: 1 });
+  };
+
+  const handleFilterChange = (key: string, value: string) => {
+    setFilterValues(prev => ({ ...prev, [key]: value }));
+    
+    // Apply filters to search params
+    const newParams: Partial<PaginationParams> = { page: 1 };
+    
+    // Add filter-specific logic
+    if (key === 'status' && value) {
+      newParams.status = value;
+    } else if (key === 'customer' && value) {
+      newParams.customerSearch = value;
+    } else if (key === 'dateFrom' && value) {
+      newParams.dateFrom = value;
+    } else if (key === 'dateTo' && value) {
+      newParams.dateTo = value;
+    } else if (key === 'amountMin' && value) {
+      newParams.amountMin = parseFloat(value);
+    } else if (key === 'amountMax' && value) {
+      newParams.amountMax = parseFloat(value);
+    }
+    
+    updateParams(newParams);
+  };
+
+  const handleClearFilters = () => {
+    setFilterValues({
+      status: '',
+      customer: '',
+      dateFrom: '',
+      dateTo: '',
+      amountMin: '',
+      amountMax: '',
+    });
+    updateParams(initialParams);
   };
 
   const handleEditOrder = (order: AdminOrder) => {
@@ -92,7 +180,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
         assigned_role: assignedRole,
         status: formData.status || (assignedRole ? 'assigned' : selectedOrder.status),
       });
-      await fetchOrders();
+      await refetch();
     } catch (error) {
       console.error('Error updating order:', error);
       throw error;
@@ -241,14 +329,25 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
         </div>
       </div>
 
-      {/* Search */}
-      <div className="max-w-md">
-        <SearchBar
-          value={params.search || ''}
-          onChange={handleSearch}
-          placeholder="Search orders by order number..."
-        />
-      </div>
+      {/* Enhanced Filter Bar */}
+      <FilterBar
+        searchValue={params.search || ''}
+        onSearchChange={handleSearch}
+        searchPlaceholder="Search orders by order number..."
+        filters={filterConfigs}
+        filterValues={filterValues}
+        onFilterChange={handleFilterChange}
+        onClearFilters={handleClearFilters}
+        resultCount={orders.total}
+        loading={loading}
+      />
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <p className="text-red-700">{error}</p>
+        </div>
+      )}
 
       {/* Orders Table */}
       <DataTable

@@ -120,6 +120,30 @@ export const getUsers = async (params: PaginationParams): Promise<PaginatedRespo
       query = query.or(`full_name.ilike.%${params.search}%,email.ilike.%${params.search}%`);
     }
 
+    // Apply role filter
+    if (params.role) {
+      query = query.eq('role', params.role);
+    }
+
+    // Apply status filter
+    if (params.status) {
+      query = query.eq('status', params.status);
+    }
+
+    // Apply sales rep filter
+    if (params.salesRepId) {
+      // This would require a join with customers table to filter by assigned sales rep
+      // For now, we'll implement a basic version
+      query = query.eq('id', params.salesRepId);
+    }
+
+    // Apply date range filters
+    if (params.dateFrom) {
+      query = query.gte('created_at', params.dateFrom);
+    }
+    if (params.dateTo) {
+      query = query.lte('created_at', params.dateTo);
+    }
     // Apply sorting
     const sortBy = params.sortBy || 'created_at';
     const sortOrder = params.sortOrder || 'desc';
@@ -233,6 +257,31 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       query = query.or(`order_number.ilike.%${params.search}%`);
     }
 
+    // Apply status filter
+    if (params.status) {
+      query = query.eq('status', params.status);
+    }
+
+    // Apply customer search filter
+    if (params.customerSearch) {
+      query = query.or(`customer.user_profiles.full_name.ilike.%${params.customerSearch}%,customer.user_profiles.email.ilike.%${params.customerSearch}%`);
+    }
+
+    // Apply date range filters
+    if (params.dateFrom) {
+      query = query.gte('created_at', params.dateFrom);
+    }
+    if (params.dateTo) {
+      query = query.lte('created_at', params.dateTo);
+    }
+
+    // Apply amount range filters
+    if (params.amountMin) {
+      query = query.gte('total_amount', params.amountMin);
+    }
+    if (params.amountMax) {
+      query = query.lte('total_amount', params.amountMax);
+    }
     // Apply sorting
     const sortBy = params.sortBy || 'created_at';
     const sortOrder = params.sortOrder || 'desc';
@@ -377,6 +426,31 @@ export const getProducts = async (params: PaginationParams): Promise<PaginatedRe
       query = query.or(`title.ilike.%${params.search}%,sku.ilike.%${params.search}%`);
     }
 
+    // Apply category filter
+    if (params.categoryId) {
+      query = query.eq('category_id', params.categoryId);
+    }
+
+    // Apply status filter
+    if (params.isActive !== undefined) {
+      query = query.eq('is_active', params.isActive);
+    }
+
+    // Apply price range filters
+    if (params.priceMin) {
+      query = query.gte('price', params.priceMin);
+    }
+    if (params.priceMax) {
+      query = query.lte('price', params.priceMax);
+    }
+
+    // Apply stock range filters
+    if (params.stockMin) {
+      query = query.gte('stock', params.stockMin);
+    }
+    if (params.stockMax) {
+      query = query.lte('stock', params.stockMax);
+    }
     // Apply sorting
     const sortBy = params.sortBy || 'created_at';
     const sortOrder = params.sortOrder || 'desc';
@@ -578,43 +652,34 @@ export const updateLastSeen = async (tabName: string): Promise<void> => {
 // Badge Counts
 export const getBadgeCounts = async (): Promise<{ users: number; orders: number; products: number }> => {
   try {
-    // Use a static time instead of constantly changing last seen times
+    // Implement proper badge counting with admin meta tracking
+    const adminMeta = await getAdminMeta();
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-
-    // For now, return 0 badges to stop the constant refreshing
-    // You can implement proper badge logic later if needed
+    
+    const lastSeenUsers = adminMeta?.last_seen_users || oneDayAgo;
+    const lastSeenOrders = adminMeta?.last_seen_orders || oneDayAgo;
+    const lastSeenProducts = adminMeta?.last_seen_products || oneDayAgo;
+    
+    const [usersCount, ordersCount, productsCount] = await Promise.all([
+      supabase
+        .from('user_profiles')
+        .select('*', { count: 'exact', head: true })
+        .gt('created_at', lastSeenUsers),
+      supabase
+        .from('orders')
+        .select('*', { count: 'exact', head: true })
+        .gt('created_at', lastSeenOrders),
+      supabase
+        .from('products')
+        .select('*', { count: 'exact', head: true })
+        .gt('created_at', lastSeenProducts),
+    ]);
+    
     return {
-      users: 0,
-      orders: 0,
-      products: 0,
+      users: usersCount.count || 0,
+      orders: ordersCount.count || 0,
+      products: productsCount.count || 0,
     };
-
-    // Uncomment below if you want to implement proper badge counting
-    // const adminMeta = await getAdminMeta();
-    // const lastSeenUsers = adminMeta?.last_seen_users || oneDayAgo;
-    // const lastSeenOrders = adminMeta?.last_seen_orders || oneDayAgo;
-    // const lastSeenProducts = adminMeta?.last_seen_products || oneDayAgo;
-    
-    // const [usersCount, ordersCount, productsCount] = await Promise.all([
-    //   supabase
-    //     .from('user_profiles')
-    //     .select('*', { count: 'exact', head: true })
-    //     .gt('created_at', lastSeenUsers),
-    //   supabase
-    //     .from('orders')
-    //     .select('*', { count: 'exact', head: true })
-    //     .gt('created_at', lastSeenOrders),
-    //   supabase
-    //     .from('products')
-    //     .select('*', { count: 'exact', head: true })
-    //     .gt('created_at', lastSeenProducts),
-    // ]);
-    
-    // return {
-    //   users: usersCount.count || 0,
-    //   orders: ordersCount.count || 0,
-    //   products: productsCount.count || 0,
-    // };
   } catch (error) {
     console.error('Error fetching badge counts:', error);
     return { users: 0, orders: 0, products: 0 };
