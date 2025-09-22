@@ -19,7 +19,7 @@ interface Product {
   id: string;
   title: string;
   description: string;
-  category: string | { name: string };
+  category: string;
   price: number;
   original_price?: number;
   image_url: string;
@@ -214,11 +214,7 @@ const Catalog: React.FC = () => {
                     </div>
                   </div>
                   
-                  <p className="text-blue-500 text-sm mb-2 font-medium">{product.category}</p>
-                  <p className="text-blue-500 text-sm mb-2 font-medium">
-                    {typeof product.category === 'object' ? product.category.name : product.category?.name}
-                  </p>
-                   <p className="text-blue-500 text-sm mb-2 font-medium">{product.category.name}</p>
+                  <p className="text-blue-500 text-sm mb-2 font-medium">{product.category?.name}</p>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">{product.description}</p>
                   
                   {/* Rating */}
@@ -247,7 +243,7 @@ const Catalog: React.FC = () => {
                       title: product.title,
                       price: `$${product.price.toFixed(2)}`,
                       image: product.image_url,
-                      category: typeof product.category === 'object' ? product.category.name : product.category
+                      category: product.category
                     }}
                     className="w-full shadow-lg transform hover:scale-105"
                   />
