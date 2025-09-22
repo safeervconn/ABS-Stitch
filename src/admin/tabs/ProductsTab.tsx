@@ -194,7 +194,7 @@ const ProductsTab: React.FC = () => {
       label: 'Category',
       type: 'select' as const,
       options: [
-        { value: '', label: 'Select Category' },
+        { value: '' },
         ...categories.map(cat => ({ value: cat.id, label: cat.name })),
       ],
     },
