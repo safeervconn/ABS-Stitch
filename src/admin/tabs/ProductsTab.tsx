@@ -186,33 +186,60 @@ const ProductsTab: React.FC = () => {
     }
   };
 
-  const productFields = [
-    { key: 'title', label: 'Product Name', type: 'text' as const, required: true },
-    { key: 'description', label: 'Description', type: 'textarea' as const },
-    {
-      key: 'category_id',
-      
-      type: 'select' as const,
-      options: [
-        { value: '', label: 'Select Category' },
-        ...categories.map(cat => ({ value: cat.id, label: cat.name })),
-      ],
-    },
-    { key: 'new_category', label: 'Or Create New Category', type: 'text' as const, placeholder: 'Enter new category name' },
-    { key: 'price', label: 'Price', type: 'number' as const, required: true, min: 0, step: 0.01 },
-    { key: 'image_url', label: 'Image URL', type: 'text' as const, placeholder: 'https://example.com/image.jpg' },
-    { 
-      key: 'status', 
-      label: 'Status', 
-      type: 'select' as const, 
-      required: true,
-      options: [
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' },
-      ]
-    },
-  ];
+  // const productFields = [
+  //   { key: 'title', label: 'Product Name', type: 'text' as const, required: true },
+  //   { key: 'description', label: 'Description', type: 'textarea' as const },
+  //   {
+  //     key: 'category_id',
+  //     label: 'Category',
+  //     type: 'select' as const,
+  //     options: [
+  //       { value: '', label: 'Select Category' },
+  //       ...categories.map(cat => ({ value: cat.id, label: cat.name })),
+  //     ],
+  //   },
+  //   // { key: 'new_category', label: 'Or Create New Category', type: 'text' as const, placeholder: 'Enter new category name' },
+  //   { key: 'price', label: 'Price', type: 'number' as const, required: true, min: 0, step: 0.01 },
+  //   { key: 'image_url', label: 'Image URL', type: 'text' as const, placeholder: 'https://example.com/image.jpg' },
+  //   { 
+  //     key: 'status', 
+  //     label: 'Status', 
+  //     type: 'select' as const, 
+  //     required: true,
+  //     options: [
+  //       { value: 'active', label: 'Active' },
+  //       { value: 'inactive', label: 'Inactive' },
+  //     ]
+  //   },
+  // ];
 
+const productFields = [
+  { key: 'title', label: 'Product Name', type: 'text' as const, required: true },
+  { key: 'description', label: 'Description', type: 'textarea' as const },
+  {
+    key: 'category_id',
+    label: 'Category',
+    type: 'select' as const,
+    options: [
+      { value: '', label: 'Select Category' },
+      ...categories.map(cat => ({ value: cat.id, label: cat.name })),
+    ],
+  },
+  { key: 'price', label: 'Price', type: 'number' as const, required: true, min: 0, step: 0.01 },
+  { key: 'image_url', label: 'Image URL', type: 'text' as const, placeholder: 'https://example.com/image.jpg' },
+  { 
+    key: 'status', 
+    label: 'Status', 
+    type: 'select' as const, 
+    required: true,
+    options: [
+      { value: 'active', label: 'Active' },
+      { value: 'inactive', label: 'Inactive' },
+    ]
+  },
+];
+
+  
   const columns = [
     {
       key: 'image_url',
