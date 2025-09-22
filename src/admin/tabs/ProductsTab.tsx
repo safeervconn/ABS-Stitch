@@ -1,0 +1,282 @@
+import React, { useState, useEffect } from 'react';
+import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
+import DataTable from '../components/DataTable';
+import SearchBar from '../components/SearchBar';
+import CrudModal from '../components/CrudModal';
+import { getProducts, createProduct, updateProduct, deleteProduct, getCategories, createCategory } from '../api/supabaseHelpers';
+import { AdminProduct, Category, PaginationParams } from '../types';
+
+const ProductsTab: React.FC = () => {
+  const [products, setProducts] = useState<any>({ data: [], total: 0, page: 1, limit: 25, totalPages: 0 });
+  const [loading, setLoading] = useState(true);
+  const [params, setParams] = useState<PaginationParams>({
+    page: 1,
+    limit: 25,
+    search: '',
+    sortBy: 'created_at',
+    sortOrder: 'desc',
+  });
+
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+  const [selectedProduct, setSelectedProduct] = useState<AdminProduct | null>(null);
+  
+  // Categories
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const data = await getProducts(params);
+      setProducts(data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const data = await getCategories();
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [params]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const handleParamsChange = (newParams: Partial<PaginationParams>) => {
+    setParams(prev => ({ ...prev, ...newParams }));
+  };
+
+  const handleSearch = (search: string) => {
+    setParams(prev => ({ ...prev, search, page: 1 }));
+  };
+
+  const handleCreateProduct = () => {
+    setModalMode('create');
+    setSelectedProduct(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditProduct = (product: AdminProduct) => {
+    setModalMode('edit');
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteProduct = async (product: AdminProduct) => {
+    if (window.confirm(`Are you sure you want to delete "${product.title}"?`)) {
+      try {
+        await deleteProduct(product.id);
+        await fetchProducts();
+      } catch (error) {
+        console.error('Error deleting product:', error);
+        alert('Error deleting product. Please try again.');
+      }
+    }
+  };
+
+  const handleToggleStatus = async (product: AdminProduct) => {
+    try {
+      await updateProduct(product.id, { is_active: !product.is_active });
+      await fetchProducts();
+    } catch (error) {
+      console.error('Error updating product status:', error);
+      alert('Error updating product status. Please try again.');
+    }
+  };
+
+  const handleModalSubmit = async (formData: any) => {
+    try {
+      // Handle new category creation
+      if (formData.new_category && formData.new_category.trim()) {
+        const newCategory = await createCategory({
+          name: formData.new_category.trim(),
+          is_active: true,
+        });
+        formData.category_id = newCategory.id;
+        delete formData.new_category;
+        await fetchCategories(); // Refresh categories
+      }
+
+      if (modalMode === 'create') {
+        await createProduct(formData);
+      } else if (selectedProduct) {
+        await updateProduct(selectedProduct.id, formData);
+      }
+      await fetchProducts();
+    } catch (error) {
+      console.error('Error saving product:', error);
+      throw error;
+    }
+  };
+
+  const productFields = [
+    { key: 'title', label: 'Product Name', type: 'text' as const, required: true },
+    { key: 'description', label: 'Description', type: 'textarea' as const },
+    { key: 'sku', label: 'SKU', type: 'text' as const, placeholder: 'Product SKU' },
+    {
+      key: 'category_id',
+      label: 'Category',
+      type: 'select' as const,
+      options: [
+        { value: '', label: 'Select Category' },
+        ...categories.map(cat => ({ value: cat.id, label: cat.name })),
+      ],
+    },
+    { key: 'new_category', label: 'Or Create New Category', type: 'text' as const, placeholder: 'Enter new category name' },
+    { key: 'price', label: 'Price', type: 'number' as const, required: true, min: 0, step: 0.01 },
+    { key: 'stock', label: 'Stock Quantity', type: 'number' as const, min: 0 },
+    { key: 'image_url', label: 'Image URL', type: 'text' as const, placeholder: 'https://example.com/image.jpg' },
+    { key: 'is_active', label: 'Active', type: 'checkbox' as const },
+  ];
+
+  const columns = [
+    {
+      key: 'image_url',
+      label: 'Image',
+      render: (product: AdminProduct) => (
+        <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+          {product.image_url ? (
+            <img 
+              src={product.image_url} 
+              alt={product.title}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=100';
+              }}
+            />
+          ) : (
+            <span className="text-xs text-gray-400">No Image</span>
+          )}
+        </div>
+      ),
+    },
+    { key: 'title', label: 'Name', sortable: true },
+    {
+      key: 'category_name',
+      label: 'Category',
+      sortable: true,
+      render: (product: AdminProduct) => product.category_name || '-',
+    },
+    {
+      key: 'price',
+      label: 'Price',
+      sortable: true,
+      render: (product: AdminProduct) => `$${product.price.toFixed(2)}`,
+    },
+    { key: 'stock', label: 'Stock', sortable: true },
+    {
+      key: 'is_active',
+      label: 'Status',
+      sortable: true,
+      render: (product: AdminProduct) => (
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+          product.is_active 
+            ? 'bg-green-100 text-green-800' 
+            : 'bg-red-100 text-red-800'
+        }`}>
+          {product.is_active ? 'Active' : 'Inactive'}
+        </span>
+      ),
+    },
+    {
+      key: 'created_at',
+      label: 'Created At',
+      sortable: true,
+      render: (product: AdminProduct) => new Date(product.created_at).toLocaleDateString(),
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      render: (product: AdminProduct) => (
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => handleEditProduct(product)}
+            className="text-blue-600 hover:text-blue-900 transition-colors"
+            title="Edit Product"
+          >
+            <Edit className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => handleToggleStatus(product)}
+            className={`transition-colors ${
+              product.is_active
+                ? 'text-orange-600 hover:text-orange-900'
+                : 'text-green-600 hover:text-green-900'
+            }`}
+            title={product.is_active ? 'Deactivate Product' : 'Activate Product'}
+          >
+            {product.is_active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+          <button
+            onClick={() => handleDeleteProduct(product)}
+            className="text-red-600 hover:text-red-900 transition-colors"
+            title="Delete Product"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Product Management</h2>
+          <p className="text-gray-600 mt-1">Manage your product catalog and inventory</p>
+        </div>
+        <button
+          onClick={handleCreateProduct}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-lg"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add Product</span>
+        </button>
+      </div>
+
+      {/* Search */}
+      <div className="max-w-md">
+        <SearchBar
+          value={params.search || ''}
+          onChange={handleSearch}
+          placeholder="Search products by name or SKU..."
+        />
+      </div>
+
+      {/* Products Table */}
+      <DataTable
+        data={products}
+        columns={columns}
+        onParamsChange={handleParamsChange}
+        currentParams={params}
+        loading={loading}
+      />
+
+      {/* Product Modal */}
+      <CrudModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleModalSubmit}
+        title={modalMode === 'create' ? 'Add New Product' : 'Edit Product'}
+        fields={productFields}
+        initialData={selectedProduct}
+      />
+    </div>
+  );
+};
+
+export default ProductsTab;

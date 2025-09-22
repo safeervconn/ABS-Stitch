@@ -23,6 +23,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import SalesRepDashboard from './pages/SalesRepDashboard';
 import DesignerDashboard from './pages/DesignerDashboard';
 import CustomerDashboard from './pages/CustomerDashboard';
+import AdminModule from './admin/AdminDashboard';
 
 // Homepage Component
 const Homepage: React.FC = () => {
@@ -106,6 +107,8 @@ function App() {
               <Route path="/sales/dashboard" element={<SalesRepDashboard />} />
               <Route path="/designer/dashboard" element={<DesignerDashboard />} />
               <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+              <Route path="/admin" element={<AdminModule />} />
+              <Route path="/admin/*" element={<AdminModule />} />
             </Routes>
           </div>
         </Router>
