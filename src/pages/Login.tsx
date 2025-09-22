@@ -37,24 +37,29 @@ const Login: React.FC = () => {
       const { user } = await signIn(formData.email, formData.password);
       
       if (user) {
-        // Wait a moment for the session to be established
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Wait for the session to be established
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
         try {
           // Get user profile to determine role
           const profile = await getUserProfile(user.id);
           if (profile) {
-            // Redirect to appropriate dashboard based on role
-            window.location.href = getDashboardRoute(profile.role);
+            // Validate role and redirect to appropriate dashboard
+            const dashboardRoute = getDashboardRoute(profile.role);
+            if (dashboardRoute) {
+              window.location.href = dashboardRoute;
+            } else {
+              setError('Invalid user role. Please contact support.');
+              return;
+            }
           } else {
-            // If no profile exists, redirect to home page
-            console.warn('User profile not found, redirecting to home');
-            window.location.href = '/';
+            setError('User profile not found. Please contact support or try signing up again.');
+            return;
           }
         } catch (profileError) {
           console.error('Error fetching user profile:', profileError);
-          // Still redirect to home if profile fetch fails
-          window.location.href = '/';
+          setError('Failed to load user profile. Please try again.');
+          return;
         }
       } else {
         setError('Invalid email or password. Please try again.');
@@ -65,6 +70,8 @@ const Login: React.FC = () => {
         setError('Invalid email or password. Please check your credentials and try again.');
       } else if (err.message.includes('Email not confirmed')) {
         setError('Please check your email and click the confirmation link before signing in.');
+      } else if (err.message.includes('Too many requests')) {
+        setError('Too many login attempts. Please wait a moment and try again.');
       } else {
         setError(err.message || 'Login failed. Please try again.');
       }

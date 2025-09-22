@@ -158,7 +158,8 @@ export const getUserProfile = async (userId: string): Promise<Employee | Custome
 };
 
 export const createUserProfile = async (profile: Partial<Employee | Customer>) => {
-  const isEmployee = profile.role && ['admin', 'sales_rep', 'designer'].includes(profile.role);
+  // For new signups, always create customer profile
+  const isEmployee = false; // All new signups are customers
   
   if (isEmployee) {
     const { data, error } = await supabase
@@ -177,6 +178,7 @@ export const createUserProfile = async (profile: Partial<Employee | Customer>) =
     if (error) throw error;
     return data;
   } else {
+    // Create customer profile
     const { data, error } = await supabase
       .from('customers')
       .insert([{
@@ -206,7 +208,7 @@ export const getDashboardRoute = (role: string): string => {
     case 'customer':
       return '/customer/dashboard';
     default:
-      return '/';
+      return null; // Return null for invalid roles
   }
 };
 

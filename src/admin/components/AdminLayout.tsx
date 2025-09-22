@@ -25,6 +25,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
           if (profile && profile.role === 'admin') {
             setUser(profile);
           } else {
+            console.error('Access denied: User role is', profile?.role, 'but admin required');
             window.location.href = '/login';
           }
         } else {

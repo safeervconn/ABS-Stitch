@@ -36,9 +36,11 @@ const CustomerDashboard: React.FC = () => {
         const currentUser = await getCurrentUser();
         if (currentUser) {
           const profile = await getUserProfile(currentUser.id);
-          if (profile && profile.role === 'customer') {
+          if (profile && (profile.role === 'customer' || !profile.role)) {
+            // Accept users without role (legacy) or with customer role
             setUser(profile);
           } else {
+            console.error('Access denied: User role is', profile?.role);
             window.location.href = '/login';
           }
         } else {

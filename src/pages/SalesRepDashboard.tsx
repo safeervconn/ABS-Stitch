@@ -37,6 +37,7 @@ const SalesRepDashboard: React.FC = () => {
           if (profile && profile.role === 'sales_rep') {
             setUser(profile);
           } else {
+            console.error('Access denied: User role is', profile?.role, 'but sales_rep required');
             window.location.href = '/login';
           }
         } else {

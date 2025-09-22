@@ -21,9 +21,7 @@ const Signup: React.FC = () => {
     phone: '',
     password: '',
     confirmPassword: '',
-    role: 'customer' as 'customer' | 'sales_rep' | 'designer' | 'admin',
-    company_name: '',
-    specialties: '',
+    company_name: '', // Optional company name for customers
     acceptTerms: false
   });
   
@@ -103,10 +101,10 @@ const Signup: React.FC = () => {
     setError('');
 
     try {
-      // Create auth user
+      // Create auth user with customer role as default
       const { user } = await signUp(formData.email, formData.password, {
         full_name: formData.full_name,
-        role: formData.role,
+        role: 'customer', // Always set to customer for security
         phone: formData.phone
       });
 
@@ -120,58 +118,23 @@ const Signup: React.FC = () => {
             id: user.id,
             email: formData.email,
             full_name: formData.full_name,
-            role: formData.email === 'admin@absstitch.com' ? 'admin' : formData.role,
+            role: 'customer', // Always customer for new signups
             phone: formData.phone,
-            is_active: true,
-            notification_preferences: { email: true, push: true }
+            company_name: formData.company_name || null
           };
           
-          await createUserProfile({
-            ...profileData
-          });
-
-          // Create role-specific records
-          const userRole = profileData.role;
-          
-          if (userRole === 'customer') {
-            await supabase.from('customers').insert({
-              id: user.id,
-              company_name: formData.company_name || null,
-              total_orders: 0,
-              total_spent: 0
-            });
-          } else if (userRole === 'sales_rep') {
-            await supabase.from('sales_reps').insert({
-              id: user.id,
-              employee_id: `SR${Date.now()}`,
-              department: formData.company_name || 'Sales',
-              commission_rate: 10.0,
-              total_sales: 0,
-              active_customers: 0
-            });
-          } else if (userRole === 'designer') {
-            const specialties = formData.specialties 
-              ? formData.specialties.split(',').map(s => s.trim()).filter(s => s.length > 0)
-              : ['Embroidery', 'Custom Stitching'];
-              
-            await supabase.from('designers').insert({
-              id: user.id,
-              employee_id: `DS${Date.now()}`,
-              specialties: specialties,
-              hourly_rate: 50.0,
-              total_completed: 0,
-              average_rating: 0
-            });
-          }
+          // Create customer profile (all new users are customers)
+          await createUserProfile(profileData);
         } catch (profileError) {
           console.error('Error creating user profile:', profileError);
-          // Don't throw error here - user is created, just profile creation failed
-          // They can still log in and we can handle profile creation later
+          setError('Account created but profile setup failed. Please try logging in.');
+          return;
         }
         
         setSuccess(true);
       }
     } catch (err: any) {
+      console.error('Signup error:', err);
       setError(err.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
@@ -312,64 +275,22 @@ const Signup: React.FC = () => {
               </div>
             </div>
 
-            {/* Role Selection */}
+
+            {/* Company Name (Optional for customers) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Account Type
+                Company Name (Optional)
               </label>
-              <select
-                name="role"
-                value={formData.role}
+              <input
+                type="text"
+                name="company_name"
+                value={formData.company_name}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
-              >
-                <option value="customer">Customer - Browse and order artwork</option>
-                <option value="sales_rep">Sales Representative - Manage customer relationships</option>
-                <option value="designer">Designer - Create custom artwork</option>
-                <option value="admin">Administrator - Full system access</option>
-              </select>
-              {formData.email === 'admin@absstitch.com' && (
-                <p className="mt-2 text-sm text-blue-600 bg-blue-50 p-2 rounded">
-                  <strong>Admin Account:</strong> This email will automatically create an admin account with full system access.
-                </p>
-              )}
+                placeholder="Enter your company name"
+              />
             </div>
 
-            {/* Company Name (for customers) */}
-            {(formData.role === 'customer' || formData.role === 'sales_rep' || formData.role === 'admin') && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {formData.role === 'customer' ? 'Company Name (Optional)' : 
-                   formData.role === 'admin' ? 'Organization (Optional)' : 'Department (Optional)'}
-                </label>
-                <input
-                  type="text"
-                  name="company_name"
-                  value={formData.company_name}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
-                  placeholder={formData.role === 'customer' ? 'Enter your company name' : 
-                              formData.role === 'admin' ? 'Enter your organization' : 'Enter your department'}
-                />
-              </div>
-            )}
-
-            {/* Specialties (for designers) */}
-            {formData.role === 'designer' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Specialties (Optional)
-                </label>
-                <input
-                  type="text"
-                  name="specialties"
-                  value={formData.specialties || ''}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
-                  placeholder="e.g., Logo Design, Embroidery, Custom Artwork"
-                />
-              </div>
-            )}
             {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

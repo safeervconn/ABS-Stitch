@@ -37,6 +37,7 @@ const DesignerDashboard: React.FC = () => {
           if (profile && profile.role === 'designer') {
             setUser(profile);
           } else {
+            console.error('Access denied: User role is', profile?.role, 'but designer required');
             window.location.href = '/login';
           }
         } else {
