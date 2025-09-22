@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase';
-import { AdminUser, AdminOrder, AdminProduct, Category, AdminStats, AdminMeta, PaginatedResponse, PaginationParams } from '../types';
+import { AdminUser, AdminCustomer, AdminOrder, AdminProduct, Category, AdminStats, PaginatedResponse, PaginationParams } from '../types';
 
 // Admin Stats Queries
 export const getAdminStats = async (): Promise<AdminStats> => {
@@ -16,24 +16,27 @@ export const getAdminStats = async (): Promise<AdminStats> => {
 
     // New customers this month
     const { count: newCustomersThisMonth } = await supabase
-      .from('user_profiles')
+      .from('customers')
       .select('*', { count: 'exact', head: true })
-      .eq('role', 'customer')
       .gte('created_at', startOfMonth.toISOString());
 
-    // Total revenue this month
+    // Total revenue this month (assuming orders have a price field or we calculate from products)
     const { data: revenueData } = await supabase
       .from('orders')
-      .select('total_amount')
+      .select(`
+        products(price)
+      `)
       .gte('created_at', startOfMonth.toISOString());
 
-    const totalRevenueThisMonth = revenueData?.reduce((sum, order) => sum + (order.total_amount || 0), 0) || 0;
+    const totalRevenueThisMonth = revenueData?.reduce((sum, order) => {
+      return sum + (order.products?.price || 75); // Default price for custom orders
+    }, 0) || 0;
 
     // In-progress orders
     const { count: inProgressOrders } = await supabase
       .from('orders')
       .select('*', { count: 'exact', head: true })
-      .in('status', ['assigned', 'in_progress', 'review']);
+      .in('status', ['assigned_to_sales', 'assigned_to_designer', 'in_progress', 'under_review']);
 
     // Active products
     const { count: activeProducts } = await supabase
@@ -67,16 +70,10 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
       .from('orders')
       .select(`
         *,
-        customer:customers!inner(
-          user_profiles!customers_id_fkey(full_name, email)
-        ),
-        sales_rep:sales_reps(
-          user_profiles!sales_reps_id_fkey(full_name)
-        ),
-        designer:designers(
-          user_profiles!designers_id_fkey(full_name)
-        ),
-        order_items(quantity, unit_price, product_id, products(title))
+        customer:customers!inner(full_name, email),
+        product:products(title),
+        sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
+        designer:employees!orders_assigned_designer_id_fkey(full_name)
       `)
       .order('created_at', { ascending: false })
       .limit(limit);
@@ -85,20 +82,19 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
 
     return (data || []).map(order => ({
       id: order.id,
-      order_number: order.order_number,
       customer_id: order.customer_id,
-      customer_name: order.customer?.user_profiles?.full_name || 'Unknown',
-      customer_email: order.customer?.user_profiles?.email || '',
-      sales_rep_id: order.sales_rep_id,
-      sales_rep_name: order.sales_rep?.user_profiles?.full_name,
-      assigned_designer_id: order.assigned_designer_id,
-      designer_name: order.designer?.user_profiles?.full_name,
-      assigned_role: order.assigned_role,
-      order_type: order.order_type,
+      customer_name: order.customer?.full_name || 'Unknown',
+      customer_email: order.customer?.email || '',
+      product_id: order.product_id,
+      product_title: order.product?.title,
+      custom_description: order.custom_description,
+      file_url: order.file_url,
       status: order.status,
-      total_amount: order.total_amount,
-      items_summary: order.order_items?.map((item: any) => item.products?.title).join(', ') || 'Custom Order',
-      quantity: order.order_items?.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0) || 1,
+      assigned_sales_rep_id: order.assigned_sales_rep_id,
+      assigned_sales_rep_name: order.sales_rep?.full_name,
+      assigned_designer_id: order.assigned_designer_id,
+      assigned_designer_name: order.designer?.full_name,
+      invoice_url: order.invoice_url,
       created_at: order.created_at,
       updated_at: order.updated_at,
     }));
@@ -108,11 +104,11 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
   }
 };
 
-// Users CRUD Operations
+// Users CRUD Operations (Employees)
 export const getUsers = async (params: PaginationParams): Promise<PaginatedResponse<AdminUser>> => {
   try {
     let query = supabase
-      .from('user_profiles')
+      .from('employees')
       .select('*', { count: 'exact' });
 
     // Apply search filter
@@ -130,13 +126,6 @@ export const getUsers = async (params: PaginationParams): Promise<PaginatedRespo
       query = query.eq('status', params.status);
     }
 
-    // Apply sales rep filter
-    if (params.salesRepId) {
-      // This would require a join with customers table to filter by assigned sales rep
-      // For now, we'll implement a basic version
-      query = query.eq('id', params.salesRepId);
-    }
-
     // Apply date range filters
     if (params.dateFrom) {
       query = query.gte('created_at', params.dateFrom);
@@ -144,6 +133,7 @@ export const getUsers = async (params: PaginationParams): Promise<PaginatedRespo
     if (params.dateTo) {
       query = query.lte('created_at', params.dateTo);
     }
+
     // Apply sorting
     const sortBy = params.sortBy || 'created_at';
     const sortOrder = params.sortOrder || 'desc';
@@ -174,20 +164,16 @@ export const getUsers = async (params: PaginationParams): Promise<PaginatedRespo
 export const createUser = async (userData: Partial<AdminUser>): Promise<AdminUser> => {
   try {
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('employees')
       .insert([{
         ...userData,
-        id: crypto.randomUUID(), // Generate UUID for user
+        id: crypto.randomUUID(),
         status: userData.status || 'active',
       }])
       .select()
       .single();
 
     if (error) throw error;
-
-    // Log activity
-    await logActivity('create', 'user', data.id, { user_data: userData });
-
     return data;
   } catch (error) {
     console.error('Error creating user:', error);
@@ -198,17 +184,13 @@ export const createUser = async (userData: Partial<AdminUser>): Promise<AdminUse
 export const updateUser = async (id: string, userData: Partial<AdminUser>): Promise<AdminUser> => {
   try {
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('employees')
       .update(userData)
       .eq('id', id)
       .select()
       .single();
 
     if (error) throw error;
-
-    // Log activity
-    await logActivity('update', 'user', id, { user_data: userData });
-
     return data;
   } catch (error) {
     console.error('Error updating user:', error);
@@ -219,16 +201,78 @@ export const updateUser = async (id: string, userData: Partial<AdminUser>): Prom
 export const deleteUser = async (id: string): Promise<void> => {
   try {
     const { error } = await supabase
-      .from('user_profiles')
+      .from('employees')
       .delete()
       .eq('id', id);
 
     if (error) throw error;
-
-    // Log activity
-    await logActivity('delete', 'user', id);
   } catch (error) {
     console.error('Error deleting user:', error);
+    throw error;
+  }
+};
+
+// Customers CRUD Operations
+export const getCustomers = async (params: PaginationParams): Promise<PaginatedResponse<AdminCustomer>> => {
+  try {
+    let query = supabase
+      .from('customers')
+      .select(`
+        *,
+        sales_rep:employees!customers_assigned_sales_rep_id_fkey(full_name)
+      `, { count: 'exact' });
+
+    // Apply search filter
+    if (params.search) {
+      query = query.or(`full_name.ilike.%${params.search}%,email.ilike.%${params.search}%`);
+    }
+
+    // Apply status filter
+    if (params.status) {
+      query = query.eq('status', params.status);
+    }
+
+    // Apply sales rep filter
+    if (params.salesRepId) {
+      query = query.eq('assigned_sales_rep_id', params.salesRepId);
+    }
+
+    // Apply date range filters
+    if (params.dateFrom) {
+      query = query.gte('created_at', params.dateFrom);
+    }
+    if (params.dateTo) {
+      query = query.lte('created_at', params.dateTo);
+    }
+
+    // Apply sorting
+    const sortBy = params.sortBy || 'created_at';
+    const sortOrder = params.sortOrder || 'desc';
+    query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+
+    // Apply pagination
+    const from = (params.page - 1) * params.limit;
+    const to = from + params.limit - 1;
+    query = query.range(from, to);
+
+    const { data, error, count } = await query;
+
+    if (error) throw error;
+
+    const transformedData = (data || []).map(customer => ({
+      ...customer,
+      assigned_sales_rep_name: customer.sales_rep?.full_name,
+    }));
+
+    return {
+      data: transformedData,
+      total: count || 0,
+      page: params.page,
+      limit: params.limit,
+      totalPages: Math.ceil((count || 0) / params.limit),
+    };
+  } catch (error) {
+    console.error('Error fetching customers:', error);
     throw error;
   }
 };
@@ -240,21 +284,15 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       .from('orders')
       .select(`
         *,
-        customer:customers!inner(
-          user_profiles!customers_id_fkey(full_name, email)
-        ),
-        sales_rep:sales_reps(
-          user_profiles!sales_reps_id_fkey(full_name)
-        ),
-        designer:designers(
-          user_profiles!designers_id_fkey(full_name)
-        ),
-        order_items(quantity, unit_price, product_id, products(title))
+        customer:customers!inner(full_name, email),
+        product:products(title),
+        sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
+        designer:employees!orders_assigned_designer_id_fkey(full_name)
       `, { count: 'exact' });
 
     // Apply search filter
     if (params.search) {
-      query = query.or(`order_number.ilike.%${params.search}%`);
+      query = query.ilike('id', `%${params.search}%`);
     }
 
     // Apply status filter
@@ -264,7 +302,7 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
 
     // Apply customer search filter
     if (params.customerSearch) {
-      query = query.or(`customer.user_profiles.full_name.ilike.%${params.customerSearch}%,customer.user_profiles.email.ilike.%${params.customerSearch}%`);
+      query = query.or(`customer.full_name.ilike.%${params.customerSearch}%,customer.email.ilike.%${params.customerSearch}%`);
     }
 
     // Apply date range filters
@@ -275,13 +313,6 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       query = query.lte('created_at', params.dateTo);
     }
 
-    // Apply amount range filters
-    if (params.amountMin) {
-      query = query.gte('total_amount', params.amountMin);
-    }
-    if (params.amountMax) {
-      query = query.lte('total_amount', params.amountMax);
-    }
     // Apply sorting
     const sortBy = params.sortBy || 'created_at';
     const sortOrder = params.sortOrder || 'desc';
@@ -298,20 +329,19 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
 
     const transformedData = (data || []).map(order => ({
       id: order.id,
-      order_number: order.order_number,
       customer_id: order.customer_id,
-      customer_name: order.customer?.user_profiles?.full_name || 'Unknown',
-      customer_email: order.customer?.user_profiles?.email || '',
-      sales_rep_id: order.sales_rep_id,
-      sales_rep_name: order.sales_rep?.user_profiles?.full_name,
-      assigned_designer_id: order.assigned_designer_id,
-      designer_name: order.designer?.user_profiles?.full_name,
-      assigned_role: order.assigned_role,
-      order_type: order.order_type,
+      customer_name: order.customer?.full_name || 'Unknown',
+      customer_email: order.customer?.email || '',
+      product_id: order.product_id,
+      product_title: order.product?.title,
+      custom_description: order.custom_description,
+      file_url: order.file_url,
       status: order.status,
-      total_amount: order.total_amount,
-      items_summary: order.order_items?.map((item: any) => item.products?.title).join(', ') || 'Custom Order',
-      quantity: order.order_items?.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0) || 1,
+      assigned_sales_rep_id: order.assigned_sales_rep_id,
+      assigned_sales_rep_name: order.sales_rep?.full_name,
+      assigned_designer_id: order.assigned_designer_id,
+      assigned_designer_name: order.designer?.full_name,
+      invoice_url: order.invoice_url,
       created_at: order.created_at,
       updated_at: order.updated_at,
     }));
@@ -334,11 +364,10 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
     const { data, error } = await supabase
       .from('orders')
       .update({
-        sales_rep_id: orderData.sales_rep_id,
+        assigned_sales_rep_id: orderData.assigned_sales_rep_id,
         assigned_designer_id: orderData.assigned_designer_id,
-        assigned_role: orderData.assigned_role,
         status: orderData.status,
-        total_amount: orderData.total_amount,
+        invoice_url: orderData.invoice_url,
       })
       .eq('id', id)
       .select()
@@ -347,17 +376,15 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
     if (error) throw error;
 
     // Create notification for assigned user
-    if (orderData.sales_rep_id || orderData.assigned_designer_id) {
-      const assignedUserId = orderData.sales_rep_id || orderData.assigned_designer_id;
-      await createNotification(assignedUserId!, 'Order Assigned', `Order ${data.order_number} has been assigned to you.`, id);
+    if (orderData.assigned_sales_rep_id || orderData.assigned_designer_id) {
+      const assignedUserId = orderData.assigned_sales_rep_id || orderData.assigned_designer_id;
+      await createNotification(assignedUserId!, 'order', `Order ${id} has been assigned to you.`);
     }
 
-    // Log activity
-    await logActivity('update', 'order', id, { order_data: orderData });
+    // Log the activity
+    await logOrderActivity(id, 'updated', data);
 
-    // Return transformed data
-    const transformedOrder = await getOrderById(id);
-    return transformedOrder;
+    return await getOrderById(id);
   } catch (error) {
     console.error('Error updating order:', error);
     throw error;
@@ -370,16 +397,10 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
       .from('orders')
       .select(`
         *,
-        customer:customers!inner(
-          user_profiles!customers_id_fkey(full_name, email)
-        ),
-        sales_rep:sales_reps(
-          user_profiles!sales_reps_id_fkey(full_name)
-        ),
-        designer:designers(
-          user_profiles!designers_id_fkey(full_name)
-        ),
-        order_items(quantity, unit_price, product_id, products(title))
+        customer:customers!inner(full_name, email),
+        product:products(title),
+        sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
+        designer:employees!orders_assigned_designer_id_fkey(full_name)
       `)
       .eq('id', id)
       .single();
@@ -388,20 +409,19 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
 
     return {
       id: data.id,
-      order_number: data.order_number,
       customer_id: data.customer_id,
-      customer_name: data.customer?.user_profiles?.full_name || 'Unknown',
-      customer_email: data.customer?.user_profiles?.email || '',
-      sales_rep_id: data.sales_rep_id,
-      sales_rep_name: data.sales_rep?.user_profiles?.full_name,
-      assigned_designer_id: data.assigned_designer_id,
-      designer_name: data.designer?.user_profiles?.full_name,
-      assigned_role: data.assigned_role,
-      order_type: data.order_type,
+      customer_name: data.customer?.full_name || 'Unknown',
+      customer_email: data.customer?.email || '',
+      product_id: data.product_id,
+      product_title: data.product?.title,
+      custom_description: data.custom_description,
+      file_url: data.file_url,
       status: data.status,
-      total_amount: data.total_amount,
-      items_summary: data.order_items?.map((item: any) => item.products?.title).join(', ') || 'Custom Order',
-      quantity: data.order_items?.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0) || 1,
+      assigned_sales_rep_id: data.assigned_sales_rep_id,
+      assigned_sales_rep_name: data.sales_rep?.full_name,
+      assigned_designer_id: data.assigned_designer_id,
+      assigned_designer_name: data.designer?.full_name,
+      invoice_url: data.invoice_url,
       created_at: data.created_at,
       updated_at: data.updated_at,
     };
@@ -412,7 +432,7 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
 };
 
 // Products CRUD Operations
-export getProducts = async (params: PaginationParams): Promise<PaginatedResponse<AdminProduct>> => {
+export const getProducts = async (params: PaginationParams): Promise<PaginatedResponse<AdminProduct>> => {
   try {
     let query = supabase
       .from('products')
@@ -423,7 +443,7 @@ export getProducts = async (params: PaginationParams): Promise<PaginatedResponse
 
     // Apply search filter
     if (params.search) {
-      query = query.or(`title.ilike.%${params.search}%,sku.ilike.%${params.search}%`);
+      query = query.or(`title.ilike.%${params.search}%,description.ilike.%${params.search}%`);
     }
 
     // Apply category filter
@@ -444,7 +464,6 @@ export getProducts = async (params: PaginationParams): Promise<PaginatedResponse
       query = query.lte('price', params.priceMax);
     }
 
-    // Apply stock range filters
     // Apply sorting
     const sortBy = params.sortBy || 'created_at';
     const sortOrder = params.sortOrder || 'desc';
@@ -489,10 +508,6 @@ export const createProduct = async (productData: Partial<AdminProduct>): Promise
       .single();
 
     if (error) throw error;
-
-    // Log activity
-    await logActivity('create', 'product', data.id, { product_data: productData });
-
     return data;
   } catch (error) {
     console.error('Error creating product:', error);
@@ -510,10 +525,6 @@ export const updateProduct = async (id: string, productData: Partial<AdminProduc
       .single();
 
     if (error) throw error;
-
-    // Log activity
-    await logActivity('update', 'product', id, { product_data: productData });
-
     return data;
   } catch (error) {
     console.error('Error updating product:', error);
@@ -529,9 +540,6 @@ export const deleteProduct = async (id: string): Promise<void> => {
       .eq('id', id);
 
     if (error) throw error;
-
-    // Log activity
-    await logActivity('delete', 'product', id);
   } catch (error) {
     console.error('Error deleting product:', error);
     throw error;
@@ -547,7 +555,6 @@ export const getCategories = async (): Promise<Category[]> => {
       .order('name');
 
     if (error) throw error;
-
     return data || [];
   } catch (error) {
     console.error('Error fetching categories:', error);
@@ -564,7 +571,6 @@ export const createCategory = async (categoryData: Partial<Category>): Promise<C
       .single();
 
     if (error) throw error;
-
     return data;
   } catch (error) {
     console.error('Error creating category:', error);
@@ -576,14 +582,13 @@ export const createCategory = async (categoryData: Partial<Category>): Promise<C
 export const getSalesReps = async (): Promise<AdminUser[]> => {
   try {
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('employees')
       .select('*')
       .eq('role', 'sales_rep')
       .eq('status', 'active')
       .order('full_name');
 
     if (error) throw error;
-
     return data || [];
   } catch (error) {
     console.error('Error fetching sales reps:', error);
@@ -594,14 +599,13 @@ export const getSalesReps = async (): Promise<AdminUser[]> => {
 export const getDesigners = async (): Promise<AdminUser[]> => {
   try {
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('employees')
       .select('*')
       .eq('role', 'designer')
       .eq('status', 'active')
       .order('full_name');
 
     if (error) throw error;
-
     return data || [];
   } catch (error) {
     console.error('Error fetching designers:', error);
@@ -609,61 +613,24 @@ export const getDesigners = async (): Promise<AdminUser[]> => {
   }
 };
 
-// Admin Meta Operations
-export const getAdminMeta = async (): Promise<AdminMeta | null> => {
-  try {
-    const user = await supabase.auth.getUser();
-    if (!user.data.user) return null;
-    
-    const { data, error } = await supabase
-      .from('admin_meta')
-      .select('*') 
-      .eq('admin_id', user.data.user.id)
-      .single();
-
-    if (error && error.code !== 'PGRST116') throw error;
-
-    return data;
-  } catch (error) {
-    console.error('Error fetching admin meta:', error);
-    return null;
-  }
-};
-
-export const updateLastSeen = async (tabName: string): Promise<void> => {
-  try {
-    const { error } = await supabase.rpc('update_admin_last_seen', { tab_name: tabName });
-
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error updating last seen:', error);
-  }
-};
-
-// Badge Counts
+// Badge Counts (simplified without admin_meta table)
 export const getBadgeCounts = async (): Promise<{ users: number; orders: number; products: number }> => {
   try {
-    // Implement proper badge counting with admin meta tracking
-    const adminMeta = await getAdminMeta();
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    
-    const lastSeenUsers = adminMeta?.last_seen_users || oneDayAgo;
-    const lastSeenOrders = adminMeta?.last_seen_orders || oneDayAgo;
-    const lastSeenProducts = adminMeta?.last_seen_products || oneDayAgo;
     
     const [usersCount, ordersCount, productsCount] = await Promise.all([
       supabase
-        .from('user_profiles')
+        .from('employees')
         .select('*', { count: 'exact', head: true })
-        .gt('created_at', lastSeenUsers),
+        .gt('created_at', oneDayAgo),
       supabase
         .from('orders')
         .select('*', { count: 'exact', head: true })
-        .gt('created_at', lastSeenOrders),
+        .gt('created_at', oneDayAgo),
       supabase
         .from('products')
         .select('*', { count: 'exact', head: true })
-        .gt('created_at', lastSeenProducts),
+        .gt('created_at', oneDayAgo),
     ]);
     
     return {
@@ -678,41 +645,42 @@ export const getBadgeCounts = async (): Promise<{ users: number; orders: number;
 };
 
 // Utility Functions
-export const logActivity = async (
+export const logOrderActivity = async (
+  orderId: string,
   action: string,
-  resourceType: string,
-  resourceId?: string,
   details?: any
 ): Promise<void> => {
   try {
-    const { error } = await supabase.rpc('log_admin_activity', {
-      action_name: action,
-      resource_type_name: resourceType,
-      resource_id_param: resourceId,
-      details_param: details,
-    });
+    const user = await supabase.auth.getUser();
+    if (!user.data.user) return;
+
+    const { error } = await supabase
+      .from('order_logs')
+      .insert([{
+        order_id: orderId,
+        action,
+        performed_by: user.data.user.id,
+        details,
+      }]);
 
     if (error) throw error;
   } catch (error) {
-    console.error('Error logging activity:', error);
+    console.error('Error logging order activity:', error);
   }
 };
 
 export const createNotification = async (
   userId: string,
-  title: string,
-  message: string,
-  relatedOrderId?: string
+  type: 'order' | 'user' | 'product' | 'system',
+  message: string
 ): Promise<void> => {
   try {
     const { error } = await supabase
       .from('notifications')
       .insert([{
         user_id: userId,
-        title,
+        type,
         message,
-        type: 'info',
-        related_order_id: relatedOrderId,
       }]);
 
     if (error) throw error;

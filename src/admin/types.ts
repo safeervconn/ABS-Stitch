@@ -1,31 +1,41 @@
 export interface AdminUser {
   id: string;
-  email: string;
   full_name: string;
-  role: 'admin' | 'sales_rep' | 'designer' | 'customer';
-  status: 'active' | 'disabled';
-  avatar_url?: string;
+  email: string;
   phone?: string;
+  role: 'admin' | 'sales_rep' | 'designer';
+  status: 'active' | 'disabled';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AdminCustomer {
+  id: string;
+  full_name: string;
+  email: string;
+  phone?: string;
+  status: 'active' | 'disabled';
+  assigned_sales_rep_id?: string;
+  assigned_sales_rep_name?: string;
   created_at: string;
   updated_at: string;
 }
 
 export interface AdminOrder {
   id: string;
-  order_number: string;
   customer_id: string;
   customer_name: string;
   customer_email: string;
-  sales_rep_id?: string;
-  sales_rep_name?: string;
+  product_id?: string;
+  product_title?: string;
+  custom_description?: string;
+  file_url?: string;
+  status: 'pending' | 'unassigned' | 'assigned_to_sales' | 'assigned_to_designer' | 'in_progress' | 'under_review' | 'completed' | 'archived';
+  assigned_sales_rep_id?: string;
+  assigned_sales_rep_name?: string;
   assigned_designer_id?: string;
-  designer_name?: string;
-  assigned_role?: 'sales_rep' | 'designer';
-  order_type: 'catalog' | 'custom';
-  status: 'pending' | 'assigned' | 'in_progress' | 'review' | 'completed' | 'delivered' | 'cancelled';
-  total_amount: number;
-  items_summary: string;
-  quantity: number;
+  assigned_designer_name?: string;
+  invoice_url?: string;
   created_at: string;
   updated_at: string;
 }
@@ -36,9 +46,8 @@ export interface AdminProduct {
   description?: string;
   category_id?: string;
   category_name?: string;
-  price: number;
   image_url?: string;
-  tags?: string[];
+  price: number;
   status: 'active' | 'inactive';
   created_at: string;
   updated_at: string;
@@ -48,7 +57,6 @@ export interface Category {
   id: string;
   name: string;
   description?: string;
-  is_active: boolean;
   created_at: string;
 }
 
@@ -58,12 +66,6 @@ export interface AdminStats {
   totalRevenueThisMonth: number;
   inProgressOrders: number;
   activeProducts: number;
-}
-
-export interface AdminMeta {
-  last_seen_users: string;
-  last_seen_orders: string;
-  last_seen_products: string;
 }
 
 export interface PaginationParams {
@@ -84,7 +86,6 @@ export interface PaginationParams {
   salesRepId?: string;
   // Product filters
   categoryId?: string;
-  status?: string;
   priceMin?: number;
   priceMax?: number;
 }

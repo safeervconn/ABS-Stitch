@@ -3,7 +3,7 @@ import { Plus, Edit, Trash2, UserCheck, UserX } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
 import CrudModal from '../components/CrudModal';
-import { createUser, updateUser, deleteUser, getSalesReps } from '../api/supabaseHelpers';
+import { createUser, updateUser, deleteUser } from '../api/supabaseHelpers';
 import { AdminUser, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { getUsers } from '../api/supabaseHelpers';
@@ -110,7 +110,7 @@ const UsersTab: React.FC = () => {
     if (window.confirm(`Are you sure you want to delete ${user.full_name}?`)) {
       try {
         await deleteUser(user.id);
-        await fetchUsers();
+        await refetch();
       } catch (error) {
         console.error('Error deleting user:', error);
         alert('Error deleting user. Please try again.');
@@ -146,6 +146,7 @@ const UsersTab: React.FC = () => {
   const userFields = [
     { key: 'full_name', label: 'Full Name', type: 'text' as const, required: true },
     { key: 'email', label: 'Email', type: 'email' as const, required: true },
+    { key: 'phone', label: 'Phone', type: 'text' as const },
     { 
       key: 'role', 
       label: 'Role', 
@@ -155,10 +156,8 @@ const UsersTab: React.FC = () => {
         { value: 'admin', label: 'Administrator' },
         { value: 'sales_rep', label: 'Sales Representative' },
         { value: 'designer', label: 'Designer' },
-        { value: 'customer', label: 'Customer' },
       ]
     },
-    { key: 'phone', label: 'Phone', type: 'text' as const },
     { 
       key: 'status', 
       label: 'Status', 
@@ -172,23 +171,9 @@ const UsersTab: React.FC = () => {
   ];
 
   const columns = [
-    {
-      key: 'avatar_url',
-      label: 'Avatar',
-      render: (user: AdminUser) => (
-        <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-          {user.avatar_url ? (
-            <img src={user.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover" />
-          ) : (
-            <span className="text-xs font-medium text-gray-600">
-              {user.full_name?.charAt(0)?.toUpperCase() || '?'}
-            </span>
-          )}
-        </div>
-      ),
-    },
     { key: 'full_name', label: 'Name', sortable: true },
     { key: 'email', label: 'Email', sortable: true },
+    { key: 'phone', label: 'Phone' },
     {
       key: 'role',
       label: 'Role',
@@ -260,14 +245,14 @@ const UsersTab: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
-          <p className="text-gray-600 mt-1">Manage system users and their roles</p>
+          <p className="text-gray-600 mt-1">Manage employees and their roles</p>
         </div>
         <button
           onClick={handleCreateUser}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-lg"
         >
           <Plus className="h-4 w-4" />
-          <span>Add User</span>
+          <span>Add Employee</span>
         </button>
       </div>
 
@@ -275,7 +260,7 @@ const UsersTab: React.FC = () => {
       <FilterBar
         searchValue={params.search || ''}
         onSearchChange={handleSearch}
-        searchPlaceholder="Search users by name or email..."
+        searchPlaceholder="Search employees by name or email..."
         filters={filterConfigs}
         filterValues={filterValues}
         onFilterChange={handleFilterChange}
@@ -305,7 +290,7 @@ const UsersTab: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
-        title={modalMode === 'create' ? 'Add New User' : 'Edit User'}
+        title={modalMode === 'create' ? 'Add New Employee' : 'Edit Employee'}
         fields={userFields}
         initialData={selectedUser}
       />

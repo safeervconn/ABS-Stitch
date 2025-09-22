@@ -12,11 +12,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   getAdminStats, 
   getRecentOrders, 
-  getUsers, 
-  getOrders, 
-  getProducts,
   getBadgeCounts,
-  updateLastSeen 
 } from '../api/supabaseHelpers';
 import { AdminStats, AdminOrder, PaginatedResponse, PaginationParams } from '../types';
 
@@ -76,7 +72,6 @@ export const useAdminData = (options: UseAdminDataOptions = {}) => {
   // Clear badge for specific tab
   const clearBadge = useCallback(async (tabName: 'users' | 'orders' | 'products') => {
     setBadgeCounts(prev => ({ ...prev, [tabName]: 0 }));
-    await updateLastSeen(tabName);
   }, []);
 
   // Initial data load

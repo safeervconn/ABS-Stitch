@@ -12,29 +12,32 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Database types
-export interface UserProfile {
+export interface Employee {
   id: string;
-  email: string;
   full_name: string;
-  role: 'admin' | 'sales_rep' | 'designer' | 'customer';
-  avatar_url?: string;
+  email: string;
   phone?: string;
-  is_active: boolean;
-  notification_preferences: {
-    email: boolean;
-    push: boolean;
-  };
+  role: 'admin' | 'sales_rep' | 'designer';
+  status: 'active' | 'disabled';
   created_at: string;
   updated_at: string;
 }
 
 export interface Customer {
   id: string;
-  company_name?: string;
-  billing_address?: any;
-  assigned_sales_rep?: string;
-  total_orders: number;
-  total_spent: number;
+  full_name: string;
+  email: string;
+  phone?: string;
+  status: 'active' | 'disabled';
+  assigned_sales_rep_id?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
   created_at: string;
 }
 
@@ -42,37 +45,58 @@ export interface Product {
   id: string;
   title: string;
   description?: string;
-  category: string;
-  price: number;
-  original_price?: number;
+  category_id?: string;
   image_url?: string;
-  tags?: string[];
+  price: number;
   status: 'active' | 'inactive';
-  created_by?: string;
   created_at: string;
   updated_at: string;
 }
 
 export interface Order {
   id: string;
-  order_number: string;
   customer_id: string;
-  sales_rep_id?: string;
+  product_id?: string;
+  custom_description?: string;
+  file_url?: string;
+  status: 'pending' | 'unassigned' | 'assigned_to_sales' | 'assigned_to_designer' | 'in_progress' | 'under_review' | 'completed' | 'archived';
+  assigned_sales_rep_id?: string;
   assigned_designer_id?: string;
-  order_type: 'catalog' | 'custom';
-  status: 'pending' | 'assigned' | 'in_progress' | 'review' | 'completed' | 'delivered' | 'cancelled';
-  total_amount: number;
-  custom_instructions?: string;
-  design_requirements?: any;
-  due_date?: string;
+  invoice_url?: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface OrderComment {
+  id: number;
+  order_id: string;
+  author_id: string;
+  content: string;
+  created_at: string;
+}
+
+export interface OrderLog {
+  id: number;
+  order_id: string;
+  action: string;
+  performed_by?: string;
+  details?: any;
+  created_at: string;
+}
+
+export interface Notification {
+  id: number;
+  user_id: string;
+  type: 'order' | 'user' | 'product' | 'system';
+  message: string;
+  read: boolean;
+  created_at: string;
 }
 
 // Auth helper functions
 export const signUp = async (email: string, password: string, userData: {
   full_name: string;
-  role?: 'customer' | 'sales_rep' | 'designer';
+  role?: 'customer' | 'sales_rep' | 'designer' | 'admin';
   phone?: string;
 }) => {
   const { data, error } = await supabase.auth.signUp({
@@ -107,61 +131,66 @@ export const getCurrentUser = async () => {
   return user;
 };
 
-export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
-  const { data, error } = await supabase
-    .from('user_profiles')
+export const getUserProfile = async (userId: string): Promise<Employee | Customer | null> => {
+  // First try employees table
+  const { data: employee, error: empError } = await supabase
+    .from('employees')
     .select('*')
     .eq('id', userId)
     .maybeSingle();
   
-  if (error) {
-    console.error('Error fetching user profile:', error);
-    throw error;
-  }
-  return data;
-};
-
-export const createUserProfile = async (profile: Partial<UserProfile>) => {
-  // Check if this is the admin user
-  const isAdminEmail = profile.email === 'admin@absstitch.com';
-  if (isAdminEmail) {
-    profile.role = 'admin';
+  if (employee) {
+    return { ...employee, role: employee.role as Employee['role'] };
   }
   
-  const { data, error } = await supabase
-    .from('user_profiles')
-    .insert([profile])
-    .select()
-    .single();
+  // Then try customers table
+  const { data: customer, error: custError } = await supabase
+    .from('customers')
+    .select('*')
+    .eq('id', userId)
+    .maybeSingle();
   
-  if (error) {
-    console.error('Error creating user profile:', error);
-    throw error;
+  if (customer) {
+    return { ...customer, role: 'customer' as any };
   }
-  return data;
+  
+  return null;
 };
 
-// Function to create admin user if it doesn't exist
-export const ensureAdminUser = async () => {
-  try {
-    // Check if admin user already exists
-    const { data: existingAdmin } = await supabase
-      .from('user_profiles')
-      .select('id')
-      .eq('email', 'admin@absstitch.com')
-      .eq('role', 'admin')
+export const createUserProfile = async (profile: Partial<Employee | Customer>) => {
+  const isEmployee = profile.role && ['admin', 'sales_rep', 'designer'].includes(profile.role);
+  
+  if (isEmployee) {
+    const { data, error } = await supabase
+      .from('employees')
+      .insert([{
+        id: profile.id,
+        full_name: profile.full_name,
+        email: profile.email,
+        phone: profile.phone,
+        role: profile.role,
+        status: 'active'
+      }])
+      .select()
       .single();
     
-    if (existingAdmin) {
-      console.log('Admin user already exists');
-      return existingAdmin;
-    }
+    if (error) throw error;
+    return data;
+  } else {
+    const { data, error } = await supabase
+      .from('customers')
+      .insert([{
+        id: profile.id,
+        full_name: profile.full_name,
+        email: profile.email,
+        phone: profile.phone,
+        status: 'active'
+      }])
+      .select()
+      .single();
     
-    console.log('Admin user not found. Please sign up with admin@absstitch.com to create the admin account.');
-    return null;
-  } catch (error) {
-    console.error('Error checking for admin user:', error);
-    return null;
+    if (error) throw error;
+    return data;
   }
 };
 
@@ -191,16 +220,19 @@ export const getProducts = async (filters?: {
 }) => {
   let query = supabase
     .from('products')
-    .select('*')
+    .select(`
+      *,
+      category:categories(name)
+    `)
     .eq('status', 'active');
 
   // Apply filters
   if (filters?.category && filters.category !== 'All') {
-    query = query.eq('category', filters.category);
+    query = query.eq('categories.name', filters.category);
   }
 
   if (filters?.search) {
-    query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%,tags.cs.{${filters.search}}`);
+    query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
   }
 
   // Apply sorting
@@ -230,32 +262,35 @@ export const getProducts = async (filters?: {
   
   if (error) {
     console.error('Error fetching products:', error);
-    return []; // Return empty array instead of throwing for better UX
+    return [];
   }
   return data;
 };
 
 export const getProductCategories = async () => {
   const { data, error } = await supabase
-    .from('products')
-    .select('category')
-    .eq('is_active', true);
+    .from('categories')
+    .select('name')
+    .order('name');
   
   if (error) {
     console.error('Error fetching categories:', error);
-    return ['All']; // Return default categories
+    return ['All'];
   }
   
-  const categories = [...new Set(data.map(item => item.category))];
+  const categories = data.map(item => item.name);
   return ['All', ...categories];
 };
 
 export const getProductById = async (id: string) => {
   const { data, error } = await supabase
     .from('products')
-    .select('*')
+    .select(`
+      *,
+      category:categories(name)
+    `)
     .eq('id', id)
-    .eq('is_active', true)
+    .eq('status', 'active')
     .single();
   
   if (error) {
