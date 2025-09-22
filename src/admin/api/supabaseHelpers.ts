@@ -412,7 +412,7 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
 };
 
 // Products CRUD Operations
-export const getProducts = async (params: PaginationParams): Promise<PaginatedResponse<AdminProduct>> => {
+export getProducts = async (params: PaginationParams): Promise<PaginatedResponse<AdminProduct>> => {
   try {
     let query = supabase
       .from('products')
@@ -444,6 +444,7 @@ export const getProducts = async (params: PaginationParams): Promise<PaginatedRe
       query = query.lte('price', params.priceMax);
     }
 
+    // Apply stock range filters
     // Apply sorting
     const sortBy = params.sortBy || 'created_at';
     const sortOrder = params.sortOrder || 'desc';
@@ -719,15 +720,3 @@ export const createNotification = async (
     console.error('Error creating notification:', error);
   }
 };
-
-export const getProducts = async (filters?: {
-  category?: string;
-  search?: string;
-  sortBy?: string;
-  limit?: number;
-  offset?: number;
- }) => {
-  let query = supabase
-    .from('products')
-    .select('*')
-    .eq('status', 'active');
