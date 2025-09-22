@@ -191,10 +191,10 @@ const ProductsTab: React.FC = () => {
     { key: 'description', label: 'Description', type: 'textarea' as const },
     {
       key: 'category_id',
-      label: 'Category',
+      
       type: 'select' as const,
       options: [
-        { value: '' },
+        { value: '', label: 'Select Category' },
         ...categories.map(cat => ({ value: cat.id, label: cat.name })),
       ],
     },
