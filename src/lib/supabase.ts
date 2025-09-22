@@ -218,13 +218,21 @@ export const getProducts = async (filters?: {
   limit?: number;
   offset?: number;
 }) => {
+  // let query = supabase
+  //   .from('products')
+  //   .select(`
+  //     *,
+  //     category:categories(name)
+  //   `)
+  //   .eq('status', 'active');
   let query = supabase
-    .from('products')
-    .select(`
-      *,
-      category:categories(name)
-    `)
-    .eq('status', 'active');
+  .from('products')
+  .select(`
+    *,
+    category:categories(name)
+  `)
+  .eq('status', 'active');
+
 
   // Apply filters
   if (filters?.category && filters.category !== 'All') {
