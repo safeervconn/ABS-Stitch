@@ -39,7 +39,7 @@ export const getAdminStats = async (): Promise<AdminStats> => {
     const { count: activeProducts } = await supabase
       .from('products')
       .select('*', { count: 'exact', head: true })
-      .eq('is_active', true);
+      .eq('status', 'active');
 
     return {
       totalOrdersThisMonth: totalOrdersThisMonth || 0,
@@ -432,8 +432,8 @@ export const getProducts = async (params: PaginationParams): Promise<PaginatedRe
     }
 
     // Apply status filter
-    if (params.isActive !== undefined) {
-      query = query.eq('is_active', params.isActive);
+    if (params.status) {
+      query = query.eq('status', params.status);
     }
 
     // Apply price range filters
@@ -444,13 +444,6 @@ export const getProducts = async (params: PaginationParams): Promise<PaginatedRe
       query = query.lte('price', params.priceMax);
     }
 
-    // Apply stock range filters
-    if (params.stockMin) {
-      query = query.gte('stock', params.stockMin);
-    }
-    if (params.stockMax) {
-      query = query.lte('stock', params.stockMax);
-    }
     // Apply sorting
     const sortBy = params.sortBy || 'created_at';
     const sortOrder = params.sortOrder || 'desc';
@@ -468,7 +461,6 @@ export const getProducts = async (params: PaginationParams): Promise<PaginatedRe
     const transformedData = (data || []).map(product => ({
       ...product,
       category_name: product.category?.name,
-      stock: product.stock || 0,
     }));
 
     return {
@@ -490,8 +482,7 @@ export const createProduct = async (productData: Partial<AdminProduct>): Promise
       .from('products')
       .insert([{
         ...productData,
-        stock: productData.stock || 0,
-        is_active: productData.is_active !== undefined ? productData.is_active : true,
+        status: productData.status || 'active',
       }])
       .select()
       .single();
@@ -552,7 +543,6 @@ export const getCategories = async (): Promise<Category[]> => {
     const { data, error } = await supabase
       .from('categories')
       .select('*')
-      .eq('is_active', true)
       .order('name');
 
     if (error) throw error;
@@ -729,3 +719,15 @@ export const createNotification = async (
     console.error('Error creating notification:', error);
   }
 };
+
+export const getProducts = async (filters?: {
+  category?: string;
+  search?: string;
+  sortBy?: string;
+  limit?: number;
+  offset?: number;
+ }) => {
+  let query = supabase
+    .from('products')
+    .select('*')
+    .eq('status', 'active');

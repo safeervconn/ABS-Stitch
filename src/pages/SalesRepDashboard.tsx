@@ -75,10 +75,10 @@ const SalesRepDashboard: React.FC = () => {
 
   // Mock data for demonstration
   const stats = [
-    { title: 'My Customers', value: '45', change: '+3', icon: Users, color: 'blue' },
-    { title: 'Active Orders', value: salesOrders.filter(o => !['completed', 'delivered', 'cancelled'].includes(o.status)).length.toString(), change: '+2', icon: ShoppingBag, color: 'green' },
-    { title: 'Monthly Sales', value: '$8,450', change: '+15%', icon: DollarSign, color: 'purple' },
-    { title: 'Commission', value: '$845', change: '+12%', icon: Target, color: 'orange' }
+    { title: 'My Customers', value: '45', icon: Users, color: 'blue' },
+    { title: 'Active Orders', value: salesOrders.filter(o => !['completed', 'delivered', 'cancelled'].includes(o.status)).length.toString(), icon: ShoppingBag, color: 'green' },
+    { title: 'Monthly Sales', value: '$8,450', icon: DollarSign, color: 'purple' },
+    { title: 'Commission', value: '$845', icon: Target, color: 'orange' }
   ];
 
   // Mock designers data
@@ -177,7 +177,6 @@ const SalesRepDashboard: React.FC = () => {
                   <div className={`bg-${stat.color}-100 p-3 rounded-lg`}>
                     <IconComponent className={`h-6 w-6 text-${stat.color}-600`} />
                   </div>
-                  <span className="text-green-600 text-sm font-medium">{stat.change}</span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
                 <p className="text-gray-600 text-sm">{stat.title}</p>

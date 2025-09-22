@@ -75,10 +75,10 @@ const DesignerDashboard: React.FC = () => {
 
   // Mock data for demonstration
   const stats = [
-    { title: 'Active Projects', value: designerOrders.filter(o => ['assigned', 'in_progress'].includes(o.status)).length.toString(), change: '+2', icon: Briefcase, color: 'blue' },
-    { title: 'Pending Review', value: designerOrders.filter(o => o.status === 'review').length.toString(), change: '0', icon: Clock, color: 'yellow' },
-    { title: 'Completed', value: designerOrders.filter(o => ['completed', 'delivered'].includes(o.status)).length.toString(), change: '+4', icon: CheckCircle, color: 'green' },
-    { title: 'Rating', value: '4.9', change: '+0.1', icon: Award, color: 'purple' }
+    { title: 'Active Projects', value: designerOrders.filter(o => ['assigned', 'in_progress'].includes(o.status)).length.toString(), icon: Briefcase, color: 'blue' },
+    { title: 'Pending Review', value: designerOrders.filter(o => o.status === 'review').length.toString(), icon: Clock, color: 'yellow' },
+    { title: 'Completed', value: designerOrders.filter(o => ['completed', 'delivered'].includes(o.status)).length.toString(), icon: CheckCircle, color: 'green' },
+    { title: 'Rating', value: '4.9', icon: Award, color: 'purple' }
   ];
 
   const handleViewOrder = (order: any) => {
@@ -176,7 +176,6 @@ const DesignerDashboard: React.FC = () => {
                   <div className={`bg-${stat.color}-100 p-3 rounded-lg`}>
                     <IconComponent className={`h-6 w-6 text-${stat.color}-600`} />
                   </div>
-                  <span className="text-green-600 text-sm font-medium">{stat.change}</span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
                 <p className="text-gray-600 text-sm">{stat.title}</p>

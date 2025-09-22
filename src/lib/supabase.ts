@@ -47,7 +47,7 @@ export interface Product {
   original_price?: number;
   image_url?: string;
   tags?: string[];
-  is_active: boolean;
+  status: 'active' | 'inactive';
   created_by?: string;
   created_at: string;
   updated_at: string;
@@ -192,7 +192,7 @@ export const getProducts = async (filters?: {
   let query = supabase
     .from('products')
     .select('*')
-    .eq('is_active', true);
+    .eq('status', 'active');
 
   // Apply filters
   if (filters?.category && filters.category !== 'All') {

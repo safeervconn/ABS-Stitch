@@ -77,10 +77,10 @@ const CustomerDashboard: React.FC = () => {
 
   // Mock data for demonstration
   const stats = [
-    { title: 'Total Orders', value: customerOrders.length.toString(), change: '+2', icon: ShoppingBag, color: 'blue' },
-    { title: 'In Progress', value: customerOrders.filter(o => ['assigned', 'in_progress', 'review'].includes(o.status)).length.toString(), change: '0', icon: Package, color: 'yellow' },
-    { title: 'Completed', value: customerOrders.filter(o => ['completed', 'delivered'].includes(o.status)).length.toString(), change: '+2', icon: ShoppingBag, color: 'green' },
-    { title: 'Total Spent', value: '$1,245', change: '+$180', icon: CreditCard, color: 'purple' }
+    { title: 'Total Orders', value: customerOrders.length.toString(), icon: ShoppingBag, color: 'blue' },
+    { title: 'In Progress', value: customerOrders.filter(o => ['assigned', 'in_progress', 'review'].includes(o.status)).length.toString(), icon: Package, color: 'yellow' },
+    { title: 'Completed', value: customerOrders.filter(o => ['completed', 'delivered'].includes(o.status)).length.toString(), icon: ShoppingBag, color: 'green' },
+    { title: 'Total Spent', value: '$1,245', icon: CreditCard, color: 'purple' }
   ];
 
   const handleViewOrder = (order: any) => {
@@ -171,7 +171,6 @@ const CustomerDashboard: React.FC = () => {
                   <div className={`bg-${stat.color}-100 p-3 rounded-lg`}>
                     <IconComponent className={`h-6 w-6 text-${stat.color}-600`} />
                   </div>
-                  <span className="text-green-600 text-sm font-medium">{stat.change}</span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
                 <p className="text-gray-600 text-sm">{stat.title}</p>
