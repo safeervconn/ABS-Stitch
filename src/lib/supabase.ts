@@ -169,7 +169,7 @@ export const ensureAdminUser = async () => {
 export const getDashboardRoute = (role: string): string => {
   switch (role) {
     case 'admin':
-      return '/admin/dashboard';
+      return '/admin';
     case 'sales_rep':
       return '/sales/dashboard';
     case 'designer':

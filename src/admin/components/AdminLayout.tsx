@@ -40,29 +40,27 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
   }, []);
 
   useEffect(() => {
-    const fetchBadgeCounts = async () => {
-      try {
-        const counts = await getBadgeCounts();
-        setBadgeCounts(counts);
-      } catch (error) {
-        console.error('Error fetching badge counts:', error);
-      }
-    };
-
-    fetchBadgeCounts();
-
-    // Refresh badge counts every 30 seconds
-    const interval = setInterval(fetchBadgeCounts, 30000);
-    return () => clearInterval(interval);
+    // Initialize badge counts to 0 to prevent constant refreshing
+    setBadgeCounts({ users: 0, orders: 0, products: 0 });
+    
+    // Uncomment below if you want badge functionality
+    // const fetchBadgeCounts = async () => {
+    //   try {
+    //     const counts = await getBadgeCounts();
+    //     setBadgeCounts(counts);
+    //   } catch (error) {
+    //     console.error('Error fetching badge counts:', error);
+    //   }
+    // };
+    // fetchBadgeCounts();
   }, []);
 
   useEffect(() => {
-    // Update last seen when tab changes
-    if (activeTab && ['users', 'orders', 'products'].includes(activeTab)) {
-      updateLastSeen(activeTab);
-      // Reset badge count for current tab
-      setBadgeCounts(prev => ({ ...prev, [activeTab]: 0 }));
-    }
+    // Disable last seen updates to prevent constant refreshing
+    // if (activeTab && ['users', 'orders', 'products'].includes(activeTab)) {
+    //   updateLastSeen(activeTab);
+    //   setBadgeCounts(prev => ({ ...prev, [activeTab]: 0 }));
+    // }
   }, [activeTab]);
 
   const handleSignOut = async () => {

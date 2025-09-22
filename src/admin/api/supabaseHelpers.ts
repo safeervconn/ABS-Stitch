@@ -547,10 +547,13 @@ export const getDesigners = async (): Promise<AdminUser[]> => {
 // Admin Meta Operations
 export const getAdminMeta = async (): Promise<AdminMeta | null> => {
   try {
+    const user = await supabase.auth.getUser();
+    if (!user.data.user) return null;
+    
     const { data, error } = await supabase
       .from('admin_meta')
-      .select('*')
-      .eq('admin_id', (await supabase.auth.getUser()).data.user?.id)
+      .select('*') 
+      .eq('admin_id', user.data.user.id)
       .single();
 
     if (error && error.code !== 'PGRST116') throw error;
@@ -575,33 +578,43 @@ export const updateLastSeen = async (tabName: string): Promise<void> => {
 // Badge Counts
 export const getBadgeCounts = async (): Promise<{ users: number; orders: number; products: number }> => {
   try {
-    const adminMeta = await getAdminMeta();
-    const fallbackTime = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(); // 24 hours ago
+    // Use a static time instead of constantly changing last seen times
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-    const lastSeenUsers = adminMeta?.last_seen_users || fallbackTime;
-    const lastSeenOrders = adminMeta?.last_seen_orders || fallbackTime;
-    const lastSeenProducts = adminMeta?.last_seen_products || fallbackTime;
-
-    const [usersCount, ordersCount, productsCount] = await Promise.all([
-      supabase
-        .from('user_profiles')
-        .select('*', { count: 'exact', head: true })
-        .gt('created_at', lastSeenUsers),
-      supabase
-        .from('orders')
-        .select('*', { count: 'exact', head: true })
-        .gt('created_at', lastSeenOrders),
-      supabase
-        .from('products')
-        .select('*', { count: 'exact', head: true })
-        .gt('created_at', lastSeenProducts),
-    ]);
-
+    // For now, return 0 badges to stop the constant refreshing
+    // You can implement proper badge logic later if needed
     return {
-      users: usersCount.count || 0,
-      orders: ordersCount.count || 0,
-      products: productsCount.count || 0,
+      users: 0,
+      orders: 0,
+      products: 0,
     };
+
+    // Uncomment below if you want to implement proper badge counting
+    // const adminMeta = await getAdminMeta();
+    // const lastSeenUsers = adminMeta?.last_seen_users || oneDayAgo;
+    // const lastSeenOrders = adminMeta?.last_seen_orders || oneDayAgo;
+    // const lastSeenProducts = adminMeta?.last_seen_products || oneDayAgo;
+    
+    // const [usersCount, ordersCount, productsCount] = await Promise.all([
+    //   supabase
+    //     .from('user_profiles')
+    //     .select('*', { count: 'exact', head: true })
+    //     .gt('created_at', lastSeenUsers),
+    //   supabase
+    //     .from('orders')
+    //     .select('*', { count: 'exact', head: true })
+    //     .gt('created_at', lastSeenOrders),
+    //   supabase
+    //     .from('products')
+    //     .select('*', { count: 'exact', head: true })
+    //     .gt('created_at', lastSeenProducts),
+    // ]);
+    
+    // return {
+    //   users: usersCount.count || 0,
+    //   orders: ordersCount.count || 0,
+    //   products: productsCount.count || 0,
+    // };
   } catch (error) {
     console.error('Error fetching badge counts:', error);
     return { users: 0, orders: 0, products: 0 };
