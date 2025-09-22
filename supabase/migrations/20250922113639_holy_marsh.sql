@@ -14,7 +14,6 @@
 
 -- Drop existing problematic policies
 DROP POLICY IF EXISTS "Admins can manage all employees" ON employees;
-DROP POLICY IF EXISTS "Employees can read own profile" ON employees;
 DROP POLICY IF EXISTS "Admins can manage all customers" ON customers;
 DROP POLICY IF EXISTS "Sales reps can manage assigned customers" ON customers;
 DROP POLICY IF EXISTS "Admins can manage products" ON products;
