@@ -114,6 +114,7 @@ const CatalogPreview: React.FC = () => {
                   </div>
                   
                   <p className="text-gray-500 text-sm mb-3">{product.category}</p>
+                  <p className="text-gray-500 text-sm mb-3">{product.category?.name || product.category}</p>
                   <p className="text-gray-500 text-sm mb-3">{product.category.name}</p>
                   
                   {/* Rating */}
@@ -134,7 +135,7 @@ const CatalogPreview: React.FC = () => {
                       title: product.title,
                       price: `$${product.price.toFixed(2)}`,
                       image: product.image_url,
-                      category: product.category.name
+                      category: product.category?.name || product.category
                     }}
                     className="w-full mt-3 text-sm"
                   />
