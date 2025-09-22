@@ -161,57 +161,34 @@ const ProductsTab: React.FC = () => {
     }
   };
 
-  const handleModalSubmit = async (formData: any) => {
-    try {
-      // Handle new category creation
-      if (formData.new_category && formData.new_category.trim()) {
-        const newCategory = await createCategory({
-          name: formData.new_category.trim(),
-          is_active: true,
-        });
-        formData.category_id = newCategory.id;
-        delete formData.new_category;
-        await fetchCategories(); // Refresh categories
-      }
-
-      if (modalMode === 'create') {
-        await createProduct(formData);
-      } else if (selectedProduct) {
-        await updateProduct(selectedProduct.id, formData);
-      }
-      await refetch();
-    } catch (error) {
-      console.error('Error saving product:', error);
-      throw error;
+ const handleModalSubmit = async (formData: any) => {
+  try {
+    if (modalMode === 'create') {
+      await createProduct({
+        title: formData.title,
+        description: formData.description,
+        category_id: formData.category_id,
+        price: formData.price,
+        image_url: formData.image_url,
+        status: formData.status,
+      });
+    } else if (selectedProduct) {
+      await updateProduct(selectedProduct.id, {
+        title: formData.title,
+        description: formData.description,
+        category_id: formData.category_id,
+        price: formData.price,
+        image_url: formData.image_url,
+        status: formData.status,
+      });
     }
-  };
+    await refetch(); // Refresh products list
+  } catch (error) {
+    console.error('Error saving product:', error);
+    throw error;
+  }
+};
 
-  // const productFields = [
-  //   { key: 'title', label: 'Product Name', type: 'text' as const, required: true },
-  //   { key: 'description', label: 'Description', type: 'textarea' as const },
-  //   {
-  //     key: 'category_id',
-  //     label: 'Category',
-  //     type: 'select' as const,
-  //     options: [
-  //       { value: '', label: 'Select Category' },
-  //       ...categories.map(cat => ({ value: cat.id, label: cat.name })),
-  //     ],
-  //   },
-  //   // { key: 'new_category', label: 'Or Create New Category', type: 'text' as const, placeholder: 'Enter new category name' },
-  //   { key: 'price', label: 'Price', type: 'number' as const, required: true, min: 0, step: 0.01 },
-  //   { key: 'image_url', label: 'Image URL', type: 'text' as const, placeholder: 'https://example.com/image.jpg' },
-  //   { 
-  //     key: 'status', 
-  //     label: 'Status', 
-  //     type: 'select' as const, 
-  //     required: true,
-  //     options: [
-  //       { value: 'active', label: 'Active' },
-  //       { value: 'inactive', label: 'Inactive' },
-  //     ]
-  //   },
-  // ];
 
 const productFields = [
   { key: 'title', label: 'Product Name', type: 'text' as const, required: true },
