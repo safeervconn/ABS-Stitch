@@ -99,13 +99,13 @@ let query = supabase
   .select(`
     *,
     customer:customers!inner(
-      user_profiles!customers_id_fkey(full_name, email, phone)
+      customers!customers_id_fkey(full_name, email, phone)
     ),
     sales_rep:sales_reps(
-      user_profiles!sales_reps_id_fkey(full_name)
+      customers!sales_reps_id_fkey(full_name)
     ),
     designer:designers(
-      user_profiles!designers_id_fkey(full_name)
+      customers!designers_id_fkey(full_name)
     )
   `);
 
@@ -131,18 +131,18 @@ let query = supabase
       const transformedOrders: Order[] = (data || []).map(order => ({
         id: order.id,
         orderNumber: order.order_number,
-        customer: order.customer?.user_profiles?.full_name || 'Unknown',
+        customer: order.customer?.customers?.full_name || 'Unknown',
         customerId: order.customer_id,
-        salesRep: order.sales_rep?.user_profiles?.full_name,
+        salesRep: order.sales_rep?.employees?.full_name,
         salesRepId: order.sales_rep_id,
-        designer: order.designer?.user_profiles?.full_name,
+        designer: order.designer?.employees?.full_name,
         designerId: order.assigned_designer_id,
         type: order.order_type,
         status: order.status,
         amount: `$${order.total_amount.toFixed(2)}`,
         date: new Date(order.created_at).toLocaleDateString(),
-        email: order.customer?.user_profiles?.email || '',
-        phone: order.customer?.user_profiles?.phone || '',
+        email: order.customer?.customers?.email || '',
+        phone: order.customer?.customers?.phone || '',
         designInstructions: order.custom_instructions,
       }));
       
