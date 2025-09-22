@@ -364,7 +364,7 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
   }
 };
 
-export const getOrderById = async (id: string): Promise<AdminOrder> => {
+export getOrderById = async (id: string): Promise<AdminOrder> => {
   try {
     const { data, error } = await supabase
       .from('orders')
