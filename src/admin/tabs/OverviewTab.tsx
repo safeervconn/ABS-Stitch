@@ -17,35 +17,30 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
       value: stats.totalOrdersThisMonth.toString(),
       icon: ShoppingBag,
       color: 'blue',
-      change: '+12%',
     },
     {
       title: 'New Customers',
       value: stats.newCustomersThisMonth.toString(),
       icon: Users,
       color: 'green',
-      change: '+8%',
     },
     {
       title: 'Revenue This Month',
       value: `$${stats.totalRevenueThisMonth.toLocaleString()}`,
       icon: DollarSign,
       color: 'purple',
-      change: '+15%',
     },
     {
       title: 'In Progress',
       value: stats.inProgressOrders.toString(),
       icon: TrendingUp,
       color: 'orange',
-      change: '+3',
     },
     {
       title: 'Active Products',
       value: stats.activeProducts.toString(),
       icon: Package,
       color: 'indigo',
-      change: '+5',
     },
   ];
 
@@ -116,7 +111,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
                 <div className={`bg-${stat.color}-100 p-3 rounded-lg`}>
                   <IconComponent className={`h-6 w-6 text-${stat.color}-600`} />
                 </div>
-                <span className="text-green-600 text-sm font-medium">{stat.change}</span>
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
               <p className="text-gray-600 text-sm">{stat.title}</p>

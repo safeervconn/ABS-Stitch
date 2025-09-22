@@ -25,9 +25,6 @@ const UsersTab: React.FC = () => {
   const [filterValues, setFilterValues] = useState<Record<string, string>>({
     role: '',
     status: '',
-    salesRep: '',
-    dateFrom: '',
-    dateTo: '',
   });
 
   // Initial params for reset
@@ -44,22 +41,6 @@ const UsersTab: React.FC = () => {
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
-  // Sales reps for filter
-  const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
-
-  useEffect(() => {
-    // Fetch sales reps for filter
-    const fetchSalesReps = async () => {
-      try {
-        const reps = await getSalesReps();
-        setSalesReps(reps);
-      } catch (error) {
-        console.error('Error fetching sales reps:', error);
-      }
-    };
-    
-    fetchSalesReps();
-  }, []);
 
   // Filter configurations
   const filterConfigs: FilterConfig[] = [
@@ -81,24 +62,6 @@ const UsersTab: React.FC = () => {
         { value: 'disabled', label: 'Disabled' },
       ],
     },
-    {
-      key: 'salesRep',
-      label: 'Sales Rep',
-      options: salesReps.map(rep => ({
-        value: rep.id,
-        label: rep.full_name,
-      })),
-    },
-    {
-      key: 'dateFrom',
-      label: 'Registered From',
-      type: 'date' as const,
-    },
-    {
-      key: 'dateTo',
-      label: 'Registered To',
-      type: 'date' as const,
-    },
   ];
   const handleParamsChange = (newParams: Partial<PaginationParams>) => {
     updateParams(newParams);
@@ -118,12 +81,6 @@ const UsersTab: React.FC = () => {
       newParams.role = value;
     } else if (key === 'status' && value) {
       newParams.status = value;
-    } else if (key === 'salesRep' && value) {
-      newParams.salesRepId = value;
-    } else if (key === 'dateFrom' && value) {
-      newParams.dateFrom = value;
-    } else if (key === 'dateTo' && value) {
-      newParams.dateTo = value;
     }
     
     updateParams(newParams);
@@ -133,9 +90,6 @@ const UsersTab: React.FC = () => {
     setFilterValues({
       role: '',
       status: '',
-      salesRep: '',
-      dateFrom: '',
-      dateTo: '',
     });
     updateParams(initialParams);
   };

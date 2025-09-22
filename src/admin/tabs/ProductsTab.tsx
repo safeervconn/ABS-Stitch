@@ -27,8 +27,6 @@ const ProductsTab: React.FC = () => {
     status: '',
     priceMin: '',
     priceMax: '',
-    stockMin: '',
-    stockMax: '',
   });
 
   // Initial params for reset
@@ -91,18 +89,6 @@ const ProductsTab: React.FC = () => {
       type: 'number' as const,
       placeholder: 'Max $',
     },
-    {
-      key: 'stockMin',
-      label: 'Min Stock',
-      type: 'number' as const,
-      placeholder: 'Min qty',
-    },
-    {
-      key: 'stockMax',
-      label: 'Max Stock',
-      type: 'number' as const,
-      placeholder: 'Max qty',
-    },
   ];
   const handleParamsChange = (newParams: Partial<PaginationParams>) => {
     updateParams(newParams);
@@ -121,15 +107,11 @@ const ProductsTab: React.FC = () => {
     if (key === 'category' && value) {
       newParams.categoryId = value;
     } else if (key === 'status' && value) {
-      newParams.isActive = value === 'active';
+      newParams.status = value;
     } else if (key === 'priceMin' && value) {
       newParams.priceMin = parseFloat(value);
     } else if (key === 'priceMax' && value) {
       newParams.priceMax = parseFloat(value);
-    } else if (key === 'stockMin' && value) {
-      newParams.stockMin = parseInt(value);
-    } else if (key === 'stockMax' && value) {
-      newParams.stockMax = parseInt(value);
     }
     
     updateParams(newParams);
@@ -141,8 +123,6 @@ const ProductsTab: React.FC = () => {
       status: '',
       priceMin: '',
       priceMax: '',
-      stockMin: '',
-      stockMax: '',
     });
     updateParams(initialParams);
   };
@@ -173,7 +153,7 @@ const ProductsTab: React.FC = () => {
 
   const handleToggleStatus = async (product: AdminProduct) => {
     try {
-      await updateProduct(product.id, { is_active: !product.is_active });
+      await updateProduct(product.id, { status: product.status === 'active' ? 'inactive' : 'active' });
       await refetch();
     } catch (error) {
       console.error('Error updating product status:', error);
@@ -209,7 +189,6 @@ const ProductsTab: React.FC = () => {
   const productFields = [
     { key: 'title', label: 'Product Name', type: 'text' as const, required: true },
     { key: 'description', label: 'Description', type: 'textarea' as const },
-    { key: 'sku', label: 'SKU', type: 'text' as const, placeholder: 'Product SKU' },
     {
       key: 'category_id',
       label: 'Category',
@@ -221,9 +200,17 @@ const ProductsTab: React.FC = () => {
     },
     { key: 'new_category', label: 'Or Create New Category', type: 'text' as const, placeholder: 'Enter new category name' },
     { key: 'price', label: 'Price', type: 'number' as const, required: true, min: 0, step: 0.01 },
-    { key: 'stock', label: 'Stock Quantity', type: 'number' as const, min: 0 },
     { key: 'image_url', label: 'Image URL', type: 'text' as const, placeholder: 'https://example.com/image.jpg' },
-    { key: 'is_active', label: 'Active', type: 'checkbox' as const },
+    { 
+      key: 'status', 
+      label: 'Status', 
+      type: 'select' as const, 
+      required: true,
+      options: [
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' },
+      ]
+    },
   ];
 
   const columns = [
@@ -260,18 +247,17 @@ const ProductsTab: React.FC = () => {
       sortable: true,
       render: (product: AdminProduct) => `$${product.price.toFixed(2)}`,
     },
-    { key: 'stock', label: 'Stock', sortable: true },
     {
-      key: 'is_active',
+      key: 'status',
       label: 'Status',
       sortable: true,
       render: (product: AdminProduct) => (
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          product.is_active 
+          product.status === 'active'
             ? 'bg-green-100 text-green-800' 
             : 'bg-red-100 text-red-800'
         }`}>
-          {product.is_active ? 'Active' : 'Inactive'}
+          {product.status === 'active' ? 'Active' : 'Inactive'}
         </span>
       ),
     },
@@ -296,13 +282,13 @@ const ProductsTab: React.FC = () => {
           <button
             onClick={() => handleToggleStatus(product)}
             className={`transition-colors ${
-              product.is_active
+              product.status === 'active'
                 ? 'text-orange-600 hover:text-orange-900'
                 : 'text-green-600 hover:text-green-900'
             }`}
-            title={product.is_active ? 'Deactivate Product' : 'Activate Product'}
+            title={product.status === 'active' ? 'Deactivate Product' : 'Activate Product'}
           >
-            {product.is_active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {product.status === 'active' ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
           <button
             onClick={() => handleDeleteProduct(product)}

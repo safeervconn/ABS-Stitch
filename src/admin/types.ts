@@ -37,11 +37,9 @@ export interface AdminProduct {
   category_id?: string;
   category_name?: string;
   price: number;
-  stock: number;
-  sku?: string;
   image_url?: string;
   tags?: string[];
-  is_active: boolean;
+  status: 'active' | 'inactive';
   created_at: string;
   updated_at: string;
 }
@@ -86,11 +84,9 @@ export interface PaginationParams {
   salesRepId?: string;
   // Product filters
   categoryId?: string;
-  isActive?: boolean;
+  status?: string;
   priceMin?: number;
   priceMax?: number;
-  stockMin?: number;
-  stockMax?: number;
 }
 
 export interface PaginatedResponse<T> {
