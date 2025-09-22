@@ -94,17 +94,10 @@ export interface Notification {
 }
 
 // Auth helper functions
-export const signUp = async (email: string, password: string, userData: {
-  full_name: string;
-  role?: 'customer' | 'sales_rep' | 'designer' | 'admin';
-  phone?: string;
-}) => {
+export const signUp = async (email: string, password: string) => {
   const { data, error } = await supabase.auth.signUp({
     email,
-    password,
-    options: {
-      data: userData
-    }
+    password
   });
   
   if (error) throw error;
@@ -151,49 +144,48 @@ export const getUserProfile = async (userId: string): Promise<Employee | Custome
     .maybeSingle();
   
   if (customer) {
-    return { ...customer, role: 'customer' as any };
+    return { ...customer, role: 'customer' };
   }
   
   return null;
 };
 
-export const createUserProfile = async (profile: Partial<Employee | Customer>) => {
-  // For new signups, always create customer profile
-  const isEmployee = false; // All new signups are customers
+// Create customer profile (used only during signup)
+export const createCustomerProfile = async (customerData: {
+  id: string;
+  email: string;
+  full_name: string;
+  phone?: string;
+  status: string;
+  company_name?: string;
+}) => {
+  const { data, error } = await supabase
+    .from('customers')
+    .insert([customerData])
+    .select()
+    .single();
   
-  if (isEmployee) {
-    const { data, error } = await supabase
-      .from('employees')
-      .insert([{
-        id: profile.id,
-        full_name: profile.full_name,
-        email: profile.email,
-        phone: profile.phone,
-        role: profile.role,
-        status: 'active'
-      }])
-      .select()
-      .single();
-    
-    if (error) throw error;
-    return data;
-  } else {
-    // Create customer profile
-    const { data, error } = await supabase
-      .from('customers')
-      .insert([{
-        id: profile.id,
-        full_name: profile.full_name,
-        email: profile.email,
-        phone: profile.phone,
-        status: 'active'
-      }])
-      .select()
-      .single();
-    
-    if (error) throw error;
-    return data;
-  }
+  if (error) throw error;
+  return data;
+};
+
+// Create employee profile (used only by admin via dashboard or create-admin script)
+export const createEmployeeProfile = async (employeeData: {
+  id: string;
+  email: string;
+  full_name: string;
+  phone?: string;
+  role: 'admin' | 'sales_rep' | 'designer';
+  status: string;
+}) => {
+  const { data, error } = await supabase
+    .from('employees')
+    .insert([employeeData])
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return data;
 };
 
 // Get dashboard route based on user role

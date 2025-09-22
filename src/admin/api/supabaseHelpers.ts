@@ -163,17 +163,40 @@ export const getUsers = async (params: PaginationParams): Promise<PaginatedRespo
 
 export const createUser = async (userData: Partial<AdminUser>): Promise<AdminUser> => {
   try {
+    // First create the auth user
+    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      email: userData.email!,
+      password: 'TempPassword123!', // Temporary password - user should reset
+      email_confirm: true,
+      user_metadata: {
+        full_name: userData.full_name,
+        role: userData.role
+      }
+    });
+
+    if (authError) throw authError;
+    if (!authData.user) throw new Error('Failed to create auth user');
+
+    // Then create the employee record
     const { data, error } = await supabase
       .from('employees')
       .insert([{
-        ...userData,
-        id: crypto.randomUUID(),
+        id: authData.user.id, // Use the auth user ID
+        full_name: userData.full_name,
+        email: userData.email,
+        phone: userData.phone,
+        role: userData.role,
         status: userData.status || 'active',
       }])
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      // If employee creation fails, clean up the auth user
+      await supabase.auth.admin.deleteUser(authData.user.id);
+      throw error;
+    }
+    
     return data;
   } catch (error) {
     console.error('Error creating user:', error);

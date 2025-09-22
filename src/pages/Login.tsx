@@ -49,16 +49,16 @@ const Login: React.FC = () => {
             if (dashboardRoute) {
               window.location.href = dashboardRoute;
             } else {
-              setError('Invalid user role. Please contact support.');
+              setError(`Invalid user role: ${profile.role}. Please contact support.`);
               return;
             }
           } else {
-            setError('User profile not found. Please contact support or try signing up again.');
+            setError('User profile not found. This may be a new account that needs setup. Please contact support.');
             return;
           }
         } catch (profileError) {
           console.error('Error fetching user profile:', profileError);
-          setError('Failed to load user profile. Please try again.');
+          setError('Failed to load user profile. Please try again or contact support if the problem persists.');
           return;
         }
       } else {

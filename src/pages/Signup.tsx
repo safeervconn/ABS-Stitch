@@ -101,33 +101,32 @@ const Signup: React.FC = () => {
     setError('');
 
     try {
-      // Create auth user with customer role as default
-      const { user } = await signUp(formData.email, formData.password, {
-        full_name: formData.full_name,
-        role: 'customer', // Always set to customer for security
-        phone: formData.phone
-      });
+      // Create auth user (all signups are customers)
+      const { user } = await signUp(formData.email, formData.password);
 
       if (user) {
         // Wait a moment for the auth session to be established
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         try {
-          // Create user profile
-          const profileData = {
+          // Create customer profile (all new signups are customers)
+          const customerData = {
             id: user.id,
             email: formData.email,
             full_name: formData.full_name,
-            role: 'customer', // Always customer for new signups
             phone: formData.phone,
-            company_name: formData.company_name || null
+            status: 'active'
           };
           
-          // Create customer profile (all new users are customers)
-          await createUserProfile(profileData);
+          // Add company_name if provided
+          if (formData.company_name?.trim()) {
+            customerData.company_name = formData.company_name.trim();
+          }
+          
+          await createCustomerProfile(customerData);
         } catch (profileError) {
           console.error('Error creating user profile:', profileError);
-          setError('Account created but profile setup failed. Please try logging in.');
+          setError('Account created but profile setup failed. Please contact support or try logging in.');
           return;
         }
         
