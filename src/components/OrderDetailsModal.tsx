@@ -212,7 +212,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
                 {/* Contact Information */}
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Contact Info</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Customer Info</h3>
                   <div className="space-y-2">
                     <p className="text-sm">
                       <span className="text-gray-500">Email:</span><br />
