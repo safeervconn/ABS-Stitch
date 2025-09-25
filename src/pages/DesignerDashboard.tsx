@@ -202,7 +202,7 @@ const DesignerDashboard: React.FC = () => {
                         <Palette className="h-5 w-5 text-purple-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{order.orderNumber}</p>
+                        <p className="font-medium text-gray-900">{order.order_number}</p>
                         <p className="text-sm text-gray-500">Client: {order.customer}</p>
                       </div>
                     </div>

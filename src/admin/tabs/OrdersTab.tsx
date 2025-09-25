@@ -189,6 +189,15 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
 
   const orderFields = [
     {
+      key: 'order_type',
+      label: 'Order Type',
+      type: 'select' as const,
+      options: [
+        { value: 'custom', label: 'Custom' },
+        { value: 'catalog', label: 'Catalog' },
+      ],
+    },
+    {
       key: 'status',
       label: 'Status',
       type: 'select' as const,
@@ -201,6 +210,29 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
         { value: 'completed', label: 'Completed' },
         { value: 'delivered', label: 'Delivered' },
         { value: 'cancelled', label: 'Cancelled' },
+      ],
+    },
+    {
+      key: 'design_size',
+      label: 'Design Size',
+      type: 'select' as const,
+      options: [
+        { value: 'small', label: 'Small (3" x 3")' },
+        { value: 'medium', label: 'Medium (5" x 5")' },
+        { value: 'large', label: 'Large (8" x 10")' },
+        { value: 'xl', label: 'Extra Large (12" x 12")' },
+        { value: 'custom', label: 'Custom Size' },
+      ],
+    },
+    {
+      key: 'apparel_type',
+      label: 'Apparel Type',
+      type: 'select' as const,
+      options: [
+        { value: 't-shirt', label: 'T-shirt' },
+        { value: 'jacket', label: 'Jacket' },
+        { value: 'cap', label: 'Cap' },
+        { value: 'other', label: 'Other' },
       ],
     },
     {
@@ -244,23 +276,25 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
   };
 
   const columns = [
-    { key: 'order_number', label: 'Order ID', sortable: true },
+    { 
+      key: 'order_number', 
+      label: 'Order Number', 
+      sortable: true,
+      render: (order: AdminOrder) => order.order_number || `ORD-${order.id.slice(0, 8)}`
+    },
     { key: 'customer_name', label: 'Customer', sortable: true },
     {
-      key: 'items_summary',
-      label: 'Items',
+      key: 'order_type',
+      label: 'Type',
       render: (order: AdminOrder) => (
-        <div className="max-w-xs truncate" title={order.items_summary}>
-          {order.items_summary}
-        </div>
+        <span className="capitalize">{order.order_type || 'custom'}</span>
       ),
     },
-    { key: 'quantity', label: 'Qty', sortable: true },
     {
       key: 'total_amount',
       label: 'Total',
       sortable: true,
-      render: (order: AdminOrder) => `$${order.total_amount.toFixed(2)}`,
+      render: (order: AdminOrder) => `$${(order.total_amount || 75).toFixed(2)}`,
     },
     {
       key: 'status',

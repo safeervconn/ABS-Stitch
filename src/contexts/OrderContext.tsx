@@ -3,25 +3,25 @@ import { getCurrentUser, getUserProfile, supabase } from '../lib/supabase';
 
 export interface Order {
   id: string;
-  orderNumber: string;
+  order_number: string;
   customer: string;
   customerId: string;
   salesRep?: string;
   salesRepId?: string;
   designer?: string;
   designerId?: string;
-  type: 'catalog' | 'custom';
+  order_type: 'catalog' | 'custom';
   status: 'pending' | 'assigned' | 'in_progress' | 'review' | 'completed' | 'delivered' | 'cancelled';
-  amount: string;
+  total_amount: number;
   date: string;
   email: string;
   phone: string;
-  file_urls?: string[];
-  designSize?: string;
-  apparelType?: string;
-  customWidth?: string;
-  customHeight?: string;
-  designInstructions?: string;
+  file_urls?: string[] | null;
+  design_size?: string;
+  apparel_type?: string;
+  custom_width?: number;
+  custom_height?: number;
+  custom_description?: string;
 }
 
 interface OrderContextType {
@@ -50,7 +50,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const [orders, setOrders] = useState<Order[]>([]);
 
   // Add new order
-  const addOrder = async (order: any, files?: File[]) => {
+  const addOrder = async (formData: any, files?: File[]) => {
     try {
       const user = await getCurrentUser();
       if (!user) return;
@@ -87,12 +87,25 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         }
       }
 
-      const { data: order, error } = await supabase
+      // Calculate total amount based on order type and specifications
+      let totalAmount = 75.00; // Default for custom orders
+      if (formData.order_type === 'catalog' && formData.product_id) {
+        // For catalog orders, you might want to fetch the product price
+        totalAmount = 50.00; // Placeholder - should fetch from products table
+      }
+
+      const { data: orderData, error } = await supabase
         .from('orders')
         .insert({
           customer_id: profile.id,
-          custom_description: order.designInstructions || '',
-          file_url: fileUrls.length > 0 ? fileUrls[0] : null, // Store first file URL for compatibility
+          order_type: formData.order_type || 'custom',
+          custom_description: formData.designInstructions || '',
+          design_size: formData.designSize,
+          apparel_type: formData.apparelType,
+          custom_width: formData.customWidth ? parseFloat(formData.customWidth) : null,
+          custom_height: formData.customHeight ? parseFloat(formData.customHeight) : null,
+          file_urls: fileUrls.length > 0 ? fileUrls : null,
+          total_amount: totalAmount,
           status: 'pending',
         })
         .select()
@@ -146,25 +159,25 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
       const transformedOrders: Order[] = (data || []).map(order => ({
         id: order.id,
-        orderNumber: order.order_number,
+        order_number: order.order_number || `ORD-${order.id.slice(0, 8)}`,
         customer: order.customer?.full_name || 'Unknown',
         customerId: order.customer_id,
         salesRep: order.sales_rep?.full_name,
         salesRepId: order.assigned_sales_rep_id,
         designer: order.designer?.full_name,
         designerId: order.assigned_designer_id,
-        type: order.order_type,
-        file_urls: order.file_url ? [order.file_url] : [],
+        order_type: order.order_type || 'custom',
+        file_urls: order.file_urls || (order.file_url ? [order.file_url] : null),
         status: order.status,
-        amount: `$75.00`, // Default amount for custom orders
+        total_amount: order.total_amount || 75.00,
         date: new Date(order.created_at).toLocaleDateString(),
         email: order.customer?.email || '',
         phone: order.customer?.phone || '',
-        designInstructions: order.custom_description,
-        designSize: order.designSize,
-        apparelType: order.apparelType,
-        customWidth: order.customWidth,
-        customHeight: order.customHeight,
+        custom_description: order.custom_description,
+        design_size: order.design_size,
+        apparel_type: order.apparel_type,
+        custom_width: order.custom_width,
+        custom_height: order.custom_height,
       }));
 
       setOrders(transformedOrders);

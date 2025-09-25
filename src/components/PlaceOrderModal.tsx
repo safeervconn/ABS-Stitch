@@ -79,7 +79,17 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
     
     setIsSubmitting(true);
     try {
-      await addOrder(formData, formData.files);
+      // Prepare order data with proper field mapping
+      const orderData = {
+        order_type: 'custom',
+        designInstructions: formData.designInstructions,
+        designSize: formData.designSize,
+        apparelType: formData.apparelType,
+        customWidth: formData.customWidth,
+        customHeight: formData.customHeight,
+      };
+      
+      await addOrder(orderData, formData.files);
       onClose();
       // Reset form
       setFormData({

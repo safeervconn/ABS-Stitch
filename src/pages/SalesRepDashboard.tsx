@@ -203,13 +203,13 @@ const SalesRepDashboard: React.FC = () => {
                         <ShoppingBag className="h-5 w-5 text-blue-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{order.orderNumber}</p>
+                        <p className="font-medium text-gray-900">{order.order_number}</p>
                         <p className="text-sm text-gray-500">{order.customer} • {order.date}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <div className="text-right">
-                        <p className="font-semibold text-gray-900">{order.amount}</p>
+                        <p className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '75.00'}</p>
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
                           {order.status.replace('_', ' ')}
                         </span>

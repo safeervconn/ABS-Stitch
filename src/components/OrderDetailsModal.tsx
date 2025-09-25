@@ -63,7 +63,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <div>
               <h2 className="text-2xl font-bold text-gray-800">Order Details</h2>
-              <p className="text-gray-600">{order.orderNumber}</p>
+              <p className="text-gray-600">{order.order_number}</p>
             </div>
             <button
               onClick={onClose}
@@ -88,7 +88,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                       <Package className="h-5 w-5 text-blue-600" />
                       <div>
                         <p className="text-sm text-gray-500">Order Type</p>
-                        <p className="font-medium text-gray-800 capitalize">{order.type}</p>
+                        <p className="font-medium text-gray-800 capitalize">{order.order_type}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
@@ -118,11 +118,11 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 </div>
 
                 {/* Design Requirements */}
-                {order.designInstructions && (
+                {order.custom_description && (
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Design Requirements</h3>
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
-                      <p className="text-gray-700 leading-relaxed">{order.designInstructions}</p>
+                      <p className="text-gray-700 leading-relaxed">{order.custom_description}</p>
                     </div>
                   </div>
                 )}
@@ -156,22 +156,22 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">Specifications</h3>
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {order.designSize && (
+                      {order.design_size && (
                         <div>
                           <p className="text-sm text-gray-500">Design Size</p>
-                          <p className="font-medium text-gray-800 capitalize">{order.designSize}</p>
+                          <p className="font-medium text-gray-800 capitalize">{order.design_size}</p>
                         </div>
                       )}
-                      {order.apparelType && (
+                      {order.apparel_type && (
                         <div>
                           <p className="text-sm text-gray-500">Apparel Type</p>
-                          <p className="font-medium text-gray-800 capitalize">{order.apparelType}</p>
+                          <p className="font-medium text-gray-800 capitalize">{order.apparel_type}</p>
                         </div>
                       )}
-                      {order.customWidth && order.customHeight && (
+                      {order.custom_width && order.custom_height && (
                         <div>
                           <p className="text-sm text-gray-500">Custom Dimensions</p>
-                          <p className="font-medium text-gray-800">{order.customWidth}" x {order.customHeight}"</p>
+                          <p className="font-medium text-gray-800">{order.custom_width}" x {order.custom_height}"</p>
                         </div>
                       )}
                     </div>
@@ -186,7 +186,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 {/* Order Total */}
                 <div className="bg-blue-50 rounded-lg p-4">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">Order Total</h3>
-                  <div className="text-2xl font-bold text-blue-600">{order.amount}</div>
+                  <div className="text-2xl font-bold text-blue-600">${order.total_amount?.toFixed(2) || '75.00'}</div>
                 </div>
 
                 {/* Assignment Info */}

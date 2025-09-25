@@ -23,13 +23,20 @@ export interface AdminCustomer {
 
 export interface AdminOrder {
   id: string;
+  order_number?: string;
+  order_type?: 'catalog' | 'custom';
   customer_id: string;
   customer_name: string;
   customer_email: string;
   product_id?: string;
   product_title?: string;
   custom_description?: string;
-  file_url?: string;
+  file_urls?: string[] | null;
+  design_size?: string;
+  apparel_type?: string;
+  custom_width?: number;
+  custom_height?: number;
+  total_amount?: number;
   status: 'pending' | 'unassigned' | 'assigned_to_sales' | 'assigned_to_designer' | 'in_progress' | 'under_review' | 'completed' | 'archived';
   assigned_sales_rep_id?: string;
   assigned_sales_rep_name?: string;
