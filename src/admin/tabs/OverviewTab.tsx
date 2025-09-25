@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Users, DollarSign, Package, TrendingUp, Eye } from 'lucide-react';
 import { useAdminData } from '../hooks/useAdminData';
 import { AdminOrder } from '../types';
-import { useOrders } from '../contexts/OrderContext';
 
-const { orders } = useOrders();
-const recentOrders = orders.slice(0, 10); // take the latest 10
 
 interface OverviewTabProps {
   onOrderClick: (order: AdminOrder) => void;
