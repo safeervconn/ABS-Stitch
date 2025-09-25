@@ -64,8 +64,6 @@ export const getAdminStats = async (): Promise<AdminStats> => {
 };
 
 // Recent Orders Query
-
-
 export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]> => {
   try {
     const { data, error } = await supabase
