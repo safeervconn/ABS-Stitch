@@ -180,7 +180,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {order.sales_rep_name || order.designer_name || '-'}
+                      {order.assigned_sales_rep_name || order.assigned_designer_name || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {new Date(order.created_at).toLocaleDateString()}

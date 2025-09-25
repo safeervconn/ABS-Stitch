@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { X, Calendar, User, Package, FileText, Paperclip } from 'lucide-react';
 import { getCurrentUser, getUserProfile } from '../lib/supabase';
+import { Order } from '../contexts/OrderContext';
 
 interface OrderDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  order: any;
+  order: Order | null;
 }
 
 const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ 
@@ -102,7 +103,10 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                       <User className="h-5 w-5 text-purple-600" />
                       <div>
                         <p className="text-sm text-gray-500">Customer</p>
-                        <p className="font-medium text-gray-800">{order.customer}</p>
+                        <p className="font-medium text-gray-800">{order.customer_name}</p>
+                        {order.customer_company_name && (
+                          <p className="text-sm text-gray-600">{order.customer_company_name}</p>
+                        )}
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
@@ -190,20 +194,20 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 </div>
 
                 {/* Assignment Info */}
-                {(order.salesRep || order.designer) && (
+                {(order.assigned_sales_rep_name || order.assigned_designer_name) && (
                   <div className="bg-gray-50 rounded-lg p-4">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Assignment</h3>
                     <div className="space-y-3">
-                      {order.salesRep && (
+                      {order.assigned_sales_rep_name && (
                         <div>
                           <p className="text-sm text-gray-500">Sales Representative</p>
-                          <p className="font-medium text-gray-800">{order.salesRep}</p>
+                          <p className="font-medium text-gray-800">{order.assigned_sales_rep_name}</p>
                         </div>
                       )}
-                      {order.designer && (
+                      {order.assigned_designer_name && (
                         <div>
                           <p className="text-sm text-gray-500">Designer</p>
-                          <p className="font-medium text-gray-800">{order.designer}</p>
+                          <p className="font-medium text-gray-800">{order.assigned_designer_name}</p>
                         </div>
                       )}
                     </div>
@@ -215,13 +219,30 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">Customer Info</h3>
                   <div className="space-y-2">
                     <p className="text-sm">
-                      <span className="text-gray-500">Email:</span><br />
-                      <span className="text-gray-800">{order.email}</span>
+                      <span className="text-gray-500">Name:</span><br />
+                      <span className="text-gray-800">{order.customer_name}</span>
                     </p>
-                    <p className="text-sm">
-                      <span className="text-gray-500">Phone:</span><br />
-                      <span className="text-gray-800">{order.phone}</span>
-                    </p>
+                    {order.customer_company_name && (
+                      <p className="text-sm">
+                        <span className="text-gray-500">Company:</span><br />
+                        <span className="text-gray-800">{order.customer_company_name}</span>
+                      </p>
+                    )}
+                    {/* Only show email and phone to admin users */}
+                    {currentUser?.role === 'admin' && (
+                      <>
+                        <p className="text-sm">
+                          <span className="text-gray-500">Email:</span><br />
+                          <span className="text-gray-800">{order.customer_email}</span>
+                        </p>
+                        {order.customer_phone && (
+                          <p className="text-sm">
+                            <span className="text-gray-500">Phone:</span><br />
+                            <span className="text-gray-800">{order.customer_phone}</span>
+                          </p>
+                        )}
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

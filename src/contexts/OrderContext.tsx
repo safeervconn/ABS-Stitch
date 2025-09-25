@@ -4,18 +4,19 @@ import { getCurrentUser, getUserProfile, supabase } from '../lib/supabase';
 export interface Order {
   id: string;
   order_number: string;
-  customer: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  customer_company_name?: string;
   customerId: string;
-  salesRep?: string;
+  assigned_sales_rep_name?: string;
   salesRepId?: string;
-  designer?: string;
+  assigned_designer_name?: string;
   designerId?: string;
   order_type: 'catalog' | 'custom';
   status: 'pending' | 'assigned' | 'in_progress' | 'review' | 'completed' | 'delivered' | 'cancelled';
   total_amount: number;
   date: string;
-  email: string;
-  phone: string;
   file_urls?: string[] | null;
   design_size?: string;
   apparel_type?: string;
@@ -160,19 +161,20 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       const transformedOrders: Order[] = (data || []).map(order => ({
         id: order.id,
         order_number: order.order_number || `ORD-${order.id.slice(0, 8)}`,
-        customer: order.customer?.full_name || 'Unknown',
+        customer_name: order.customer?.full_name || 'Unknown',
+        customer_email: order.customer?.email || '',
+        customer_phone: order.customer?.phone || '',
+        customer_company_name: order.customer?.company_name || '',
         customerId: order.customer_id,
-        salesRep: order.sales_rep?.full_name,
+        assigned_sales_rep_name: order.sales_rep?.full_name,
         salesRepId: order.assigned_sales_rep_id,
-        designer: order.designer?.full_name,
+        assigned_designer_name: order.designer?.full_name,
         designerId: order.assigned_designer_id,
         order_type: order.order_type || 'custom',
         file_urls: order.file_urls || (order.file_url ? [order.file_url] : null),
         status: order.status,
         total_amount: order.total_amount || 75.00,
         date: new Date(order.created_at).toLocaleDateString(),
-        email: order.customer?.email || '',
-        phone: order.customer?.phone || '',
         custom_description: order.custom_description,
         design_size: order.design_size,
         apparel_type: order.apparel_type,

@@ -204,7 +204,7 @@ const SalesRepDashboard: React.FC = () => {
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{order.order_number}</p>
-                        <p className="text-sm text-gray-500">{order.customer} • {order.date}</p>
+                        <p className="text-sm text-gray-500">{order.customer_name} • {order.date}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
@@ -231,10 +231,10 @@ const SalesRepDashboard: React.FC = () => {
                         </select>
                       )}
                       
-                      {order.designer && (
+                      {order.assigned_designer_name && (
                         <div className="text-xs text-gray-500">
                           <p>Designer:</p>
-                          <p className="font-medium">{order.designer}</p>
+                          <p className="font-medium">{order.assigned_designer_name}</p>
                         </div>
                       )}
                       

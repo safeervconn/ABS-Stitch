@@ -70,7 +70,7 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
       .from('orders')
       .select(`
         *,
-        customer:customers!inner(full_name, email),
+        customer:customers!inner(full_name, email, phone, company_name),
         product:products(title),
         sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
         designer:employees!orders_assigned_designer_id_fkey(full_name)
@@ -87,15 +87,17 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
       customer_id: order.customer_id,
       customer_name: order.customer?.full_name || 'Unknown',
       customer_email: order.customer?.email || '',
+      customer_phone: order.customer?.phone || '',
+      customer_company_name: order.customer?.company_name || '',
       product_id: order.product_id,
       product_title: order.product?.title,
       custom_description: order.custom_description,
       file_url: order.file_url,
       status: order.status,
       assigned_sales_rep_id: order.assigned_sales_rep_id,
-      sales_rep_name: order.sales_rep?.full_name,
+      assigned_sales_rep_name: order.sales_rep?.full_name,
       assigned_designer_id: order.assigned_designer_id,
-      designer_name: order.designer?.full_name,
+      assigned_designer_name: order.designer?.full_name,
       invoice_url: order.invoice_url,
       created_at: order.created_at,
       updated_at: order.updated_at,
@@ -245,6 +247,7 @@ export const getCustomers = async (params: PaginationParams): Promise<PaginatedR
       .from('customers')
       .select(`
         *,
+        company_name,
         sales_rep:employees!customers_assigned_sales_rep_id_fkey(full_name)
       `, { count: 'exact' });
 
@@ -310,7 +313,7 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       .from('orders')
       .select(`
         *,
-        customer:customers!inner(full_name, email),
+        customer:customers!inner(full_name, email, phone, company_name),
         product:products(title),
         sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
         designer:employees!orders_assigned_designer_id_fkey(full_name)
@@ -360,6 +363,8 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       customer_id: order.customer_id,
       customer_name: order.customer?.full_name || 'Unknown',
       customer_email: order.customer?.email || '',
+      customer_phone: order.customer?.phone || '',
+      customer_company_name: order.customer?.company_name || '',
       product_id: order.product_id,
       product_title: order.product?.title,
       custom_description: order.custom_description,
@@ -436,7 +441,7 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
       .from('orders')
       .select(`
         *,
-        customer:customers!inner(full_name, email),
+        customer:customers!inner(full_name, email, phone, company_name),
         product:products(title),
         sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
         designer:employees!orders_assigned_designer_id_fkey(full_name)
@@ -453,6 +458,8 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
       customer_id: data.customer_id,
       customer_name: data.customer?.full_name || 'Unknown',
       customer_email: data.customer?.email || '',
+      customer_phone: data.customer?.phone || '',
+      customer_company_name: data.customer?.company_name || '',
       product_id: data.product_id,
       product_title: data.product?.title,
       custom_description: data.custom_description,

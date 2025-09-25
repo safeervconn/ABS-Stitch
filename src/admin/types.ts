@@ -14,6 +14,7 @@ export interface AdminCustomer {
   full_name: string;
   email: string;
   phone?: string;
+  company_name?: string;
   status: 'active' | 'disabled';
   assigned_sales_rep_id?: string;
   assigned_sales_rep_name?: string;
@@ -28,6 +29,8 @@ export interface AdminOrder {
   customer_id: string;
   customer_name: string;
   customer_email: string;
+  customer_phone?: string;
+  customer_company_name?: string;
   product_id?: string;
   product_title?: string;
   custom_description?: string;
