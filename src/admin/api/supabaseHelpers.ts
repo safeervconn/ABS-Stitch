@@ -64,69 +64,7 @@ export const getAdminStats = async (): Promise<AdminStats> => {
 };
 
 // Recent Orders Query
-export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]> => {
-  try {
-    const { data, error } = await supabase
-      .from('orders')
-      .select(`
-        *,
-        customer:customers!inner(full_name, email),
-        product:products(title),
-        sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
-        designer:employees!orders_assigned_designer_id_fkey(full_name)
-      `)
-      .order('created_at', { ascending: false })
-      .limit(limit);
 
-    if (error) throw error;
-
-      return (data || []).map(order => ({
-      id: order.id,
-      customer_id: order.customer_id,
-      customer_name: order.customer?.full_name || 'Unknown',
-      customer_email: order.customer?.email || '',
-      product_id: order.product_id,
-      product_title: order.product?.title,
-      custom_description: order.custom_description,
-      file_url: order.file_url,
-      status: order.status,
-      assigned_sales_rep_id: order.assigned_sales_rep_id,
-      assigned_sales_rep_name: order.sales_rep?.full_name,
-      assigned_designer_id: order.assigned_designer_id,
-      assigned_designer_name: order.designer?.full_name,
-      invoice_url: order.invoice_url,
-      created_at: order.created_at,
-      updated_at: order.updated_at,
-    }));
-
-    return (data || []).map(order => ({
-  id: order.id,
-  orderNumber: order.order_number,
-  customer: order.customer?.full_name || 'Unknown',
-  customerId: order.customer_id,
-  salesRep: order.sales_rep?.full_name,
-  salesRepId: order.assigned_sales_rep_id,
-  designer: order.designer?.full_name,
-  designerId: order.assigned_designer_id,
-  type: order.order_type,
-  file_urls: order.file_url ? [order.file_url] : [],
-  status: order.status,
-  amount: order.total_amount, // or use actual amount if stored
-  date: new Date(order.created_at).toLocaleDateString(),
-  email: order.customer?.email || '',
-  phone: order.customer?.phone || '',
-  designInstructions: order.custom_description,
-  designSize: order.designSize,
-  apparelType: order.apparelType,
-  customWidth: order.customWidth,
-  customHeight: order.customHeight,
-}));
-
-  } catch (error) {
-    console.error('Error fetching recent orders:', error);
-    return [];
-  }
-};
 
 export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]> => {
   try {
