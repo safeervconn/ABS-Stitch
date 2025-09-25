@@ -137,7 +137,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         .from('orders')
         .select(`
           *,
-          customer:customers(id, full_name, email, phone),
+          customer:customers(id, full_name, email, phone, company_name),
           sales_rep:employees!orders_assigned_sales_rep_id_fkey(id, full_name),
           designer:employees!orders_assigned_designer_id_fkey(id, full_name)
         `);
@@ -164,6 +164,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         customer_name: order.customer?.full_name || 'Unknown',
         customer_email: order.customer?.email || '',
         customer_phone: order.customer?.phone || '',
+        customer_company_name: order.customer?.company_name || '',
         customer_company_name: order.customer?.company_name || '',
         customerId: order.customer_id,
         assigned_sales_rep_name: order.sales_rep?.full_name,
