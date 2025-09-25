@@ -41,10 +41,8 @@ const Homepage: React.FC = () => {
   }, []);
 
   const handlePlaceOrder = (orderData: any) => {
-    // This would integrate with the order context
-    console.log('Order placed:', orderData);
+    // Order handling is now done in the PlaceOrderModal component
     setIsPlaceOrderOpen(false);
-    alert('Order placed successfully!');
   };
 
   return (
@@ -84,7 +82,6 @@ const Homepage: React.FC = () => {
       <PlaceOrderModal
         isOpen={isPlaceOrderOpen}
         onClose={() => setIsPlaceOrderOpen(false)}
-        onSubmit={handlePlaceOrder}
       />
     </>
   );

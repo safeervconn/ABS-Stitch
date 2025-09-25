@@ -91,9 +91,8 @@ const CustomerDashboard: React.FC = () => {
   };
 
   const handlePlaceOrder = (orderData: any) => {
-    addOrder(orderData);
+    // Order handling is now done in the PlaceOrderModal component
     setIsPlaceOrderOpen(false);
-    alert('Order placed successfully!');
   };
 
   const handleAddComment = (orderId: string, comment: string) => {
@@ -284,7 +283,6 @@ const CustomerDashboard: React.FC = () => {
       <PlaceOrderModal
         isOpen={isPlaceOrderOpen}
         onClose={() => setIsPlaceOrderOpen(false)}
-        onSubmit={handlePlaceOrder}
       />
     </div>
   );

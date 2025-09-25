@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { X, Send, Paperclip } from 'lucide-react';
+import { X, Send, Paperclip, Loader, Trash2 } from 'lucide-react';
 import { getCurrentUser, getUserProfile } from '../lib/supabase';
+import { useOrders } from '../contexts/OrderContext';
 
 interface PlaceOrderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (orderData: any) => void;
 }
 
-const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose, onSubmit }) => {
+const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -19,10 +19,12 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose, onSu
     customHeight: '',
     apparelType: '',
     designInstructions: '',
-    file: null as File | null
+    files: [] as File[]
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
+  const { addOrder } = useOrders();
 
   React.useEffect(() => {
     const checkUser = async () => {
@@ -61,14 +63,43 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose, onSu
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setFormData(prev => ({ ...prev, file }));
+    const selectedFiles = Array.from(e.target.files || []);
+    setFormData(prev => ({ ...prev, files: [...prev.files, ...selectedFiles] }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const removeFile = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      files: prev.files.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
-    onClose();
+    
+    setIsSubmitting(true);
+    try {
+      await addOrder(formData, formData.files);
+      onClose();
+      // Reset form
+      setFormData({
+        fullName: '',
+        email: '',
+        countryCode: '+1',
+        phoneNumber: '',
+        designSize: '',
+        customWidth: '',
+        customHeight: '',
+        apparelType: '',
+        designInstructions: '',
+        files: []
+      });
+    } catch (error) {
+      console.error('Error placing order:', error);
+      alert('Failed to place order. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -274,7 +305,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose, onSu
             {/* File Attachment */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                File Attachment (Optional)
+                File Attachments (Optional)
               </label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
                 <input
@@ -282,7 +313,8 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose, onSu
                   onChange={handleFileChange}
                   className="hidden"
                   id="file-upload-modal"
-                  accept="image/*,.pdf,.doc,.docx"
+                  accept="image/*,.pdf,.doc,.docx,.zip"
+                  multiple
                 />
                 <label 
                   htmlFor="file-upload-modal" 
@@ -290,10 +322,29 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose, onSu
                 >
                   <Paperclip className="h-5 w-5" />
                   <span>
-                    {formData.file ? formData.file.name : 'Click to upload reference images or documents'}
+                    Click to upload reference images, documents, or zip files
                   </span>
                 </label>
               </div>
+              
+              {/* Display selected files */}
+              {formData.files.length > 0 && (
+                <div className="mt-3 space-y-2">
+                  <p className="text-sm font-medium text-gray-700">Selected files:</p>
+                  {formData.files.map((file, index) => (
+                    <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                      <span className="text-sm text-gray-700 truncate">{file.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeFile(index)}
+                        className="text-red-500 hover:text-red-700 ml-2"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Submit Button */}
@@ -307,10 +358,20 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose, onSu
               </button>
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all flex items-center justify-center space-x-2 shadow-lg font-semibold"
               >
-                <Send className="h-5 w-5" />
-                <span>Place Order</span>
+                {isSubmitting ? (
+                  <>
+                    <Loader className="h-5 w-5 animate-spin" />
+                    <span>Placing Order...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-5 w-5" />
+                    <span>Place Order</span>
+                  </>
+                )}
               </button>
             </div>
           </form>

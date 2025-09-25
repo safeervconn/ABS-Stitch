@@ -16,6 +16,7 @@ export interface Order {
   date: string;
   email: string;
   phone: string;
+  file_urls?: string[];
   designSize?: string;
   apparelType?: string;
   customWidth?: string;
@@ -25,7 +26,7 @@ export interface Order {
 
 interface OrderContextType {
   orders: Order[];
-  addOrder: (orderData: any) => void;
+  addOrder: (orderData: any, files?: File[]) => Promise<void>;
   updateOrderStatus: (orderId: string, status: Order['status']) => void;
   assignDesigner: (orderId: string, designerId: string, designerName: string) => void;
   getOrdersByRole: () => Order[];
@@ -49,7 +50,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const [orders, setOrders] = useState<Order[]>([]);
 
   // Add new order
-  const addOrder = async (orderData: any) => {
+  const addOrder = async (orderData: any, files?: File[]) => {
     try {
       const user = await getCurrentUser();
       if (!user) return;
@@ -57,21 +58,42 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       const profile = await getUserProfile(user.id);
       if (!profile) return;
 
+      let fileUrls: string[] = [];
+
+      // Upload files if provided
+      if (files && files.length > 0) {
+        for (const file of files) {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+          const filePath = `order-files/${fileName}`;
+
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('order-files')
+            .upload(filePath, file);
+
+          if (uploadError) {
+            console.error('Error uploading file:', uploadError);
+            throw new Error(`Failed to upload file: ${file.name}`);
+          }
+
+          // Get public URL
+          const { data: urlData } = supabase.storage
+            .from('order-files')
+            .getPublicUrl(filePath);
+
+          if (urlData?.publicUrl) {
+            fileUrls.push(urlData.publicUrl);
+          }
+        }
+      }
+
       const { data: order, error } = await supabase
         .from('orders')
         .insert({
-          order_number: `ORD-${Date.now()}`,
           customer_id: profile.id,
-          order_type: orderData.type || 'custom',
+          custom_description: orderData.designInstructions || '',
+          file_url: fileUrls.length > 0 ? fileUrls[0] : null, // Store first file URL for compatibility
           status: 'pending',
-          total_amount: orderData.amount || 75.0,
-          custom_instructions: orderData.designInstructions || '',
-          design_requirements: {
-            designSize: orderData.designSize || '',
-            apparelType: orderData.apparelType || '',
-            customWidth: orderData.customWidth || '',
-            customHeight: orderData.customHeight || ''
-          }
         })
         .select()
         .single();
@@ -79,8 +101,12 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       if (error) throw error;
 
       await fetchOrders();
+      
+      // Show success message
+      alert('Order placed successfully!');
     } catch (error) {
       console.error('Error adding order:', error);
+      throw error;
     }
   };
 
@@ -128,16 +154,17 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         designer: order.designer?.full_name,
         designerId: order.assigned_designer_id,
         type: order.order_type,
+        file_urls: order.file_url ? [order.file_url] : [],
         status: order.status,
-        amount: `$${order.total_amount.toFixed(2)}`,
+        amount: `$75.00`, // Default amount for custom orders
         date: new Date(order.created_at).toLocaleDateString(),
         email: order.customer?.email || '',
         phone: order.customer?.phone || '',
-        designInstructions: order.custom_instructions,
-        designSize: order.design_requirements?.designSize,
-        apparelType: order.design_requirements?.apparelType,
-        customWidth: order.design_requirements?.customWidth,
-        customHeight: order.design_requirements?.customHeight,
+        designInstructions: order.custom_description,
+        designSize: orderData.designSize,
+        apparelType: orderData.apparelType,
+        customWidth: orderData.customWidth,
+        customHeight: orderData.customHeight,
       }));
 
       setOrders(transformedOrders);

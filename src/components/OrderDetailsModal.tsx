@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Calendar, User, Package, FileText } from 'lucide-react';
+import { X, Calendar, User, Package, FileText, Paperclip } from 'lucide-react';
 import { getCurrentUser, getUserProfile } from '../lib/supabase';
 
 interface OrderDetailsModalProps {
@@ -123,6 +123,30 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Design Requirements</h3>
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
                       <p className="text-gray-700 leading-relaxed">{order.designInstructions}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Attached Files */}
+                {order.file_urls && order.file_urls.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Attached Files</h3>
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      <div className="space-y-2">
+                        {order.file_urls.map((fileUrl, index) => (
+                          <div key={index} className="flex items-center space-x-3">
+                            <Paperclip className="h-4 w-4 text-gray-500" />
+                            <a
+                              href={fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 underline"
+                            >
+                              Attachment {index + 1}
+                            </a>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
