@@ -123,7 +123,7 @@ const Signup: React.FC = () => {
             customerData.company_name = formData.company_name.trim();
           }
           
-          await createCustomerProfile(customerData);
+          await createUserProfile(customerData);
         } catch (profileError) {
           console.error('Error creating user profile:', profileError);
           setError('Account created but profile setup failed. Please contact support or try logging in.');
