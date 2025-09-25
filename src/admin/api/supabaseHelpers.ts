@@ -64,7 +64,7 @@ export const getAdminStats = async (): Promise<AdminStats> => {
 };
 
 // Recent Orders Query
-export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]> => {
+// export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]> => {
   try {
     const { data, error } = await supabase
       .from('orders')
@@ -103,6 +103,28 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
     return [];
   }
 };
+return (data || []).map(order => ({
+  id: order.id,
+  orderNumber: order.order_number,
+  customer: order.customer?.full_name || 'Unknown',
+  customerId: order.customer_id,
+  salesRep: order.sales_rep?.full_name,
+  salesRepId: order.assigned_sales_rep_id,
+  designer: order.designer?.full_name,
+  designerId: order.assigned_designer_id,
+  type: order.order_type,
+  file_urls: order.file_url ? [order.file_url] : [],
+  status: order.status,
+  amount: `$75.00`, // or use actual amount if stored
+  date: new Date(order.created_at).toLocaleDateString(),
+  email: order.customer?.email || '',
+  phone: order.customer?.phone || '',
+  designInstructions: order.custom_description,
+  designSize: order.designSize,
+  apparelType: order.apparelType,
+  customWidth: order.customWidth,
+  customHeight: order.customHeight,
+}));
 
 // Users CRUD Operations (Employees)
 export const getUsers = async (params: PaginationParams): Promise<PaginatedResponse<AdminUser>> => {
