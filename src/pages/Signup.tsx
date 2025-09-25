@@ -12,7 +12,7 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Eye, EyeOff, User, Mail, Phone, AlertCircle, CheckCircle, Lock } from 'lucide-react';
-import { signUp, createUserProfile, supabase } from '../lib/supabase';
+import { signUp, createUserProfile, createCustomerProfile, supabase } from '../lib/supabase';
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -123,7 +123,7 @@ const Signup: React.FC = () => {
             customerData.company_name = formData.company_name.trim();
           }
           
-          await createUserProfile(customerData);
+          await createCustomerProfile(customerData);
         } catch (profileError) {
           console.error('Error creating user profile:', profileError);
           setError('Account created but profile setup failed. Please contact support or try logging in.');
