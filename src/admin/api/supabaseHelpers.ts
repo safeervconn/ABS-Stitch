@@ -82,8 +82,8 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
 
     return (data || []).map(order => ({
       id: order.id,
-      order_number: order.order_number,   // ✅ added
-      total_amount: order.total_amount,   // ✅ added
+      order_number: order.order_number, 
+      total_amount: order.total_amount,
       customer_id: order.customer_id,
       customer_name: order.customer?.full_name || 'Unknown',
       customer_email: order.customer?.email || '',
