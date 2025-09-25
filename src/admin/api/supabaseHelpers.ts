@@ -111,7 +111,7 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
   type: order.order_type,
   file_urls: order.file_url ? [order.file_url] : [],
   status: order.status,
-  amount: `$75.00`, // or use actual amount if stored
+  amount: order.total_amount, // or use actual amount if stored
   date: new Date(order.created_at).toLocaleDateString(),
   email: order.customer?.email || '',
   phone: order.customer?.phone || '',
