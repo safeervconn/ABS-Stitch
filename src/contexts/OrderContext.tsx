@@ -26,7 +26,7 @@ export interface Order {
 
 interface OrderContextType {
   orders: Order[];
-  addOrder: (orderData: any, files?: File[]) => Promise<void>;
+  addOrder: (order: any, files?: File[]) => Promise<void>;
   updateOrderStatus: (orderId: string, status: Order['status']) => void;
   assignDesigner: (orderId: string, designerId: string, designerName: string) => void;
   getOrdersByRole: () => Order[];
@@ -50,7 +50,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const [orders, setOrders] = useState<Order[]>([]);
 
   // Add new order
-  const addOrder = async (orderData: any, files?: File[]) => {
+  const addOrder = async (order: any, files?: File[]) => {
     try {
       const user = await getCurrentUser();
       if (!user) return;
@@ -91,7 +91,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         .from('orders')
         .insert({
           customer_id: profile.id,
-          custom_description: orderData.designInstructions || '',
+          custom_description: order.designInstructions || '',
           file_url: fileUrls.length > 0 ? fileUrls[0] : null, // Store first file URL for compatibility
           status: 'pending',
         })
@@ -161,10 +161,10 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         email: order.customer?.email || '',
         phone: order.customer?.phone || '',
         designInstructions: order.custom_description,
-        designSize: orderData.designSize,
-        apparelType: orderData.apparelType,
-        customWidth: orderData.customWidth,
-        customHeight: orderData.customHeight,
+        designSize: order.designSize,
+        apparelType: order.apparelType,
+        customWidth: order.customWidth,
+        customHeight: order.customHeight,
       }));
 
       setOrders(transformedOrders);
