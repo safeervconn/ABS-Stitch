@@ -165,7 +165,6 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         customer_email: order.customer?.email || '',
         customer_phone: order.customer?.phone || '',
         customer_company_name: order.customer?.company_name || '',
-        customer_company_name: order.customer?.company_name || '',
         customerId: order.customer_id,
         assigned_sales_rep_name: order.sales_rep?.full_name,
         salesRepId: order.assigned_sales_rep_id,
