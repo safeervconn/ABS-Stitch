@@ -258,7 +258,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-medium text-gray-900">
-                    Unpaid Orders for {selectedCustomer?.full_name}
+                    Unpaid Orders for {selectedCustomer?.full_name} ({allOrders.length} available)
                   </h3>
                   {unpaidOrders.length > 0 && (
                     <label className="flex items-center space-x-2">
