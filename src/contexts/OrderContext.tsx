@@ -104,32 +104,50 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
   // Fetch orders with correct relationships
   const fetchOrders = async () => {
-    try {
-      const user = await getCurrentUser();
-      if (!user) return;
+  try {
+    const user = await getCurrentUser();
+    if (!user) return;
 
-      const profile = await getUserProfile(user.id);
-      if (!profile) return;
+    const profile = await getUserProfile(user.id);
+    if (!profile) return;
 
-      let query = supabase
-        .from('orders')
-        .select(`
-          *,
-          customer:customers(id, full_name, email, phone, company_name),
-          ${profile.role === 'customer' ? '' : 'sales_rep:employees!orders_assigned_sales_rep_id_fkey(id, full_name), designer:employees!orders_assigned_designer_id_fkey(id, full_name)'}
-        `);
+    // Build fields dynamically in an array
+    const selectParts = [
+      "*",
+      "customer:customers(id, full_name, email, phone, company_name)"
+    ];
 
-      switch (profile.role) {
-        case 'customer':
-          query = query.eq('customer_id', profile.id);
-          break;
-        case 'sales_rep':
-          query = query.eq('assigned_sales_rep_id', profile.id);
-          break;
-        case 'designer':
-          query = query.eq('assigned_designer_id', profile.id);
-          break;
-      }
+    if (profile.role !== "customer") {
+      selectParts.push(
+        "sales_rep:employees!orders_assigned_sales_rep_id_fkey(id, full_name)",
+        "designer:employees!orders_assigned_designer_id_fkey(id, full_name)"
+      );
+    }
+
+    const query = supabase
+      .from("orders")
+      .select(selectParts.join(", "));
+
+    let filteredQuery = query;
+    switch (profile.role) {
+      case "customer":
+        filteredQuery = query.eq("customer_id", profile.id);
+        break;
+      case "sales_rep":
+        filteredQuery = query.eq("assigned_sales_rep_id", profile.id);
+        break;
+      case "designer":
+        filteredQuery = query.eq("assigned_designer_id", profile.id);
+        break;
+    }
+
+    return await filteredQuery.order("created_at", { ascending: false });
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    return null;
+  }
+};
+
 
       const { data, error } = await query.order('created_at', { ascending: false });
 
