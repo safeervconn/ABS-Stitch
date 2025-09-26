@@ -124,61 +124,50 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       );
     }
 
-    const query = supabase
-      .from("orders")
-      .select(selectParts.join(", "));
+    let query = supabase.from("orders").select(selectParts.join(", "));
 
-    let filteredQuery = query;
     switch (profile.role) {
       case "customer":
-        filteredQuery = query.eq("customer_id", profile.id);
+        query = query.eq("customer_id", profile.id);
         break;
       case "sales_rep":
-        filteredQuery = query.eq("assigned_sales_rep_id", profile.id);
+        query = query.eq("assigned_sales_rep_id", profile.id);
         break;
       case "designer":
-        filteredQuery = query.eq("assigned_designer_id", profile.id);
+        query = query.eq("assigned_designer_id", profile.id);
         break;
     }
 
-    return await filteredQuery.order("created_at", { ascending: false });
+    const { data, error } = await query.order("created_at", { ascending: false });
+    if (error) throw error;
+
+    const transformedOrders: CustomerOrder[] = (data || []).map(order => ({
+      id: order.id,
+      order_number: order.order_number || `ORD-${order.id.slice(0, 8)}`,
+      customer_name: order.customer?.full_name || "Unknown",
+      customer_email: order.customer?.email || "",
+      customer_phone: order.customer?.phone || "",
+      customer_company_name: order.customer?.company_name || "",
+      customerId: order.customer_id,
+      order_type: order.order_type || "custom",
+      file_urls: order.file_urls || (order.file_url ? [order.file_url] : null),
+      status: order.status,
+      payment_status: order.payment_status || "unpaid",
+      total_amount: order.total_amount || 75.0,
+      date: new Date(order.created_at).toLocaleDateString(),
+      custom_description: order.custom_description,
+      design_size: order.design_size,
+      apparel_type: order.apparel_type,
+      custom_width: order.custom_width,
+      custom_height: order.custom_height,
+    }));
+
+    setOrders(transformedOrders);
   } catch (error) {
     console.error("Error fetching orders:", error);
-    return null;
   }
 };
 
-
-      const { data, error } = await query.order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      const transformedOrders: CustomerOrder[] = (data || []).map(order => ({
-        id: order.id,
-        order_number: order.order_number || `ORD-${order.id.slice(0, 8)}`,
-        customer_name: order.customer?.full_name || 'Unknown',
-        customer_email: order.customer?.email || '',
-        customer_phone: order.customer?.phone || '',
-        customer_company_name: order.customer?.company_name || '',
-        customerId: order.customer_id,
-        order_type: order.order_type || 'custom',
-        file_urls: order.file_urls || (order.file_url ? [order.file_url] : null),
-        status: order.status,
-        payment_status: order.payment_status || 'unpaid',
-        total_amount: order.total_amount || 75.00,
-        date: new Date(order.created_at).toLocaleDateString(),
-        custom_description: order.custom_description,
-        design_size: order.design_size,
-        apparel_type: order.apparel_type,
-        custom_width: order.custom_width,
-        custom_height: order.custom_height,
-      }));
-
-      setOrders(transformedOrders);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-    }
-  };
 
   React.useEffect(() => {
     fetchOrders();
