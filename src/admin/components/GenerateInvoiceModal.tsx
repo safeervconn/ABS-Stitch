@@ -23,7 +23,6 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
   const [invoiceTitle, setInvoiceTitle] = useState('');
   const [monthYear, setMonthYear] = useState('');
   const [paymentLink, setPaymentLink] = useState('');
-  const [paymentLink, setPaymentLink] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
