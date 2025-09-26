@@ -79,6 +79,42 @@ export interface AdminStats {
   activeProducts: number;
 }
 
+export interface Invoice {
+  id: string;
+  customer_id: string;
+  customer_name?: string;
+  customer_email?: string;
+  invoice_title: string;
+  month_year: string;
+  payment_link?: string;
+  order_ids: string[];
+  total_amount: number;
+  status: 'paid' | 'unpaid' | 'partially_paid';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CustomerOrder {
+  id: string;
+  order_number: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone?: string;
+  customer_company_name?: string;
+  customerId: string;
+  order_type: 'catalog' | 'custom';
+  status: 'pending' | 'assigned' | 'in_progress' | 'review' | 'completed' | 'delivered' | 'cancelled';
+  payment_status: 'paid' | 'unpaid' | 'partially_paid';
+  total_amount: number;
+  date: string;
+  file_urls?: string[] | null;
+  design_size?: string;
+  apparel_type?: string;
+  custom_width?: number;
+  custom_height?: number;
+  custom_description?: string;
+}
+
 export interface PaginationParams {
   page: number;
   limit: number;
@@ -92,6 +128,7 @@ export interface PaginationParams {
   dateTo?: string;
   amountMin?: number;
   amountMax?: number;
+  paymentStatus?: string;
   // User filters
   role?: string;
   salesRepId?: string;
@@ -99,6 +136,10 @@ export interface PaginationParams {
   categoryId?: string;
   priceMin?: number;
   priceMax?: number;
+  // Invoice filters
+  invoiceStatus?: string;
+  invoiceCustomerId?: string;
+  invoiceMonthYear?: string;
 }
 
 export interface PaginatedResponse<T> {

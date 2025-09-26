@@ -4,6 +4,7 @@ import OverviewTab from './tabs/OverviewTab';
 import UsersTab from './tabs/UsersTab';
 import OrdersTab from './tabs/OrdersTab';
 import ProductsTab from './tabs/ProductsTab';
+import InvoiceManagementTab from './tabs/InvoiceManagementTab';
 import OrderDetailsModal from '../components/OrderDetailsModal';
 import { AdminOrder } from './types';
 
@@ -27,6 +28,8 @@ const AdminDashboard: React.FC = () => {
         return <OrdersTab onOrderClick={handleOrderClick} />;
       case 'products':
         return <ProductsTab />;
+      case 'invoices':
+        return <InvoiceManagementTab />;
       default:
         return <OverviewTab onOrderClick={handleOrderClick} />;
     }

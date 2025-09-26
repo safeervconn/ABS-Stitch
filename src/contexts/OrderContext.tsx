@@ -1,36 +1,13 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { getCurrentUser, getUserProfile, supabase } from '../lib/supabase';
-
-export interface Order {
-  id: string;
-  order_number: string;
-  customer_name: string;
-  customer_email: string;
-  customer_phone: string;
-  customer_company_name?: string;
-  customerId: string;
-  assigned_sales_rep_name?: string;
-  salesRepId?: string;
-  assigned_designer_name?: string;
-  designerId?: string;
-  order_type: 'catalog' | 'custom';
-  status: 'pending' | 'assigned' | 'in_progress' | 'review' | 'completed' | 'delivered' | 'cancelled';
-  total_amount: number;
-  date: string;
-  file_urls?: string[] | null;
-  design_size?: string;
-  apparel_type?: string;
-  custom_width?: number;
-  custom_height?: number;
-  custom_description?: string;
-}
+import { CustomerOrder } from '../admin/types';
 
 interface OrderContextType {
-  orders: Order[];
+  orders: CustomerOrder[];
   addOrder: (order: any, files?: File[]) => Promise<void>;
-  updateOrderStatus: (orderId: string, status: Order['status']) => void;
+  updateOrderStatus: (orderId: string, status: CustomerOrder['status']) => void;
   assignDesigner: (orderId: string, designerId: string, designerName: string) => void;
-  getOrdersByRole: () => Order[];
+  getOrdersByRole: () => CustomerOrder[];
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -48,7 +25,7 @@ interface OrderProviderProps {
 }
 
 export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<CustomerOrder[]>([]);
 
   // Add new order
   const addOrder = async (formData: any, files?: File[]) => {
@@ -107,6 +84,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           custom_height: formData.customHeight ? parseFloat(formData.customHeight) : null,
           file_urls: fileUrls.length > 0 ? fileUrls : null,
           total_amount: totalAmount,
+          payment_status: 'unpaid',
           status: 'pending',
         })
         .select()
@@ -138,8 +116,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         .select(`
           *,
           customer:customers(id, full_name, email, phone, company_name),
-          sales_rep:employees!orders_assigned_sales_rep_id_fkey(id, full_name),
-          designer:employees!orders_assigned_designer_id_fkey(id, full_name)
+          ${profile.role === 'customer' ? '' : 'sales_rep:employees!orders_assigned_sales_rep_id_fkey(id, full_name), designer:employees!orders_assigned_designer_id_fkey(id, full_name)'}
         `);
 
       switch (profile.role) {
@@ -158,7 +135,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
       if (error) throw error;
 
-      const transformedOrders: Order[] = (data || []).map(order => ({
+      const transformedOrders: CustomerOrder[] = (data || []).map(order => ({
         id: order.id,
         order_number: order.order_number || `ORD-${order.id.slice(0, 8)}`,
         customer_name: order.customer?.full_name || 'Unknown',
@@ -166,13 +143,10 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         customer_phone: order.customer?.phone || '',
         customer_company_name: order.customer?.company_name || '',
         customerId: order.customer_id,
-        assigned_sales_rep_name: order.sales_rep?.full_name,
-        salesRepId: order.assigned_sales_rep_id,
-        assigned_designer_name: order.designer?.full_name,
-        designerId: order.assigned_designer_id,
         order_type: order.order_type || 'custom',
         file_urls: order.file_urls || (order.file_url ? [order.file_url] : null),
         status: order.status,
+        payment_status: order.payment_status || 'unpaid',
         total_amount: order.total_amount || 75.00,
         date: new Date(order.created_at).toLocaleDateString(),
         custom_description: order.custom_description,
@@ -192,7 +166,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     fetchOrders();
   }, []);
 
-  const updateOrderStatus = (orderId: string, status: Order['status']) => {
+  const updateOrderStatus = (orderId: string, status: CustomerOrder['status']) => {
     supabase
       .from('orders')
       .update({ status })
@@ -211,7 +185,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       .then(() => fetchOrders());
   };
 
-  const getOrdersByRole = (): Order[] => orders;
+  const getOrdersByRole = (): CustomerOrder[] => orders;
 
   const value: OrderContextType = {
     orders,

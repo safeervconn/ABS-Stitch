@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase';
-import { AdminUser, AdminCustomer, AdminOrder, AdminProduct, Category, AdminStats, PaginatedResponse, PaginationParams } from '../types';
+import { AdminUser, AdminCustomer, AdminOrder, AdminProduct, Category, AdminStats, PaginatedResponse, PaginationParams, Invoice } from '../types';
 
 // Admin Stats Queries
 export const getAdminStats = async (): Promise<AdminStats> => {
@@ -332,6 +332,11 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
     // Apply customer search filter
     if (params.customerSearch) {
       query = query.or(`customer.full_name.ilike.%${params.customerSearch}%,customer.email.ilike.%${params.customerSearch}%`);
+    }
+
+    // Apply payment status filter
+    if (params.paymentStatus) {
+      query = query.eq('payment_status', params.paymentStatus);
     }
 
     // Apply date range filters
@@ -739,5 +744,196 @@ export const createNotification = async (
     if (error) throw error;
   } catch (error) {
     console.error('Error creating notification:', error);
+  }
+};
+
+// Invoice CRUD Operations
+export const getInvoices = async (params: PaginationParams): Promise<PaginatedResponse<Invoice>> => {
+  try {
+    let query = supabase
+      .from('invoices')
+      .select(`
+        *,
+        customer:customers(full_name, email)
+      `, { count: 'exact' });
+
+    // Apply search filter
+    if (params.search) {
+      query = query.ilike('invoice_title', `%${params.search}%`);
+    }
+
+    // Apply status filter
+    if (params.invoiceStatus) {
+      query = query.eq('status', params.invoiceStatus);
+    }
+
+    // Apply customer filter
+    if (params.invoiceCustomerId) {
+      query = query.eq('customer_id', params.invoiceCustomerId);
+    }
+
+    // Apply month/year filter
+    if (params.invoiceMonthYear) {
+      query = query.eq('month_year', params.invoiceMonthYear);
+    }
+
+    // Apply date range filters
+    if (params.dateFrom) {
+      query = query.gte('created_at', params.dateFrom);
+    }
+    if (params.dateTo) {
+      query = query.lte('created_at', params.dateTo);
+    }
+
+    // Apply sorting
+    const sortBy = params.sortBy || 'created_at';
+    const sortOrder = params.sortOrder || 'desc';
+    query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+
+    // Apply pagination
+    const from = (params.page - 1) * params.limit;
+    const to = from + params.limit - 1;
+    query = query.range(from, to);
+
+    const { data, error, count } = await query;
+
+    if (error) throw error;
+
+    const transformedData = (data || []).map(invoice => ({
+      ...invoice,
+      customer_name: invoice.customer?.full_name,
+      customer_email: invoice.customer?.email,
+    }));
+
+    return {
+      data: transformedData,
+      total: count || 0,
+      page: params.page,
+      limit: params.limit,
+      totalPages: Math.ceil((count || 0) / params.limit),
+    };
+  } catch (error) {
+    console.error('Error fetching invoices:', error);
+    throw error;
+  }
+};
+
+export const createInvoice = async (invoiceData: Partial<Invoice>): Promise<Invoice> => {
+  try {
+    const { data, error } = await supabase
+      .from('invoices')
+      .insert([invoiceData])
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // Update payment status of associated orders
+    if (invoiceData.order_ids && invoiceData.order_ids.length > 0) {
+      await supabase
+        .from('orders')
+        .update({ payment_status: 'paid' })
+        .in('id', invoiceData.order_ids);
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error creating invoice:', error);
+    throw error;
+  }
+};
+
+export const updateInvoice = async (id: string, invoiceData: Partial<Invoice>): Promise<Invoice> => {
+  try {
+    const { data, error } = await supabase
+      .from('invoices')
+      .update(invoiceData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error updating invoice:', error);
+    throw error;
+  }
+};
+
+export const getCustomersForInvoice = async (): Promise<{ id: string; full_name: string; email: string }[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('customers')
+      .select('id, full_name, email')
+      .eq('status', 'active')
+      .order('full_name');
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching customers for invoice:', error);
+    return [];
+  }
+};
+
+export const getUnpaidOrdersForCustomer = async (
+  customerId: string, 
+  dateFrom?: string, 
+  dateTo?: string
+): Promise<AdminOrder[]> => {
+  try {
+    let query = supabase
+      .from('orders')
+      .select(`
+        *,
+        customer:customers!inner(full_name, email, phone, company_name),
+        product:products(title)
+      `)
+      .eq('customer_id', customerId)
+      .eq('payment_status', 'unpaid');
+
+    if (dateFrom) {
+      query = query.gte('created_at', dateFrom);
+    }
+    if (dateTo) {
+      query = query.lte('created_at', dateTo);
+    }
+
+    query = query.order('created_at', { ascending: false });
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    return (data || []).map(order => ({
+      id: order.id,
+      order_number: order.order_number,
+      order_type: order.order_type,
+      customer_id: order.customer_id,
+      customer_name: order.customer?.full_name || 'Unknown',
+      customer_email: order.customer?.email || '',
+      customer_phone: order.customer?.phone || '',
+      customer_company_name: order.customer?.company_name || '',
+      product_id: order.product_id,
+      product_title: order.product?.title,
+      custom_description: order.custom_description,
+      file_urls: order.file_urls,
+      design_size: order.design_size,
+      apparel_type: order.apparel_type,
+      custom_width: order.custom_width,
+      custom_height: order.custom_height,
+      total_amount: order.total_amount,
+      status: order.status,
+      assigned_sales_rep_id: order.assigned_sales_rep_id,
+      assigned_sales_rep_name: undefined,
+      assigned_designer_id: order.assigned_designer_id,
+      assigned_designer_name: undefined,
+      invoice_url: order.invoice_url,
+      created_at: order.created_at,
+      updated_at: order.updated_at,
+    }));
+  } catch (error) {
+    console.error('Error fetching unpaid orders for customer:', error);
+    return [];
   }
 };

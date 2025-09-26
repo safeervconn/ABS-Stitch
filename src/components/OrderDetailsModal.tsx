@@ -194,7 +194,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 </div>
 
                 {/* Assignment Info */}
-                {(order.assigned_sales_rep_name || order.assigned_designer_name) && (
+                {currentUser?.role === 'admin' && (order.assigned_sales_rep_name || order.assigned_designer_name) && (
                   <div className="bg-gray-50 rounded-lg p-4">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Assignment</h3>
                     <div className="space-y-3">

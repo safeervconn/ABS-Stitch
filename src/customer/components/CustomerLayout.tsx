@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Users, ShoppingBag, Package, BarChart3, Bell, LogOut, FileText } from 'lucide-react';
+import { User, ShoppingBag, FileText, Bell, LogOut } from 'lucide-react';
 import { signOut, getCurrentUser, getUserProfile } from '../../lib/supabase';
-import { useAdminData } from '../hooks/useAdminData';
 
-interface AdminLayoutProps {
+interface CustomerLayoutProps {
   children: React.ReactNode;
   activeTab: string;
   onTabChange: (tab: string) => void;
 }
 
-const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabChange }) => {
+const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children, activeTab, onTabChange }) => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
-  // Use the new admin data hook (with auto-refresh disabled to fix the bug)
-  const { badgeCounts, clearBadge } = useAdminData({ autoRefresh: false });
 
   useEffect(() => {
     const checkUser = async () => {
@@ -22,10 +18,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
         const currentUser = await getCurrentUser();
         if (currentUser) {
           const profile = await getUserProfile(currentUser.id);
-          if (profile && profile.role === 'admin') {
+          if (profile && (profile.role === 'customer' || !profile.role)) {
             setUser(profile);
           } else {
-            console.error('Access denied: User role is', profile?.role, 'but admin required');
+            console.error('Access denied: User role is', profile?.role);
             window.location.href = '/login';
           }
         } else {
@@ -42,14 +38,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
     checkUser();
   }, []);
 
-  // Handle tab changes and clear badges
-  const handleTabChange = (tab: string) => {
-    onTabChange(tab);
-    if (['users', 'orders', 'products'].includes(tab)) {
-      clearBadge(tab as 'users' | 'orders' | 'products');
-    }
-  };
-
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -60,11 +48,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
   };
 
   const tabs = [
-    { id: 'overview', label: 'Overview', icon: BarChart3, badge: 0 },
-    { id: 'users', label: 'Users', icon: Users, badge: badgeCounts.users },
-    { id: 'orders', label: 'Orders', icon: ShoppingBag, badge: badgeCounts.orders },
-    { id: 'products', label: 'Products', icon: Package, badge: badgeCounts.products },
-    { id: 'invoices', label: 'Invoices', icon: FileText, badge: 0 },
+    { id: 'overview', label: 'Overview', icon: User },
+    { id: 'orders', label: 'Orders', icon: ShoppingBag },
+    { id: 'invoices', label: 'Invoices', icon: FileText },
   ];
 
   if (loading) {
@@ -72,7 +58,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading admin panel...</p>
+          <p className="text-gray-600 font-medium">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -86,9 +72,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <div className="bg-blue-100 p-2 rounded-lg">
-                <BarChart3 className="h-6 w-6 text-blue-600" />
+                <User className="h-6 w-6 text-blue-600" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gray-900">My Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
               <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors relative">
@@ -96,8 +82,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
               </button>
               <div className="flex items-center space-x-3">
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-900">{user?.full_name || 'Admin'}</p>
-                  <p className="text-xs text-gray-500 capitalize">{user?.role || 'admin'}</p>
+                  <p className="text-sm font-semibold text-gray-900">{user?.full_name || 'Customer'}</p>
+                  <p className="text-xs text-gray-500 capitalize">{user?.role || 'customer'}</p>
                 </div>
                 <button
                   onClick={handleSignOut}
@@ -123,8 +109,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
               return (
                 <button
                   key={tab.id}
-                  onClick={() => handleTabChange(tab.id)}
-                  className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors relative ${
+                  onClick={() => onTabChange(tab.id)}
+                  className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     isActive
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -132,11 +118,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
                 >
                   <IconComponent className="h-5 w-5" />
                   <span>{tab.label}</span>
-                  {tab.badge > 0 && (
-                    <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {tab.badge > 99 ? '99+' : tab.badge}
-                    </span>
-                  )}
                 </button>
               );
             })}
@@ -152,4 +133,4 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
   );
 };
 
-export default AdminLayout;
+export default CustomerLayout;
