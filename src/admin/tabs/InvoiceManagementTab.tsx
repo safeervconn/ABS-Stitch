@@ -67,7 +67,6 @@ const InvoiceManagementTab: React.FC = () => {
       options: [
         { value: 'paid', label: 'Paid' },
         { value: 'unpaid', label: 'Unpaid' },
-        { value: 'partially_paid', label: 'Partially Paid' },
       ],
     },
     {
@@ -131,7 +130,6 @@ const InvoiceManagementTab: React.FC = () => {
     switch (status) {
       case 'paid': return 'bg-green-100 text-green-800';
       case 'unpaid': return 'bg-red-100 text-red-800';
-      case 'partially_paid': return 'bg-yellow-100 text-yellow-800';
       case 'cancelled': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -208,12 +206,12 @@ const InvoiceManagementTab: React.FC = () => {
           <button
             onClick={() => handleEditInvoice(invoice)}
             className={`transition-colors ${
-              invoice.status === 'cancelled'
+              invoice.status === 'cancelled' || invoice.status === 'paid'
                 ? 'text-gray-400 cursor-not-allowed'
                 : 'text-green-600 hover:text-green-900'
             }`}
             title="Edit Invoice"
-            disabled={invoice.status === 'cancelled'}
+            disabled={invoice.status === 'cancelled' || invoice.status === 'paid'}
           >
             <Edit className="h-4 w-4" />
           </button>

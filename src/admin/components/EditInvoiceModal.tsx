@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Save, Loader, FileText, Package } from 'lucide-react';
 import { getInvoiceById, getAllCustomerOrders, updateInvoice } from '../api/supabaseHelpers';
 import { Invoice, AdminOrder } from '../types';
+import ConfirmationModal from './ConfirmationModal';
 
 interface EditInvoiceModalProps {
   isOpen: boolean;
@@ -21,9 +22,14 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
   const [invoiceTitle, setInvoiceTitle] = useState('');
   const [invoiceStatus, setInvoiceStatus] = useState<Invoice['status']>('unpaid');
+  const [paymentLink, setPaymentLink] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  
+  // Confirmation modal states
+  const [isStatusConfirmationOpen, setIsStatusConfirmationOpen] = useState(false);
+  const [pendingStatusChange, setPendingStatusChange] = useState<Invoice['status'] | null>(null);
 
   useEffect(() => {
     if (isOpen && invoiceId) {
@@ -42,6 +48,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
       setInvoice(invoiceData);
       setInvoiceTitle(invoiceData.invoice_title);
       setInvoiceStatus(invoiceData.status);
+      setPaymentLink(invoiceData.payment_link || '');
       setSelectedOrderIds(invoiceData.order_ids || []);
 
       // Fetch all orders for this customer
@@ -90,6 +97,17 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
       return;
     }
 
+    // Check if status change is irreversible
+    if (invoiceStatus !== invoice.status && (invoiceStatus === 'paid' || invoiceStatus === 'cancelled')) {
+      setPendingStatusChange(invoiceStatus);
+      setIsStatusConfirmationOpen(true);
+      return;
+    }
+
+    await performUpdate();
+  };
+
+  const performUpdate = async () => {
     setSubmitting(true);
     setError('');
 
@@ -99,6 +117,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
       await updateInvoice(invoice.id, {
         invoice_title: invoiceTitle.trim(),
         status: invoiceStatus,
+        payment_link: paymentLink.trim() || null,
         order_ids: selectedOrderIds,
         total_amount: totalAmount,
       });
@@ -113,11 +132,19 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
     }
   };
 
+  const handleConfirmStatusChange = async () => {
+    if (pendingStatusChange) {
+      setInvoiceStatus(pendingStatusChange);
+      setIsStatusConfirmationOpen(false);
+      setPendingStatusChange(null);
+      await performUpdate();
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'paid': return 'bg-green-100 text-green-800';
       case 'unpaid': return 'bg-red-100 text-red-800';
-      case 'partially_paid': return 'bg-yellow-100 text-yellow-800';
       case 'cancelled': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -139,7 +166,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   if (!isOpen) return null;
 
   const totalAmount = calculateTotal();
-  const isDisabled = invoice?.status === 'cancelled';
+  const isDisabled = invoice?.status === 'cancelled' || invoice?.status === 'paid';
 
   return (
     <>
@@ -209,9 +236,23 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                     >
                       <option value="unpaid">Unpaid</option>
                       <option value="paid">Paid</option>
-                      <option value="partially_paid">Partially Paid</option>
                       <option value="cancelled">Cancelled</option>
                     </select>
+                  </div>
+
+                  {/* Payment Link */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Payment Link (Optional)
+                    </label>
+                    <input
+                      type="url"
+                      value={paymentLink}
+                      onChange={(e) => setPaymentLink(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      placeholder="https://payment-provider.com/invoice/..."
+                      disabled={isDisabled}
+                    />
                   </div>
                 </div>
 
@@ -319,7 +360,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                 {isDisabled && (
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
                     <p className="text-gray-600 text-sm">
-                      This invoice is cancelled and cannot be edited. Only the status can be changed from cancelled to another status.
+                      This invoice is {invoice?.status} and cannot be edited.
                     </p>
                   </div>
                 )}
@@ -355,6 +396,21 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
               </button>
             </div>
           </form>
+
+          {/* Status Change Confirmation Modal */}
+          <ConfirmationModal
+            isOpen={isStatusConfirmationOpen}
+            onClose={() => {
+              setIsStatusConfirmationOpen(false);
+              setPendingStatusChange(null);
+            }}
+            onConfirm={handleConfirmStatusChange}
+            title="Confirm Status Change"
+            message={`Are you sure you want to change the invoice status to "${pendingStatusChange}"? This action is irreversible and cannot be undone.`}
+            confirmText="Confirm Change"
+            cancelText="Cancel"
+            type="warning"
+          />
         </div>
       </div>
     </>
