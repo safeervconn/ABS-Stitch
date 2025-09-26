@@ -23,6 +23,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
   const [invoiceTitle, setInvoiceTitle] = useState('');
   const [monthYear, setMonthYear] = useState('');
   const [paymentLink, setPaymentLink] = useState('');
+  const [invoiceLink, setInvoiceLink] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -119,6 +120,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
         invoice_title: invoiceTitle.trim(),
         month_year: monthYear,
         payment_link: paymentLink.trim() || null,
+        invoice_link: invoiceLink.trim() || null,
         order_ids: selectedOrderIds,
         total_amount: totalAmount,
         status: 'unpaid',
@@ -134,6 +136,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
       setSelectedOrderIds([]);
       setInvoiceTitle('');
       setPaymentLink('');
+      setInvoiceLink('');
       setError('');
     } catch (error) {
       console.error('Error creating invoice:', error);
@@ -244,6 +247,20 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
                   onChange={(e) => setPaymentLink(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   placeholder="https://payment-provider.com/invoice/..."
+                />
+              </div>
+
+              {/* Invoice Link */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Invoice Link (Optional)
+                </label>
+                <input
+                  type="url"
+                  value={invoiceLink}
+                  onChange={(e) => setInvoiceLink(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="https://invoice-provider.com/invoice/..."
                 />
               </div>
 

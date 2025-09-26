@@ -874,6 +874,23 @@ export const updateInvoice = async (id: string, invoiceData: Partial<Invoice>): 
       }
     }
 
+    // If only status is being updated to paid, update order payment status
+    if (invoiceData.status === 'paid' && !invoiceData.order_ids) {
+      // Get current invoice order_ids
+      const { data: currentInvoice } = await supabase
+        .from('invoices')
+        .select('order_ids')
+        .eq('id', id)
+        .single();
+
+      if (currentInvoice && currentInvoice.order_ids && currentInvoice.order_ids.length > 0) {
+        await supabase
+          .from('orders')
+          .update({ payment_status: 'paid' })
+          .in('id', currentInvoice.order_ids);
+      }
+    }
+
     const { data, error } = await supabase
       .from('invoices')
       .update(invoiceData)

@@ -141,6 +141,10 @@ const InvoiceManagementTab: React.FC = () => {
   };
 
   const handleEditInvoice = (invoice: Invoice) => {
+    // Disable edit for paid and cancelled invoices
+    if (invoice.status === 'paid' || invoice.status === 'cancelled') {
+      return;
+    }
     setSelectedInvoiceId(invoice.id);
     setIsEditModalOpen(true);
   };

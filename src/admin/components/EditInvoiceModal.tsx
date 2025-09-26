@@ -23,6 +23,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   const [invoiceTitle, setInvoiceTitle] = useState('');
   const [invoiceStatus, setInvoiceStatus] = useState<Invoice['status']>('unpaid');
   const [paymentLink, setPaymentLink] = useState('');
+  const [invoiceLink, setInvoiceLink] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -49,6 +50,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
       setInvoiceTitle(invoiceData.invoice_title);
       setInvoiceStatus(invoiceData.status);
       setPaymentLink(invoiceData.payment_link || '');
+      setInvoiceLink(invoiceData.invoice_link || '');
       setSelectedOrderIds(invoiceData.order_ids || []);
 
       // Fetch all orders for this customer
@@ -118,6 +120,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
         invoice_title: invoiceTitle.trim(),
         status: invoiceStatus,
         payment_link: paymentLink.trim() || null,
+        invoice_link: invoiceLink.trim() || null,
         order_ids: selectedOrderIds,
         total_amount: totalAmount,
       });
@@ -144,7 +147,6 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'paid': return 'bg-green-100 text-green-800';
-      case 'unpaid': return 'bg-red-100 text-red-800';
       case 'cancelled': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -235,7 +237,6 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                       disabled={isDisabled}
                     >
                       <option value="unpaid">Unpaid</option>
-                      <option value="paid">Paid</option>
                       <option value="cancelled">Cancelled</option>
                     </select>
                   </div>
@@ -251,6 +252,21 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                       onChange={(e) => setPaymentLink(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
                       placeholder="https://payment-provider.com/invoice/..."
+                      disabled={isDisabled}
+                    />
+                  </div>
+
+                  {/* Invoice Link */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Invoice Link (Optional)
+                    </label>
+                    <input
+                      type="url"
+                      value={invoiceLink}
+                      onChange={(e) => setInvoiceLink(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      placeholder="https://invoice-provider.com/invoice/..."
                       disabled={isDisabled}
                     />
                   </div>
