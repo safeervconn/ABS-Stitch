@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Download, Eye, CreditCard, Calendar } from 'lucide-react';
 import { supabase, getCurrentUser } from '../../lib/supabase';
+import InvoiceDetailsModal from '../../admin/components/InvoiceDetailsModal';
 import { Invoice } from '../../admin/types';
 
 const CustomerInvoicesTab: React.FC = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchInvoices();
@@ -58,6 +61,7 @@ const CustomerInvoicesTab: React.FC = () => {
       case 'paid': return 'bg-green-100 text-green-800';
       case 'unpaid': return 'bg-red-100 text-red-800';
       case 'partially_paid': return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -66,6 +70,11 @@ const CustomerInvoicesTab: React.FC = () => {
     if (paymentLink) {
       window.open(paymentLink, '_blank');
     }
+  };
+
+  const handleViewInvoice = (invoice: Invoice) => {
+    setSelectedInvoiceId(invoice.id);
+    setIsDetailsModalOpen(true);
   };
 
   if (loading) {
@@ -135,10 +144,7 @@ const CustomerInvoicesTab: React.FC = () => {
                         </button>
                       )}
                       <button
-                        onClick={() => {
-                          // TODO: Implement invoice download/view
-                          console.log('View invoice:', invoice.id);
-                        }}
+                        onClick={() => handleViewInvoice(invoice)}
                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                         title="View Invoice"
                       >
@@ -158,6 +164,13 @@ const CustomerInvoicesTab: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Invoice Details Modal */}
+      <InvoiceDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        invoiceId={selectedInvoiceId}
+      />
     </div>
   );
 };

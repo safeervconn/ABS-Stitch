@@ -168,9 +168,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Total
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -206,17 +203,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       ${order.total_amount.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onOrderClick(order);
-                        }}
-                        className="text-blue-600 hover:text-blue-900 transition-colors"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
                     </td>
                   </tr>
                 ))

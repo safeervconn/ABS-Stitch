@@ -845,6 +845,35 @@ export const createInvoice = async (invoiceData: Partial<Invoice>): Promise<Invo
 
 export const updateInvoice = async (id: string, invoiceData: Partial<Invoice>): Promise<Invoice> => {
   try {
+    // If order_ids are being updated, also update payment status of orders
+    if (invoiceData.order_ids) {
+      // First, get the current invoice to see which orders were previously included
+      const { data: currentInvoice } = await supabase
+        .from('invoices')
+        .select('order_ids')
+        .eq('id', id)
+        .single();
+
+      if (currentInvoice) {
+        // Reset payment status of previously included orders to unpaid
+        if (currentInvoice.order_ids && currentInvoice.order_ids.length > 0) {
+          await supabase
+            .from('orders')
+            .update({ payment_status: 'unpaid' })
+            .in('id', currentInvoice.order_ids);
+        }
+
+        // Set payment status of newly included orders based on invoice status
+        if (invoiceData.order_ids.length > 0) {
+          const paymentStatus = invoiceData.status === 'paid' ? 'paid' : 'unpaid';
+          await supabase
+            .from('orders')
+            .update({ payment_status: paymentStatus })
+            .in('id', invoiceData.order_ids);
+        }
+      }
+    }
+
     const { data, error } = await supabase
       .from('invoices')
       .update(invoiceData)
@@ -860,6 +889,125 @@ export const updateInvoice = async (id: string, invoiceData: Partial<Invoice>): 
   }
 };
 
+export const getInvoiceById = async (id: string): Promise<Invoice> => {
+  try {
+    const { data, error } = await supabase
+      .from('invoices')
+      .select(`
+        *,
+        customer:customers(full_name, email)
+      `)
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    return {
+      ...data,
+      customer_name: data.customer?.full_name,
+      customer_email: data.customer?.email,
+    };
+  } catch (error) {
+    console.error('Error fetching invoice by ID:', error);
+    throw error;
+  }
+};
+
+export const getOrdersByIds = async (orderIds: string[]): Promise<AdminOrder[]> => {
+  try {
+    if (!orderIds || orderIds.length === 0) return [];
+
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        customer:customers!inner(full_name, email, phone, company_name),
+        product:products(title)
+      `)
+      .in('id', orderIds)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    return (data || []).map(order => ({
+      id: order.id,
+      order_number: order.order_number,
+      order_type: order.order_type,
+      customer_id: order.customer_id,
+      customer_name: order.customer?.full_name || 'Unknown',
+      customer_email: order.customer?.email || '',
+      customer_phone: order.customer?.phone || '',
+      customer_company_name: order.customer?.company_name || '',
+      product_id: order.product_id,
+      product_title: order.product?.title,
+      custom_description: order.custom_description,
+      file_urls: order.file_urls,
+      design_size: order.design_size,
+      apparel_type: order.apparel_type,
+      custom_width: order.custom_width,
+      custom_height: order.custom_height,
+      total_amount: order.total_amount,
+      status: order.status,
+      assigned_sales_rep_id: order.assigned_sales_rep_id,
+      assigned_sales_rep_name: undefined,
+      assigned_designer_id: order.assigned_designer_id,
+      assigned_designer_name: undefined,
+      invoice_url: order.invoice_url,
+      created_at: order.created_at,
+      updated_at: order.updated_at,
+    }));
+  } catch (error) {
+    console.error('Error fetching orders by IDs:', error);
+    return [];
+  }
+};
+
+export const getAllCustomerOrders = async (customerId: string): Promise<AdminOrder[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        customer:customers!inner(full_name, email, phone, company_name),
+        product:products(title)
+      `)
+      .eq('customer_id', customerId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    return (data || []).map(order => ({
+      id: order.id,
+      order_number: order.order_number,
+      order_type: order.order_type,
+      customer_id: order.customer_id,
+      customer_name: order.customer?.full_name || 'Unknown',
+      customer_email: order.customer?.email || '',
+      customer_phone: order.customer?.phone || '',
+      customer_company_name: order.customer?.company_name || '',
+      product_id: order.product_id,
+      product_title: order.product?.title,
+      custom_description: order.custom_description,
+      file_urls: order.file_urls,
+      design_size: order.design_size,
+      apparel_type: order.apparel_type,
+      custom_width: order.custom_width,
+      custom_height: order.custom_height,
+      total_amount: order.total_amount,
+      status: order.status,
+      assigned_sales_rep_id: order.assigned_sales_rep_id,
+      assigned_sales_rep_name: undefined,
+      assigned_designer_id: order.assigned_designer_id,
+      assigned_designer_name: undefined,
+      invoice_url: order.invoice_url,
+      created_at: order.created_at,
+      updated_at: order.updated_at,
+    }));
+  } catch (error) {
+    console.error('Error fetching all customer orders:', error);
+    return [];
+  }
+};
 export const getCustomersForInvoice = async (): Promise<{ id: string; full_name: string; email: string }[]> => {
   try {
     const { data, error } = await supabase

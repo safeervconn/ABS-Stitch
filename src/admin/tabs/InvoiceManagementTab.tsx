@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Plus, FileText, Eye, CreditCard as Edit, Calendar, DollarSign } from 'lucide-react';
+import { Plus, FileText, Eye, Edit, Calendar, DollarSign } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
 import GenerateInvoiceModal from '../components/GenerateInvoiceModal';
+import InvoiceDetailsModal from '../components/InvoiceDetailsModal';
+import EditInvoiceModal from '../components/EditInvoiceModal';
 import { getInvoices, getCustomersForInvoice } from '../api/supabaseHelpers';
 import { Invoice, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
@@ -31,6 +33,9 @@ const InvoiceManagementTab: React.FC = () => {
 
   // Modal states
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null);
   const [customers, setCustomers] = useState<{ id: string; full_name: string; email: string }[]>([]);
 
   // Initial params for reset
@@ -127,8 +132,19 @@ const InvoiceManagementTab: React.FC = () => {
       case 'paid': return 'bg-green-100 text-green-800';
       case 'unpaid': return 'bg-red-100 text-red-800';
       case 'partially_paid': return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const handleViewInvoice = (invoice: Invoice) => {
+    setSelectedInvoiceId(invoice.id);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleEditInvoice = (invoice: Invoice) => {
+    setSelectedInvoiceId(invoice.id);
+    setIsEditModalOpen(true);
   };
 
   const columns = [
@@ -183,22 +199,21 @@ const InvoiceManagementTab: React.FC = () => {
       render: (invoice: Invoice) => (
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => {
-              // TODO: Implement invoice view
-              console.log('View invoice:', invoice.id);
-            }}
+            onClick={() => handleViewInvoice(invoice)}
             className="text-blue-600 hover:text-blue-900 transition-colors"
             title="View Invoice"
           >
             <Eye className="h-4 w-4" />
           </button>
           <button
-            onClick={() => {
-              // TODO: Implement invoice edit
-              console.log('Edit invoice:', invoice.id);
-            }}
-            className="text-green-600 hover:text-green-900 transition-colors"
+            onClick={() => handleEditInvoice(invoice)}
+            className={`transition-colors ${
+              invoice.status === 'cancelled'
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'text-green-600 hover:text-green-900'
+            }`}
             title="Edit Invoice"
+            disabled={invoice.status === 'cancelled'}
           >
             <Edit className="h-4 w-4" />
           </button>
@@ -259,6 +274,24 @@ const InvoiceManagementTab: React.FC = () => {
         onClose={() => setIsGenerateModalOpen(false)}
         onSuccess={() => {
           setIsGenerateModalOpen(false);
+          refetch();
+        }}
+      />
+
+      {/* Invoice Details Modal */}
+      <InvoiceDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        invoiceId={selectedInvoiceId}
+      />
+
+      {/* Edit Invoice Modal */}
+      <EditInvoiceModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        invoiceId={selectedInvoiceId}
+        onSuccess={() => {
+          setIsEditModalOpen(false);
           refetch();
         }}
       />
