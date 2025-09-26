@@ -22,6 +22,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
   const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
   const [invoiceTitle, setInvoiceTitle] = useState('');
   const [monthYear, setMonthYear] = useState('');
+  const [paymentLink, setPaymentLink] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -117,6 +118,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
         customer_id: selectedCustomerId,
         invoice_title: invoiceTitle.trim(),
         month_year: monthYear,
+        payment_link: paymentLink.trim() || null,
         order_ids: selectedOrderIds,
         total_amount: totalAmount,
         status: 'unpaid',
@@ -131,6 +133,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
       setUnpaidOrders([]);
       setSelectedOrderIds([]);
       setInvoiceTitle('');
+      setPaymentLink('');
       setError('');
     } catch (error) {
       console.error('Error creating invoice:', error);
@@ -227,6 +230,20 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
                   placeholder="e.g., September 2025"
                   required
                   disabled
+                />
+              </div>
+
+              {/* Payment Link */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Payment Link (Optional)
+                </label>
+                <input
+                  type="url"
+                  value={paymentLink}
+                  onChange={(e) => setPaymentLink(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="https://payment-provider.com/invoice/..."
                 />
               </div>
 

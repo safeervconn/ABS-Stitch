@@ -3,6 +3,7 @@ import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
 import CrudModal from '../components/CrudModal';
+import ConfirmationModal from '../components/ConfirmationModal';
 import { createProduct, updateProduct, deleteProduct, getCategories, createCategory } from '../api/supabaseHelpers';
 import { AdminProduct, Category, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
@@ -42,6 +43,10 @@ const ProductsTab: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [selectedProduct, setSelectedProduct] = useState<AdminProduct | null>(null);
+  
+  // Confirmation modal states
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<AdminProduct | null>(null);
   
   // Categories
   const [categories, setCategories] = useState<Category[]>([]);
@@ -140,14 +145,21 @@ const ProductsTab: React.FC = () => {
   };
 
   const handleDeleteProduct = async (product: AdminProduct) => {
-    if (window.confirm(`Are you sure you want to delete "${product.title}"?`)) {
-      try {
-        await deleteProduct(product.id);
-        await refetch();
-      } catch (error) {
-        console.error('Error deleting product:', error);
-        alert('Error deleting product. Please try again.');
-      }
+    setProductToDelete(product);
+    setIsConfirmationOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!productToDelete) return;
+    
+    try {
+      await deleteProduct(productToDelete.id);
+      await refetch();
+      setIsConfirmationOpen(false);
+      setProductToDelete(null);
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Error deleting product. Please try again.');
     }
   };
 
@@ -360,6 +372,21 @@ const productFields = [
         title={modalMode === 'create' ? 'Add New Product' : 'Edit Product'}
         fields={productFields}
         initialData={selectedProduct}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isConfirmationOpen}
+        onClose={() => {
+          setIsConfirmationOpen(false);
+          setProductToDelete(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Delete Product"
+        message={`Are you sure you want to delete "${productToDelete?.title}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
       />
     </div>
   );

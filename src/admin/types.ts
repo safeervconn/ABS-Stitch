@@ -89,7 +89,7 @@ export interface Invoice {
   payment_link?: string;
   order_ids: string[];
   total_amount: number;
-  status: 'paid' | 'unpaid' | 'partially_paid' | 'cancelled';
+  status: 'paid' | 'unpaid' | 'cancelled';
   created_at: string;
   updated_at: string;
 }
