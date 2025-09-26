@@ -28,6 +28,22 @@ const DesignerDashboard: React.FC = () => {
   const { getOrdersByRole, updateOrderStatus, addComment } = useOrders();
   const designerOrders = getOrdersByRole();
 
+  // Color mapping for stat cards
+  const getColorClasses = (color: string) => {
+    switch (color) {
+      case 'blue':
+        return { bg: 'bg-blue-100', text: 'text-blue-600' };
+      case 'yellow':
+        return { bg: 'bg-yellow-100', text: 'text-yellow-600' };
+      case 'green':
+        return { bg: 'bg-green-100', text: 'text-green-600' };
+      case 'purple':
+        return { bg: 'bg-purple-100', text: 'text-purple-600' };
+      default:
+        return { bg: 'bg-gray-100', text: 'text-gray-600' };
+    }
+  };
+
   useEffect(() => {
     const checkUser = async () => {
       try {
@@ -167,6 +183,7 @@ const DesignerDashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat, index) => {
             const IconComponent = stat.icon;
+            const colorClasses = getColorClasses(stat.color);
             return (
               <div 
                 key={stat.title} 
@@ -174,8 +191,8 @@ const DesignerDashboard: React.FC = () => {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className={`bg-${stat.color}-100 p-3 rounded-lg`}>
-                    <IconComponent className={`h-6 w-6 text-${stat.color}-600`} />
+                  <div className={`${colorClasses.bg} p-3 rounded-lg`}>
+                    <IconComponent className={`h-6 w-6 ${colorClasses.text}`} />
                   </div>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
