@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, FileText, Eye, Edit, Calendar, DollarSign } from 'lucide-react';
+import { Plus, FileText, Eye, CreditCard as Edit, Calendar, DollarSign } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
 import GenerateInvoiceModal from '../components/GenerateInvoiceModal';
