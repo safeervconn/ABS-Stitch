@@ -41,19 +41,6 @@ const UsersTab: React.FC = () => {
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
-  // Assignment options
-  const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
-
-  const fetchAssignmentOptions = async () => {
-    try {
-      const [salesRepsData] = await Promise.all([
-        getSalesReps(),
-      ]);
-      setSalesReps(salesRepsData);
-    } catch (error) {
-      console.error('Error fetching assignment options:', error);
-    }
-  };
 
   // Filter configurations
   const filterConfigs: FilterConfig[] = [
@@ -291,14 +278,14 @@ const UsersTab: React.FC = () => {
         >
           <Plus className="h-4 w-4" />
           <span>Add Employee</span>
-        </button>
+        <p className="text-gray-600 mt-1">Manage all users: employees, customers, and administrators</p>
       </div>
 
       {/* Enhanced Filter Bar */}
       <FilterBar
         searchValue={params.search || ''}
         onSearchChange={handleSearch}
-        searchPlaceholder="Search users by name or email..."
+        searchPlaceholder="Search employees by name or email..."
         filters={filterConfigs}
         filterValues={filterValues}
         onFilterChange={handleFilterChange}
@@ -328,12 +315,14 @@ const UsersTab: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
-        title={modalMode === 'create' ? 'Add New User' : 'Edit User'}
+        title={modalMode === 'create' ? 'Add New Employee' : 'Edit Employee'}
         fields={userFields}
-        initialData={selectedUser}
+        <span>Add User</span>
       />
     </div>
   );
 };
 
 export default UsersTab;
+  )
+}
