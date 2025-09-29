@@ -41,8 +41,6 @@ const UsersTab: React.FC = () => {
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
-  // Sales reps for assignment dropdown
-  const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
 
   // Filter configurations
   const filterConfigs: FilterConfig[] = [
@@ -149,7 +147,6 @@ const UsersTab: React.FC = () => {
     { key: 'full_name', label: 'Full Name', type: 'text' as const, required: true },
     { key: 'email', label: 'Email', type: 'email' as const, required: true },
     { key: 'phone', label: 'Phone', type: 'text' as const },
-    { key: 'company_name', label: 'Company Name', type: 'text' as const },
     { 
       key: 'role', 
       label: 'Role', 
@@ -159,17 +156,7 @@ const UsersTab: React.FC = () => {
         { value: 'admin', label: 'Administrator' },
         { value: 'sales_rep', label: 'Sales Representative' },
         { value: 'designer', label: 'Designer' },
-        { value: 'customer', label: 'Customer' },
       ]
-    },
-    { 
-      key: 'assigned_sales_rep_id', 
-      label: 'Assigned Sales Rep', 
-      type: 'select' as const,
-      options: [
-        { value: '', label: 'No Assignment' },
-        ...salesReps.map(rep => ({ value: rep.id, label: rep.full_name })),
-      ],
     },
     { 
       key: 'status', 
@@ -188,11 +175,6 @@ const UsersTab: React.FC = () => {
     { key: 'email', label: 'Email', sortable: true },
     { key: 'phone', label: 'Phone' },
     {
-      key: 'company_name',
-      label: 'Company',
-      render: (user: AdminUser) => user.company_name || '-',
-    },
-    {
       key: 'role',
       label: 'Role',
       sortable: true,
@@ -200,15 +182,6 @@ const UsersTab: React.FC = () => {
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 capitalize">
           {user.role.replace('_', ' ')}
         </span>
-      ),
-    },
-    {
-      key: 'assigned_to',
-      label: 'Assigned To',
-      render: (user: AdminUser) => (
-        user.role === 'customer' && user.assigned_sales_rep_name 
-          ? user.assigned_sales_rep_name 
-          : '-'
       ),
     },
     {
@@ -272,14 +245,14 @@ const UsersTab: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
-          <p className="text-gray-600 mt-1">Manage all users: employees, customers, and administrators</p>
+          <p className="text-gray-600 mt-1">Manage employees and their roles</p>
         </div>
         <button
           onClick={handleCreateUser}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-lg"
         >
           <Plus className="h-4 w-4" />
-          <span>Add User</span>
+          <span>Add Employee</span>
         </button>
       </div>
 

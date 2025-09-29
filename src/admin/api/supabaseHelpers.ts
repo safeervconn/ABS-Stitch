@@ -71,7 +71,7 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
       .select(`
         *,
         customer:customers!inner(full_name, email, phone, company_name),
-        product:products(title, image_url),
+        product:products(title),
         sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
         designer:employees!orders_assigned_designer_id_fkey(full_name)
       `)
@@ -91,7 +91,6 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
       customer_company_name: order.customer?.company_name || '',
       product_id: order.product_id,
       product_title: order.product?.title,
-      product_image_url: order.product?.image_url,
       custom_description: order.custom_description,
       file_url: order.file_url,
       status: order.status,
@@ -110,8 +109,8 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
 };
 
 
-// Employees CRUD Operations
-export const getAdminEmployees = async (params: PaginationParams): Promise<PaginatedResponse<AdminUser>> => {
+// Users CRUD Operations (Employees)
+export const getUsers = async (params: PaginationParams): Promise<PaginatedResponse<AdminUser>> => {
   try {
     let query = supabase
       .from('employees')
@@ -167,231 +166,43 @@ export const getAdminEmployees = async (params: PaginationParams): Promise<Pagin
   }
 };
 
-// Customers CRUD Operations for Admin
-export const getAdminCustomers = async (params: PaginationParams): Promise<PaginatedResponse<AdminUser>> => {
+export const createUser = async (userData: Partial<AdminUser>): Promise<AdminUser> => {
   try {
-    let query = supabase
-      .from('customers')
-      .select(`
-        *,
-        sales_rep:employees!customers_assigned_sales_rep_id_fkey(full_name)
-      `, { count: 'exact' });
-
-    // Apply search filter
-    if (params.search) {
-      query = query.or(`full_name.ilike.%${params.search}%,email.ilike.%${params.search}%`);
-    }
-
-    // Apply status filter
-    if (params.status) {
-      query = query.eq('status', params.status);
-    }
-
-    // Apply date range filters
-    if (params.dateFrom) {
-      query = query.gte('created_at', params.dateFrom);
-    }
-    if (params.dateTo) {
-      query = query.lte('created_at', params.dateTo);
-    }
-
-    // Apply sorting
-    const sortBy = params.sortBy || 'created_at';
-    const sortOrder = params.sortOrder || 'desc';
-    query = query.order(sortBy, { ascending: sortOrder === 'asc' });
-
-    // Apply pagination
-    const from = (params.page - 1) * params.limit;
-    const to = from + params.limit - 1;
-    query = query.range(from, to);
-
-    const { data, error, count } = await query;
-
-    if (error) throw error;
-
-    // Transform customer data to AdminUser format
-    const transformedData: AdminUser[] = (data || []).map(customer => ({
-      id: customer.id,
-      full_name: customer.full_name,
-      email: customer.email,
-      phone: customer.phone,
-      role: 'customer' as const,
-      status: customer.status,
-      company_name: customer.company_name,
-      assigned_sales_rep_id: customer.assigned_sales_rep_id,
-      assigned_sales_rep_name: customer.sales_rep?.full_name,
-      created_at: customer.created_at,
-      updated_at: customer.updated_at,
-    }));
-
-    return {
-      data: transformedData,
-      total: count || 0,
-      page: params.page,
-      limit: params.limit,
-      totalPages: Math.ceil((count || 0) / params.limit),
-    };
-  } catch (error) {
-    console.error('Error fetching customers:', error);
-    throw error;
-  }
-};
-
-// Combined Users CRUD Operations (Employees + Customers)
-export const getUsers = async (params: PaginationParams): Promise<PaginatedResponse<AdminUser>> => {
-  try {
-    // If role filter is specified, fetch only from the relevant table
-    if (params.role && params.role !== 'customer') {
-      return await getAdminEmployees(params);
-    } else if (params.role === 'customer') {
-      return await getAdminCustomers(params);
-    }
-
-    // Fetch both employees and customers
-    const [employeesResult, customersResult] = await Promise.all([
-      getAdminEmployees({ ...params, page: 1, limit: 1000 }), // Get all for combining
-      getAdminCustomers({ ...params, page: 1, limit: 1000 })  // Get all for combining
-    ]);
-
-    // Combine the data
-    const combinedData = [...employeesResult.data, ...customersResult.data];
-    const totalCount = employeesResult.total + customersResult.total;
-
-    // Apply search filter to combined data
-    let filteredData = combinedData;
-    if (params.search) {
-      const searchLower = params.search.toLowerCase();
-      filteredData = combinedData.filter(user => 
-        user.full_name.toLowerCase().includes(searchLower) ||
-        user.email.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Apply status filter
-    if (params.status) {
-      filteredData = filteredData.filter(user => user.status === params.status);
-    }
-
-    // Apply date range filters
-    if (params.dateFrom) {
-      filteredData = filteredData.filter(user => new Date(user.created_at) >= new Date(params.dateFrom!));
-    }
-    if (params.dateTo) {
-      filteredData = filteredData.filter(user => new Date(user.created_at) <= new Date(params.dateTo!));
-    }
-
-    // Apply sorting
-    const sortBy = params.sortBy || 'created_at';
-    const sortOrder = params.sortOrder || 'desc';
-    filteredData.sort((a, b) => {
-      const aValue = a[sortBy as keyof AdminUser] || '';
-      const bValue = b[sortBy as keyof AdminUser] || '';
-      
-      if (sortOrder === 'asc') {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
+    // First create the auth user
+    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      email: userData.email!,
+      password: 'TempPassword123!', // Temporary password - user should reset
+      email_confirm: true,
+      user_metadata: {
+        full_name: userData.full_name,
+        role: userData.role
       }
     });
 
-    // Apply pagination
-    const from = (params.page - 1) * params.limit;
-    const to = from + params.limit;
-    const paginatedData = filteredData.slice(from, to);
+    if (authError) throw authError;
+    if (!authData.user) throw new Error('Failed to create auth user');
 
-    return {
-      data: paginatedData,
-      total: filteredData.length,
-      page: params.page,
-      limit: params.limit,
-      totalPages: Math.ceil(filteredData.length / params.limit),
-    };
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    throw error;
-  }
-};
+    // Then create the employee record
+    const { data, error } = await supabase
+      .from('employees')
+      .insert([{
+        id: authData.user.id, // Use the auth user ID
+        full_name: userData.full_name,
+        email: userData.email,
+        phone: userData.phone,
+        role: userData.role,
+        status: userData.status || 'active',
+      }])
+      .select()
+      .single();
 
-export const createUser = async (userData: Partial<AdminUser>): Promise<AdminUser> => {
-  try {
-    if (userData.role === 'customer') {
-      // Create customer account
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: userData.email!,
-        password: 'TempPassword123!', // Temporary password - user should reset
-        email_confirm: true,
-        user_metadata: {
-          full_name: userData.full_name,
-          role: 'customer'
-        }
-      });
-
-      if (authError) throw authError;
-      if (!authData.user) throw new Error('Failed to create auth user');
-
-      // Create customer record
-      const { data, error } = await supabase
-        .from('customers')
-        .insert([{
-          id: authData.user.id,
-          full_name: userData.full_name,
-          email: userData.email,
-          phone: userData.phone,
-          company_name: userData.company_name,
-          assigned_sales_rep_id: userData.assigned_sales_rep_id,
-          status: userData.status || 'active',
-        }])
-        .select()
-        .single();
-
-      if (error) {
-        // If customer creation fails, clean up the auth user
-        await supabase.auth.admin.deleteUser(authData.user.id);
-        throw error;
-      }
-
-      return {
-        ...data,
-        role: 'customer' as const,
-        assigned_sales_rep_name: undefined,
-      };
-    } else {
-      // Create employee account (existing logic)
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: userData.email!,
-        password: 'TempPassword123!', // Temporary password - user should reset
-        email_confirm: true,
-        user_metadata: {
-          full_name: userData.full_name,
-          role: userData.role
-        }
-      });
-
-      if (authError) throw authError;
-      if (!authData.user) throw new Error('Failed to create auth user');
-
-      // Then create the employee record
-      const { data, error } = await supabase
-        .from('employees')
-        .insert([{
-          id: authData.user.id, // Use the auth user ID
-          full_name: userData.full_name,
-          email: userData.email,
-          phone: userData.phone,
-          role: userData.role,
-          status: userData.status || 'active',
-        }])
-        .select()
-        .single();
-
-      if (error) {
-        // If employee creation fails, clean up the auth user
-        await supabase.auth.admin.deleteUser(authData.user.id);
-        throw error;
-      }
-      
-      return data;
+    if (error) {
+      // If employee creation fails, clean up the auth user
+      await supabase.auth.admin.deleteUser(authData.user.id);
+      throw error;
     }
+    
+    return data;
   } catch (error) {
     console.error('Error creating user:', error);
     throw error;
@@ -400,52 +211,15 @@ export const createUser = async (userData: Partial<AdminUser>): Promise<AdminUse
 
 export const updateUser = async (id: string, userData: Partial<AdminUser>): Promise<AdminUser> => {
   try {
-    if (userData.role === 'customer') {
-      // Update customer record
-      const { data, error } = await supabase
-        .from('customers')
-        .update({
-          full_name: userData.full_name,
-          email: userData.email,
-          phone: userData.phone,
-          company_name: userData.company_name,
-          assigned_sales_rep_id: userData.assigned_sales_rep_id,
-          status: userData.status,
-        })
-        .eq('id', id)
-        .select()
-        .single();
+    const { data, error } = await supabase
+      .from('employees')
+      .update(userData)
+      .eq('id', id)
+      .select()
+      .single();
 
-      if (error) throw error;
-
-      // Auto-assign customer orders to sales rep
-      if (userData.assigned_sales_rep_id !== undefined) {
-        await autoAssignCustomerOrdersToSalesRep(id, userData.assigned_sales_rep_id);
-      }
-
-      return {
-        ...data,
-        role: 'customer' as const,
-        assigned_sales_rep_name: undefined,
-      };
-    } else {
-      // Update employee record
-      const { data, error } = await supabase
-        .from('employees')
-        .update({
-          full_name: userData.full_name,
-          email: userData.email,
-          phone: userData.phone,
-          role: userData.role,
-          status: userData.status,
-        })
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    }
+    if (error) throw error;
+    return data;
   } catch (error) {
     console.error('Error updating user:', error);
     throw error;
@@ -454,53 +228,15 @@ export const updateUser = async (id: string, userData: Partial<AdminUser>): Prom
 
 export const deleteUser = async (id: string): Promise<void> => {
   try {
-    // Try to delete from employees first
-    const { error: empError } = await supabase
+    const { error } = await supabase
       .from('employees')
       .delete()
       .eq('id', id);
 
-    // If not found in employees, try customers
-    if (empError) {
-      const { error: custError } = await supabase
-        .from('customers')
-        .delete()
-        .eq('id', id);
-
-      if (custError) throw custError;
-    }
-
-    // Delete from auth
-    await supabase.auth.admin.deleteUser(id);
+    if (error) throw error;
   } catch (error) {
     console.error('Error deleting user:', error);
     throw error;
-  }
-};
-
-// Auto-assign customer orders to sales rep
-export const autoAssignCustomerOrdersToSalesRep = async (
-  customerId: string, 
-  salesRepId: string | null
-): Promise<void> => {
-  try {
-    const { error } = await supabase
-      .from('orders')
-      .update({ assigned_sales_rep_id: salesRepId })
-      .eq('customer_id', customerId);
-
-    if (error) throw error;
-
-    // Log the bulk assignment activity
-    if (salesRepId) {
-      await logOrderActivity(
-        'bulk-assignment', 
-        'bulk_sales_rep_assignment', 
-        { customer_id: customerId, sales_rep_id: salesRepId }
-      );
-    }
-  } catch (error) {
-    console.error('Error auto-assigning customer orders to sales rep:', error);
   }
 };
 
@@ -578,7 +314,7 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       .select(`
         *,
         customer:customers!inner(full_name, email, phone, company_name),
-        product:products(title, image_url),
+        product:products(title),
         sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
         designer:employees!orders_assigned_designer_id_fkey(full_name)
       `, { count: 'exact' });
@@ -636,7 +372,6 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       customer_company_name: order.customer?.company_name || '',
       product_id: order.product_id,
       product_title: order.product?.title,
-      product_image_url: order.product?.image_url,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
       design_size: order.design_size,

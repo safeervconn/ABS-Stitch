@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Loader, FileText, Package } from 'lucide-react';
-  product_image_url?: string;
 import { getInvoiceById, getAllCustomerOrders, updateInvoice } from '../api/supabaseHelpers';
 import { Invoice, AdminOrder } from '../types';
 import ConfirmationModal from './ConfirmationModal';
@@ -8,9 +7,6 @@ import ConfirmationModal from './ConfirmationModal';
 interface EditInvoiceModalProps {
   isOpen: boolean;
   onClose: () => void;
-  company_name?: string;
-  assigned_sales_rep_id?: string;
-  assigned_sales_rep_name?: string;
   invoiceId: string | null;
   onSuccess: () => void;
 }
