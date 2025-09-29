@@ -320,3 +320,5 @@ const UsersTab: React.FC = () => {
         title={modalMode === 'create' ? 'Add New Employee' : 'Edit Employee'}
         title={modalMode === 'create' ? 'Add New User' : 'Edit User'}
         fields={userFields}
+  )
+}
