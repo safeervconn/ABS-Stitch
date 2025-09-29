@@ -140,19 +140,12 @@ export const getUserProfile = async (userId: string): Promise<Employee | Custome
   // Then try customers table
   const { data: customer, error: custError } = await supabase
     .from('customers')
-    .select(`
-      *,
-      assigned_sales_rep:employees!customers_assigned_sales_rep_id_fkey(full_name)
-    `)
+    .select('*')
     .eq('id', userId)
     .maybeSingle();
   
   if (customer) {
-    return { 
-      ...customer, 
-      role: 'customer',
-      assigned_sales_rep_name: customer.assigned_sales_rep?.full_name
-    };
+    return { ...customer, role: 'customer' };
   }
   
   return null;

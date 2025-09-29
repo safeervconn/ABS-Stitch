@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, CreditCard as Edit, Trash2, UserCheck, UserX } from 'lucide-react';
+import { Plus, Edit, Trash2, UserCheck, UserX } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
 import CrudModal from '../components/CrudModal';
