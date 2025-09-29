@@ -257,6 +257,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                   </div>
 
                   
+                </div>
 
                 {/* Customer Info (Read-only) */}
                 <div className="bg-gray-50 rounded-lg p-4 mb-6">
