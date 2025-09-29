@@ -256,21 +256,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                     />
                   </div>
 
-                  {/* Invoice Link */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Invoice Link (Optional)
-                    </label>
-                    <input
-                      type="url"
-                      value={invoiceLink}
-                      onChange={(e) => setInvoiceLink(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
-                      placeholder="https://invoice-provider.com/invoice/..."
-                      disabled={isDisabled}
-                    />
-                  </div>
-                </div>
+                  
 
                 {/* Customer Info (Read-only) */}
                 <div className="bg-gray-50 rounded-lg p-4 mb-6">
