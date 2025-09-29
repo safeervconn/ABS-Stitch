@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, UserCheck, UserX } from 'lucide-react';
+import { Plus, CreditCard as Edit, Trash2, UserCheck, UserX } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
 import CrudModal from '../components/CrudModal';
-import { createUser, updateUser, deleteUser, updateCustomer, deleteCustomer, getAssignableEmployees } from '../api/supabaseHelpers';
+import { createUser, updateUser, deleteUser } from '../api/supabaseHelpers';
 import { AdminUser, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { getUsers } from '../api/supabaseHelpers';
@@ -40,23 +40,6 @@ const UsersTab: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
-  
-  // Assignment options
-  const [assignableEmployees, setAssignableEmployees] = useState<AdminUser[]>([]);
-
-  // Fetch assignable employees on component mount
-  useEffect(() => {
-    const fetchAssignableEmployees = async () => {
-      try {
-        const employees = await getAssignableEmployees();
-        setAssignableEmployees(employees);
-      } catch (error) {
-        console.error('Error fetching assignable employees:', error);
-      }
-    };
-    
-    fetchAssignableEmployees();
-  }, []);
 
 
   // Filter configurations
@@ -126,11 +109,7 @@ const UsersTab: React.FC = () => {
   const handleDeleteUser = async (user: AdminUser) => {
     if (window.confirm(`Are you sure you want to delete ${user.full_name}?`)) {
       try {
-        if (user.role === 'customer') {
-          await deleteCustomer(user.id);
-        } else {
-          await deleteUser(user.id);
-        }
+        await deleteUser(user.id);
         await refetch();
       } catch (error) {
         console.error('Error deleting user:', error);
@@ -142,11 +121,7 @@ const UsersTab: React.FC = () => {
   const handleToggleStatus = async (user: AdminUser) => {
     try {
       const newStatus = user.status === 'active' ? 'disabled' : 'active';
-      if (user.role === 'customer') {
-        await updateCustomer(user.id, { status: newStatus });
-      } else {
-        await updateUser(user.id, { status: newStatus });
-      }
+      await updateUser(user.id, { status: newStatus });
       await refetch();
     } catch (error) {
       console.error('Error updating user status:', error);
@@ -159,11 +134,7 @@ const UsersTab: React.FC = () => {
       if (modalMode === 'create') {
         await createUser(formData);
       } else if (selectedUser) {
-        if (selectedUser.role === 'customer') {
-          await updateCustomer(selectedUser.id, formData);
-        } else {
-          await updateUser(selectedUser.id, formData);
-        }
+        await updateUser(selectedUser.id, formData);
       }
       await refetch();
     } catch (error) {
@@ -172,96 +143,32 @@ const UsersTab: React.FC = () => {
     }
   };
 
-  // Dynamic user fields based on mode and selected user
-  const getUserFields = () => {
-    const baseFields = [
-      { key: 'full_name', label: 'Full Name', type: 'text' as const, required: true },
-      { key: 'email', label: 'Email', type: 'email' as const, required: true },
-      { key: 'phone', label: 'Phone', type: 'text' as const },
-    ];
-
-    if (modalMode === 'create') {
-      return [
-        ...baseFields,
-        { 
-          key: 'role', 
-          label: 'Role', 
-          type: 'select' as const, 
-          required: true,
-          options: [
-            { value: 'admin', label: 'Administrator' },
-            { value: 'sales_rep', label: 'Sales Representative' },
-            { value: 'designer', label: 'Designer' },
-            { value: 'customer', label: 'Customer' },
-          ]
-        },
-        { key: 'company_name', label: 'Company Name', type: 'text' as const },
-        { 
-          key: 'status', 
-          label: 'Status', 
-          type: 'select' as const, 
-          required: true,
-          options: [
-            { value: 'active', label: 'Active' },
-            { value: 'disabled', label: 'Disabled' },
-          ]
-        },
-      ];
-    } else if (selectedUser?.role === 'customer') {
-      return [
-        ...baseFields,
-        { key: 'company_name', label: 'Company Name', type: 'text' as const },
-        { 
-          key: 'assigned_sales_rep_id', 
-          label: 'Assigned Sales Rep/Admin', 
-          type: 'select' as const,
-          options: [
-            { value: '', label: 'No Assignment' },
-            ...assignableEmployees.map(emp => ({ 
-              value: emp.id, 
-              label: `${emp.full_name} (${emp.role.replace('_', ' ')})` 
-            })),
-          ]
-        },
-        { 
-          key: 'status', 
-          label: 'Status', 
-          type: 'select' as const, 
-          required: true,
-          options: [
-            { value: 'active', label: 'Active' },
-            { value: 'disabled', label: 'Disabled' },
-          ]
-        },
-      ];
-    } else {
-      // Employee edit
-      return [
-        ...baseFields,
-        { 
-          key: 'role', 
-          label: 'Role', 
-          type: 'select' as const, 
-          required: true,
-          options: [
-            { value: 'admin', label: 'Administrator' },
-            { value: 'sales_rep', label: 'Sales Representative' },
-            { value: 'designer', label: 'Designer' },
-          ]
-        },
-        { 
-          key: 'status', 
-          label: 'Status', 
-          type: 'select' as const, 
-          required: true,
-          options: [
-            { value: 'active', label: 'Active' },
-            { value: 'disabled', label: 'Disabled' },
-          ]
-        },
-      ];
-    }
-  };
+  const userFields = [
+    { key: 'full_name', label: 'Full Name', type: 'text' as const, required: true },
+    { key: 'email', label: 'Email', type: 'email' as const, required: true },
+    { key: 'phone', label: 'Phone', type: 'text' as const },
+    { 
+      key: 'role', 
+      label: 'Role', 
+      type: 'select' as const, 
+      required: true,
+      options: [
+        { value: 'admin', label: 'Administrator' },
+        { value: 'sales_rep', label: 'Sales Representative' },
+        { value: 'designer', label: 'Designer' },
+      ]
+    },
+    { 
+      key: 'status', 
+      label: 'Status', 
+      type: 'select' as const, 
+      required: true,
+      options: [
+        { value: 'active', label: 'Active' },
+        { value: 'disabled', label: 'Disabled' },
+      ]
+    },
+  ];
 
   const columns = [
     { key: 'full_name', label: 'Name', sortable: true },
@@ -273,22 +180,9 @@ const UsersTab: React.FC = () => {
       sortable: true,
       render: (user: AdminUser) => (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 capitalize">
-          {user.role === 'customer' ? 'Customer' : user.role.replace('_', ' ')}
+          {user.role.replace('_', ' ')}
         </span>
       ),
-    },
-    {
-      key: 'company_name',
-      label: 'Company',
-      render: (user: AdminUser) => user.company_name || '-',
-    },
-    {
-      key: 'assigned_sales_rep_name',
-      label: 'Assigned To',
-      render: (user: AdminUser) => {
-        if (user.role !== 'customer') return '-';
-        return user.assigned_sales_rep_name || 'Unassigned';
-      },
     },
     {
       key: 'status',
@@ -351,14 +245,14 @@ const UsersTab: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
-          <p className="text-gray-600 mt-1">Manage employees, customers, and their assignments</p>
+          <p className="text-gray-600 mt-1">Manage employees and their roles</p>
         </div>
         <button
           onClick={handleCreateUser}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-lg"
         >
           <Plus className="h-4 w-4" />
-          <span>Add User</span>
+          <span>Add Employee</span>
         </button>
       </div>
 
@@ -366,7 +260,7 @@ const UsersTab: React.FC = () => {
       <FilterBar
         searchValue={params.search || ''}
         onSearchChange={handleSearch}
-        searchPlaceholder="Search users by name, email, or company..."
+        searchPlaceholder="Search employees by name or email..."
         filters={filterConfigs}
         filterValues={filterValues}
         onFilterChange={handleFilterChange}
@@ -396,8 +290,8 @@ const UsersTab: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
-        title={modalMode === 'create' ? 'Add New User' : `Edit ${selectedUser?.role === 'customer' ? 'Customer' : 'Employee'}`}
-        fields={getUserFields()}
+        title={modalMode === 'create' ? 'Add New Employee' : 'Edit Employee'}
+        fields={userFields}
         initialData={selectedUser}
       />
     </div>
