@@ -1,6 +1,24 @@
 import { supabase } from '../../lib/supabase';
 import { AdminUser, AdminCustomer, AdminOrder, AdminProduct, Category, AdminStats, PaginatedResponse, PaginationParams, Invoice } from '../types';
 
+// Get assignable employees (admins and sales reps)
+export const getAssignableEmployees = async (): Promise<AdminUser[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('employees')
+      .select('id, full_name, email, role')
+      .in('role', ['admin', 'sales_rep'])
+      .eq('status', 'active')
+      .order('full_name');
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching assignable employees:', error);
+    return [];
+  }
+};
+
 // Admin Stats Queries
 export const getAdminStats = async (): Promise<AdminStats> => {
   const startOfMonth = new Date();
@@ -112,53 +130,105 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
 // Users CRUD Operations (Employees)
 export const getUsers = async (params: PaginationParams): Promise<PaginatedResponse<AdminUser>> => {
   try {
-    let query = supabase
+    // Fetch employees
+    const { data: employeesData, error: employeesError } = await supabase
       .from('employees')
-      .select('*', { count: 'exact' });
+      .select('*');
 
-    // Apply search filter
+    if (employeesError) throw employeesError;
+
+    // Fetch customers with assigned sales rep info
+    const { data: customersData, error: customersError } = await supabase
+      .from('customers')
+      .select(`
+        *,
+        assigned_sales_rep:employees!customers_assigned_sales_rep_id_fkey(full_name)
+      `);
+
+    if (customersError) throw customersError;
+
+    // Transform and combine data
+    const employees: AdminUser[] = (employeesData || []).map(emp => ({
+      ...emp,
+      role: emp.role as AdminUser['role'],
+    }));
+
+    const customers: AdminUser[] = (customersData || []).map(cust => ({
+      id: cust.id,
+      full_name: cust.full_name,
+      email: cust.email,
+      phone: cust.phone,
+      role: 'customer' as const,
+      status: cust.status,
+      company_name: cust.company_name,
+      assigned_sales_rep_id: cust.assigned_sales_rep_id,
+      assigned_sales_rep_name: cust.assigned_sales_rep?.full_name,
+      created_at: cust.created_at,
+      updated_at: cust.updated_at,
+    }));
+
+    // Combine all users
+    let allUsers = [...employees, ...customers];
+
+    // Apply filters
     if (params.search) {
-      query = query.or(`full_name.ilike.%${params.search}%,email.ilike.%${params.search}%`);
+      const searchLower = params.search.toLowerCase();
+      allUsers = allUsers.filter(user => 
+        user.full_name.toLowerCase().includes(searchLower) ||
+        user.email.toLowerCase().includes(searchLower) ||
+        (user.company_name && user.company_name.toLowerCase().includes(searchLower))
+      );
     }
 
-    // Apply role filter
     if (params.role) {
-      query = query.eq('role', params.role);
+      allUsers = allUsers.filter(user => user.role === params.role);
     }
 
-    // Apply status filter
     if (params.status) {
-      query = query.eq('status', params.status);
+      allUsers = allUsers.filter(user => user.status === params.status);
     }
 
-    // Apply date range filters
     if (params.dateFrom) {
-      query = query.gte('created_at', params.dateFrom);
+      allUsers = allUsers.filter(user => new Date(user.created_at) >= new Date(params.dateFrom!));
     }
+
     if (params.dateTo) {
-      query = query.lte('created_at', params.dateTo);
+      allUsers = allUsers.filter(user => new Date(user.created_at) <= new Date(params.dateTo!));
     }
 
     // Apply sorting
     const sortBy = params.sortBy || 'created_at';
     const sortOrder = params.sortOrder || 'desc';
-    query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+    
+    allUsers.sort((a, b) => {
+      let aValue = a[sortBy as keyof AdminUser];
+      let bValue = b[sortBy as keyof AdminUser];
+      
+      // Handle string comparison
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+      
+      if (sortOrder === 'asc') {
+        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      } else {
+        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+      }
+    });
 
     // Apply pagination
+    const total = allUsers.length;
     const from = (params.page - 1) * params.limit;
-    const to = from + params.limit - 1;
-    query = query.range(from, to);
-
-    const { data, error, count } = await query;
-
-    if (error) throw error;
+    const to = from + params.limit;
+    const paginatedUsers = allUsers.slice(from, to);
 
     return {
-      data: data || [],
-      total: count || 0,
+      data: paginatedUsers,
+      total,
       page: params.page,
       limit: params.limit,
-      totalPages: Math.ceil((count || 0) / params.limit),
+      totalPages: Math.ceil(total / params.limit),
     };
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -168,6 +238,9 @@ export const getUsers = async (params: PaginationParams): Promise<PaginatedRespo
 
 export const createUser = async (userData: Partial<AdminUser>): Promise<AdminUser> => {
   try {
+    // Determine if this is a customer or employee
+    const isCustomer = userData.role === 'customer';
+    
     // First create the auth user
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email: userData.email!,
@@ -182,27 +255,53 @@ export const createUser = async (userData: Partial<AdminUser>): Promise<AdminUse
     if (authError) throw authError;
     if (!authData.user) throw new Error('Failed to create auth user');
 
-    // Then create the employee record
-    const { data, error } = await supabase
-      .from('employees')
-      .insert([{
-        id: authData.user.id, // Use the auth user ID
-        full_name: userData.full_name,
-        email: userData.email,
-        phone: userData.phone,
-        role: userData.role,
-        status: userData.status || 'active',
-      }])
-      .select()
-      .single();
+    if (isCustomer) {
+      // Create customer record
+      const { data, error } = await supabase
+        .from('customers')
+        .insert([{
+          id: authData.user.id,
+          full_name: userData.full_name,
+          email: userData.email,
+          phone: userData.phone,
+          company_name: userData.company_name,
+          status: userData.status || 'active',
+          assigned_sales_rep_id: userData.assigned_sales_rep_id,
+        }])
+        .select()
+        .single();
 
-    if (error) {
-      // If employee creation fails, clean up the auth user
-      await supabase.auth.admin.deleteUser(authData.user.id);
-      throw error;
+      if (error) {
+        await supabase.auth.admin.deleteUser(authData.user.id);
+        throw error;
+      }
+      
+      return {
+        ...data,
+        role: 'customer' as const,
+      };
+    } else {
+      // Create employee record
+      const { data, error } = await supabase
+        .from('employees')
+        .insert([{
+          id: authData.user.id,
+          full_name: userData.full_name,
+          email: userData.email,
+          phone: userData.phone,
+          role: userData.role,
+          status: userData.status || 'active',
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        await supabase.auth.admin.deleteUser(authData.user.id);
+        throw error;
+      }
+      
+      return data;
     }
-    
-    return data;
   } catch (error) {
     console.error('Error creating user:', error);
     throw error;
@@ -226,6 +325,34 @@ export const updateUser = async (id: string, userData: Partial<AdminUser>): Prom
   }
 };
 
+export const updateCustomer = async (id: string, customerData: Partial<AdminUser>): Promise<AdminUser> => {
+  try {
+    const { data, error } = await supabase
+      .from('customers')
+      .update({
+        full_name: customerData.full_name,
+        email: customerData.email,
+        phone: customerData.phone,
+        company_name: customerData.company_name,
+        status: customerData.status,
+        assigned_sales_rep_id: customerData.assigned_sales_rep_id,
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    
+    return {
+      ...data,
+      role: 'customer' as const,
+    };
+  } catch (error) {
+    console.error('Error updating customer:', error);
+    throw error;
+  }
+};
+
 export const deleteUser = async (id: string): Promise<void> => {
   try {
     const { error } = await supabase
@@ -234,8 +361,28 @@ export const deleteUser = async (id: string): Promise<void> => {
       .eq('id', id);
 
     if (error) throw error;
+    
+    // Also delete from auth
+    await supabase.auth.admin.deleteUser(id);
   } catch (error) {
     console.error('Error deleting user:', error);
+    throw error;
+  }
+};
+
+export const deleteCustomer = async (id: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('customers')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    
+    // Also delete from auth
+    await supabase.auth.admin.deleteUser(id);
+  } catch (error) {
+    console.error('Error deleting customer:', error);
     throw error;
   }
 };
