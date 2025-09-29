@@ -277,9 +277,11 @@ const UsersTab: React.FC = () => {
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-lg"
         >
           <Plus className="h-4 w-4" />
-          <span>Add Employee</span>
-        <p className="text-gray-600 mt-1">Manage all users: employees, customers, and administrators</p>
+          <span>Add User</span>
+        </button>
       </div>
+      <p className="text-gray-600 mt-1">Manage all users: employees, customers, and administrators</p>
+    </div>
 
       {/* Enhanced Filter Bar */}
       <FilterBar
@@ -316,13 +318,5 @@ const UsersTab: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
         title={modalMode === 'create' ? 'Add New Employee' : 'Edit Employee'}
+        title={modalMode === 'create' ? 'Add New User' : 'Edit User'}
         fields={userFields}
-        <span>Add User</span>
-      />
-    </div>
-  );
-};
-
-export default UsersTab;
-  )
-}
