@@ -41,6 +41,8 @@ const UsersTab: React.FC = () => {
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
+  // Sales reps for assignment dropdown
+  const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
 
   // Filter configurations
   const filterConfigs: FilterConfig[] = [
@@ -270,7 +272,7 @@ const UsersTab: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
-          <p className="text-gray-600 mt-1">Manage employees and their roles</p>
+          <p className="text-gray-600 mt-1">Manage all users: employees, customers, and administrators</p>
         </div>
         <button
           onClick={handleCreateUser}
@@ -280,8 +282,6 @@ const UsersTab: React.FC = () => {
           <span>Add User</span>
         </button>
       </div>
-      <p className="text-gray-600 mt-1">Manage all users: employees, customers, and administrators</p>
-    </div>
 
       {/* Enhanced Filter Bar */}
       <FilterBar
@@ -318,7 +318,11 @@ const UsersTab: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
         title={modalMode === 'create' ? 'Add New Employee' : 'Edit Employee'}
-        title={modalMode === 'create' ? 'Add New User' : 'Edit User'}
         fields={userFields}
-  )
-}
+        initialData={selectedUser}
+      />
+    </div>
+  );
+};
+
+export default UsersTab;
