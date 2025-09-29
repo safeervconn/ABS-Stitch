@@ -282,6 +282,29 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       sortable: true,
       render: (order: AdminOrder) => order.order_number || `ORD-${order.id.slice(0, 8)}`
     },
+    {
+      key: 'product_image',
+      label: 'Product',
+      render: (order: AdminOrder) => (
+        <div className="flex items-center space-x-2">
+          {order.product_image_url ? (
+            <img
+              src={order.product_image_url}
+              alt={order.product_title || 'Product'}
+              className="w-10 h-10 object-cover rounded-lg"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=100';
+              }}
+            />
+          ) : (
+            <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+              <Package className="h-5 w-5 text-gray-400" />
+            </div>
+          )}
+          <span className="text-sm text-gray-600">{order.product_title || 'Custom'}</span>
+        </div>
+      ),
+    },
     { key: 'customer_name', label: 'Customer', sortable: true },
     {
       key: 'order_type',

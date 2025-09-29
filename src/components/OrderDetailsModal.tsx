@@ -178,6 +178,30 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                           <p className="font-medium text-gray-800">{order.custom_width}" x {order.custom_height}"</p>
                         </div>
                       )}
+                      {order.order_type && (
+                        <div>
+                          <p className="text-sm text-gray-500">Order Type</p>
+                          <p className="font-medium text-gray-800 capitalize">{order.order_type}</p>
+                        </div>
+                      )}
+                      {order.total_amount && (
+                        <div>
+                          <p className="text-sm text-gray-500">Total Amount</p>
+                          <p className="font-medium text-gray-800">${order.total_amount.toFixed(2)}</p>
+                        </div>
+                      )}
+                      {order.payment_status && (
+                        <div>
+                          <p className="text-sm text-gray-500">Payment Status</p>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            order.payment_status === 'paid' ? 'bg-green-100 text-green-800' :
+                            order.payment_status === 'partially_paid' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {order.payment_status.replace('_', ' ')}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

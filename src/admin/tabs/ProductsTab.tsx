@@ -202,6 +202,28 @@ const ProductsTab: React.FC = () => {
   ];
 
   const columns = [
+    {
+      key: 'image',
+      label: 'Image',
+      render: (product: AdminProduct) => (
+        <div className="flex items-center">
+          {product.image_url ? (
+            <img
+              src={product.image_url}
+              alt={product.title}
+              className="w-12 h-12 object-cover rounded-lg"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=100';
+              }}
+            />
+          ) : (
+            <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+              <Package className="h-6 w-6 text-gray-400" />
+            </div>
+          )}
+        </div>
+      ),
+    },
     { key: 'title', label: 'Product Title', sortable: true },
     {
       key: 'category_name',

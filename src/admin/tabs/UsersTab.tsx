@@ -41,6 +41,19 @@ const UsersTab: React.FC = () => {
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
+  // Assignment options
+  const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
+
+  const fetchAssignmentOptions = async () => {
+    try {
+      const [salesRepsData] = await Promise.all([
+        getSalesReps(),
+      ]);
+      setSalesReps(salesRepsData);
+    } catch (error) {
+      console.error('Error fetching assignment options:', error);
+    }
+  };
 
   // Filter configurations
   const filterConfigs: FilterConfig[] = [
@@ -147,6 +160,7 @@ const UsersTab: React.FC = () => {
     { key: 'full_name', label: 'Full Name', type: 'text' as const, required: true },
     { key: 'email', label: 'Email', type: 'email' as const, required: true },
     { key: 'phone', label: 'Phone', type: 'text' as const },
+    { key: 'company_name', label: 'Company Name', type: 'text' as const },
     { 
       key: 'role', 
       label: 'Role', 
@@ -156,7 +170,17 @@ const UsersTab: React.FC = () => {
         { value: 'admin', label: 'Administrator' },
         { value: 'sales_rep', label: 'Sales Representative' },
         { value: 'designer', label: 'Designer' },
+        { value: 'customer', label: 'Customer' },
       ]
+    },
+    { 
+      key: 'assigned_sales_rep_id', 
+      label: 'Assigned Sales Rep', 
+      type: 'select' as const,
+      options: [
+        { value: '', label: 'No Assignment' },
+        ...salesReps.map(rep => ({ value: rep.id, label: rep.full_name })),
+      ],
     },
     { 
       key: 'status', 
@@ -175,6 +199,11 @@ const UsersTab: React.FC = () => {
     { key: 'email', label: 'Email', sortable: true },
     { key: 'phone', label: 'Phone' },
     {
+      key: 'company_name',
+      label: 'Company',
+      render: (user: AdminUser) => user.company_name || '-',
+    },
+    {
       key: 'role',
       label: 'Role',
       sortable: true,
@@ -182,6 +211,15 @@ const UsersTab: React.FC = () => {
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 capitalize">
           {user.role.replace('_', ' ')}
         </span>
+      ),
+    },
+    {
+      key: 'assigned_to',
+      label: 'Assigned To',
+      render: (user: AdminUser) => (
+        user.role === 'customer' && user.assigned_sales_rep_name 
+          ? user.assigned_sales_rep_name 
+          : '-'
       ),
     },
     {
@@ -260,7 +298,7 @@ const UsersTab: React.FC = () => {
       <FilterBar
         searchValue={params.search || ''}
         onSearchChange={handleSearch}
-        searchPlaceholder="Search employees by name or email..."
+        searchPlaceholder="Search users by name or email..."
         filters={filterConfigs}
         filterValues={filterValues}
         onFilterChange={handleFilterChange}
@@ -290,7 +328,7 @@ const UsersTab: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
-        title={modalMode === 'create' ? 'Add New Employee' : 'Edit Employee'}
+        title={modalMode === 'create' ? 'Add New User' : 'Edit User'}
         fields={userFields}
         initialData={selectedUser}
       />
