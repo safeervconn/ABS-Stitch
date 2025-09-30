@@ -52,9 +52,20 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
       setPaymentLink(invoiceData.payment_link || '');
       setSelectedOrderIds(invoiceData.order_ids || []);
 
-      // Fetch all orders for this customer
-      const customerOrders = await getAllCustomerOrders(invoiceData.customer_id);
-      setAllOrders(customerOrders);
+      // Fetch orders already in this invoice
+      const invoiceOrders = invoiceData.order_ids && invoiceData.order_ids.length > 0 
+        ? await getOrdersByIds(invoiceData.order_ids)
+        : [];
+
+      // Fetch unpaid orders for this customer (excluding orders already in this invoice)
+      const unpaidOrders = await getUnpaidOrdersForCustomer(invoiceData.customer_id);
+      const filteredUnpaidOrders = unpaidOrders.filter(order => 
+        !invoiceData.order_ids.includes(order.id)
+      );
+
+      // Combine invoice orders and available unpaid orders
+      const combinedOrders = [...invoiceOrders, ...filteredUnpaidOrders];
+      setAllOrders(combinedOrders);
     } catch (err: any) {
       console.error('Error fetching invoice data:', err);
       setError(err.message || 'Failed to load invoice data');
@@ -82,7 +93,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   const calculateTotal = () => {
     return allOrders
       .filter(order => selectedOrderIds.includes(order.id))
-      .reduce((sum, order) => sum + (order.total_amount || 75), 0);
+      .reduce((sum, order) => sum + (order.total_amount || 0), 0);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -235,6 +246,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                       disabled={isDisabled}
                     >
                       <option value="unpaid">Unpaid</option>
+                      <option value="paid">Paid</option>
                       <option value="cancelled">Cancelled</option>
                     </select>
                   </div>
