@@ -23,7 +23,6 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   const [invoiceTitle, setInvoiceTitle] = useState('');
   const [invoiceStatus, setInvoiceStatus] = useState<Invoice['status']>('unpaid');
   const [paymentLink, setPaymentLink] = useState('');
-  const [invoiceLink, setInvoiceLink] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
