@@ -86,7 +86,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           file_urls: fileUrls.length > 0 ? fileUrls : null,
           total_amount: totalAmount,
           payment_status: 'unpaid',
-          status: 'pending',
+          status: 'New',
         })
         .select()
         .single();
