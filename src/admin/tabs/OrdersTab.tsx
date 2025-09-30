@@ -341,12 +341,15 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
         </span>
       ),
     },
+    
     {
       key: 'created_at',
       label: 'Created At',
       sortable: true,
       render: (order: AdminOrder) => new Date(order.created_at).toLocaleDateString(),
     },
+
+    
     {
       key: 'actions',
       label: 'Actions',
