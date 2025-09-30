@@ -90,13 +90,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">Order Summary</h3>
                   <div className="grid md:grid-cols-2 gap-4">
-                    <div className="flex items-center space-x-3">
-                      <Package className="h-5 w-5 text-blue-600" />
-                      <div>
-                        <p className="text-sm text-gray-500">Order Type</p>
-                        <p className="font-medium text-gray-800 capitalize">{order.order_type}</p>
-                      </div>
-                    </div>
+                    
                     <div className="flex items-center space-x-3">
                       <Calendar className="h-5 w-5 text-green-600" />
                       <div>
