@@ -106,10 +106,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         <p className="font-medium text-gray-800">{order.date}</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <User className="h-5 w-5 text-purple-600" />
-                      
-                    </div>
+                    
                     <div className="flex items-center space-x-3">
                       <FileText className="h-5 w-5 text-orange-600" />
                       <div>
