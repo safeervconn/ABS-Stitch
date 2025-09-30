@@ -88,6 +88,7 @@ export interface Invoice {
   invoice_title: string;
   month_year: string;
   payment_link?: string;
+  invoice_link?: string;
   order_ids: string[];
   total_amount: number;
   status: 'paid' | 'unpaid' | 'cancelled';

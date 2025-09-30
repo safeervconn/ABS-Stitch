@@ -50,22 +50,12 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
       setInvoiceTitle(invoiceData.invoice_title);
       setInvoiceStatus(invoiceData.status);
       setPaymentLink(invoiceData.payment_link || '');
+      setInvoiceLink(invoiceData.invoice_link || '');
       setSelectedOrderIds(invoiceData.order_ids || []);
 
-      // Fetch orders already in this invoice
-      const invoiceOrders = invoiceData.order_ids && invoiceData.order_ids.length > 0 
-        ? await getOrdersByIds(invoiceData.order_ids)
-        : [];
-
-      // Fetch unpaid orders for this customer (excluding orders already in this invoice)
-      const unpaidOrders = await getUnpaidOrdersForCustomer(invoiceData.customer_id);
-      const filteredUnpaidOrders = unpaidOrders.filter(order => 
-        !invoiceData.order_ids.includes(order.id)
-      );
-
-      // Combine invoice orders and available unpaid orders
-      const combinedOrders = [...invoiceOrders, ...filteredUnpaidOrders];
-      setAllOrders(combinedOrders);
+      // Fetch all orders for this customer
+      const customerOrders = await getAllCustomerOrders(invoiceData.customer_id);
+      setAllOrders(customerOrders);
     } catch (err: any) {
       console.error('Error fetching invoice data:', err);
       setError(err.message || 'Failed to load invoice data');
@@ -93,7 +83,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   const calculateTotal = () => {
     return allOrders
       .filter(order => selectedOrderIds.includes(order.id))
-      .reduce((sum, order) => sum + (order.total_amount || 0), 0);
+      .reduce((sum, order) => sum + (order.total_amount || 75), 0);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -130,6 +120,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
         invoice_title: invoiceTitle.trim(),
         status: invoiceStatus,
         payment_link: paymentLink.trim() || null,
+        invoice_link: invoiceLink.trim() || null,
         order_ids: selectedOrderIds,
         total_amount: totalAmount,
       });
@@ -246,7 +237,6 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                       disabled={isDisabled}
                     >
                       <option value="unpaid">Unpaid</option>
-                      <option value="paid">Paid</option>
                       <option value="cancelled">Cancelled</option>
                     </select>
                   </div>
@@ -330,7 +320,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
                               <span className="font-medium text-gray-900">{order.order_number}</span>
-                              <span className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '0.00'}</span>
+                              <span className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '75.00'}</span>
                             </div>
                             <div className="flex items-center space-x-2 mt-1">
                               <p className="text-sm text-gray-500">

@@ -120,6 +120,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
         invoice_title: invoiceTitle.trim(),
         month_year: monthYear,
         payment_link: paymentLink.trim() || null,
+        invoice_link: invoiceLink.trim() || null,
         order_ids: selectedOrderIds,
         total_amount: totalAmount,
         status: 'unpaid',
