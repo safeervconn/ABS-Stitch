@@ -294,7 +294,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
             <img
               src="https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=100"
               alt="Default order"
-              className="w-full h-full object-cover opacity-50"
+              className="w-full h-full object-cover"
             />
           )}
         </div>
