@@ -144,7 +144,7 @@ export interface CustomerOrder {
   order_type: 'custom' | 'catalog';
   file_urls?: string[] | null;
   status: 'in_progress' | 'under_review' | 'completed' | 'cancelled';
-  payment_status: 'paid' | 'unpaid' | 'partially_paid';
+  payment_status: 'paid' | 'unpaid';
   total_amount: number;
   date: string;
   custom_description?: string;
