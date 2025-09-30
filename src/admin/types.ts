@@ -50,7 +50,7 @@ export interface AdminOrder {
   custom_height?: number;
   total_amount: number;
   payment_status: 'paid' | 'unpaid' | 'partially_paid';
-  status: 'unassigned' | 'in_progress' | 'under_review' | 'completed' | 'cancelled';
+  status: 'in_progress' | 'under_review' | 'completed' | 'cancelled';
   assigned_sales_rep_id?: string;
   assigned_sales_rep_name?: string;
   assigned_designer_id?: string;
