@@ -75,7 +75,6 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       key: 'status',
       label: 'Status',
       options: [
-        { value: 'unassigned', label: 'Unassigned' },
         { value: 'in_progress', label: 'In Progress' },
         { value: 'under_review', label: 'Under Review' },
         { value: 'completed', label: 'Completed' },
@@ -201,7 +200,6 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       type: 'select' as const,
       required: true,
       options: [
-        { value: 'unassigned', label: 'Unassigned' },
         { value: 'in_progress', label: 'In Progress' },
         { value: 'under_review', label: 'Under Review' },
         { value: 'completed', label: 'Completed' },
