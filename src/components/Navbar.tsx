@@ -12,6 +12,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Palette, User, Settings, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react';
 import CartDropdown from './CartDropdown';
+import NotificationDropdown from './NotificationDropdown';
 import { signOut, getCurrentUser, getUserProfile, getDashboardRoute } from '../lib/supabase';
 
 const Navbar: React.FC = () => {
@@ -92,6 +93,9 @@ const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center space-x-4">
             {/* Cart - Only show for customers on relevant pages */}
             {shouldShowCart() && <CartDropdown />}
+            
+            {/* Notifications - Show for all authenticated users */}
+            {currentUser && <NotificationDropdown />}
             
             {/* Authentication Section */}
             {currentUser ? (
@@ -197,6 +201,13 @@ const Navbar: React.FC = () => {
                 {shouldShowCart() && (
                   <div className="px-3 py-2">
                     <CartDropdown />
+                  </div>
+                )}
+                
+                {/* Notifications for mobile - Show for all authenticated users */}
+                {currentUser && (
+                  <div className="px-3 py-2">
+                    <NotificationDropdown />
                   </div>
                 )}
                 

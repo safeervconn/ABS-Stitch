@@ -33,13 +33,13 @@ const CustomerOverviewTab: React.FC = () => {
     },
     { 
       title: 'In Progress', 
-      value: orders.filter(o => ['assigned', 'in_progress', 'review'].includes(o.status)).length.toString(), 
+      value: orders.filter(o => ['in_progress', 'under_review'].includes(o.status)).length.toString(), 
       icon: Package, 
       color: 'yellow' 
     },
     { 
       title: 'Completed', 
-      value: orders.filter(o => ['completed', 'delivered'].includes(o.status)).length.toString(), 
+      value: orders.filter(o => ['completed'].includes(o.status)).length.toString(), 
       icon: ShoppingBag, 
       color: 'green' 
     },
@@ -53,12 +53,10 @@ const CustomerOverviewTab: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'assigned': return 'bg-blue-100 text-blue-800';
+      case 'unassigned': return 'bg-gray-100 text-gray-800';
       case 'in_progress': return 'bg-purple-100 text-purple-800';
-      case 'review': return 'bg-orange-100 text-orange-800';
+      case 'under_review': return 'bg-orange-100 text-orange-800';
       case 'completed': return 'bg-green-100 text-green-800';
-      case 'delivered': return 'bg-emerald-100 text-emerald-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }

@@ -75,12 +75,10 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       key: 'status',
       label: 'Status',
       options: [
-        { value: 'pending', label: 'Pending' },
-        { value: 'assigned', label: 'Assigned' },
+        { value: 'unassigned', label: 'Unassigned' },
         { value: 'in_progress', label: 'In Progress' },
-        { value: 'review', label: 'Review' },
+        { value: 'under_review', label: 'Under Review' },
         { value: 'completed', label: 'Completed' },
-        { value: 'delivered', label: 'Delivered' },
         { value: 'cancelled', label: 'Cancelled' },
       ],
     },
@@ -203,12 +201,10 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       type: 'select' as const,
       required: true,
       options: [
-        { value: 'pending', label: 'Pending' },
-        { value: 'assigned', label: 'Assigned' },
+        { value: 'unassigned', label: 'Unassigned' },
         { value: 'in_progress', label: 'In Progress' },
-        { value: 'review', label: 'Review' },
+        { value: 'under_review', label: 'Under Review' },
         { value: 'completed', label: 'Completed' },
-        { value: 'delivered', label: 'Delivered' },
         { value: 'cancelled', label: 'Cancelled' },
       ],
     },
@@ -264,12 +260,10 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'assigned': return 'bg-blue-100 text-blue-800';
+      case 'unassigned': return 'bg-gray-100 text-gray-800';
       case 'in_progress': return 'bg-purple-100 text-purple-800';
-      case 'review': return 'bg-orange-100 text-orange-800';
+      case 'under_review': return 'bg-orange-100 text-orange-800';
       case 'completed': return 'bg-green-100 text-green-800';
-      case 'delivered': return 'bg-emerald-100 text-emerald-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -319,7 +313,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       key: 'total_amount',
       label: 'Total',
       sortable: true,
-      render: (order: AdminOrder) => `$${(order.total_amount || 75).toFixed(2)}`,
+      render: (order: AdminOrder) => `$${(order.total_amount || 0).toFixed(2)}`,
     },
     {
       key: 'status',
@@ -332,20 +326,21 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       ),
     },
     {
-      key: 'assigned_to',
-      label: 'Assigned To',
+      key: 'assigned_sales_rep_name',
+      label: 'Sales Rep',
       render: (order: AdminOrder) => (
-        <div className="text-sm">
-          {order.sales_rep_name && (
-            <div className="text-blue-600">SR: {order.sales_rep_name}</div>
-          )}
-          {order.designer_name && (
-            <div className="text-purple-600">D: {order.designer_name}</div>
-          )}
-          {!order.sales_rep_name && !order.designer_name && (
-            <span className="text-gray-400">Unassigned</span>
-          )}
-        </div>
+        <span className={`text-sm ${order.assigned_sales_rep_name === 'Unassigned' ? 'text-gray-400' : 'text-blue-600'}`}>
+          {order.assigned_sales_rep_name}
+        </span>
+      ),
+    },
+    {
+      key: 'assigned_designer_name',
+      label: 'Designer',
+      render: (order: AdminOrder) => (
+        <span className={`text-sm ${order.assigned_designer_name === 'Unassigned' ? 'text-gray-400' : 'text-purple-600'}`}>
+          {order.assigned_designer_name}
+        </span>
       ),
     },
     {

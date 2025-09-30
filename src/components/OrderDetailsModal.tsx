@@ -40,13 +40,20 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'assigned': return 'bg-blue-100 text-blue-800';
+      case 'unassigned': return 'bg-gray-100 text-gray-800';
       case 'in_progress': return 'bg-purple-100 text-purple-800';
-      case 'review': return 'bg-orange-100 text-orange-800';
+      case 'under_review': return 'bg-orange-100 text-orange-800';
       case 'completed': return 'bg-green-100 text-green-800';
-      case 'delivered': return 'bg-emerald-100 text-emerald-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getPaymentStatusColor = (status: string) => {
+    switch (status) {
+      case 'paid': return 'bg-green-100 text-green-800';
+      case 'unpaid': return 'bg-red-100 text-red-800';
+      case 'partially_paid': return 'bg-yellow-100 text-yellow-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -115,6 +122,15 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         <p className="text-sm text-gray-500">Status</p>
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
                           {order.status.replace('_', ' ')}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <FileText className="h-5 w-5 text-indigo-600" />
+                      <div>
+                        <p className="text-sm text-gray-500">Payment Status</p>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status)}`}>
+                          {order.payment_status.replace('_', ' ')}
                         </span>
                       </div>
                     </div>
@@ -198,16 +214,23 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   <div className="bg-gray-50 rounded-lg p-4">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Assignment</h3>
                     <div className="space-y-3">
-                      {order.assigned_sales_rep_name && (
+                      {order.assigned_sales_rep_name && order.assigned_sales_rep_name !== 'Unassigned' && (
                         <div>
                           <p className="text-sm text-gray-500">Sales Representative</p>
                           <p className="font-medium text-gray-800">{order.assigned_sales_rep_name}</p>
                         </div>
                       )}
-                      {order.assigned_designer_name && (
+                      {order.assigned_designer_name && order.assigned_designer_name !== 'Unassigned' && (
                         <div>
                           <p className="text-sm text-gray-500">Designer</p>
                           <p className="font-medium text-gray-800">{order.assigned_designer_name}</p>
+                        </div>
+                      )}
+                      {(!order.assigned_sales_rep_name || order.assigned_sales_rep_name === 'Unassigned') && 
+                       (!order.assigned_designer_name || order.assigned_designer_name === 'Unassigned') && (
+                        <div>
+                          <p className="text-sm text-gray-500">Assignment Status</p>
+                          <p className="font-medium text-gray-400">Unassigned</p>
                         </div>
                       )}
                     </div>

@@ -93,7 +93,7 @@ const SalesRepDashboard: React.FC = () => {
   // Mock data for demonstration
   const stats = [
     { title: 'My Customers', value: '45', icon: Users, color: 'blue' },
-    { title: 'Active Orders', value: salesOrders.filter(o => !['completed', 'delivered', 'cancelled'].includes(o.status)).length.toString(), icon: ShoppingBag, color: 'green' },
+    { title: 'Active Orders', value: salesOrders.filter(o => !['completed', 'cancelled'].includes(o.status)).length.toString(), icon: ShoppingBag, color: 'green' },
     { title: 'Monthly Sales', value: '$8,450', icon: DollarSign, color: 'purple' },
     { title: 'Commission', value: '$845', icon: Target, color: 'orange' }
   ];
@@ -123,12 +123,10 @@ const SalesRepDashboard: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'assigned': return 'bg-blue-100 text-blue-800';
+      case 'unassigned': return 'bg-gray-100 text-gray-800';
       case 'in_progress': return 'bg-purple-100 text-purple-800';
-      case 'review': return 'bg-orange-100 text-orange-800';
+      case 'under_review': return 'bg-orange-100 text-orange-800';
       case 'completed': return 'bg-green-100 text-green-800';
-      case 'delivered': return 'bg-emerald-100 text-emerald-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -233,7 +231,7 @@ const SalesRepDashboard: React.FC = () => {
                       </div>
                       
                       {/* Designer Assignment Dropdown */}
-                      {order.status === 'pending' && (
+                      {order.status === 'unassigned' && (
                         <select
                           onChange={(e) => handleAssignDesigner(order.id, e.target.value)}
                           className="text-xs border border-gray-300 rounded px-2 py-1"
@@ -248,7 +246,7 @@ const SalesRepDashboard: React.FC = () => {
                         </select>
                       )}
                       
-                      {order.assigned_designer_name && (
+                      {order.assigned_designer_name && order.assigned_designer_name !== 'Unassigned' && (
                         <div className="text-xs text-gray-500">
                           <p>Designer:</p>
                           <p className="font-medium">{order.assigned_designer_name}</p>

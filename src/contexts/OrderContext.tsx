@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { getCurrentUser, getUserProfile, supabase } from '../lib/supabase';
+import { createNotification } from '../admin/api/supabaseHelpers';
 import { CustomerOrder } from '../admin/types';
 
 interface OrderContextType {

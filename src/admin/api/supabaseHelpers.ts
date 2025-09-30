@@ -36,7 +36,7 @@ export const getAdminStats = async (): Promise<AdminStats> => {
     const { count: inProgressOrders } = await supabase
       .from('orders')
       .select('*', { count: 'exact', head: true })
-      .not('status', 'in', '(completed,archived,cancelled)');
+      .eq('status', 'in_progress');
 
     // Active products
     const { count: activeProducts } = await supabase

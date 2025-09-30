@@ -92,9 +92,9 @@ const DesignerDashboard: React.FC = () => {
 
   // Mock data for demonstration
   const stats = [
-    { title: 'Active Projects', value: designerOrders.filter(o => ['assigned', 'in_progress'].includes(o.status)).length.toString(), icon: Briefcase, color: 'blue' },
-    { title: 'Pending Review', value: designerOrders.filter(o => o.status === 'review').length.toString(), icon: Clock, color: 'yellow' },
-    { title: 'Completed', value: designerOrders.filter(o => ['completed', 'delivered'].includes(o.status)).length.toString(), icon: CheckCircle, color: 'green' },
+    { title: 'Active Projects', value: designerOrders.filter(o => ['in_progress'].includes(o.status)).length.toString(), icon: Briefcase, color: 'blue' },
+    { title: 'Pending Review', value: designerOrders.filter(o => o.status === 'under_review').length.toString(), icon: Clock, color: 'yellow' },
+    { title: 'Completed', value: designerOrders.filter(o => ['completed'].includes(o.status)).length.toString(), icon: CheckCircle, color: 'green' },
     { title: 'Rating', value: '4.9', icon: Award, color: 'purple' }
   ];
 
@@ -113,12 +113,10 @@ const DesignerDashboard: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'assigned': return 'bg-blue-100 text-blue-800';
+      case 'unassigned': return 'bg-gray-100 text-gray-800';
       case 'in_progress': return 'bg-purple-100 text-purple-800';
-      case 'review': return 'bg-orange-100 text-orange-800';
+      case 'under_review': return 'bg-orange-100 text-orange-800';
       case 'completed': return 'bg-green-100 text-green-800';
-      case 'delivered': return 'bg-emerald-100 text-emerald-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -236,15 +234,15 @@ const DesignerDashboard: React.FC = () => {
                       </div>
                       
                       {/* Status Update Dropdown */}
-                      {['assigned', 'in_progress'].includes(order.status) && (
+                      {['unassigned', 'in_progress'].includes(order.status) && (
                         <select
                           onChange={(e) => handleStatusChange(order.id, e.target.value)}
                           className="text-xs border border-gray-300 rounded px-2 py-1"
                           defaultValue={order.status}
                         >
-                          <option value="assigned">Assigned</option>
+                          <option value="unassigned">Unassigned</option>
                           <option value="in_progress">In Progress</option>
-                          <option value="review">Send to Review</option>
+                          <option value="under_review">Send to Review</option>
                           <option value="completed">Completed</option>
                         </select>
                       )}

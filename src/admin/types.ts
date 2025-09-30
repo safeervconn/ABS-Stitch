@@ -49,7 +49,8 @@ export interface AdminOrder {
   custom_width?: number;
   custom_height?: number;
   total_amount: number;
-  status: 'pending' | 'unassigned' | 'assigned_to_sales' | 'assigned_to_designer' | 'in_progress' | 'under_review' | 'completed' | 'archived';
+  payment_status: 'paid' | 'unpaid' | 'partially_paid';
+  status: 'unassigned' | 'in_progress' | 'under_review' | 'completed' | 'cancelled';
   assigned_sales_rep_id?: string;
   assigned_sales_rep_name?: string;
   assigned_designer_id?: string;
@@ -142,7 +143,7 @@ export interface CustomerOrder {
   customerId: string;
   order_type: 'custom' | 'catalog';
   file_urls?: string[] | null;
-  status: 'pending' | 'assigned' | 'in_progress' | 'review' | 'completed' | 'delivered' | 'cancelled';
+  status: 'unassigned' | 'in_progress' | 'under_review' | 'completed' | 'cancelled';
   payment_status: 'paid' | 'unpaid' | 'partially_paid';
   total_amount: number;
   date: string;
