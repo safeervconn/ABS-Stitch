@@ -154,7 +154,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       file_urls: order.file_urls || (order.file_url ? [order.file_url] : null),
       status: order.status,
       payment_status: order.payment_status || "unpaid",
-      total_amount: order.total_amount || 75.0,
+      total_amount: order.total_amount || 0.0,
       date: new Date(order.created_at).toLocaleDateString(),
       custom_description: order.custom_description,
       design_size: order.design_size,
