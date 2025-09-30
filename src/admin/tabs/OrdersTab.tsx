@@ -282,6 +282,30 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       sortable: true,
       render: (order: AdminOrder) => order.order_number || `ORD-${order.id.slice(0, 8)}`
     },
+    {
+      key: 'image',
+      label: 'Image',
+      render: (order: AdminOrder) => (
+        <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+          {order.file_urls && order.file_urls.length > 0 ? (
+            <img
+              src={order.file_urls[0]}
+              alt="Order file"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=100';
+              }}
+            />
+          ) : (
+            <img
+              src="https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=100"
+              alt="Default order"
+              className="w-full h-full object-cover opacity-50"
+            />
+          )}
+        </div>
+      ),
+    },
     { key: 'customer_name', label: 'Customer', sortable: true },
     {
       key: 'order_type',
