@@ -49,7 +49,7 @@ export interface AdminOrder {
   custom_width?: number;
   custom_height?: number;
   total_amount: number;
-  payment_status: 'paid' | 'unpaid' | 'partially_paid';
+  payment_status: 'paid' | 'unpaid';
   status: 'in_progress' | 'under_review' | 'completed' | 'cancelled';
   assigned_sales_rep_id?: string;
   assigned_sales_rep_name?: string;
