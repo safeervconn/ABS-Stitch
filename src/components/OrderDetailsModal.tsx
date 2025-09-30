@@ -108,13 +108,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     </div>
                     <div className="flex items-center space-x-3">
                       <User className="h-5 w-5 text-purple-600" />
-                      <div>
-                        <p className="text-sm text-gray-500">Customer</p>
-                        <p className="font-medium text-gray-800">{order.customer_name}</p>
-                        {order.customer_company_name && (
-                          <p className="text-sm text-gray-600">{order.customer_company_name}</p>
-                        )}
-                      </div>
+                      
                     </div>
                     <div className="flex items-center space-x-3">
                       <FileText className="h-5 w-5 text-orange-600" />
