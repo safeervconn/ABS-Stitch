@@ -276,12 +276,6 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
   };
 
   const columns = [
-    { 
-      key: 'order_number', 
-      label: 'Order Number', 
-      sortable: true,
-      render: (order: AdminOrder) => order.order_number || `ORD-${order.id.slice(0, 8)}`
-    },
     {
       key: 'image',
       label: 'Image',
@@ -306,6 +300,13 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
         </div>
       ),
     },
+    { 
+      key: 'order_number', 
+      label: 'Order Number', 
+      sortable: true,
+      render: (order: AdminOrder) => order.order_number || `ORD-${order.id.slice(0, 8)}`
+    },
+    
     { key: 'customer_name', label: 'Customer', sortable: true },
     {
       key: 'order_type',
