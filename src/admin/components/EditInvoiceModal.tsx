@@ -233,6 +233,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
                       disabled={isDisabled}
                     >
+                      <option value="paid">Paid</option>
                       <option value="unpaid">Unpaid</option>
                       <option value="cancelled">Cancelled</option>
                     </select>
