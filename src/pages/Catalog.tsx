@@ -102,10 +102,7 @@ const Catalog: React.FC = () => {
 
       <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Search and Filter Bar */}
-        <div className="glass rounded-2xl shadow-2xl p-6 mb-8"> 
-        
-          <div className="grid md:grid-cols-4 gap-4"></div>
-  </div>
+       
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
