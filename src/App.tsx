@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './contexts/CartContext';
 import { OrderProvider } from './contexts/OrderContext';
-import { Bolt Database, signIn, getProducts } from './lib/Bolt Database'
+import { Bolt Database, signIn, getProducts } from './lib/Bolt Database';
 
 
 // Components
