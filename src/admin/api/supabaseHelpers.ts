@@ -921,7 +921,7 @@ export const createInvoice = async (invoiceData: Partial<Invoice>): Promise<Invo
     if (invoiceData.order_ids && invoiceData.order_ids.length > 0) {
       await supabase
         .from('orders')
-        .update({ payment_status: 'paid' })
+        .update({ payment_status: 'Paid' })
         .in('id', invoiceData.order_ids);
     }
 
@@ -954,7 +954,7 @@ export const updateInvoice = async (id: string, invoiceData: Partial<Invoice>): 
 
         // Set payment status of newly included orders based on invoice status
         if (invoiceData.order_ids.length > 0) {
-          const paymentStatus = invoiceData.status === 'paid' ? 'paid' : 'unpaid';
+          const paymentStatus = invoiceData.status === 'Paid' ? 'Paid' : 'Unpaid';
           await supabase
             .from('orders')
             .update({ payment_status: paymentStatus })
