@@ -114,20 +114,7 @@ const CatalogPreview: React.FC = () => {
                   </div>
                   
                   <p className="text-gray-500 text-sm mb-3">{product.category?.name}</p>
-                  <p className="text-gray-500 text-sm mb-3">{product.category?.name}</p>
-                  <p className="text-gray-500 text-sm mb-3">{product.category?.name}</p>
-                  
-                  {/* Rating */}
-                  <div className="flex items-center space-x-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`h-4 w-4 ${i < 5 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                      />
-                    ))}
-                    <span className="text-gray-500 text-sm ml-2">(5.0)</span>
-                  </div>
-                  
+                                   
                   {/* Add to Cart Button */}
                   <AddToCartButton
                     item={{
