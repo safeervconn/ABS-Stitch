@@ -85,7 +85,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           custom_height: formData.customHeight ? parseFloat(formData.customHeight) : null,
           file_urls: fileUrls.length > 0 ? fileUrls : null,
           total_amount: totalAmount,
-          payment_status: 'Unpaid',
+          payment_status: 'unpaid',
           status: 'New',
         })
         .select()
