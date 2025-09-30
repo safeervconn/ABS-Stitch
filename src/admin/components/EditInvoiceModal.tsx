@@ -119,7 +119,6 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
         invoice_title: invoiceTitle.trim(),
         status: invoiceStatus,
         payment_link: paymentLink.trim() || null,
-        invoice_link: invoiceLink.trim() || null,
         order_ids: selectedOrderIds,
         total_amount: totalAmount,
       });
