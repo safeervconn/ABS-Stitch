@@ -166,7 +166,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     try {
       // Determine assigned role based on which field is filled
       let assignedRole = undefined;
-      if (formData.sales_rep_id) {
+      if (formData.assigned_sales_rep_id) {
         assignedRole = 'sales_rep';
       } else if (formData.assigned_designer_id) {
         assignedRole = 'designer';
@@ -174,6 +174,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
 
       await updateOrder(selectedOrder.id, {
         ...formData,
+        assigned_sales_rep_id: formData.assigned_sales_rep_id,
         assigned_role: assignedRole,
         status: formData.status || (assignedRole ? 'assigned' : selectedOrder.status),
       });
@@ -230,7 +231,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       ],
     },
     {
-      key: 'sales_rep_id',
+      key: 'assigned_sales_rep_id',
       label: 'Assign to Sales Rep',
       type: 'select' as const,
       options: [
