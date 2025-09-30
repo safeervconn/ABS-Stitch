@@ -224,7 +224,7 @@ const DesignerDashboard: React.FC = () => {
                     <div className="flex items-center space-x-3">
                       <div className="text-right">
                         <p className="text-sm text-gray-600">{order.date}</p>
-                        <p className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '75.00'}</p>
+                        <p className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '0.00'}</p>
                       </div>
                       
                       <div className="flex items-center space-x-2">
