@@ -294,7 +294,6 @@ const Catalog: React.FC = () => {
         )}
       </div>
     </div>
-    </div>
   );
 };
 
