@@ -24,12 +24,12 @@ export const getAdminStats = async (): Promise<AdminStats> => {
     const { data: revenueData } = await supabase
       .from('orders')
       .select(`
-        products(price)
+        total_amount
       `)
       .gte('created_at', startOfMonth.toISOString());
 
     const totalRevenueThisMonth = revenueData?.reduce((sum, order) => {
-      return sum + (order.products?.price || 75); // Default price for custom orders
+      return sum + (order.total_amount || 0);
     }, 0) || 0;
 
     // In-progress orders
