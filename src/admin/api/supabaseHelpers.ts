@@ -1180,6 +1180,7 @@ export const getUnpaidOrdersForCustomer = async (
       custom_width: order.custom_width,
       custom_height: order.custom_height,
       total_amount: order.total_amount,
+      payment_status: order.payment_status,
       status: order.status,
       assigned_sales_rep_id: order.assigned_sales_rep_id,
       assigned_sales_rep_name: undefined,

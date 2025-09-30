@@ -330,7 +330,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
                               <span className="font-medium text-gray-900">{order.order_number}</span>
-                              <span className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '75.00'}</span>
+                              <span className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '0.00'}</span>
                             </div>
                             <div className="flex items-center space-x-2 mt-1">
                               <p className="text-sm text-gray-500">
