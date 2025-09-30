@@ -34,7 +34,7 @@ BEGIN
     AND table_name = 'orders'
   ) THEN
     ALTER TABLE orders ADD CONSTRAINT orders_payment_status_check 
-    CHECK (payment_status IN ('paid', 'unpaid', 'partially_paid'));
+    CHECK (payment_status IN ('paid', 'unpaid'));
   END IF;
 END $$;
 
