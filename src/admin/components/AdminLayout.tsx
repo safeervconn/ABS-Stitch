@@ -45,7 +45,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
   // Handle tab changes and clear badges
   const handleTabChange = (tab: string) => {
     onTabChange(tab);
-    if (['users', 'orders', 'products'].includes(tab)) {
+    if (['employees', 'customers', 'orders', 'products'].includes(tab)) {
       clearBadge(tab as 'users' | 'orders' | 'products');
     }
   };
@@ -61,7 +61,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BarChart3, badge: 0 },
-    { id: 'users', label: 'Users', icon: Users, badge: badgeCounts.users },
+    { id: 'employees', label: 'Employees', icon: Users, badge: badgeCounts.users },
+    { id: 'customers', label: 'Customers', icon: Users, badge: 0 },
     { id: 'orders', label: 'Orders', icon: ShoppingBag, badge: badgeCounts.orders },
     { id: 'products', label: 'Products', icon: Package, badge: badgeCounts.products },
     { id: 'invoices', label: 'Invoices', icon: FileText, badge: 0 },

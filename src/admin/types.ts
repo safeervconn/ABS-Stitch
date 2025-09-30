@@ -1,366 +1,159 @@
-import React, { useState, useEffect } from 'react';
-import { X, Save, Loader, FileText, Package } from 'lucide-react';
-import { getInvoiceById, getAllCustomerOrders, updateInvoice } from '../api/supabaseHelpers';
-import { Invoice, AdminOrder } from '../types';
-import ConfirmationModal from './ConfirmationModal';
-
-interface EditInvoiceModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  invoiceId: string | null;
-  onSuccess: () => void;
+// Base types for admin interface
+export interface AdminStats {
+  totalOrdersThisMonth: number;
+  newCustomersThisMonth: number;
+  totalRevenueThisMonth: number;
+  inProgressOrders: number;
+  activeProducts: number;
 }
 
-const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
-  isOpen,
-  onClose,
-  invoiceId,
-  onSuccess,
-}) => {
-  const [invoice, setInvoice] = useState<Invoice | null>(null);
-  const [allOrders, setAllOrders] = useState<AdminOrder[]>([]);
-  const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
-  const [invoiceTitle, setInvoiceTitle] = useState('');
-  const [invoiceStatus, setInvoiceStatus] = useState<Invoice['status']>('unpaid');
-  const [paymentLink, setPaymentLink] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
+export interface AdminUser {
+  id: string;
+  full_name: string;
+  email: string;
+  phone?: string;
+  role: 'admin' | 'sales_rep' | 'designer';
+  status: 'active' | 'disabled';
+  created_at: string;
+  updated_at: string;
+}
 
-  useEffect(() => {
-    if (isOpen && invoiceId) {
-      fetchInvoiceData();
-    }
-  }, [isOpen, invoiceId]);
+export interface AdminCustomer {
+  id: string;
+  full_name: string;
+  email: string;
+  phone?: string;
+  company_name?: string;
+  status: 'active' | 'disabled';
+  assigned_sales_rep_id?: string;
+  assigned_sales_rep_name?: string;
+  created_at: string;
+  updated_at: string;
+}
 
-  const fetchInvoiceData = async () => {
-    if (!invoiceId) return;
+export interface AdminOrder {
+  id: string;
+  order_number: string;
+  order_type?: 'custom' | 'catalog';
+  customer_id: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  customer_company_name: string;
+  product_id?: string;
+  product_title?: string;
+  custom_description?: string;
+  file_urls?: string[];
+  design_size?: string;
+  apparel_type?: string;
+  custom_width?: number;
+  custom_height?: number;
+  total_amount: number;
+  status: 'pending' | 'unassigned' | 'assigned_to_sales' | 'assigned_to_designer' | 'in_progress' | 'under_review' | 'completed' | 'archived';
+  assigned_sales_rep_id?: string;
+  assigned_sales_rep_name?: string;
+  assigned_designer_id?: string;
+  assigned_designer_name?: string;
+  invoice_url?: string;
+  created_at: string;
+  updated_at: string;
+}
 
-    try {
-      setLoading(true);
-      setError('');
+export interface AdminProduct {
+  id: string;
+  title: string;
+  description?: string;
+  category_id?: string;
+  category_name?: string;
+  image_url?: string;
+  price: number;
+  status: 'active' | 'inactive';
+  created_at: string;
+  updated_at: string;
+}
 
-      const invoiceData = await getInvoiceById(invoiceId);
-      setInvoice(invoiceData);
-      setInvoiceTitle(invoiceData.invoice_title);
-      setInvoiceStatus(invoiceData.status);
-      setSelectedOrderIds(invoiceData.order_ids || []);
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  created_at: string;
+}
 
-      // Fetch all orders for this customer
-      const customerOrders = await getAllCustomerOrders(invoiceData.customer_id);
-      setAllOrders(customerOrders);
-    } catch (err: any) {
-      console.error('Error fetching invoice data:', err);
-      setError(err.message || 'Failed to load invoice data');
-    } finally {
-      setLoading(false);
-    }
-  };
+export interface Invoice {
+  id: string;
+  customer_id: string;
+  customer_name?: string;
+  customer_email?: string;
+  invoice_title: string;
+  month_year: string;
+  payment_link?: string;
+  invoice_link?: string;
+  order_ids: string[];
+  total_amount: number;
+  status: 'paid' | 'unpaid' | 'cancelled';
+  created_at: string;
+  updated_at: string;
+}
 
-  const handleOrderSelection = (orderId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedOrderIds(prev => [...prev, orderId]);
-    } else {
-      setSelectedOrderIds(prev => prev.filter(id => id !== orderId));
-    }
-  };
+// Pagination types
+export interface PaginationParams {
+  page: number;
+  limit: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  
+  // Filter-specific params
+  role?: string;
+  status?: string;
+  categoryId?: string;
+  salesRepId?: string;
+  customerSearch?: string;
+  paymentStatus?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  priceMin?: number;
+  priceMax?: number;
+  amountMin?: number;
+  amountMax?: number;
+  
+  // Invoice-specific params
+  invoiceStatus?: string;
+  invoiceCustomerId?: string;
+  invoiceMonthYear?: string;
+}
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedOrderIds(allOrders.map(order => order.id));
-    } else {
-      setSelectedOrderIds([]);
-    }
-  };
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
 
-  const calculateTotal = () => {
-    return allOrders
-      .filter(order => selectedOrderIds.includes(order.id))
-      .reduce((sum, order) => sum + (order.total_amount || 75), 0);
-  };
+// Customer order type for customer dashboard
+export interface CustomerOrder {
+  id: string;
+  order_number: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  customer_company_name: string;
+  customerId: string;
+  order_type: 'custom' | 'catalog';
+  file_urls?: string[] | null;
+  status: 'pending' | 'assigned' | 'in_progress' | 'review' | 'completed' | 'delivered' | 'cancelled';
+  payment_status: 'paid' | 'unpaid' | 'partially_paid';
+  total_amount: number;
+  date: string;
+  custom_description?: string;
+  design_size?: string;
+  apparel_type?: string;
+  custom_width?: number;
+  custom_height?: number;
+  assigned_sales_rep_name?: string;
+  assigned_designer_name?: string;
+}
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!invoice || !invoiceTitle.trim()) {
-      setError('Invoice title is required');
-      return;
-    }
-
-    if (selectedOrderIds.length === 0) {
-      setError('Please select at least one order');
-      return;
-    }
-
-    setSubmitting(true);
-    setError('');
-
-    try {
-      const totalAmount = calculateTotal();
-
-      await updateInvoice(invoice.id, {
-        invoice_title: invoiceTitle.trim(),
-        status: invoiceStatus,
-        order_ids: selectedOrderIds,
-        total_amount: totalAmount,
-      });
-
-      onSuccess();
-      onClose();
-    } catch (error) {
-      console.error('Error updating invoice:', error);
-      setError('Failed to update invoice. Please try again.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'paid': return 'bg-green-100 text-green-800';
-      case 'unpaid': return 'bg-red-100 text-red-800';
-      case 'partially_paid': return 'bg-yellow-100 text-yellow-800';
-      case 'cancelled': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getOrderStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'assigned': return 'bg-blue-100 text-blue-800';
-      case 'in_progress': return 'bg-purple-100 text-purple-800';
-      case 'review': return 'bg-orange-100 text-orange-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'delivered': return 'bg-emerald-100 text-emerald-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  if (!isOpen) return null;
-
-  const totalAmount = calculateTotal();
-  const isDisabled = invoice?.status === 'cancelled';
-
-  return (
-    <>
-      {/* Backdrop */}
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={onClose} />
-      
-      {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-          
-          {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Edit Invoice</h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
-              disabled={submitting}
-            >
-              <X className="h-6 w-6" />
-            </button>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6">
-            {/* Error Display */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <p className="text-red-700 text-sm">{error}</p>
-              </div>
-            )}
-
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader className="h-6 w-6 animate-spin text-blue-600 mr-2" />
-                <span className="text-gray-600">Loading invoice data...</span>
-              </div>
-            ) : invoice ? (
-              <>
-                <div className="grid md:grid-cols-2 gap-6 mb-6">
-                  {/* Invoice Title */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      <FileText className="h-4 w-4 inline mr-1" />
-                      Invoice Title *
-                    </label>
-                    <input
-                      type="text"
-                      value={invoiceTitle}
-                      onChange={(e) => setInvoiceTitle(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
-                      placeholder="e.g., Monthly Invoice - September 2025"
-                      required
-                      disabled={isDisabled}
-                    />
-                  </div>
-
-                  {/* Invoice Status */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Status *
-                    </label>
-                    <select
-                      value={invoiceStatus}
-                      onChange={(e) => setInvoiceStatus(e.target.value as Invoice['status'])}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
-                      disabled={isDisabled}
-                    >
-                      <option value="unpaid">Unpaid</option>
-                      <option value="paid">Paid</option>
-                      <option value="partially_paid">Partially Paid</option>
-                      <option value="cancelled">Cancelled</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Customer Info (Read-only) */}
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Customer Information</h3>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-500">Customer Name</p>
-                      <p className="font-medium text-gray-900">{invoice.customer_name}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Email</p>
-                      <p className="font-medium text-gray-900">{invoice.customer_email}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Period</p>
-                      <p className="font-medium text-gray-900">{invoice.month_year}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Current Status</p>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(invoice.status)}`}>
-                        {invoice.status.replace('_', ' ')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Orders Selection */}
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-medium text-gray-900">
-                      Select Orders ({allOrders.length} available)
-                    </h3>
-                    {allOrders.length > 0 && !isDisabled && (
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          checked={selectedOrderIds.length === allOrders.length}
-                          onChange={(e) => handleSelectAll(e.target.checked)}
-                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                        <span className="text-sm text-gray-700">Select All</span>
-                      </label>
-                    )}
-                  </div>
-
-                  {allOrders.length > 0 ? (
-                    <div className="border border-gray-200 rounded-lg max-h-64 overflow-y-auto">
-                      {allOrders.map(order => (
-                        <label
-                          key={order.id}
-                          className={`flex items-center space-x-3 p-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 cursor-pointer ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedOrderIds.includes(order.id)}
-                            onChange={(e) => handleOrderSelection(order.id, e.target.checked)}
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            disabled={isDisabled}
-                          />
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium text-gray-900">{order.order_number}</span>
-                              <span className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '75.00'}</span>
-                            </div>
-                            <div className="flex items-center space-x-2 mt-1">
-                              <p className="text-sm text-gray-500">
-                                {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • 
-                                {new Date(order.created_at).toLocaleDateString()}
-                              </p>
-                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getOrderStatusColor(order.status)}`}>
-                                {order.status.replace('_', ' ')}
-                              </span>
-                            </div>
-                            {order.custom_description && (
-                              <p className="text-sm text-gray-600 mt-1 truncate">{order.custom_description}</p>
-                            )}
-                          </div>
-                        </label>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-gray-500">
-                      No orders found for this customer
-                    </div>
-                  )}
-                </div>
-
-                {/* Total */}
-                {selectedOrderIds.length > 0 && (
-                  <div className="bg-blue-50 rounded-lg p-4 mb-6">
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-medium text-gray-900">
-                        Total ({selectedOrderIds.length} orders):
-                      </span>
-                      <span className="text-2xl font-bold text-blue-600">
-                        ${totalAmount.toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Disabled Notice */}
-                {isDisabled && (
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
-                    <p className="text-gray-600 text-sm">
-                      This invoice is cancelled and cannot be edited. Only the status can be changed from cancelled to another status.
-                    </p>
-                  </div>
-                )}
-              </>
-            ) : null}
-
-            {/* Actions */}
-            <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-                disabled={submitting}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={submitting || loading}
-              >
-                {submitting ? (
-                  <>
-                    <Loader className="h-4 w-4 animate-spin" />
-                    <span>Updating...</span>
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" />
-                    <span>Update Invoice</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </>
-  );
-};
-
-export default EditInvoiceModal;
+// Order type for order context
+export interface Order extends CustomerOrder {}

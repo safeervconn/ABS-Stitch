@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import AdminLayout from './components/AdminLayout';
 import OverviewTab from './tabs/OverviewTab';
-import UsersTab from './tabs/UsersTab';
+import EmployeesTab from './tabs/EmployeesTab';
+import CustomersTab from './tabs/CustomersTab';
 import OrdersTab from './tabs/OrdersTab';
 import ProductsTab from './tabs/ProductsTab';
 import InvoiceManagementTab from './tabs/InvoiceManagementTab';
@@ -22,8 +23,10 @@ const AdminDashboard: React.FC = () => {
     switch (activeTab) {
       case 'overview':
         return <OverviewTab onOrderClick={handleOrderClick} />;
-      case 'users':
-        return <UsersTab />;
+      case 'employees':
+        return <EmployeesTab />;
+      case 'customers':
+        return <CustomersTab />;
       case 'orders':
         return <OrdersTab onOrderClick={handleOrderClick} />;
       case 'products':

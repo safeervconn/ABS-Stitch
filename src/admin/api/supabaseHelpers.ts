@@ -240,6 +240,90 @@ export const deleteUser = async (id: string): Promise<void> => {
   }
 };
 
+// Customer CRUD Operations
+export const createCustomer = async (customerData: Partial<AdminCustomer>): Promise<AdminCustomer> => {
+  try {
+    // First create the auth user
+    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      email: customerData.email!,
+      password: 'TempPassword123!', // Temporary password - user should reset
+      email_confirm: true,
+      user_metadata: {
+        full_name: customerData.full_name,
+        role: 'customer'
+      }
+    });
+
+    if (authError) throw authError;
+    if (!authData.user) throw new Error('Failed to create auth user');
+
+    // Then create the customer record
+    const { data, error } = await supabase
+      .from('customers')
+      .insert([{
+        id: authData.user.id, // Use the auth user ID
+        full_name: customerData.full_name,
+        email: customerData.email,
+        phone: customerData.phone,
+        company_name: customerData.company_name,
+        assigned_sales_rep_id: customerData.assigned_sales_rep_id,
+        status: customerData.status || 'active',
+      }])
+      .select()
+      .single();
+
+    if (error) {
+      // If customer creation fails, clean up the auth user
+      await supabase.auth.admin.deleteUser(authData.user.id);
+      throw error;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error creating customer:', error);
+    throw error;
+  }
+};
+
+export const updateCustomer = async (id: string, customerData: Partial<AdminCustomer>): Promise<AdminCustomer> => {
+  try {
+    const { data, error } = await supabase
+      .from('customers')
+      .update(customerData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error updating customer:', error);
+    throw error;
+  }
+};
+
+export const deleteCustomer = async (id: string): Promise<void> => {
+  try {
+    // First delete the customer record
+    const { error: customerError } = await supabase
+      .from('customers')
+      .delete()
+      .eq('id', id);
+
+    if (customerError) throw customerError;
+
+    // Then delete the auth user
+    const { error: authError } = await supabase.auth.admin.deleteUser(id);
+    if (authError) {
+      console.error('Error deleting auth user:', authError);
+      // Don't throw here as the customer record is already deleted
+    }
+  } catch (error) {
+    console.error('Error deleting customer:', error);
+    throw error;
+  }
+};
+
 // Customers CRUD Operations
 export const getCustomers = async (params: PaginationParams): Promise<PaginatedResponse<AdminCustomer>> => {
   try {
