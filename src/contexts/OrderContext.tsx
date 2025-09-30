@@ -70,7 +70,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       let totalAmount = 0.00; // Default for custom orders
       if (formData.order_type === 'catalog' && formData.product_id) {
         // For catalog orders, you might want to fetch the product price
-        totalAmount = 50.00; // Placeholder - should fetch from products table
+        totalAmount = 0.00; // Placeholder - should fetch from products table
       }
 
       const { data: orderData, error } = await supabase
