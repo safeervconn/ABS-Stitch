@@ -143,7 +143,7 @@ export interface CustomerOrder {
   customerId: string;
   order_type: 'custom' | 'catalog';
   file_urls?: string[] | null;
-  status: 'unassigned' | 'in_progress' | 'under_review' | 'completed' | 'cancelled';
+  status: 'in_progress' | 'under_review' | 'completed' | 'cancelled';
   payment_status: 'paid' | 'unpaid' | 'partially_paid';
   total_amount: number;
   date: string;
