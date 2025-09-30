@@ -77,15 +77,7 @@ const Catalog: React.FC = () => {
     setSortBy(sort);
   };
 
-  // Generate star rating display
-  const renderStars = (rating: number = 5) => {
-    return [...Array(5)].map((_, i) => (
-      <Star 
-        key={i} 
-        className={`h-4 w-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-      />
-    ));
-  };
+ 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
