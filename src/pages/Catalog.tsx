@@ -77,6 +77,17 @@ const Catalog: React.FC = () => {
     setSortBy(sort);
   };
 
+  const renderStars = (rating: number) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        className={`h-4 w-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+      />
+    ));
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
  
       {/* Navigation */}
       <Navbar />
@@ -102,7 +113,8 @@ const Catalog: React.FC = () => {
 
       <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Search and Filter Bar */}
-       zz
+        <div className="glass rounded-2xl shadow-2xl p-6 mb-8">
+          <div className="flex flex-col md:flex-row gap-4 items-center">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -281,6 +293,7 @@ const Catalog: React.FC = () => {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 };
