@@ -50,7 +50,6 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
       setInvoiceTitle(invoiceData.invoice_title);
       setInvoiceStatus(invoiceData.status);
       setPaymentLink(invoiceData.payment_link || '');
-      setInvoiceLink(invoiceData.invoice_link || '');
       setSelectedOrderIds(invoiceData.order_ids || []);
 
       // Fetch all orders for this customer
