@@ -60,7 +60,7 @@ export interface Order {
   product_id?: string;
   custom_description?: string;
   file_url?: string;
-  status: 'unassigned' | 'in_progress' | 'under_review' | 'completed' | 'cancelled';
+  status: 'in_progress' | 'under_review' | 'completed' | 'cancelled';
   assigned_sales_rep_id?: string;
   assigned_designer_id?: string;
   invoice_url?: string;
