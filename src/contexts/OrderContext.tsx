@@ -67,7 +67,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       }
 
       // Calculate total amount based on order type and specifications
-      let totalAmount = 75.00; // Default for custom orders
+      let totalAmount = 0.00; // Default for custom orders
       if (formData.order_type === 'catalog' && formData.product_id) {
         // For catalog orders, you might want to fetch the product price
         totalAmount = 50.00; // Placeholder - should fetch from products table
