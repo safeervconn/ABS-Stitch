@@ -37,6 +37,18 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       const profile = await getUserProfile(user.id);
       if (!profile) return;
 
+      // Fetch customer profile to get assigned sales rep
+      const { data: customerProfile, error: customerError } = await supabase
+        .from('customers')
+        .select('assigned_sales_rep_id')
+        .eq('id', profile.id)
+        .single();
+
+      if (customerError) {
+        console.error('Error fetching customer profile:', customerError);
+        throw new Error('Failed to fetch customer information');
+      }
+
       let fileUrls: string[] = [];
 
       // Upload files if provided
@@ -84,6 +96,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           custom_width: formData.customWidth ? parseFloat(formData.customWidth) : null,
           custom_height: formData.customHeight ? parseFloat(formData.customHeight) : null,
           file_urls: fileUrls.length > 0 ? fileUrls : null,
+          assigned_sales_rep_id: customerProfile.assigned_sales_rep_id,
           total_amount: totalAmount,
           payment_status: 'unpaid',
           status: 'New',
