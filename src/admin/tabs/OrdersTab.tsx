@@ -198,16 +198,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     }
   };
 
-  const orderFields = [
-    {
-      key: 'order_type',
-      label: 'Order Type',
-      type: 'select' as const,
-      options: [
-        { value: 'custom', label: 'Custom' },
-        { value: 'catalog', label: 'Catalog' },
-      ],
-    },
+  
     {
       key: 'status',
       label: 'Status',
