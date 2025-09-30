@@ -121,7 +121,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                       <div>
                         <p className="text-sm text-gray-500">Status</p>
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                          {order.status.replace('_', ' ')}
+                          {(order.status || 'unknown').replace('_', ' ')}
                         </span>
                       </div>
                     </div>
@@ -130,7 +130,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                       <div>
                         <p className="text-sm text-gray-500">Payment Status</p>
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status)}`}>
-                          {order.payment_status.replace('_', ' ')}
+                          {(order.payment_status || 'unknown').replace('_', ' ')}
                         </span>
                       </div>
                     </div>
