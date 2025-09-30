@@ -102,7 +102,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                       <Calendar className="h-5 w-5 text-green-600" />
                       <div>
                         <p className="text-sm text-gray-500">Created</p>
-                        <p className="font-medium text-gray-800">{order.created_at.toLocaleDateString()}</p>
+                        <p className="font-medium text-gray-800">{new Date(order.created_at).toLocaleDateString()}</p>
                       </div>
                     </div>
                     
