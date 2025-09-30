@@ -28,6 +28,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
   // Filter state
   const [filterValues, setFilterValues] = useState<Record<string, string>>({
     status: '',
+    paymentStatus: '',
     customer: '',
     dateFrom: '',
     dateTo: '',
@@ -82,6 +83,15 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       ],
     },
     {
+      key: 'paymentStatus',
+      label: 'Payment Status',
+      options: [
+        { value: 'paid', label: 'Paid' },
+        { value: 'unpaid', label: 'Unpaid' },
+        { value: 'partially_paid', label: 'Partially Paid' },
+      ],
+    },
+    {
       key: 'customer',
       label: 'Customer',
       type: 'search' as const,
@@ -128,6 +138,8 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     // Add filter-specific logic
     if (key === 'status' && value) {
       newParams.status = value;
+    } else if (key === 'paymentStatus' && value) {
+      newParams.paymentStatus = value;
     } else if (key === 'customer' && value) {
       newParams.customerSearch = value;
     } else if (key === 'dateFrom' && value) {
@@ -146,6 +158,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
   const handleClearFilters = () => {
     setFilterValues({
       status: '',
+      paymentStatus: '',
       customer: '',
       dateFrom: '',
       dateTo: '',
@@ -267,6 +280,15 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     }
   };
 
+  const getPaymentStatusColor = (status: string) => {
+    switch (status) {
+      case 'paid': return 'bg-green-100 text-green-800';
+      case 'unpaid': return 'bg-red-100 text-red-800';
+      case 'partially_paid': return 'bg-yellow-100 text-yellow-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   const columns = [
     {
       key: 'image',
@@ -320,6 +342,16 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       render: (order: AdminOrder) => (
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
           {order.status.replace('_', ' ')}
+        </span>
+      ),
+    },
+    {
+      key: 'payment_status',
+      label: 'Payment Status',
+      sortable: true,
+      render: (order: AdminOrder) => (
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status)}`}>
+          {order.payment_status.replace('_', ' ')}
         </span>
       ),
     },
