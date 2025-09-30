@@ -199,7 +199,15 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
   };
 
   const orderFields = [
-    
+    {
+      key: 'order_type',
+      label: 'Order Type',
+      type: 'select' as const,
+      options: [
+        { value: 'custom', label: 'Custom' },
+        { value: 'catalog', label: 'Catalog' },
+      ],
+    },
     {
       key: 'status',
       label: 'Status',
@@ -314,13 +322,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     },
     
     { key: 'customer_name', label: 'Customer', sortable: true },
-    {
-      key: 'order_type',
-      label: 'Type',
-      render: (order: AdminOrder) => (
-        <span className="capitalize">{order.order_type || 'custom'}</span>
-      ),
-    },
+    
     {
       key: 'total_amount',
       label: 'Total',
