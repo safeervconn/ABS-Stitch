@@ -119,8 +119,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                       <FileText className="h-5 w-5 text-indigo-600" />
                       <div>
                         <p className="text-sm text-gray-500">Payment Status</p>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status)}`}>
-                          {(order.payment_status || 'unknown').replace('_', ' ')}
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status || 'unpaid')}`}>
+                          {(order.payment_status || 'unpaid').replace('_', ' ')}
                         </span>
                       </div>
                     </div>
