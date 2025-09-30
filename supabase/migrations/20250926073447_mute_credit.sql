@@ -64,7 +64,7 @@ BEGIN
     AND table_name = 'invoices'
   ) THEN
     ALTER TABLE invoices ADD CONSTRAINT invoices_status_check 
-    CHECK (status IN ('paid', 'unpaid', 'partially_paid'));
+    CHECK (status IN ('paid', 'unpaid');
   END IF;
 END $$;
 
