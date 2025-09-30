@@ -921,7 +921,7 @@ export const createInvoice = async (invoiceData: Partial<Invoice>): Promise<Invo
     if (invoiceData.order_ids && invoiceData.order_ids.length > 0) {
       await supabase
         .from('orders')
-        .update({ payment_status: 'Paid' })
+        .update({ payment_status: 'paid' })
         .in('id', invoiceData.order_ids);
     }
 
@@ -954,7 +954,7 @@ export const updateInvoice = async (id: string, invoiceData: Partial<Invoice>): 
 
         // Set payment status of newly included orders based on invoice status
         if (invoiceData.order_ids.length > 0) {
-          const paymentStatus = invoiceData.status === 'Paid' ? 'Paid' : 'Unpaid';
+          const paymentStatus = invoiceData.status === 'paid' ? 'paid' : 'unpaid';
           await supabase
             .from('orders')
             .update({ payment_status: paymentStatus })
@@ -964,7 +964,7 @@ export const updateInvoice = async (id: string, invoiceData: Partial<Invoice>): 
     }
 
     // If only status is being updated to paid, update order payment status
-    if (invoiceData.status === 'Paid' && !invoiceData.order_ids) {
+    if (invoiceData.status === 'paid' && !invoiceData.order_ids) {
       // Get current invoice order_ids
       const { data: currentInvoice } = await supabase
         .from('invoices')
@@ -975,7 +975,7 @@ export const updateInvoice = async (id: string, invoiceData: Partial<Invoice>): 
       if (currentInvoice && currentInvoice.order_ids && currentInvoice.order_ids.length > 0) {
         await supabase
           .from('orders')
-          .update({ payment_status: 'Paid' })
+          .update({ payment_status: 'paid' })
           .in('id', currentInvoice.order_ids);
       }
     }
@@ -1144,7 +1144,7 @@ export const getUnpaidOrdersForCustomer = async (
         product:products(title)
       `)
       .eq('customer_id', customerId)
-      .eq('payment_status', 'Inpaid');
+      .eq('payment_status', 'unpaid');
 
     if (dateFrom) {
       query = query.gte('created_at', dateFrom);
