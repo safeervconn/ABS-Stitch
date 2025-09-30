@@ -198,7 +198,8 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     }
   };
 
-  
+ 
+    },
     {
       key: 'status',
       label: 'Status',
