@@ -149,7 +149,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     // Apply filters to search params
     const newParams: Partial<PaginationParams> = { page: 1 };
     
-    // Add filter-specific logic
+    // Apply filter-specific logic
     if (key === 'paymentStatus' && value) {
       newParams.paymentStatus = value;
     } else if (key === 'customer' && value) {
@@ -159,9 +159,23 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     } else if (key === 'dateTo' && value) {
       newParams.dateTo = value;
     } else if (key === 'amountMin' && value) {
-      newParams.amountMin = parseFloat(value);
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue) && numValue >= 0) {
+        newParams.amountMin = numValue;
+      }
     } else if (key === 'amountMax' && value) {
-      newParams.amountMax = parseFloat(value);
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue) && numValue >= 0) {
+        newParams.amountMax = numValue;
+      }
+    }
+    
+    // Clear amount filters if empty string
+    if (key === 'amountMin' && !value) {
+      newParams.amountMin = undefined;
+    }
+    if (key === 'amountMax' && !value) {
+      newParams.amountMax = undefined;
     }
     
     updateParams(newParams);
@@ -285,6 +299,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
+      case 'new': return 'bg-blue-100 text-blue-800';
       case 'new': return 'bg-blue-100 text-blue-800';
       case 'in_progress': return 'bg-purple-100 text-purple-800';
       case 'under_review': return 'bg-orange-100 text-orange-800';

@@ -417,9 +417,10 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
         designer:employees!orders_assigned_designer_id_fkey(full_name)
       `, { count: 'exact' });
 
-    // Apply search filter
+    // Apply comprehensive search filter
     if (params.search) {
-      query = query.ilike('id', `%${params.search}%`);
+      // Search across order number, custom description, and order ID
+      query = query.or(`order_number.ilike.%${params.search}%,custom_description.ilike.%${params.search}%,id.ilike.%${params.search}%`);
     }
 
     // Apply status filter
@@ -431,14 +432,23 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       }
     }
 
-    // Apply customer search filter
+    // Apply customer search filter (separate from main search)
     if (params.customerSearch) {
-      query = query.or(`customer.full_name.ilike.%${params.customerSearch}%,customer.email.ilike.%${params.customerSearch}%`);
+      // Note: We need to use a different approach for nested table searches
+      // This will be handled by filtering the results after the query
     }
 
     // Apply payment status filter
     if (params.paymentStatus) {
       query = query.eq('payment_status', params.paymentStatus);
+    }
+
+    // Apply amount range filters
+    if (params.amountMin !== undefined && !isNaN(params.amountMin) && params.amountMin >= 0) {
+      query = query.gte('total_amount', params.amountMin);
+    }
+    if (params.amountMax !== undefined && !isNaN(params.amountMax) && params.amountMax >= 0) {
+      query = query.lte('total_amount', params.amountMax);
     }
 
     // Apply date range filters
@@ -463,7 +473,7 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
 
     if (error) throw error;
 
-    const transformedData = (data || []).map(order => ({
+    let transformedData = (data || []).map(order => ({
       id: order.id,
       order_number: order.order_number,
       order_type: order.order_type,
@@ -492,12 +502,21 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       updated_at: order.updated_at,
     }));
 
+    // Apply customer search filter on transformed data (since we can't do nested OR queries easily in Supabase)
+    if (params.customerSearch) {
+      const customerSearchLower = params.customerSearch.toLowerCase();
+      transformedData = transformedData.filter(order => 
+        order.customer_name.toLowerCase().includes(customerSearchLower) ||
+        order.customer_email.toLowerCase().includes(customerSearchLower)
+      );
+    }
+
     return {
       data: transformedData,
-      total: count || 0,
+      total: params.customerSearch ? transformedData.length : (count || 0),
       page: params.page,
       limit: params.limit,
-      totalPages: Math.ceil((count || 0) / params.limit),
+      totalPages: Math.ceil((params.customerSearch ? transformedData.length : (count || 0)) / params.limit),
     };
   } catch (error) {
     console.error('Error fetching orders:', error);
