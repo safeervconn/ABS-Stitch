@@ -886,7 +886,7 @@ export const getInvoices = async (params: PaginationParams): Promise<PaginatedRe
 
     // Apply search filter
     if (params.search) {
-      query = query.ilike('invoice_title', `%${params.search}%`);
+      query = query.or(`invoice_title.ilike.%${params.search}%,customer.full_name.ilike.%${params.search}%,customer.email.ilike.%${params.search}%`);
     }
 
     // Apply status filter
@@ -894,10 +894,6 @@ export const getInvoices = async (params: PaginationParams): Promise<PaginatedRe
       query = query.eq('status', params.invoiceStatus);
     }
 
-    // Apply customer filter
-    if (params.invoiceCustomerId) {
-      query = query.eq('customer_id', params.invoiceCustomerId);
-    }
 
     // Apply month/year filter
     if (params.invoiceMonthYear) {

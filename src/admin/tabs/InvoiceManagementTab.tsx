@@ -70,14 +70,6 @@ const InvoiceManagementTab: React.FC = () => {
       ],
     },
     {
-      key: 'customer',
-      label: 'Customer',
-      options: customers.map(customer => ({
-        value: customer.id,
-        label: `${customer.full_name} | ${customer.email}`,
-      })),
-    },
-    {
       key: 'dateFrom',
       label: 'From Date',
       type: 'date' as const,
@@ -104,8 +96,6 @@ const InvoiceManagementTab: React.FC = () => {
     
     if (key === 'status' && value) {
       newParams.invoiceStatus = value;
-    } else if (key === 'customer' && value) {
-      newParams.invoiceCustomerId = value;
     } else if (key === 'dateFrom' && value) {
       newParams.dateFrom = value;
     } else if (key === 'dateTo' && value) {
@@ -118,7 +108,6 @@ const InvoiceManagementTab: React.FC = () => {
   const handleClearFilters = () => {
     setFilterValues({
       status: '',
-      customer: '',
       monthYear: '',
       dateFrom: '',
       dateTo: '',
@@ -245,7 +234,7 @@ const InvoiceManagementTab: React.FC = () => {
       <FilterBar
         searchValue={params.search || ''}
         onSearchChange={handleSearch}
-        searchPlaceholder="Search invoices by title..."
+        searchPlaceholder="Search invoices by title, customer name, or email..."
         filters={filterConfigs}
         filterValues={filterValues}
         onFilterChange={handleFilterChange}
