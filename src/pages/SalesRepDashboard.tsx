@@ -14,10 +14,14 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Users, ShoppingBag, DollarSign, LogOut, Bell, Phone, Mail, TrendingUp, Target, Eye, UserPlus } from 'lucide-react';
+import { Users, ShoppingBag, DollarSign, LogOut, Bell, Phone, Mail, TrendingUp, Target, Eye, UserPlus, CreditCard as Edit, Clock } from 'lucide-react';
 import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
-import { useOrders } from '../contexts/OrderContext';
-import { getSalesRepDashboardStats } from '../admin/api/supabaseHelpers';
+import { getSalesRepDashboardStats, getOrders, updateOrder, getDesigners } from '../admin/api/supabaseHelpers';
+import { AdminOrder, AdminUser, PaginationParams } from '../admin/types';
+import { usePaginatedData } from '../admin/hooks/useAdminData';
+import DataTable from '../admin/components/DataTable';
+import FilterBar, { FilterConfig } from '../admin/components/FilterBar';
+import CrudModal from '../admin/components/CrudModal';
 import OrderDetailsModal from '../components/OrderDetailsModal';
 
 const SalesRepDashboard: React.FC = () => {
@@ -27,12 +31,41 @@ const SalesRepDashboard: React.FC = () => {
     totalOrdersThisMonth: 0,
     newOrdersCount: 0,
     inProgressOrdersCount: 0,
+    underReviewOrdersCount: 0,
   });
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
   
-  const { getOrdersByRole, assignDesigner, addComment } = useOrders();
-  const salesOrders = getOrdersByRole();
+  // Modal states for order editing
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingOrder, setEditingOrder] = useState<AdminOrder | null>(null);
+  
+  // Designers for assignment dropdown
+  const [designers, setDesigners] = useState<AdminUser[]>([]);
+  
+  // Filter state
+  const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({
+    search: '',
+    status: [],
+  });
+  
+  // Use paginated data hook for orders
+  const { data: ordersData, params, loading: ordersLoading, error: ordersError, updateParams, refetch } = usePaginatedData(
+    (searchParams: PaginationParams) => {
+      // Filter orders for this sales rep's customers
+      return getOrders({
+        ...searchParams,
+        salesRepId: user?.id,
+      });
+    },
+    {
+      page: 1,
+      limit: 25,
+      search: '',
+      sortBy: 'created_at',
+      sortOrder: 'desc',
+    }
+  );
 
   // Color mapping for stat cards
   const getColorClasses = (color: string) => {
@@ -61,6 +94,10 @@ const SalesRepDashboard: React.FC = () => {
             // Fetch dashboard stats for this sales rep
             const stats = await getSalesRepDashboardStats(profile.id);
             setDashboardStats(stats);
+            
+            // Fetch designers for assignment dropdown
+            const designersData = await getDesigners();
+            setDesigners(designersData);
           } else {
             console.error('Access denied: User role is', profile?.role, 'but sales_rep required');
             window.location.href = '/login';
@@ -102,30 +139,234 @@ const SalesRepDashboard: React.FC = () => {
   const stats = [
     { title: 'Orders This Month', value: dashboardStats.totalOrdersThisMonth.toString(), icon: ShoppingBag, color: 'blue' },
     { title: 'New Orders', value: dashboardStats.newOrdersCount.toString(), icon: Target, color: 'green' },
-    { title: 'In Progress Orders', value: dashboardStats.inProgressOrdersCount.toString(), icon: TrendingUp, color: 'purple' }
+    { title: 'In Progress Orders', value: dashboardStats.inProgressOrdersCount.toString(), icon: TrendingUp, color: 'purple' },
+    { title: 'Under Review', value: dashboardStats.underReviewOrdersCount.toString(), icon: Clock, color: 'orange' }
   ];
 
-  // Mock designers data
-  const availableDesigners = [
-    { id: 'designer-001', name: 'Jane Designer' },
-    { id: 'designer-002', name: 'Alex Creative' },
-    { id: 'designer-003', name: 'Sam Artist' }
+  // Filter configurations
+  const filterConfigs: FilterConfig[] = [
+    {
+      key: 'status',
+      label: 'Status',
+      multi: true,
+      options: [
+        { value: 'new', label: 'New' },
+        { value: 'in_progress', label: 'In Progress' },
+        { value: 'under_review', label: 'Under Review' },
+        { value: 'completed', label: 'Completed' },
+        { value: 'cancelled', label: 'Cancelled' },
+      ],
+    },
   ];
+
+  const handleParamsChange = (newParams: Partial<PaginationParams>) => {
+    updateParams(newParams);
+  };
+
+  const handleSearch = (search: string) => {
+    updateParams({ search, page: 1 });
+  };
+
+  const handleFilterChange = (key: string, value: string) => {
+    if (key === 'status') {
+      // Handle multi-select status filter
+      const statusArray = value ? value.split(',') : [];
+      setFilterValues(prev => ({ ...prev, [key]: statusArray }));
+      
+      const newParams: Partial<PaginationParams> = { page: 1 };
+      if (statusArray.length > 0) {
+        newParams.status = statusArray;
+      }
+      updateParams(newParams);
+      return;
+    }
+    
+    setFilterValues(prev => ({ ...prev, [key]: value }));
+    updateParams({ page: 1 });
+  };
+
+  const handleClearFilters = () => {
+    setFilterValues({
+      search: '',
+      status: [],
+    });
+    updateParams({
+      page: 1,
+      limit: 25,
+      search: '',
+      sortBy: 'created_at',
+      sortOrder: 'desc',
+    });
+  };
 
   const handleViewOrder = (order: any) => {
     setSelectedOrder(order);
     setIsOrderDetailsOpen(true);
   };
 
-  const handleAssignDesigner = (orderId: string, designerId: string) => {
-    const designer = availableDesigners.find(d => d.id === designerId);
-    if (designer) {
-      assignDesigner(orderId, designerId, designer.name);
+  const handleEditOrder = (order: AdminOrder) => {
+    setEditingOrder(order);
+    setIsEditModalOpen(true);
+  };
+
+  const handleModalSubmit = async (formData: any) => {
+    if (!editingOrder) return;
+
+    try {
+      await updateOrder(editingOrder.id, formData);
+      await refetch();
+    } catch (error) {
+      console.error('Error updating order:', error);
+      throw error;
     }
   };
 
-  const handleAddComment = (orderId: string, comment: string) => {
-    // Comment functionality removed - implement if needed
+  const orderFields = [
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'select' as const,
+      required: true,
+      options: [
+        { value: 'new', label: 'New' },
+        { value: 'in_progress', label: 'In Progress' },
+        { value: 'under_review', label: 'Under Review' },
+        { value: 'completed', label: 'Completed' },
+        { value: 'cancelled', label: 'Cancelled' },
+      ],
+    },
+    {
+      key: 'assigned_designer_id',
+      label: 'Assign to Designer',
+      type: 'select' as const,
+      options: [
+        { value: '', label: 'No Assignment' },
+        ...designers.map(designer => ({ value: designer.id, label: designer.full_name })),
+      ],
+    },
+    {
+      key: 'total_amount',
+      label: 'Total Amount',
+      type: 'number' as const,
+      min: 0,
+      step: 0.01,
+    },
+  ];
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'new': return 'bg-blue-100 text-blue-800';
+      case 'in_progress': return 'bg-purple-100 text-purple-800';
+      case 'under_review': return 'bg-orange-100 text-orange-800';
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getPaymentStatusColor = (status: string) => {
+    switch (status) {
+      case 'paid': return 'bg-green-100 text-green-800';
+      case 'unpaid': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const columns = [
+    {
+      key: 'image',
+      label: 'Image',
+      render: (order: AdminOrder) => (
+        <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+          {order.file_urls && order.file_urls.length > 0 ? (
+            <img
+              src={order.file_urls[0]}
+              alt="Order file"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=100';
+              }}
+            />
+          ) : (
+            <img
+              src="https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=100"
+              alt="Default order"
+              className="w-full h-full object-cover"
+            />
+          )}
+        </div>
+      ),
+    },
+    { 
+      key: 'order_number', 
+      label: 'Order Number', 
+      sortable: true,
+      render: (order: AdminOrder) => order.order_number || `ORD-${order.id.slice(0, 8)}`
+    },
+    { key: 'customer_name', label: 'Customer', sortable: true },
+    {
+      key: 'total_amount',
+      label: 'Total',
+      sortable: true,
+      render: (order: AdminOrder) => `$${(order.total_amount || 0).toFixed(2)}`,
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      sortable: true,
+      render: (order: AdminOrder) => (
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+          {order.status.replace('_', ' ')}
+        </span>
+      ),
+    },
+    {
+      key: 'payment_status',
+      label: 'Payment',
+      sortable: true,
+      render: (order: AdminOrder) => (
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status)}`}>
+          {order.payment_status.replace('_', ' ')}
+        </span>
+      ),
+    },
+    {
+      key: 'assigned_designer_name',
+      label: 'Designer',
+      render: (order: AdminOrder) => (
+        <span className={`text-sm ${order.assigned_designer_name === 'Unassigned' ? 'text-gray-400' : 'text-purple-600'}`}>
+          {order.assigned_designer_name || 'Unassigned'}
+        </span>
+      ),
+    },
+    {
+      key: 'created_at',
+      label: 'Created At',
+      sortable: true,
+      render: (order: AdminOrder) => new Date(order.created_at).toLocaleDateString(),
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      render: (order: AdminOrder) => (
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => handleEditOrder(order)}
+            className="text-blue-600 hover:text-blue-900 transition-colors"
+            title="Edit Order"
+          >
+            <Edit className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => handleViewOrder(order)}
+            className="text-green-600 hover:text-green-900 transition-colors"
+            title="View Details"
+          >
+            <Eye className="h-4 w-4" />
+          </button>
+        </div>
+      ),
+    },
   };
 
   const getStatusColor = (status: string) => {
@@ -185,7 +426,7 @@ const SalesRepDashboard: React.FC = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat, index) => {
             const IconComponent = stat.icon;
             const colorClasses = getColorClasses(stat.color);
@@ -207,75 +448,54 @@ const SalesRepDashboard: React.FC = () => {
           })}
         </div>
 
-        {/* Dashboard Grid */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          
-          {/* Orders List */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
-            <div className="p-6 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900">Customer Orders</h3>
-            </div>
-            <div className="p-6">
-              <div className="space-y-4">
-                {salesOrders.map((order) => (
-                  <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="flex items-center space-x-4">
-                      <div className="bg-blue-100 p-2 rounded-lg">
-                        <ShoppingBag className="h-5 w-5 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">{order.order_number}</p>
-                        <p className="text-sm text-gray-500">{order.customer_name} • {order.date}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <div className="text-right">
-                        <p className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '0.00'}</p>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                          {order.status.replace('_', ' ')}
-                        </span>
-                      </div>
-                      
-                      {/* Designer Assignment Dropdown */}
-                      {order.status === 'new' && (
-                        <select
-                          onChange={(e) => handleAssignDesigner(order.id, e.target.value)}
-                          className="text-xs border border-gray-300 rounded px-2 py-1"
-                          defaultValue=""
-                        >
-                          <option value="" disabled>Assign Designer</option>
-                          {availableDesigners.map(designer => (
-                            <option key={designer.id} value={designer.id}>
-                              {designer.name}
-                            </option>
-                          ))}
-                        </select>
-                      )}
-                      
-                      {order.assigned_designer_name && order.assigned_designer_name !== 'Unassigned' && (
-                        <div className="text-xs text-gray-500">
-                          <p>Designer:</p>
-                          <p className="font-medium">{order.assigned_designer_name}</p>
-                        </div>
-                      )}
-                      
-                      <button
-                        onClick={() => handleViewOrder(order)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="View Details"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+        {/* Orders Management Section */}
+        <div className="space-y-6">
+          {/* Section Header */}
+          <div>
+            <h3 className="text-2xl font-bold text-gray-900">Customer Orders</h3>
+            <p className="text-gray-600 mt-1">Manage orders from your assigned customers</p>
           </div>
 
-          
+          {/* Filter Bar */}
+          <FilterBar
+            searchValue={params.search || ''}
+            onSearchChange={handleSearch}
+            searchPlaceholder="Search orders by order number..."
+            filters={filterConfigs}
+            filterValues={filterValues}
+            onFilterChange={handleFilterChange}
+            onClearFilters={handleClearFilters}
+            resultCount={ordersData.total}
+            loading={ordersLoading}
+          />
+
+          {/* Error Display */}
+          {ordersError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-red-700">{ordersError}</p>
+            </div>
+          )}
+
+          {/* Orders Table */}
+          <DataTable
+            data={ordersData}
+            columns={columns}
+            onParamsChange={handleParamsChange}
+            currentParams={params}
+            loading={ordersLoading}
+          />
         </div>
       </main>
+
+      {/* Edit Order Modal */}
+      <CrudModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSubmit={handleModalSubmit}
+        title="Edit Order"
+        fields={orderFields}
+        initialData={editingOrder}
+      />
 
       {/* Order Details Modal */}
       <OrderDetailsModal

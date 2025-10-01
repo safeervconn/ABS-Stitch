@@ -129,6 +129,7 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
       newOrdersCount: 0,
       inProgressOrdersCount: 0,
       underReviewOrdersCount: 0,
+      underReviewOrdersCount: 0,
     };
   }
 };
