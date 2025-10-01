@@ -98,7 +98,7 @@ const Navbar: React.FC = () => {
             {currentUser && <NotificationDropdown />}
             
             {/* Authentication Section */}
-            {currentUser && currentUser.role === 'customer' ? (
+            {currentUser ? (
               /* Profile Dropdown for signed-in users */
               <div className="relative">
                 <button
@@ -148,8 +148,7 @@ const Navbar: React.FC = () => {
                   </>
                 )}
               </div>
-            ) : null}
-            {!currentUser ? (
+            ) : (
               /* Combined Authentication Button for non-signed-in users */
               <button 
                 onClick={() => window.location.href = '/login'}
@@ -157,7 +156,7 @@ const Navbar: React.FC = () => {
               >
                 Sign In / Sign Up
               </button>
-            ) : null}
+            )}
             
             {currentUser && currentUser.role === 'customer' ? (
               <button 
@@ -169,8 +168,7 @@ const Navbar: React.FC = () => {
               >
                 Place Order
               </button>
-            ) : null}
-            {!currentUser ? (
+            ) : !currentUser ? (
               <button 
                 onClick={() => window.location.href = '/#contact'}
                 className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-bold shadow-lg"
