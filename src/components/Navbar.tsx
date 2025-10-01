@@ -98,7 +98,7 @@ const Navbar: React.FC = () => {
             {currentUser && <NotificationDropdown />}
             
             {/* Authentication Section */}
-            {currentUser && currentUser.role === 'customer' ? (
+            {currentUser ? (
               /* Profile Dropdown for signed-in users */
               <div className="relative">
                 <button
@@ -158,7 +158,7 @@ const Navbar: React.FC = () => {
               </button>
             )}
             
-            {currentUser && currentUser.role === 'customer' ? (
+            {currentUser ? (
               <button 
                 onClick={() => {
                   const event = new CustomEvent('openPlaceOrderModal');
