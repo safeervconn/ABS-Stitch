@@ -116,10 +116,10 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
       .select('*', { count: 'exact', head: true })
       .in('customer_id', customerIds)
       .eq('status', 'under_review');
+
     return {
       totalOrdersThisMonth: totalOrdersThisMonth || 0,
       newOrdersCount: newOrdersCount || 0,
-      inProgressOrdersCount: inProgressOrdersCount || 0,
       underReviewOrdersCount: underReviewOrdersCount || 0,
     };
   } catch (error) {
