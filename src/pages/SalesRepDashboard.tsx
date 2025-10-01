@@ -69,6 +69,8 @@ const SalesRepDashboard: React.FC = () => {
             setUser(profile);
             await fetchStats(profile.id);
             await fetchAssignmentOptions();
+            // Update params with sales rep ID to fetch their orders
+            updateParams({ salesRepId: profile.id });
           } else {
             console.error('Access denied: User role is', profile?.role, 'but sales_rep required');
             window.location.href = '/login';
@@ -85,7 +87,7 @@ const SalesRepDashboard: React.FC = () => {
     };
 
     checkUser();
-  }, []);
+  }, [updateParams]);
 
   const fetchStats = async (salesRepId: string) => {
     try {

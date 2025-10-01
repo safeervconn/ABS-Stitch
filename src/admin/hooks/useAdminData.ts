@@ -154,7 +154,7 @@ export const usePaginatedData = <T>(
   // Initial fetch
   useEffect(() => {
     fetchDataDebounced(params);
-  }, []);
+  }, [params, fetchDataDebounced]);
 
   return {
     data,
