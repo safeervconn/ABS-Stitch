@@ -26,8 +26,8 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
   );
 
   // Filter state
-  const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({
-    status: [],
+  const [filterValues, setFilterValues] = useState<Record<string, string>>({
+    status: '',
     paymentStatus: '',
     customer: '',
     dateFrom: '',
@@ -75,7 +75,6 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     {
       key: 'status',
       label: 'Status',
-      multiSelect: true,
       options: [
         { value: 'in_progress', label: 'In Progress' },
         { value: 'under_review', label: 'Under Review' },
@@ -129,7 +128,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     updateParams({ search, page: 1 });
   };
 
-  const handleFilterChange = (key: string, value: string | string[]) => {
+  const handleFilterChange = (key: string, value: string) => {
     setFilterValues(prev => ({ ...prev, [key]: value }));
     
     // Apply filters to search params
@@ -157,7 +156,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
 
   const handleClearFilters = () => {
     setFilterValues({
-      status: [],
+      status: '',
       paymentStatus: '',
       customer: '',
       dateFrom: '',
