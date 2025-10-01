@@ -63,6 +63,67 @@ export const getAdminStats = async (): Promise<AdminStats> => {
   }
 };
 
+// Sales Rep Dashboard Stats
+export const getSalesRepDashboardStats = async (salesRepId: string) => {
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  try {
+    // Get customers assigned to this sales rep
+    const { data: assignedCustomers, error: customersError } = await supabase
+      .from('customers')
+      .select('id')
+      .eq('assigned_sales_rep_id', salesRepId);
+
+    if (customersError) throw customersError;
+
+    const customerIds = assignedCustomers?.map(c => c.id) || [];
+
+    if (customerIds.length === 0) {
+      return {
+        totalOrdersThisMonth: 0,
+        newOrdersCount: 0,
+        inProgressOrdersCount: 0,
+      };
+    }
+
+    // Total orders this month for assigned customers
+    const { count: totalOrdersThisMonth } = await supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .in('customer_id', customerIds)
+      .gte('created_at', startOfMonth.toISOString());
+
+    // New orders count for assigned customers
+    const { count: newOrdersCount } = await supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .in('customer_id', customerIds)
+      .eq('status', 'new');
+
+    // In progress orders count for assigned customers
+    const { count: inProgressOrdersCount } = await supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .in('customer_id', customerIds)
+      .eq('status', 'in_progress');
+
+    return {
+      totalOrdersThisMonth: totalOrdersThisMonth || 0,
+      newOrdersCount: newOrdersCount || 0,
+      inProgressOrdersCount: inProgressOrdersCount || 0,
+    };
+  } catch (error) {
+    console.error('Error fetching sales rep stats:', error);
+    return {
+      totalOrdersThisMonth: 0,
+      newOrdersCount: 0,
+      inProgressOrdersCount: 0,
+    };
+  }
+};
+
 // Recent Orders Query
 export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]> => {
   try {

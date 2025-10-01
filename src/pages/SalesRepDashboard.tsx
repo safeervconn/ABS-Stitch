@@ -17,11 +17,17 @@ import React, { useState, useEffect } from 'react';
 import { Users, ShoppingBag, DollarSign, LogOut, Bell, Phone, Mail, TrendingUp, Target, Eye, UserPlus } from 'lucide-react';
 import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
 import { useOrders } from '../contexts/OrderContext';
+import { getSalesRepDashboardStats } from '../admin/api/supabaseHelpers';
 import OrderDetailsModal from '../components/OrderDetailsModal';
 
 const SalesRepDashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [dashboardStats, setDashboardStats] = useState({
+    totalOrdersThisMonth: 0,
+    newOrdersCount: 0,
+    inProgressOrdersCount: 0,
+  });
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
   
@@ -52,6 +58,9 @@ const SalesRepDashboard: React.FC = () => {
           const profile = await getUserProfile(currentUser.id);
           if (profile && profile.role === 'sales_rep') {
             setUser(profile);
+            // Fetch dashboard stats for this sales rep
+            const stats = await getSalesRepDashboardStats(profile.id);
+            setDashboardStats(stats);
           } else {
             console.error('Access denied: User role is', profile?.role, 'but sales_rep required');
             window.location.href = '/login';
@@ -90,12 +99,10 @@ const SalesRepDashboard: React.FC = () => {
     );
   }
 
-  // Mock data for demonstration
   const stats = [
-    { title: 'My Customers', value: '45', icon: Users, color: 'blue' },
-    { title: 'Active Orders', value: salesOrders.filter(o => !['completed', 'cancelled'].includes(o.status)).length.toString(), icon: ShoppingBag, color: 'green' },
-    { title: 'Monthly Sales', value: '$8,450', icon: DollarSign, color: 'purple' },
-    { title: 'Commission', value: '$845', icon: Target, color: 'orange' }
+    { title: 'Orders This Month', value: dashboardStats.totalOrdersThisMonth.toString(), icon: ShoppingBag, color: 'blue' },
+    { title: 'New Orders', value: dashboardStats.newOrdersCount.toString(), icon: Target, color: 'green' },
+    { title: 'In Progress Orders', value: dashboardStats.inProgressOrdersCount.toString(), icon: TrendingUp, color: 'purple' }
   ];
 
   // Mock designers data
@@ -178,7 +185,7 @@ const SalesRepDashboard: React.FC = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, index) => {
             const IconComponent = stat.icon;
             const colorClasses = getColorClasses(stat.color);
