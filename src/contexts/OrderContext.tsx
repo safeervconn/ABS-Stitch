@@ -9,7 +9,6 @@ interface OrderContextType {
   updateOrderStatus: (orderId: string, status: CustomerOrder['status']) => void;
   assignDesigner: (orderId: string, designerId: string, designerName: string) => void;
   getOrdersByRole: () => CustomerOrder[];
-  fetchOrders: () => Promise<void>;
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -215,7 +214,6 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     updateOrderStatus,
     assignDesigner,
     getOrdersByRole
-    fetchOrders
   };
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;
