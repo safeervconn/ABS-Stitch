@@ -49,8 +49,6 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       newCustomersThisMonth: newCustomersThisMonth || 0,
       totalRevenueThisMonth,
       inProgressOrders: inProgressOrders || 0,
-      activeProducts: activeProducts || 0,
-        underReviewOrdersCount: underReviewOrdersCount || 0,  // <--- add this
 
     };
   } catch (error) {
@@ -96,7 +94,7 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
       .from('orders')
       .select('*', { count: 'exact', head: true })
       .in('customer_id', customerIds)
-      .gte('created_at', startOfMonth.toString());
+      .gte('created_at', startOfMonth.toISOString());
 
     // New orders count for assigned customers
     const { count: newOrdersCount } = await supabase
@@ -119,10 +117,26 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
       .in('customer_id', customerIds)
       .eq('status', 'under_review');
 
+    // Under review orders count for assigned customers
+    const { count: underReviewOrdersCount } = await supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .in('customer_id', customerIds)
+      .eq('status', 'under_review');
+
+    // Under review orders count for assigned customers
+    const { count: underReviewOrdersCount } = await supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .in('customer_id', customerIds)
+      .eq('status', 'under_review');
+
     return {
       totalOrdersThisMonth: totalOrdersThisMonth || 0,
       newOrdersCount: newOrdersCount || 0,
       inProgressOrdersCount: inProgressOrdersCount || 0,
+      underReviewOrdersCount: underReviewOrdersCount || 0,
+      underReviewOrdersCount: underReviewOrdersCount || 0,
     };
   } catch (error) {
     console.error('Error fetching sales rep stats:', error);
