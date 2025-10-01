@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Package, Clock, Eye, CreditCard as Edit, TrendingUp } from 'lucide-react';
+import { Users, Package, Clock, Eye, CreditCard as Edit, TrendingUp, LogOut } from 'lucide-react';
 import DataTable from '../admin/components/DataTable';
 import FilterBar, { FilterConfig } from '../admin/components/FilterBar';
 import CrudModal from '../admin/components/CrudModal';
