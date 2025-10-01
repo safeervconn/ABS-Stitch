@@ -99,7 +99,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           assigned_sales_rep_id: customerProfile.assigned_sales_rep_id,
           total_amount: totalAmount,
           payment_status: 'unpaid',
-          status: 'New',
+          status: 'new',
         })
         .select()
         .single();
