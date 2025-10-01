@@ -38,12 +38,6 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       .select('*', { count: 'exact', head: true })
       .eq('status', 'in_progress');
 
-    // Under review orders
-    const { count: underReviewOrders } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'under_review');
-
     // Active products
     const { count: activeProducts } = await supabase
       .from('products')
@@ -55,7 +49,6 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       newCustomersThisMonth: newCustomersThisMonth || 0,
       totalRevenueThisMonth,
       inProgressOrders: inProgressOrders || 0,
-      underReviewOrders: underReviewOrders || 0,
       activeProducts: activeProducts || 0,
     };
   } catch (error) {
