@@ -284,7 +284,6 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       label: 'Assign to Designer',
       type: 'select' as const,
       options: [
-        { value: '', label: 'No Assignment' },
         ...designers.map(designer => ({ value: designer.id, label: designer.full_name })),
       ],
     },
