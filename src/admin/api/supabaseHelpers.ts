@@ -596,19 +596,26 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
 
 export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): Promise<AdminOrder> => {
   try {
+    // Convert empty strings to null for UUID fields to prevent Supabase validation errors
+    const sanitizedOrderData = {
+      ...orderData,
+      assigned_sales_rep_id: orderData.assigned_sales_rep_id === '' ? null : orderData.assigned_sales_rep_id,
+      assigned_designer_id: orderData.assigned_designer_id === '' ? null : orderData.assigned_designer_id,
+    };
+
     const { data, error } = await supabase
       .from('orders')
       .update({
-        order_type: orderData.order_type,
-        design_size: orderData.design_size,
-        apparel_type: orderData.apparel_type,
-        custom_width: orderData.custom_width,
-        custom_height: orderData.custom_height,
-        total_amount: orderData.total_amount,
-        assigned_sales_rep_id: orderData.assigned_sales_rep_id,
-        assigned_designer_id: orderData.assigned_designer_id,
-        status: orderData.status,
-        invoice_url: orderData.invoice_url,
+        order_type: sanitizedOrderData.order_type,
+        design_size: sanitizedOrderData.design_size,
+        apparel_type: sanitizedOrderData.apparel_type,
+        custom_width: sanitizedOrderData.custom_width,
+        custom_height: sanitizedOrderData.custom_height,
+        total_amount: sanitizedOrderData.total_amount,
+        assigned_sales_rep_id: sanitizedOrderData.assigned_sales_rep_id,
+        assigned_designer_id: sanitizedOrderData.assigned_designer_id,
+        status: sanitizedOrderData.status,
+        invoice_url: sanitizedOrderData.invoice_url,
       })
       .eq('id', id)
       .select()
@@ -617,9 +624,11 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
     if (error) throw error;
 
     // Create notification for assigned user
-    if (orderData.assigned_sales_rep_id || orderData.assigned_designer_id) {
-      const assignedUserId = orderData.assigned_sales_rep_id || orderData.assigned_designer_id;
-      await createNotification(assignedUserId!, 'order', `Order ${id} has been assigned to you.`);
+    if (sanitizedOrderData.assigned_sales_rep_id || sanitizedOrderData.assigned_designer_id) {
+      const assignedUserId = sanitizedOrderData.assigned_sales_rep_id || sanitizedOrderData.assigned_designer_id;
+      if (assignedUserId) {
+        await createNotification(assignedUserId, 'order', `Order ${id} has been assigned to you.`);
+      }
     }
 
     return await getOrderById(id);
