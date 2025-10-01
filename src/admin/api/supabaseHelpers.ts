@@ -117,13 +117,6 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
       .in('customer_id', customerIds)
       .eq('status', 'under_review');
 
-    // In progress orders count for assigned customers
-    const { count: inProgressOrdersCount } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .in('customer_id', customerIds)
-      .eq('status', 'in_progress');
-
     return {
       totalOrdersThisMonth: totalOrdersThisMonth || 0,
       newOrdersCount: newOrdersCount || 0,
