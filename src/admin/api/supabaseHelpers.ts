@@ -50,6 +50,8 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       totalRevenueThisMonth,
       inProgressOrders: inProgressOrders || 0,
       activeProducts: activeProducts || 0,
+        underReviewOrdersCount: underReviewOrdersCount || 0,  // <--- add this
+
     };
   } catch (error) {
     console.error('Error fetching admin stats:', error);
