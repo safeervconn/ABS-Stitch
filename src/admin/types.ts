@@ -154,6 +154,8 @@ export interface CustomerOrder {
   custom_height?: number;
   assigned_sales_rep_name?: string;
   assigned_designer_name?: string;
+  assigned_sales_rep_id?: string;
+  assigned_designer_id?: string;
 }
 
 // Order type for order context
