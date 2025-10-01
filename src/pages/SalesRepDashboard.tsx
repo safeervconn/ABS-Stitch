@@ -50,6 +50,7 @@ const SalesRepDashboard: React.FC = () => {
   const [designers, setDesigners] = useState<AdminUser[]>([]);
   
   const { getOrdersByRole, assignDesigner, addComment } = useOrders();
+  const { getOrdersByRole, fetchOrders } = useOrders();
   const salesOrders = getOrdersByRole();
 
   // Filter orders based on current filter values
@@ -210,7 +211,8 @@ const SalesRepDashboard: React.FC = () => {
       // Refresh the dashboard stats and orders
       const stats = await getSalesRepDashboardStats(user.id);
       setDashboardStats(stats);
-      // The orders will be refreshed through the OrderContext
+      // Refresh the orders list to reflect changes
+      await fetchOrders();
     } catch (error) {
       console.error('Error updating order:', error);
       throw error;
