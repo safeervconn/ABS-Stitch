@@ -214,7 +214,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     addOrder,
     updateOrderStatus,
     assignDesigner,
-    getOrdersByRole
+    getOrdersByRole,
     fetchOrders,
   };
 
