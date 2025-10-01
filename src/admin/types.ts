@@ -105,7 +105,7 @@ export interface PaginationParams {
   
   // Filter-specific params
   role?: string;
-  status?: string;
+  status?: string | string[];
   categoryId?: string;
   salesRepId?: string;
   customerSearch?: string;

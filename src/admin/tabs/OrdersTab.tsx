@@ -26,8 +26,8 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
   );
 
   // Filter state
-  const [filterValues, setFilterValues] = useState<Record<string, string>>({
-    status: '',
+  const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({
+    status: [],
     paymentStatus: '',
     customer: '',
     dateFrom: '',
@@ -75,6 +75,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     {
       key: 'status',
       label: 'Status',
+      multi: true,
       options: [
         { value: 'in_progress', label: 'In Progress' },
         { value: 'under_review', label: 'Under Review' },
@@ -129,15 +130,26 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
   };
 
   const handleFilterChange = (key: string, value: string) => {
+    if (key === 'status') {
+      // Handle multi-select status filter
+      const statusArray = value ? value.split(',') : [];
+      setFilterValues(prev => ({ ...prev, [key]: statusArray }));
+      
+      const newParams: Partial<PaginationParams> = { page: 1 };
+      if (statusArray.length > 0) {
+        newParams.status = statusArray;
+      }
+      updateParams(newParams);
+      return;
+    }
+    
     setFilterValues(prev => ({ ...prev, [key]: value }));
     
     // Apply filters to search params
     const newParams: Partial<PaginationParams> = { page: 1 };
     
     // Add filter-specific logic
-    if (key === 'status' && value) {
-      newParams.status = value;
-    } else if (key === 'paymentStatus' && value) {
+    if (key === 'paymentStatus' && value) {
       newParams.paymentStatus = value;
     } else if (key === 'customer' && value) {
       newParams.customerSearch = value;
@@ -156,7 +168,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
 
   const handleClearFilters = () => {
     setFilterValues({
-      status: '',
+      status: [],
       paymentStatus: '',
       customer: '',
       dateFrom: '',
