@@ -420,7 +420,7 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
     // Apply comprehensive search filter
     if (params.search) {
       // Search across order number, custom description, and order ID
-      query = query.or(`order_number.ilike.%${params.search}%,custom_description.ilike.%${params.search}%,id.ilike.%${params.search}%`);
+      query = query.or(`order_number.ilike.%${params.search}%,custom_description.ilike.%${params.search}%`);
     }
 
     // Apply status filter
