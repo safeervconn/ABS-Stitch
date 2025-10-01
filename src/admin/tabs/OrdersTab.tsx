@@ -88,7 +88,6 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       options: [
         { value: 'paid', label: 'Paid' },
         { value: 'unpaid', label: 'Unpaid' },
-        { value: 'partially_paid', label: 'Partially Paid' },
       ],
     },
     {
