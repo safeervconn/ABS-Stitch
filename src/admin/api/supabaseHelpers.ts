@@ -49,6 +49,7 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       newCustomersThisMonth: newCustomersThisMonth || 0,
       totalRevenueThisMonth,
       inProgressOrders: inProgressOrders || 0,
+      activeProducts: activeProducts || 0,
 
     };
   } catch (error) {
@@ -58,6 +59,7 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       newCustomersThisMonth: 0,
       totalRevenueThisMonth: 0,
       inProgressOrders: 0,
+      activeProducts: 0,
       activeProducts: 0,
     };
   }
