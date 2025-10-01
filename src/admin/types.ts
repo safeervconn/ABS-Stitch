@@ -7,13 +7,6 @@ export interface AdminStats {
   activeProducts: number;
 }
 
-export interface SalesRepStats {
-  totalOrdersThisMonth: number;
-  newOrdersCount: number;
-  inProgressOrdersCount: number;
-  underReviewOrdersCount: number;
-}
-
 export interface AdminUser {
   id: string;
   full_name: string;

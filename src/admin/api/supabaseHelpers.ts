@@ -50,7 +50,6 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       totalRevenueThisMonth,
       inProgressOrders: inProgressOrders || 0,
       activeProducts: activeProducts || 0,
-
     };
   } catch (error) {
     console.error('Error fetching admin stats:', error);
@@ -59,7 +58,6 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       newCustomersThisMonth: 0,
       totalRevenueThisMonth: 0,
       inProgressOrders: 0,
-      activeProducts: 0,
       activeProducts: 0,
     };
   }
@@ -87,7 +85,6 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
         totalOrdersThisMonth: 0,
         newOrdersCount: 0,
         inProgressOrdersCount: 0,
-        underReviewOrdersCount: 0,
       };
     }
 
@@ -112,19 +109,10 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
       .in('customer_id', customerIds)
       .eq('status', 'in_progress');
 
-    // Under review orders count for assigned customers
-    const { count: underReviewOrdersCount } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .in('customer_id', customerIds)
-      .eq('status', 'under_review');
-
     return {
       totalOrdersThisMonth: totalOrdersThisMonth || 0,
       newOrdersCount: newOrdersCount || 0,
       inProgressOrdersCount: inProgressOrdersCount || 0,
-      underReviewOrdersCount: underReviewOrdersCount || 0,
-      underReviewOrdersCount: underReviewOrdersCount || 0,
     };
   } catch (error) {
     console.error('Error fetching sales rep stats:', error);
@@ -132,7 +120,6 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
       totalOrdersThisMonth: 0,
       newOrdersCount: 0,
       inProgressOrdersCount: 0,
-      underReviewOrdersCount: 0,
     };
   }
 };
@@ -491,10 +478,6 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
         designer:employees!orders_assigned_designer_id_fkey(full_name)
       `, { count: 'exact' });
 
-    // Apply sales rep filter if provided
-    if (params.salesRepId) {
-      query = query.eq('assigned_sales_rep_id', params.salesRepId);
-    }
     // Apply comprehensive search filter
     if (params.search) {
       // Search across order number, custom description, and order ID
