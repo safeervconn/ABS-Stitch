@@ -145,7 +145,8 @@ export interface CustomerOrder {
   status: 'in_progress' | 'under_review' | 'completed' | 'cancelled';
   payment_status: 'paid' | 'unpaid';
   total_amount: number;
-  date: string;
+  created_at: string;
+  updated_at: string;
   custom_description?: string;
   design_size?: string;
   apparel_type?: string;
