@@ -217,12 +217,11 @@ const DesignerDashboard: React.FC = () => {
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{order.order_number}</p>
-                        <p className="text-sm text-gray-500">Client: {order.customer_name}</p>
+                        <p className="text-sm text-gray-500">Client: {order.customer_name} • {new Date(order.created_at).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <div className="text-right">
-                        <p className="text-sm text-gray-600">{order.date}</p>
                         <p className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '0.00'}</p>
                       </div>
                       
