@@ -194,7 +194,6 @@ const CustomersTab: React.FC = () => {
       label: 'Assigned Sales Rep', 
       type: 'select' as const,
       options: [
-        { value: '', label: 'No Assignment' },
         ...salesReps.map(rep => ({ value: rep.id, label: rep.full_name })),
       ],
     },
