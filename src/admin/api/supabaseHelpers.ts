@@ -552,9 +552,6 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
       await createNotification(assignedUserId!, 'order', `Order ${id} has been assigned to you.`);
     }
 
-    // Log the activity
-    await logOrderActivity(id, 'updated', data);
-
     return await getOrderById(id);
   } catch (error) {
     console.error('Error updating order:', error);
@@ -830,30 +827,6 @@ export const getBadgeCounts = async (): Promise<{ users: number; orders: number;
 };
 
 // Utility Functions
-export const logOrderActivity = async (
-  orderId: string,
-  action: string,
-  details?: any
-): Promise<void> => {
-  try {
-    const user = await supabase.auth.getUser();
-    if (!user.data.user) return;
-
-    const { error } = await supabase
-      .from('order_logs')
-      .insert([{
-        order_id: orderId,
-        action,
-        performed_by: user.data.user.id,
-        details,
-      }]);
-
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error logging order activity:', error);
-  }
-};
-
 export const createNotification = async (
   userId: string,
   type: 'order' | 'user' | 'product' | 'system',
