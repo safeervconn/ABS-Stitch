@@ -117,20 +117,6 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
       .in('customer_id', customerIds)
       .eq('status', 'under_review');
 
-    // Under review orders count for assigned customers
-    const { count: underReviewOrdersCount } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .in('customer_id', customerIds)
-      .eq('status', 'under_review');
-
-    // Under review orders count for assigned customers
-    const { count: underReviewOrdersCount } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .in('customer_id', customerIds)
-      .eq('status', 'under_review');
-
     return {
       totalOrdersThisMonth: totalOrdersThisMonth || 0,
       newOrdersCount: newOrdersCount || 0,
