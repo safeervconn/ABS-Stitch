@@ -4,6 +4,7 @@ export interface AdminStats {
   newCustomersThisMonth: number;
   totalRevenueThisMonth: number;
   inProgressOrders: number;
+  underReviewOrders: number;
   activeProducts: number;
 }
 
