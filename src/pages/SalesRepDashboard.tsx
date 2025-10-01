@@ -483,7 +483,7 @@ const SalesRepDashboard: React.FC = () => {
                   className="p-2 text-gray-400 hover:text-red-600 transition-colors"
                   title="Sign Out"
                 >
-                  <Users className="h-5 w-5" />
+                  <LogOut className="h-5 w-5" />
                 </button>
               </div>
             </div>
