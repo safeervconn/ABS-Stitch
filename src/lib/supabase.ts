@@ -190,7 +190,7 @@ export const createEmployeeProfile = async (employeeData: {
 };
 
 // Get dashboard route based on user role
-export const getDashboardRoute = (role: string): string => {
+export const getDashboardRoute = (role: string): string | null => {
   switch (role) {
     case 'admin':
       return '/admin';
@@ -213,13 +213,6 @@ export const getProducts = async (filters?: {
   limit?: number;
   offset?: number;
 }) => {
-  // let query = supabase
-  //   .from('products')
-  //   .select(`
-  //     *,
-  //     category:categories(name)
-  //   `)
-  //   .eq('status', 'active');
   let query = supabase
   .from('products')
   .select(`
