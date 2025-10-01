@@ -49,7 +49,12 @@ const FilterBar: React.FC<FilterBarProps> = ({
   resultCount,
   loading = false,
 }) => {
-  const hasActiveFilters = searchValue || Object.values(filterValues).some(value => value);
+  const hasActiveFilters = searchValue || Object.values(filterValues).some(value => {
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
+    return value !== '' && value !== null && value !== undefined;
+  });
 
   const renderFilter = (filter: FilterConfig) => {
     const value = filterValues[filter.key] || (filter.multi ? [] : '');
