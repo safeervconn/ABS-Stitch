@@ -113,7 +113,7 @@ const CustomerOverviewTab: React.FC = () => {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">{order.order_number}</p>
-                      <p className="text-sm text-gray-500">{order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • {order.date}</p>
+                      <p className="text-sm text-gray-500">{order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • {new Date(order.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">

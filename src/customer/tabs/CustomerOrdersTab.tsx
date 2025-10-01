@@ -128,7 +128,7 @@ const CustomerOrdersTab: React.FC = () => {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">{order.order_number}</p>
-                      <p className="text-sm text-gray-500">{order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • {order.date}</p>
+                      <p className="text-sm text-gray-500">{order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • {new Date(order.created_at).toLocaleDateString()}</p>
                       {order.custom_description && (
                         <p className="text-sm text-gray-600 mt-1 max-w-md truncate">{order.custom_description}</p>
                       )}
