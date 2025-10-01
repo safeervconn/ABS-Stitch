@@ -23,6 +23,7 @@ export interface FilterConfig {
   options: FilterOption[];
   placeholder?: string;
   type?: 'select' | 'search' | 'date' | 'number';
+  multiSelect?: boolean;
 }
 
 interface FilterBarProps {
@@ -30,8 +31,8 @@ interface FilterBarProps {
   onSearchChange: (value: string) => void;
   searchPlaceholder?: string;
   filters: FilterConfig[];
-  filterValues: Record<string, string>;
-  onFilterChange: (key: string, value: string) => void;
+  filterValues: Record<string, string | string[]>;
+  onFilterChange: (key: string, value: string | string[]) => void;
   onClearFilters: () => void;
   resultCount?: number;
   loading?: boolean;
@@ -51,7 +52,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
   const hasActiveFilters = searchValue || Object.values(filterValues).some(value => value);
 
   const renderFilter = (filter: FilterConfig) => {
-    const value = filterValues[filter.key] || '';
+    const value = filterValues[filter.key] || (filter.multiSelect ? [] : '');
 
     switch (filter.type) {
       case 'search':
@@ -93,19 +94,39 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
       default:
         return (
-          <select
-            key={filter.key}
-            value={value}
-            onChange={(e) => onFilterChange(filter.key, e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
-          >
-            <option value="">{filter.placeholder || `All ${filter.label}`}</option>
-            {filter.options.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          filter.multiSelect ? (
+            <select
+              key={filter.key}
+              multiple
+              value={Array.isArray(value) ? value : value ? [value] : []}
+              onChange={(e) => {
+                const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
+                onFilterChange(filter.key, selectedValues);
+              }}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm min-h-[2.5rem]"
+              size={Math.min(filter.options.length + 1, 4)}
+            >
+              {filter.options.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <select
+              key={filter.key}
+              value={Array.isArray(value) ? value[0] || '' : value}
+              onChange={(e) => onFilterChange(filter.key, e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
+            >
+              <option value="">{filter.placeholder || `All ${filter.label}`}</option>
+              {filter.options.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          )
         );
     }
   };

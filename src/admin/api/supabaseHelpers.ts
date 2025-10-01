@@ -416,7 +416,11 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
 
     // Apply status filter
     if (params.status) {
-      query = query.eq('status', params.status);
+      if (Array.isArray(params.status)) {
+        query = query.in('status', params.status);
+      } else {
+        query = query.eq('status', params.status);
+      }
     }
 
     // Apply customer search filter
