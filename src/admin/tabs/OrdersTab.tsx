@@ -226,6 +226,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       type: 'select' as const,
       required: true,
       options: [
+                { value: 'new', label: 'New' },
         { value: 'in_progress', label: 'In Progress' },
         { value: 'under_review', label: 'Under Review' },
         { value: 'completed', label: 'Completed' },
@@ -284,6 +285,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
+        
       case 'in_progress': return 'bg-purple-100 text-purple-800';
       case 'under_review': return 'bg-orange-100 text-orange-800';
       case 'completed': return 'bg-green-100 text-green-800';
