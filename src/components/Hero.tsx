@@ -64,7 +64,7 @@ const Hero: React.FC = () => {
 
           {/* Call to Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {currentUser ? (
+            {currentUser && currentUser.role === 'customer' ? (
               <button 
                 onClick={() => {
                   const event = new CustomEvent('openPlaceOrderModal');
@@ -75,7 +75,8 @@ const Hero: React.FC = () => {
                 Place Order
                 <ArrowRight className="ml-2 h-5 w-5" />
               </button>
-            ) : (
+            ) : null}
+            {!currentUser ? (
               <button 
                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
                 className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-8 py-3 rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center shadow-xl font-semibold transform hover:scale-105"
@@ -83,7 +84,7 @@ const Hero: React.FC = () => {
                 Get Custom Artwork
                 <ArrowRight className="ml-2 h-5 w-5" />
               </button>
-            )}
+            ) : null}
             <button 
               onClick={() => window.location.href = '/catalog'}
               className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all shadow-xl font-semibold transform hover:scale-105"
