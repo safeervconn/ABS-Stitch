@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, X, Check } from 'lucide-react';
 import { getCurrentUser } from '../lib/supabase';
-import { getNotifications, markNotificationsAsRead, getUnreadNotificationCount } from '../admin/api/supabaseHelpers';
+import { getNotifications } from '../admin/api/supabaseHelpers';
 
 interface Notification {
   id: number;
@@ -15,30 +15,13 @@ interface Notification {
 const NotificationDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    fetchUnreadCount();
-  }, []);
 
   useEffect(() => {
     if (isOpen) {
       fetchNotifications();
     }
   }, [isOpen]);
-
-  const fetchUnreadCount = async () => {
-    try {
-      const user = await getCurrentUser();
-      if (!user) return;
-
-      const count = await getUnreadNotificationCount(user.id);
-      setUnreadCount(count);
-    } catch (error) {
-      console.error('Error fetching unread count:', error);
-    }
-  };
 
   const fetchNotifications = async () => {
     try {
@@ -48,13 +31,6 @@ const NotificationDropdown: React.FC = () => {
 
       const data = await getNotifications(user.id, 20);
       setNotifications(data);
-
-      // Mark unread notifications as read
-      const unreadIds = data.filter(n => !n.read).map(n => n.id);
-      if (unreadIds.length > 0) {
-        await markNotificationsAsRead(unreadIds);
-        setUnreadCount(0);
-      }
     } catch (error) {
       console.error('Error fetching notifications:', error);
     } finally {
@@ -91,11 +67,6 @@ const NotificationDropdown: React.FC = () => {
         className="relative p-2 text-gray-400 hover:text-gray-600 transition-colors"
       >
         <Bell className="h-6 w-6" />
-        {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            {unreadCount > 99 ? '99+' : unreadCount}
-          </span>
-        )}
       </button>
 
       {/* Dropdown */}
@@ -154,9 +125,6 @@ const NotificationDropdown: React.FC = () => {
                             {formatTimeAgo(notification.created_at)}
                           </p>
                         </div>
-                        {!notification.read && (
-                          <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
-                        )}
                       </div>
                     </div>
                   ))}
@@ -169,7 +137,6 @@ const NotificationDropdown: React.FC = () => {
               <div className="border-t border-gray-200 p-3">
                 <button
                   onClick={() => {
-                    // Mark all as read functionality could be added here
                     setIsOpen(false);
                   }}
                   className="w-full text-center text-sm text-blue-600 hover:text-blue-700 transition-colors"

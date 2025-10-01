@@ -146,7 +146,6 @@ const DesignerDashboard: React.FC = () => {
             <div className="flex items-center space-x-4">
               <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors relative">
                 <Bell className="h-6 w-6" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">1</span>
               </button>
               <div className="flex items-center space-x-3">
                 <div className="text-right">

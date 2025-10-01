@@ -795,37 +795,6 @@ export const getDesigners = async (): Promise<AdminUser[]> => {
   }
 };
 
-// Badge Counts (simplified without admin_meta table)
-export const getBadgeCounts = async (): Promise<{ users: number; orders: number; products: number }> => {
-  try {
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    
-    const [usersCount, ordersCount, productsCount] = await Promise.all([
-      supabase
-        .from('employees')
-        .select('*', { count: 'exact', head: true })
-        .gt('created_at', oneDayAgo),
-      supabase
-        .from('orders')
-        .select('*', { count: 'exact', head: true })
-        .gt('created_at', oneDayAgo),
-      supabase
-        .from('products')
-        .select('*', { count: 'exact', head: true })
-        .gt('created_at', oneDayAgo),
-    ]);
-    
-    return {
-      users: usersCount.count || 0,
-      orders: ordersCount.count || 0,
-      products: productsCount.count || 0,
-    };
-  } catch (error) {
-    console.error('Error fetching badge counts:', error);
-    return { users: 0, orders: 0, products: 0 };
-  }
-};
-
 // Utility Functions
 export const createNotification = async (
   userId: string,
@@ -1214,35 +1183,5 @@ export const getNotifications = async (userId: string, limit: number = 20): Prom
   } catch (error) {
     console.error('Error fetching notifications:', error);
     return [];
-  }
-};
-
-export const getUnreadNotificationCount = async (userId: string): Promise<number> => {
-  try {
-    const { count, error } = await supabase
-      .from('notifications')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .eq('read', false);
-
-    if (error) throw error;
-    return count || 0;
-  } catch (error) {
-    console.error('Error fetching unread notification count:', error);
-    return 0;
-  }
-};
-
-export const markNotificationsAsRead = async (notificationIds: number[]): Promise<void> => {
-  try {
-    const { error } = await supabase
-      .from('notifications')
-      .update({ read: true })
-      .in('id', notificationIds);
-
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error marking notifications as read:', error);
-    throw error;
   }
 };

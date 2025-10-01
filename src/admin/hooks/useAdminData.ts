@@ -12,7 +12,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   getAdminStats, 
   getRecentOrders, 
-  getBadgeCounts,
 } from '../api/supabaseHelpers';
 import { AdminStats, AdminOrder, PaginatedResponse, PaginationParams } from '../types';
 
@@ -34,7 +33,6 @@ export const useAdminData = (options: UseAdminDataOptions = {}) => {
   });
   
   const [recentOrders, setRecentOrders] = useState<AdminOrder[]>([]);
-  const [badgeCounts, setBadgeCounts] = useState({ users: 0, orders: 0, products: 0 });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -51,15 +49,13 @@ export const useAdminData = (options: UseAdminDataOptions = {}) => {
     setError(null);
 
     try {
-      const [statsData, ordersData, badgeData] = await Promise.all([
+      const [statsData, ordersData] = await Promise.all([
         getAdminStats(),
         getRecentOrders(10),
-        getBadgeCounts(),
       ]);
       
       setStats(statsData);
       setRecentOrders(ordersData);
-      setBadgeCounts(badgeData);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch admin data');
       console.error('Error fetching admin data:', err);
@@ -67,11 +63,6 @@ export const useAdminData = (options: UseAdminDataOptions = {}) => {
       setLoading(false);
       isRefreshingRef.current = false;
     }
-  }, []);
-
-  // Clear badge for specific tab
-  const clearBadge = useCallback(async (tabName: 'users' | 'orders' | 'products') => {
-    setBadgeCounts(prev => ({ ...prev, [tabName]: 0 }));
   }, []);
 
   // Initial data load
@@ -111,11 +102,9 @@ export const useAdminData = (options: UseAdminDataOptions = {}) => {
   return {
     stats,
     recentOrders,
-    badgeCounts,
     loading,
     error,
     refreshData,
-    clearBadge,
   };
 };
 

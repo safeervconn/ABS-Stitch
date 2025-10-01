@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Users, ShoppingBag, Package, BarChart3, Bell, LogOut, FileText } from 'lucide-react';
 import NotificationDropdown from '../../components/NotificationDropdown';
 import { signOut, getCurrentUser, getUserProfile } from '../../lib/supabase';
-import { useAdminData } from '../hooks/useAdminData';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -13,9 +12,6 @@ interface AdminLayoutProps {
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabChange }) => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
-  // Use the new admin data hook (with auto-refresh disabled to fix the bug)
-  const { badgeCounts, clearBadge } = useAdminData({ autoRefresh: false });
 
   useEffect(() => {
     const checkUser = async () => {
@@ -43,14 +39,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
     checkUser();
   }, []);
 
-  // Handle tab changes and clear badges
-  const handleTabChange = (tab: string) => {
-    onTabChange(tab);
-    if (['employees', 'customers', 'orders', 'products'].includes(tab)) {
-      clearBadge(tab as 'users' | 'orders' | 'products');
-    }
-  };
-
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -61,12 +49,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
   };
 
   const tabs = [
-    { id: 'overview', label: 'Overview', icon: BarChart3, badge: 0 },
-    { id: 'employees', label: 'Employees', icon: Users, badge: badgeCounts.users },
-    { id: 'customers', label: 'Customers', icon: Users, badge: 0 },
-    { id: 'orders', label: 'Orders', icon: ShoppingBag, badge: badgeCounts.orders },
-    { id: 'products', label: 'Products', icon: Package, badge: badgeCounts.products },
-    { id: 'invoices', label: 'Invoices', icon: FileText, badge: 0 },
+    { id: 'overview', label: 'Overview', icon: BarChart3 },
+    { id: 'employees', label: 'Employees', icon: Users },
+    { id: 'customers', label: 'Customers', icon: Users },
+    { id: 'orders', label: 'Orders', icon: ShoppingBag },
+    { id: 'products', label: 'Products', icon: Package },
+    { id: 'invoices', label: 'Invoices', icon: FileText },
   ];
 
   if (loading) {
@@ -123,7 +111,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
               return (
                 <button
                   key={tab.id}
-                  onClick={() => handleTabChange(tab.id)}
+                  onClick={() => onTabChange(tab.id)}
                   className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors relative ${
                     isActive
                       ? 'border-blue-500 text-blue-600'
@@ -132,11 +120,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
                 >
                   <IconComponent className="h-5 w-5" />
                   <span>{tab.label}</span>
-                  {tab.badge > 0 && (
-                    <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {tab.badge > 99 ? '99+' : tab.badge}
-                    </span>
-                  )}
                 </button>
               );
             })}
