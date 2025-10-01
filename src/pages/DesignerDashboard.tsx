@@ -261,9 +261,6 @@ const DesignerDashboard: React.FC = () => {
             </div>
           </div>
 
-          
-      </main>
-
       {/* Order Details Modal */}
       <OrderDetailsModal
         isOpen={isOrderDetailsOpen}
