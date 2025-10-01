@@ -117,10 +117,17 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
       .in('customer_id', customerIds)
       .eq('status', 'under_review');
 
+    // In progress orders count for assigned customers
+    const { count: inProgressOrdersCount } = await supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .in('customer_id', customerIds)
+      .eq('status', 'in_progress');
+
     return {
       totalOrdersThisMonth: totalOrdersThisMonth || 0,
       newOrdersCount: newOrdersCount || 0,
-      underReviewOrdersCount: underReviewOrdersCount || 0,
+      inProgressOrdersCount: inProgressOrdersCount || 0,
     };
   } catch (error) {
     console.error('Error fetching sales rep stats:', error);
@@ -128,7 +135,6 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
       totalOrdersThisMonth: 0,
       newOrdersCount: 0,
       inProgressOrdersCount: 0,
-      underReviewOrdersCount: 0,
       underReviewOrdersCount: 0,
     };
   }
