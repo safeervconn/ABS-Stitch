@@ -287,10 +287,6 @@ const SalesRepDashboard: React.FC = () => {
                 <Mail className="h-5 w-5 text-green-600" />
                 <span className="font-medium text-gray-900">Send Email</span>
               </button>
-              <button className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 rounded-lg transition-all text-left shadow-sm">
-                <ShoppingBag className="h-5 w-5 text-purple-600" />
-                <span className="font-medium text-gray-900">Create Order</span>
-              </button>
               <button className="w-full flex items-center space-x-3 p-4 bg-gradient-to-r from-orange-50 to-red-50 hover:from-orange-100 hover:to-red-100 rounded-lg transition-all text-left shadow-sm">
                 <TrendingUp className="h-5 w-5 text-orange-600" />
                 <span className="font-medium text-gray-900">View Reports</span>
