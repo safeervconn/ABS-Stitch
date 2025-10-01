@@ -234,13 +234,13 @@ const DesignerDashboard: React.FC = () => {
                       </div>
                       
                       {/* Status Update Dropdown */}
-                      {['unassigned', 'in_progress'].includes(order.status) && (
+                      {['new', 'in_progress'].includes(order.status) && (
                         <select
                           onChange={(e) => handleStatusChange(order.id, e.target.value)}
                           className="text-xs border border-gray-300 rounded px-2 py-1"
                           defaultValue={order.status}
                         >
-                          <option value="unassigned">Unassigned</option>
+                          <option value="new">New</option>
                           <option value="in_progress">In Progress</option>
                           <option value="under_review">Send to Review</option>
                           <option value="completed">Completed</option>

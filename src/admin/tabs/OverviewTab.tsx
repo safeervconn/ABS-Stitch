@@ -194,14 +194,13 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {order.assigned_sales_rep_name !== 'Unassigned' ? order.assigned_sales_rep_name : 
-                       order.assigned_designer_name !== 'Unassigned' ? order.assigned_designer_name : 'Unassigned' }
+                      {order.assigned_sales_rep_name || order.assigned_designer_name || 'Unassigned'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {new Date(order.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      ${order.total_amount.toFixed(2)}
+                      ${(order.total_amount || 0).toFixed(2)}
                     </td>
                   </tr>
                 ))

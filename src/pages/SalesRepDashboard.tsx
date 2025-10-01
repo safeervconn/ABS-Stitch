@@ -230,7 +230,7 @@ const SalesRepDashboard: React.FC = () => {
                       </div>
                       
                       {/* Designer Assignment Dropdown */}
-                      {order.status === 'unassigned' && (
+                      {order.status === 'new' && (
                         <select
                           onChange={(e) => handleAssignDesigner(order.id, e.target.value)}
                           className="text-xs border border-gray-300 rounded px-2 py-1"

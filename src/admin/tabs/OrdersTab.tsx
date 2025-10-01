@@ -226,7 +226,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       type: 'select' as const,
       required: true,
       options: [
-                { value: 'new', label: 'New' },
+        { value: 'new', label: 'New' },
         { value: 'in_progress', label: 'In Progress' },
         { value: 'under_review', label: 'Under Review' },
         { value: 'completed', label: 'Completed' },

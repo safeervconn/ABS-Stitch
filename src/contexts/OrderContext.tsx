@@ -200,7 +200,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       .from('orders')
       .update({
         assigned_designer_id: designerId,
-        status: 'assigned'
+        status: 'in_progress'
       })
       .eq('id', orderId)
       .then(() => fetchOrders());
