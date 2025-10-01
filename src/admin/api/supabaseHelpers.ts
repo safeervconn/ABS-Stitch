@@ -96,7 +96,7 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
       .from('orders')
       .select('*', { count: 'exact', head: true })
       .in('customer_id', customerIds)
-      .gte('created_at', startOfMonth.toISOString());
+      .gte('created_at', startOfMonth.toString());
 
     // New orders count for assigned customers
     const { count: newOrdersCount } = await supabase
