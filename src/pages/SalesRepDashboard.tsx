@@ -267,7 +267,6 @@ const SalesRepDashboard: React.FC = () => {
     },
     {
       key: 'assigned_designer_id',
-      label: 'Designer',
       type: 'select' as const,
       options: [
         ...designers.map(designer => ({ value: designer.id, label: designer.full_name })),
