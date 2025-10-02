@@ -149,9 +149,9 @@ const CustomerOverviewTab: React.FC = () => {
                 </button>
               )}
             </div>
-          )}
-       
-    
+          
+        </div>
+    </div>
   );
 };
 
