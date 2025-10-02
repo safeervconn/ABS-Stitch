@@ -104,6 +104,7 @@ const CustomerOverviewTab: React.FC = () => {
           <p className="text-sm text-gray-600 mt-1">Your last 10 orders</p>
         </div>
       </div>
+    </div>
                 
   );
 };
