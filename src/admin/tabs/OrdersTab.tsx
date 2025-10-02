@@ -27,7 +27,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
 
   // Filter state
   const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({
-    status: [],
+    status: [], // No default selection for admin
     paymentStatus: '',
     customer: '',
     dateFrom: '',
@@ -43,6 +43,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     search: '',
     sortBy: 'created_at',
     sortOrder: 'desc',
+    status: undefined, // No default status filter for admin
   });
 
   // Modal states
@@ -118,6 +119,9 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       const newParams: Partial<PaginationParams> = { page: 1 };
       if (statusArray.length > 0) {
         newParams.status = statusArray;
+      } else {
+        // When no status is selected, show all orders
+        newParams.status = undefined;
       }
       updateParams(newParams);
       return;
@@ -162,7 +166,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
 
   const handleClearFilters = () => {
     setFilterValues({
-      status: [],
+      status: [], // Reset to no selection for admin
       paymentStatus: '',
       customer: '',
       dateFrom: '',

@@ -176,6 +176,9 @@ const DesignerDashboard: React.FC = () => {
       const newParams: Partial<PaginationParams> = { page: 1 };
       if (statusArray.length > 0) {
         newParams.status = statusArray;
+      } else {
+        // When no status is selected, show all orders
+        newParams.status = undefined;
       }
       updateParams(newParams);
       return;

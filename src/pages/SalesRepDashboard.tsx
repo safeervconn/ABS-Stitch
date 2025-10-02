@@ -57,7 +57,7 @@ const SalesRepDashboard: React.FC = () => {
   
   // Filter states
   const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({
-    status: ['new', 'under_review', 'in_progress'], // Default to new and under_review
+    status: ['new', 'under_review', 'in_progress'], // Default to new, under_review, and in_progress
     dateFrom: '',
     dateTo: '',
     customer: '',
@@ -70,7 +70,7 @@ const SalesRepDashboard: React.FC = () => {
     search: '',
     sortBy: 'created_at',
     sortOrder: 'desc',
-    status: ['new', 'under_review', 'in_progress'], // Default to new and under_review
+    status: ['new', 'under_review', 'in_progress'], // Default to new, under_review, and in_progress
   });
   
   // Assignment options
@@ -116,7 +116,7 @@ const SalesRepDashboard: React.FC = () => {
             // Apply sales rep filter to orders
             updateParams({ 
               salesRepId: profile.id,
-              status: ['new', 'under_review'] // Set default status filter
+              status: ['new', 'under_review', 'in_progress'] // Set default status filter
             });
           } else {
             console.error('Access denied: User role is', profile?.role, 'but sales_rep required');
@@ -212,6 +212,9 @@ const SalesRepDashboard: React.FC = () => {
       const newParams: Partial<PaginationParams> = { page: 1 };
       if (statusArray.length > 0) {
         newParams.status = statusArray;
+      } else {
+        // When no status is selected, show all orders
+        newParams.status = undefined;
       }
       updateParams(newParams);
       return;
@@ -240,7 +243,6 @@ const SalesRepDashboard: React.FC = () => {
       dateTo: '',
       customer: '',
     });
-    updateParams(initialParams);
     updateParams({
       ...initialParams,
       salesRepId: user?.id, // Keep sales rep filter
