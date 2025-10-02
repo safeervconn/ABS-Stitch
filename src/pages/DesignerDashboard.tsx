@@ -23,6 +23,8 @@ const DesignerDashboard: React.FC = () => {
       search: '',
       sortBy: 'created_at',
       sortOrder: 'desc',
+      assignedDesignerId: undefined, // Will be set once user is loaded
+      status: ['new', 'in_progress', 'under_review'], // Broader default filter
     }
   );
   
@@ -37,7 +39,7 @@ const DesignerDashboard: React.FC = () => {
   
   // Filter states
   const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({
-    status: ['in_progress'], // Default to in_progress
+    status: ['new', 'in_progress', 'under_review'], // Broader default filter
     dateFrom: '',
     dateTo: '',
     customer: '',
@@ -50,7 +52,7 @@ const DesignerDashboard: React.FC = () => {
     search: '',
     sortBy: 'created_at',
     sortOrder: 'desc',
-    status: ['in_progress'], // Default filter
+    status: ['new', 'in_progress', 'under_review'], // Broader default filter
   });
 
   // Color mapping for stat cards
@@ -80,7 +82,7 @@ const DesignerDashboard: React.FC = () => {
             // Apply designer filter to orders
             updateParams({ 
               assignedDesignerId: profile.id,
-              status: ['in_progress'] // Set default status filter
+              status: ['new', 'in_progress', 'under_review'] // Set broader default status filter
             });
           } else {
             console.error('Access denied: User role is', profile?.role, 'but designer required');
@@ -197,7 +199,7 @@ const DesignerDashboard: React.FC = () => {
 
   const handleClearFilters = () => {
     setFilterValues({
-      status: ['in_progress'], // Reset to default
+      status: ['new', 'in_progress', 'under_review'], // Reset to broader default
       dateFrom: '',
       dateTo: '',
       customer: '',
@@ -205,7 +207,7 @@ const DesignerDashboard: React.FC = () => {
     updateParams({
       ...initialParams,
       assignedDesignerId: user?.id, // Keep designer filter
-      status: ['in_progress'], // Reset to default status
+      status: ['new', 'in_progress', 'under_review'], // Reset to broader default status
     });
   };
 
