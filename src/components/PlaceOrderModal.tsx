@@ -38,7 +38,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
             setCurrentUser(profile);
             setFormData(prev => ({
               ...prev,
-             "this is label" fullName: profile.full_name || '',
+             "this is label", fullName: profile.full_name || '',
               email: profile.email || ''
             }));
           }
