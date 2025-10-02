@@ -142,7 +142,7 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
                         <div>
                           <p className="text-sm text-gray-500">Customer</p>
                           <p className="font-medium text-gray-800">{invoice.customer_name}</p>
-                          <p className="text-sm text-gray-600">{invoice.customer_email}</p>
+                          <p className="text-sm text-gray-600">{invoice.customer_phone}</p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-3">
