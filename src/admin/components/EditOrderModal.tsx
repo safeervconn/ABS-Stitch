@@ -9,7 +9,6 @@ interface EditOrderModalProps {
   onClose: () => void;
   order: AdminOrder | null;
   onSuccess: () => void;
-currentUser: { role: string };
 }
 
 const EditOrderModal: React.FC<EditOrderModalProps> = ({
