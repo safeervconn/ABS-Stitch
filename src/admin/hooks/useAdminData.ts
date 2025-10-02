@@ -30,6 +30,8 @@ export const useAdminData = (options: UseAdminDataOptions = {}) => {
     totalRevenueThisMonth: 0,
     inProgressOrders: 0,
     activeProducts: 0,
+    newOrdersCount: 0,
+    underReviewOrdersCount: 0,
   });
   
   const [recentOrders, setRecentOrders] = useState<AdminOrder[]>([]);
