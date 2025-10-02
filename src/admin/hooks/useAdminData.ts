@@ -146,10 +146,12 @@ export const usePaginatedData = <T>(
 
   // Update params and trigger fetch
   const updateParams = useCallback((newParams: Partial<PaginationParams>) => {
-    const updatedParams = { ...params, ...newParams };
-    setParams(updatedParams);
-    fetchDataDebounced(updatedParams);
-  }, [params, fetchDataDebounced]);
+    setParams(prevParams => {
+      const updatedParams = { ...prevParams, ...newParams };
+      fetchDataDebounced(updatedParams);
+      return updatedParams;
+    });
+  }, [fetchDataDebounced]);
 
   // Initial fetch
   useEffect(() => {
