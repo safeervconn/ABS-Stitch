@@ -110,7 +110,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       await fetchOrders();
       
       // Show success message
-      alert('Order placed successfully!');
+     
     } catch (error) {
       console.error('Error adding order:', error);
       throw error;
