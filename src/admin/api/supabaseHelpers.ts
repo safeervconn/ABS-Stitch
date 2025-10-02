@@ -1,6 +1,6 @@
 import { supabase } from '../../lib/supabase';
 import { getCurrentUser as getSupabaseCurrentUser, getUserProfile as getSupabaseUserProfile } from '../../lib/supabase';
-import { AdminUser, AdminCustomer, AdminOrder, AdminProduct, Category, AdminStats, PaginatedResponse, PaginationParams, Invoice } from '../types';
+import { AdminUser, AdminCustomer, AdminOrder, AdminProduct, Category, AdminStats, PaginatedResponse, PaginationParams, Invoice, OrderComment } from '../types';
 
 // Admin Stats Queries
 export const getAdminStats = async (): Promise<AdminStats> => {
@@ -1278,6 +1278,65 @@ export const getNotifications = async (userId: string, limit: number = 20): Prom
   } catch (error) {
     console.error('Error fetching notifications:', error);
     return [];
+  }
+};
+
+// Order Comments Operations
+export const getOrderComments = async (orderId: string): Promise<OrderComment[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('order_comments')
+      .select(`
+        *,
+        author:employees(full_name)
+      `)
+      .eq('order_id', orderId)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+
+    return (data || []).map(comment => ({
+      id: comment.id,
+      order_id: comment.order_id,
+      author_id: comment.author_id,
+      author_name: comment.author?.full_name || 'Unknown',
+      content: comment.content,
+      created_at: comment.created_at,
+    }));
+  } catch (error) {
+    console.error('Error fetching order comments:', error);
+    return [];
+  }
+};
+
+export const addOrderComment = async (orderId: string, authorId: string, content: string): Promise<OrderComment> => {
+  try {
+    const { data, error } = await supabase
+      .from('order_comments')
+      .insert([{
+        order_id: orderId,
+        author_id: authorId,
+        content: content.trim(),
+      }])
+      .select(`
+        *,
+        author:employees(full_name)
+      `)
+      .single();
+
+    if (error) throw error;
+
+    return {
+      id: data.id,
+      order_id: data.order_id,
+      author_id: data.author_id,
+      author_name: data.author?.full_name || 'Unknown',
+      content: data.content,
+      created_at: data.created_at,
+    };
+  } catch (error) {
+    console.error('Error adding order comment:', error);
+    throw error;
   }
 };
 

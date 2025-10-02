@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { X, Calendar, User, Package, FileText, Paperclip } from 'lucide-react';
+import { X, Calendar, User, Package, FileText, Paperclip, MessageSquare } from 'lucide-react';
 import { getCurrentUser, getUserProfile } from '../lib/supabase';
 import { Order } from '../contexts/OrderContext';
+import { OrderComment } from '../admin/types';
+import { getOrderComments } from '../admin/api/supabaseHelpers';
 
 interface OrderDetailsModalProps {
   isOpen: boolean;
@@ -15,6 +17,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
   order
 }) => {
   const [currentUser, setCurrentUser] = React.useState<any>(null);
+  const [orderComments, setOrderComments] = React.useState<OrderComment[]>([]);
+  const [loadingComments, setLoadingComments] = React.useState(false);
 
   React.useEffect(() => {
     const checkUser = async () => {
@@ -31,8 +35,23 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       }
     };
     
+    const fetchComments = async () => {
+      if (!order?.id) return;
+      
+      try {
+        setLoadingComments(true);
+        const comments = await getOrderComments(order.id);
+        setOrderComments(comments);
+      } catch (error) {
+        console.error('Error fetching order comments:', error);
+      } finally {
+        setLoadingComments(false);
+      }
+    };
+    
     if (isOpen) {
       checkUser();
+      fetchComments();
     }
   }, [isOpen]);
 
