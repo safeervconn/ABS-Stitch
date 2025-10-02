@@ -151,7 +151,7 @@ const CustomerOverviewTab: React.FC = () => {
             </div>
           )}
         </div>
-    </div>
+    
   );
 };
 
