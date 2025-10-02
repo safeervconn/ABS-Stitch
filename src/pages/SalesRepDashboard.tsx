@@ -40,7 +40,7 @@ const SalesRepDashboard: React.FC = () => {
       search: '',
       sortBy: 'created_at',
       sortOrder: 'desc',
-      status: ['new', 'under_review'], // Default to new and under_review
+      status: ['new', 'under_review', 'in progress'], // Default to new and under_review
     }
   );
   
