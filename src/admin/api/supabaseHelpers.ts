@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabase';
+import { getCurrentUser as getSupabaseCurrentUser, getUserProfile as getSupabaseUserProfile } from '../../lib/supabase';
 import { AdminUser, AdminCustomer, AdminOrder, AdminProduct, Category, AdminStats, PaginatedResponse, PaginationParams, Invoice } from '../types';
 
 // Admin Stats Queries
@@ -1281,5 +1282,3 @@ export const getNotifications = async (userId: string, limit: number = 20): Prom
 };
 
 // Re-export auth functions for use in admin components
-export const getCurrentUser = getSupabaseCurrentUser;
-export const getUserProfile = getSupabaseUserProfile;
