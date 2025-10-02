@@ -127,7 +127,7 @@ const CustomerInvoicesTab: React.FC = () => {
                   <div className="flex items-center space-x-4">
                     <div className="text-right">
                       <p className="font-semibold text-gray-900">${invoice.total_amount.toFixed(2)}</p>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(invoice.status)}`}>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 ${getStatusColor(invoice.status)}`}>
                         {invoice.status.replace('_', ' ')}
                       </span>
                     </div>
