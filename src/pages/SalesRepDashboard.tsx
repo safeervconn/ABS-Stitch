@@ -112,7 +112,10 @@ const SalesRepDashboard: React.FC = () => {
             setDesigners(designersData);
             
             // Apply sales rep filter to orders
-            updateParams({ salesRepId: profile.id });
+            updateParams({ 
+              salesRepId: profile.id,
+              status: ['new', 'under_review'] // Set default status filter
+            });
           } else {
             console.error('Access denied: User role is', profile?.role, 'but sales_rep required');
             window.location.href = '/login';
@@ -467,6 +470,7 @@ const SalesRepDashboard: React.FC = () => {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         order={orderToEdit}
+        currentUser={user}
         onSuccess={() => {
           setIsEditModalOpen(false);
           refetch();
@@ -474,8 +478,7 @@ const SalesRepDashboard: React.FC = () => {
           if (user) {
             getSalesRepDashboardStats(user.id).then(setDashboardStats);
           }
-        }        }
-
+        }}
       />
     </div>
   );

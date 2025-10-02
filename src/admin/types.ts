@@ -117,6 +117,7 @@ export interface PaginationParams {
   status?: string | string[];
   categoryId?: string;
   salesRepId?: string;
+  assignedDesignerId?: string;
   customerSearch?: string;
   paymentStatus?: string;
   dateFrom?: string;

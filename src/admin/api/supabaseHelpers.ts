@@ -134,6 +134,39 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
   }
 };
 
+// Designer Dashboard Stats
+export const getDesignerDashboardStats = async (designerId: string) => {
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  try {
+    // Total orders this month assigned to this designer
+    const { count: totalOrdersThisMonth } = await supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .eq('assigned_designer_id', designerId)
+      .gte('created_at', startOfMonth.toISOString());
+
+    // In progress orders count for this designer
+    const { count: inProgressOrdersCount } = await supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .eq('assigned_designer_id', designerId)
+      .eq('status', 'in_progress');
+
+    return {
+      totalOrdersThisMonth: totalOrdersThisMonth || 0,
+      inProgressOrdersCount: inProgressOrdersCount || 0,
+    };
+  } catch (error) {
+    console.error('Error fetching designer stats:', error);
+    return {
+      totalOrdersThisMonth: 0,
+      inProgressOrdersCount: 0,
+    };
+  }
+};
 // Recent Orders Query
 export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]> => {
   try {
@@ -512,6 +545,16 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
     // Apply payment status filter
     if (params.paymentStatus) {
       query = query.eq('payment_status', params.paymentStatus);
+    }
+
+    // Apply sales rep filter
+    if (params.salesRepId) {
+      query = query.eq('assigned_sales_rep_id', params.salesRepId);
+    }
+
+    // Apply designer filter
+    if (params.assignedDesignerId) {
+      query = query.eq('assigned_designer_id', params.assignedDesignerId);
     }
 
     // Apply amount range filters

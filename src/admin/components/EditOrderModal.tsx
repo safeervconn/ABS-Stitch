@@ -8,6 +8,7 @@ interface EditOrderModalProps {
   isOpen: boolean;
   onClose: () => void;
   order: AdminOrder | null;
+  currentUser?: any;
   onSuccess: () => void;
 }
 
@@ -15,6 +16,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   isOpen,
   onClose,
   order,
+  currentUser: propCurrentUser,
   onSuccess,
 }) => {
   const [formData, setFormData] = useState({
@@ -34,7 +36,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   const [filesToDelete, setFilesToDelete] = useState<string[]>([]);
   const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
   const [designers, setDesigners] = useState<AdminUser[]>([]);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<any>(propCurrentUser || null);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -44,6 +46,13 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   const [addingComment, setAddingComment] = useState(false);
 
   useEffect(() => {
+    // Use prop currentUser if provided, otherwise fetch it
+    if (propCurrentUser) {
+      setCurrentUser(propCurrentUser);
+    } else {
+      fetchCurrentUser();
+    }
+
     if (isOpen && order) {
       // Initialize form data
       setFormData({
@@ -67,13 +76,15 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
       // Fetch assignment options
       fetchAssignmentOptions();
       
-      // Fetch current user
-      fetchCurrentUser();
+      // Fetch current user only if not provided as prop
+      if (!propCurrentUser) {
+        fetchCurrentUser();
+      }
       
       // Fetch order comments
       fetchOrderComments();
     }
-  }, [isOpen, order]);
+  }, [isOpen, order, propCurrentUser]);
 
   const fetchCurrentUser = async () => {
     try {
@@ -251,6 +262,8 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
 
   if (!isOpen || !order) return null;
 
+  const isDesigner = currentUser?.role === 'designer';
+
   return (
     <>
       {/* Backdrop */}
@@ -330,7 +343,8 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       name="order_type"
                       value={formData.order_type}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      disabled={isDesigner}
                     >
                       <option value="custom">Custom</option>
                       <option value="catalog">Catalog</option>
@@ -349,11 +363,11 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                       required
                     >
-                      <option value="new">New</option>
+                      {!isDesigner && <option value="new">New</option>}
                       <option value="in_progress">In Progress</option>
                       <option value="under_review">Under Review</option>
-                      <option value="completed">Completed</option>
-                      <option value="cancelled">Cancelled</option>
+                      {!isDesigner && <option value="completed">Completed</option>}
+                      {!isDesigner && <option value="cancelled">Cancelled</option>}
                     </select>
                   </div>
 
@@ -366,7 +380,8 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       name="design_size"
                       value={formData.design_size}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      disabled={isDesigner}
                     >
                       <option value="">Select Size</option>
                       <option value="small">Small (3" x 3")</option>
@@ -386,7 +401,8 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       name="apparel_type"
                       value={formData.apparel_type}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      disabled={isDesigner}
                     >
                       <option value="">Select Type</option>
                       <option value="t-shirt">T-shirt</option>
@@ -418,7 +434,8 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                   )}
 
                   {/* Assigned Designer */}
-                  <div>
+                  {!isDesigner && (
+                    <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Assign to Designer
                     </label>
@@ -433,10 +450,12 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                         <option key={designer.id} value={designer.id}>{designer.full_name}</option>
                       ))}
                     </select>
-                  </div>
+                    </div>
+                  )}
 
                   {/* Total Amount */}
-                  <div>
+                  {!isDesigner && (
+                    <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Total Amount
                     </label>
@@ -449,7 +468,8 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       step="0.01"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     />
-                  </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Custom Size Fields */}
@@ -466,7 +486,8 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                         onChange={handleInputChange}
                         step="0.1"
                         min="0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        disabled={isDesigner}
                       />
                     </div>
                     <div>
@@ -480,7 +501,8 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                         onChange={handleInputChange}
                         step="0.1"
                         min="0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        disabled={isDesigner}
                       />
                     </div>
                   </div>
