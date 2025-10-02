@@ -1,4 +1,4 @@
-zzimport React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FileText, Download, Eye, CreditCard, Calendar } from 'lucide-react';
 import { supabase, getCurrentUser } from '../../lib/supabase';
 import InvoiceDetailsModal from '../../admin/components/InvoiceDetailsModal';
