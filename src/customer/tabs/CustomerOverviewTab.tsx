@@ -103,7 +103,7 @@ const CustomerOverviewTab: React.FC = () => {
           <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
           <p className="text-sm text-gray-600 mt-1">Your last 10 orders</p>
         </div>
-        
+      </div>
                 
   );
 };
