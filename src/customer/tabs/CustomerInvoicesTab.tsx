@@ -25,7 +25,7 @@ const CustomerInvoicesTab: React.FC = () => {
         .from('invoices')
         .select(`
           *,
-          customer:customers(full_name, email)
+          customer:customers(full_name, company_name)
         `)
         .eq('customer_id', user.id)
         .order('created_at', { ascending: false });
@@ -36,7 +36,7 @@ const CustomerInvoicesTab: React.FC = () => {
         id: invoice.id,
         customer_id: invoice.customer_id,
         customer_name: invoice.customer?.full_name,
-        customer_email: invoice.customer?.email,
+        customer_company_name: invoice.customer?.company_name,
         invoice_title: invoice.invoice_title,
         month_year: invoice.month_year,
         payment_link: invoice.payment_link,
