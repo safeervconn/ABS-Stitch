@@ -102,7 +102,7 @@ const CustomerOverviewTab: React.FC = () => {
           <p className="text-sm text-gray-600 mt-1">Your last 10 orders</p>
         </div>
         
-        <div className="p-6">
+                <div className="p-6">
           {recentOrders.length > 0 ? (
             <div className="space-y-4">
               {recentOrders.map((order) => (
@@ -113,7 +113,9 @@ const CustomerOverviewTab: React.FC = () => {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">{order.order_number}</p>
-                      <p className="text-sm text-gray-500">{order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • {new Date(order.created_at).toLocaleDateString()}</p>
+                      <p className="text-sm text-gray-500">
+                        {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • {new Date(order.created_at).toLocaleDateString()}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -128,14 +130,7 @@ const CustomerOverviewTab: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8">
-              <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">No orders yet</p>
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="text-center py-12">
+            <div className="text-center py-12">
               <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
               <p className="text-gray-500 mb-4">
                 {orders.length === 0 ? 'No orders yet' : 'No orders match your filters'}
@@ -155,5 +150,6 @@ const CustomerOverviewTab: React.FC = () => {
     </div>
   );
 };
+
 
 export default CustomerOverviewTab;
