@@ -1279,3 +1279,7 @@ export const getNotifications = async (userId: string, limit: number = 20): Prom
     return [];
   }
 };
+
+// Re-export auth functions for use in admin components
+export const getCurrentUser = getSupabaseCurrentUser;
+export const getUserProfile = getSupabaseUserProfile;

@@ -342,22 +342,25 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                   </div>
 
                   {/* Assigned Sales Rep */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Assign to Sales Rep
-                    </label>
-                    <select
-                      name="assigned_sales_rep_id"
-                      value={formData.assigned_sales_rep_id}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    >
-                      <option value="">Unassigned</option>
-                      {salesReps.map(rep => (
-                        <option key={rep.id} value={rep.id}>{rep.full_name}</option>
-                      ))}
-                    </select>
-                  </div>
+                  {/* Only show sales rep assignment to admin users */}
+                  {currentUser?.role === 'admin' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Assign to Sales Rep
+                      </label>
+                      <select
+                        name="assigned_sales_rep_id"
+                        value={formData.assigned_sales_rep_id}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      >
+                        <option value="">Unassigned</option>
+                        {salesReps.map(rep => (
+                          <option key={rep.id} value={rep.id}>{rep.full_name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
                   {/* Assigned Designer */}
                   <div>

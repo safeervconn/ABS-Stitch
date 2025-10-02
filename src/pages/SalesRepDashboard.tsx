@@ -426,78 +426,32 @@ const SalesRepDashboard: React.FC = () => {
 
           {/* Filter Bar */}
           <FilterBar
-            searchValue={filterValues.search as string}
+            searchValue={params.search || ''}
             onSearchChange={handleSearch}
             searchPlaceholder="Search by order number..."
             filters={filterConfigs}
             filterValues={filterValues}
             onFilterChange={handleFilterChange}
             onClearFilters={handleClearFilters}
-            resultCount={filteredOrders.length}
-            loading={false}
+            resultCount={orders.total}
+            loading={ordersLoading}
           />
 
-          {/* Orders List */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div className="p-6">
-              {filteredOrders.length > 0 ? (
-                <div className="space-y-4">
-                  {filteredOrders.map((order) => (
-                    <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                      <div className="flex items-center space-x-4">
-                        <div className="bg-blue-100 p-2 rounded-lg">
-                          <ShoppingBag className="h-5 w-5 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">{order.order_number}</p>
-                          <p className="text-sm text-gray-500">{order.customer_name} • {new Date(order.created_at).toLocaleDateString()}</p>
-                          {order.custom_description && (
-                            <p className="text-sm text-gray-600 mt-1 max-w-md truncate">{order.custom_description}</p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <div className="text-right">
-                          <p className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '0.00'}</p>
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                            {order.status.replace('_', ' ')}
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center space-x-2">
-                          <button
-                            onClick={() => handleEditOrder(order)}
-                            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                            title="Edit Order"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </button>
-                          <button
-                            onClick={() => handleViewOrder(order)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                            title="View Details"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <ShoppingBag className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500">No orders match your current filters</p>
-                  <button
-                    onClick={handleClearFilters}
-                    className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Clear Filters
-                  </button>
-                </div>
-              )}
+          {/* Error Display */}
+          {ordersError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <p className="text-red-700">{ordersError}</p>
             </div>
-          </div>
+          )}
+
+          {/* Orders Table */}
+          <DataTable
+            data={orders}
+            columns={columns}
+            onParamsChange={handleParamsChange}
+            currentParams={params}
+            loading={ordersLoading}
+          />
         </div>
       </main>
 
@@ -509,13 +463,18 @@ const SalesRepDashboard: React.FC = () => {
       />
 
       {/* Order Edit Modal */}
-      <CrudModal
+      <EditOrderModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        onSubmit={handleEditModalSubmit}
-        title="Edit Order"
-        fields={orderFields}
-        initialData={orderToEdit}
+        order={orderToEdit}
+        onSuccess={() => {
+          setIsEditModalOpen(false);
+          refetch();
+          // Refresh dashboard stats
+          if (user) {
+            getSalesRepDashboardStats(user.id).then(setDashboardStats);
+          }
+        }}
       />
     </div>
   );
