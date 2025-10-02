@@ -204,6 +204,43 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   </div>
                 </div>
 
+                {/* Order Comments - Only for admin, sales_rep, designer */}
+                {currentUser && ['admin', 'sales_rep', 'designer'].includes(currentUser.role) && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Order Comments</h3>
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      {loadingComments ? (
+                        <div className="flex items-center justify-center py-4">
+                          <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                          <span className="text-gray-600 text-sm">Loading comments...</span>
+                        </div>
+                      ) : orderComments.length > 0 ? (
+                        <div className="space-y-4">
+                          {orderComments.map((comment) => (
+                            <div key={comment.id} className="bg-gray-50 rounded-lg p-3">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center space-x-2">
+                                  <MessageSquare className="h-4 w-4 text-blue-600" />
+                                  <span className="font-medium text-gray-800 text-sm">{comment.author_name}</span>
+                                </div>
+                                <span className="text-xs text-gray-500">
+                                  {new Date(comment.created_at).toLocaleDateString()} {new Date(comment.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                              <p className="text-gray-700 text-sm leading-relaxed">{comment.content}</p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-4">
+                          <MessageSquare className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                          <p className="text-gray-500 text-sm">No comments yet</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
               </div>
 
               {/* Sidebar */}

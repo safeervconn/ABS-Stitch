@@ -555,6 +555,77 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                     </label>
                   </div>
                 </div>
+
+                {/* Order Comments - Only for admin, sales_rep, designer */}
+                {currentUser && ['admin', 'sales_rep', 'designer'].includes(currentUser.role) && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <MessageSquare className="h-4 w-4 inline mr-1" />
+                      Order Comments
+                    </label>
+                    
+                    {/* Existing Comments */}
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 max-h-48 overflow-y-auto">
+                      {loadingComments ? (
+                        <div className="flex items-center justify-center py-4">
+                          <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                          <span className="text-gray-600 text-sm">Loading comments...</span>
+                        </div>
+                      ) : orderComments.length > 0 ? (
+                        <div className="space-y-3">
+                          {orderComments.map((comment) => (
+                            <div key={comment.id} className="bg-white rounded-lg p-3 shadow-sm">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center space-x-2">
+                                  <MessageSquare className="h-4 w-4 text-blue-600" />
+                                  <span className="font-medium text-gray-800 text-sm">{comment.author_name}</span>
+                                </div>
+                                <span className="text-xs text-gray-500">
+                                  {new Date(comment.created_at).toLocaleDateString()} {new Date(comment.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                              <p className="text-gray-700 text-sm leading-relaxed">{comment.content}</p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-4">
+                          <MessageSquare className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                          <p className="text-gray-500 text-sm">No comments yet</p>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Add New Comment */}
+                    <div className="space-y-3">
+                      <textarea
+                        value={newCommentContent}
+                        onChange={(e) => setNewCommentContent(e.target.value)}
+                        placeholder="Add a comment about this order..."
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddComment}
+                        disabled={!newCommentContent.trim() || addingComment}
+                        className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                      >
+                        {addingComment ? (
+                          <>
+                            <Loader className="h-4 w-4 animate-spin" />
+                            <span>Adding...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="h-4 w-4" />
+                            <span>Add Comment</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </>
             )}
 
