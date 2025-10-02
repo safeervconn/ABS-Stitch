@@ -104,52 +104,7 @@ const CustomerOverviewTab: React.FC = () => {
           <p className="text-sm text-gray-600 mt-1">Your last 10 orders</p>
         </div>
         
-                <div className="p-6">
-          {recentOrders.length > 0 ? (
-            <div className="space-y-4">
-              {recentOrders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="flex items-center space-x-4">
-                    <div className="bg-blue-100 p-2 rounded-lg">
-                      <ShoppingBag className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{order.order_number}</p>
-                      <p className="text-sm text-gray-500">
-                        {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • {new Date(order.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="text-right">
-                      <p className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '0.00'}</p>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                        {order.status.replace('_', ' ')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500 mb-4">
-                {orders.length === 0 ? 'No orders yet' : 'No orders match your filters'}
-              </p>
-              {orders.length === 0 && (
-                <button
-                  onClick={() => setIsPlaceOrderOpen(true)}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold"
-                >
-                  Place Your First Order
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+                
   );
 };
 
