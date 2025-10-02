@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, CreditCard as Edit, Trash2, UserCheck, UserX } from 'lucide-react';
+import { CreditCard as Edit, Trash2, UserCheck, UserX } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
 import CrudModal from '../components/CrudModal';
 import ConfirmationModal from '../components/ConfirmationModal';
-import { createCustomer, updateCustomer, deleteCustomer, getSalesReps } from '../api/supabaseHelpers';
+import { updateCustomer, deleteCustomer, getSalesReps } from '../api/supabaseHelpers';
 import { AdminCustomer, AdminUser, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { getCustomers } from '../api/supabaseHelpers';
@@ -41,7 +41,6 @@ const CustomersTab: React.FC = () => {
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [selectedCustomer, setSelectedCustomer] = useState<AdminCustomer | null>(null);
   
   // Confirmation modal states
@@ -128,14 +127,7 @@ const CustomersTab: React.FC = () => {
     updateParams(initialParams);
   };
 
-  const handleCreateCustomer = () => {
-    setModalMode('create');
-    setSelectedCustomer(null);
-    setIsModalOpen(true);
-  };
-
   const handleEditCustomer = (customer: AdminCustomer) => {
-    setModalMode('edit');
     setSelectedCustomer(customer);
     setIsModalOpen(true);
   };
@@ -172,9 +164,7 @@ const CustomersTab: React.FC = () => {
 
   const handleModalSubmit = async (formData: any) => {
     try {
-      if (modalMode === 'create') {
-        await createCustomer(formData);
-      } else if (selectedCustomer) {
+      if (selectedCustomer) {
         await updateCustomer(selectedCustomer.id, formData);
       }
       await refetch();
@@ -286,13 +276,6 @@ const CustomersTab: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-900">Customer Management</h2>
           <p className="text-gray-600 mt-1">Manage customer accounts and relationships</p>
         </div>
-        <button
-          onClick={handleCreateCustomer}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-lg"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add Customer</span>
-        </button>
       </div>
 
       {/* Enhanced Filter Bar */}
@@ -329,7 +312,7 @@ const CustomersTab: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
-        title={modalMode === 'create' ? 'Add New Customer' : 'Edit Customer'}
+        title="Edit Customer"
         fields={customerFields}
         initialData={selectedCustomer}
       />
