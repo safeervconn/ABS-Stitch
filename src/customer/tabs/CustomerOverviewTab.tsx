@@ -147,9 +147,8 @@ const CustomerOverviewTab: React.FC = () => {
                 >
                   Place Your First Order
                 </button>
-              )}
             </div>
-          
+          )}
         </div>
     </div>
   );
