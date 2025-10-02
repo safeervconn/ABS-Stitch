@@ -84,7 +84,7 @@ export interface Invoice {
   id: string;
   customer_id: string;
   customer_name?: string;
-  customer_email?: string;
+  customer_company?: string;
   invoice_title: string;
   month_year: string;
   payment_link?: string;
