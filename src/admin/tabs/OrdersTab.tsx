@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CreditCard as Edit, Eye, Calendar, DollarSign, CreditCard } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
-import CrudModal from '../components/CrudModal';
+import EditOrderModal from '../components/EditOrderModal';
 import { updateOrder, getSalesReps, getDesigners } from '../api/supabaseHelpers';
 import { AdminOrder, AdminUser, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
@@ -48,27 +48,6 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null);
-  
-  // Assignment options
-  const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
-  const [designers, setDesigners] = useState<AdminUser[]>([]);
-
-  const fetchAssignmentOptions = async () => {
-    try {
-      const [salesRepsData, designersData] = await Promise.all([
-        getSalesReps(),
-        getDesigners(),
-      ]);
-      setSalesReps(salesRepsData);
-      setDesigners(designersData);
-    } catch (error) {
-      console.error('Error fetching assignment options:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchAssignmentOptions();
-  }, []);
 
   // Filter configurations
   const filterConfigs: FilterConfig[] = [
@@ -198,102 +177,6 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     setSelectedOrder(order);
     setIsModalOpen(true);
   };
-
-  const handleModalSubmit = async (formData: any) => {
-    if (!selectedOrder) return;
-
-    try {
-      // Determine assigned role based on which field is filled
-      let assignedRole = undefined;
-      if (formData.assigned_sales_rep_id) {
-        assignedRole = 'sales_rep';
-      } else if (formData.assigned_designer_id) {
-        assignedRole = 'designer';
-      }
-
-      await updateOrder(selectedOrder.id, {
-        ...formData,
-        assigned_sales_rep_id: formData.assigned_sales_rep_id,
-        assigned_role: assignedRole,
-        status: formData.status || (assignedRole ? 'assigned' : selectedOrder.status),
-      });
-      await refetch();
-    } catch (error) {
-      console.error('Error updating order:', error);
-      throw error;
-    }
-  };
-
-  const orderFields = [
-    {
-      key: 'order_type',
-      label: 'Order Type',
-      type: 'select' as const,
-      options: [
-        { value: 'custom', label: 'Custom' },
-        { value: 'catalog', label: 'Catalog' },
-      ],
-    },
-    {
-      key: 'status',
-      label: 'Status',
-      type: 'select' as const,
-      required: true,
-      options: [
-        { value: 'new', label: 'New' },
-        { value: 'in_progress', label: 'In Progress' },
-        { value: 'under_review', label: 'Under Review' },
-        { value: 'completed', label: 'Completed' },
-        { value: 'cancelled', label: 'Cancelled' },
-      ],
-    },
-    {
-      key: 'design_size',
-      label: 'Design Size',
-      type: 'select' as const,
-      options: [
-        { value: 'small', label: 'Small (3" x 3")' },
-        { value: 'medium', label: 'Medium (5" x 5")' },
-        { value: 'large', label: 'Large (8" x 10")' },
-        { value: 'xl', label: 'Extra Large (12" x 12")' },
-        { value: 'custom', label: 'Custom Size' },
-      ],
-    },
-    {
-      key: 'apparel_type',
-      label: 'Apparel Type',
-      type: 'select' as const,
-      options: [
-        { value: 't-shirt', label: 'T-shirt' },
-        { value: 'jacket', label: 'Jacket' },
-        { value: 'cap', label: 'Cap' },
-        { value: 'other', label: 'Other' },
-      ],
-    },
-    {
-      key: 'assigned_sales_rep_id',
-      label: 'Assign to Sales Rep',
-      type: 'select' as const,
-      options: [
-        ...salesReps.map(rep => ({ value: rep.id, label: rep.full_name })),
-      ],
-    },
-    {
-      key: 'assigned_designer_id',
-      label: 'Assign to Designer',
-      type: 'select' as const,
-      options: [
-        ...designers.map(designer => ({ value: designer.id, label: designer.full_name })),
-      ],
-    },
-    {
-      key: 'total_amount',
-      label: 'Total Amount',
-      type: 'number' as const,
-      min: 0,
-      step: 0.01,
-    },
-  ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -466,13 +349,14 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       />
 
       {/* Order Edit Modal */}
-      <CrudModal
+      <EditOrderModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleModalSubmit}
-        title="Edit Order"
-        fields={orderFields}
-        initialData={selectedOrder}
+        order={selectedOrder}
+        onSuccess={() => {
+          setIsModalOpen(false);
+          refetch();
+        }}
       />
     </div>
   );

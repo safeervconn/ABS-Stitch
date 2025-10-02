@@ -605,6 +605,7 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
         custom_width: orderData.custom_width,
         custom_height: orderData.custom_height,
         total_amount: orderData.total_amount,
+        file_urls: orderData.file_urls,
         assigned_sales_rep_id: orderData.assigned_sales_rep_id,
         assigned_designer_id: orderData.assigned_designer_id,
         status: orderData.status,
