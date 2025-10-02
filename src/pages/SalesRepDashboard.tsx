@@ -475,6 +475,8 @@ const SalesRepDashboard: React.FC = () => {
             getSalesRepDashboardStats(user.id).then(setDashboardStats);
           }
         }        }
+          currentUser={loggedInUser}
+
       />
     </div>
   );
