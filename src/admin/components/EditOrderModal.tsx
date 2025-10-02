@@ -262,11 +262,13 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       <p className="text-sm text-gray-500">Customer Name</p>
                       <p className="font-medium text-gray-900">{order.customer_name}</p>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Email</p>
-                      <p className="font-medium text-gray-900">{order.customer_email}</p>
-                    </div>
-                    {order.customer_phone && (
+                    {currentUser?.role === 'admin' && (
+                      <div>
+                        <p className="text-sm text-gray-500">Email</p>
+                        <p className="font-medium text-gray-900">{order.customer_email}</p>
+                      </div>
+                    )}
+                    {currentUser?.role === 'admin' && order.customer_phone && (
                       <div>
                         <p className="text-sm text-gray-500">Phone</p>
                         <p className="font-medium text-gray-900">{order.customer_phone}</p>
