@@ -109,15 +109,19 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <FileText className="h-5 w-5 text-indigo-600" />
-                      <div>
-                        <p className="text-sm text-gray-500">Payment Status</p>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status || 'unpaid')}`}>
-                          {(order.payment_status || 'unpaid').replace('_', ' ')}
-                        </span>
+                    
+                    {/* Only show payment status for admin users */}
+                    {currentUser?.role === 'admin' && (
+                      <div className="flex items-center space-x-3">
+                        <FileText className="h-5 w-5 text-indigo-600" />
+                        <div>
+                          <p className="text-sm text-gray-500">Payment Status</p>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status || 'unpaid')}`}>
+                            {(order.payment_status || 'unpaid').replace('_', ' ')}
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
 
@@ -198,7 +202,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   <div className="bg-gray-50 rounded-lg p-4">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Assignment</h3>
                     <div className="space-y-3">
-                      {currentUser?.role === 'admin' && order.assigned_sales_rep_name && order.assigned_sales_rep_name !== 'Unassigned' && (
+                      {order.assigned_sales_rep_name && order.assigned_sales_rep_name !== 'Unassigned' && (
                         <div>
                           <p className="text-sm text-gray-500">Sales Representative</p>
                           <p className="font-medium text-gray-800">{order.assigned_sales_rep_name}</p>
@@ -210,26 +214,13 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                           <p className="font-medium text-gray-800">{order.assigned_designer_name}</p>
                         </div>
                       )}
-                      {((currentUser?.role !== 'admin' || !order.assigned_sales_rep_name || order.assigned_sales_rep_name === 'Unassigned') && 
-                       (!order.assigned_designer_name || order.assigned_designer_name === 'Unassigned')) && (
+                      {(!order.assigned_sales_rep_name || order.assigned_sales_rep_name === 'Unassigned') && 
+                       (!order.assigned_designer_name || order.assigned_designer_name === 'Unassigned') && (
                         <div>
                           <p className="text-sm text-gray-500">Assignment Status</p>
                           <p className="font-medium text-gray-400">Unassigned</p>
                         </div>
                       )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Assignment Info for Non-Admin Users (Designer Only) */}
-                {currentUser?.role !== 'admin' && order.assigned_designer_name && order.assigned_designer_name !== 'Unassigned' && (
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Assignment</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <p className="text-sm text-gray-500">Designer</p>
-                        <p className="font-medium text-gray-800">{order.assigned_designer_name}</p>
-                      </div>
                     </div>
                   </div>
                 )}
@@ -247,6 +238,21 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         <span className="text-gray-500">Company:</span><br />
                         <span className="text-gray-800">{order.customer_company_name}</span>
                       </p>
+                    )}
+                    {/* Only show email and phone to admin users */}
+                    {currentUser?.role === 'admin' && (
+                      <>
+                        <p className="text-sm">
+                          <span className="text-gray-500">Email:</span><br />
+                          <span className="text-gray-800">{order.customer_email}</span>
+                        </p>
+                        {order.customer_phone && (
+                          <p className="text-sm">
+                            <span className="text-gray-500">Phone:</span><br />
+                            <span className="text-gray-800">{order.customer_phone}</span>
+                          </p>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
