@@ -177,7 +177,7 @@ const ProductsTab: React.FC = () => {
 
   const productFields = [
     { key: 'title', label: 'Product Title', type: 'text' as const, required: true },
-    { key: 'description', label: 'Description', type: 'textarea' as const },
+    { key: 'description', label: 'Description', type: 'textarea' as const, colSpan: 2 },
     { 
       key: 'category_id', 
       label: 'Category', 

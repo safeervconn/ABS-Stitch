@@ -11,6 +11,7 @@ interface Field {
   min?: number;
   max?: number;
   step?: number;
+  colSpan?: number;
 }
 
 interface CrudModalProps {
@@ -35,6 +36,7 @@ const CrudModal: React.FC<CrudModalProps> = ({
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [generalError, setGeneralError] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -59,6 +61,7 @@ const CrudModal: React.FC<CrudModalProps> = ({
       });
       setFormData(initData);
       setErrors({});
+      setGeneralError('');
     }
   }, [isOpen, fields, initialData]);
 
@@ -121,7 +124,7 @@ const CrudModal: React.FC<CrudModalProps> = ({
       onClose();
     } catch (error) {
       console.error('Error submitting form:', error);
-      // Handle error (could set a general error state)
+      setGeneralError(error.message || 'An error occurred while saving. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -226,11 +229,13 @@ const CrudModal: React.FC<CrudModalProps> = ({
       
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
           
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+            </div>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -242,9 +247,16 @@ const CrudModal: React.FC<CrudModalProps> = ({
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-6">
-            <div className="space-y-6">
+            {/* Error Display */}
+            {generalError && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <p className="text-red-700 text-sm">{generalError}</p>
+              </div>
+            )}
+
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
               {fields.map((field) => (
-                <div key={field.key}>
+                <div key={field.key} className={field.colSpan === 2 ? 'md:col-span-2' : ''}>
                   {field.type !== 'checkbox' && (
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {field.label}
@@ -260,7 +272,7 @@ const CrudModal: React.FC<CrudModalProps> = ({
             </div>
 
             {/* Actions */}
-            <div className="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
               <button
                 type="button"
                 onClick={onClose}
@@ -271,7 +283,7 @@ const CrudModal: React.FC<CrudModalProps> = ({
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={submitting || loading}
               >
                 {submitting ? (
