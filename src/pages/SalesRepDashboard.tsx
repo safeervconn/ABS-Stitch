@@ -40,6 +40,7 @@ const SalesRepDashboard: React.FC = () => {
       search: '',
       sortBy: 'created_at',
       sortOrder: 'desc',
+      status: ['new', 'under_review'], // Default to new and under_review
     }
   );
   
@@ -69,6 +70,7 @@ const SalesRepDashboard: React.FC = () => {
     search: '',
     sortBy: 'created_at',
     sortOrder: 'desc',
+    status: ['new', 'under_review'], // Default to new and under_review
   });
   
   // Assignment options
@@ -239,6 +241,11 @@ const SalesRepDashboard: React.FC = () => {
       customer: '',
     });
     updateParams(initialParams);
+    updateParams({
+      ...initialParams,
+      salesRepId: user?.id, // Keep sales rep filter
+      status: ['new', 'under_review'], // Reset to default status
+    });
   };
 
   const handleEditOrder = (order: any) => {

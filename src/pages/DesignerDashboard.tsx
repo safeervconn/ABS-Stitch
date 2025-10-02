@@ -24,7 +24,7 @@ const DesignerDashboard: React.FC = () => {
       sortBy: 'created_at',
       sortOrder: 'desc',
       assignedDesignerId: undefined, // Will be set once user is loaded
-      status: ['new', 'in_progress', 'under_review'], // Broader default filter
+      status: ['in_progress'], // Default to in_progress only
     }
   );
   
@@ -39,7 +39,7 @@ const DesignerDashboard: React.FC = () => {
   
   // Filter states
   const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({
-    status: ['new', 'in_progress', 'under_review'], // Broader default filter
+    status: ['in_progress'], // Default to in_progress only
     dateFrom: '',
     dateTo: '',
     customer: '',
@@ -52,7 +52,7 @@ const DesignerDashboard: React.FC = () => {
     search: '',
     sortBy: 'created_at',
     sortOrder: 'desc',
-    status: ['new', 'in_progress', 'under_review'], // Broader default filter
+    status: ['in_progress'], // Default to in_progress only
   });
 
   // Color mapping for stat cards
@@ -82,7 +82,7 @@ const DesignerDashboard: React.FC = () => {
             // Apply designer filter to orders
             updateParams({ 
               assignedDesignerId: profile.id,
-              status: ['new', 'in_progress', 'under_review'] // Set broader default status filter
+              status: ['in_progress'] // Set default status filter to in_progress only
             });
           } else {
             console.error('Access denied: User role is', profile?.role, 'but designer required');
@@ -199,7 +199,7 @@ const DesignerDashboard: React.FC = () => {
 
   const handleClearFilters = () => {
     setFilterValues({
-      status: ['new', 'in_progress', 'under_review'], // Reset to broader default
+      status: ['in_progress'], // Reset to in_progress only
       dateFrom: '',
       dateTo: '',
       customer: '',
@@ -207,7 +207,7 @@ const DesignerDashboard: React.FC = () => {
     updateParams({
       ...initialParams,
       assignedDesignerId: user?.id, // Keep designer filter
-      status: ['new', 'in_progress', 'under_review'], // Reset to broader default status
+      status: ['in_progress'], // Reset to in_progress only
     });
   };
 
