@@ -1177,6 +1177,29 @@ export const getCustomersForInvoice = async (): Promise<{ id: string; full_name:
   }
 };
 
+// Utility function to delete files from Supabase storage
+export const deleteFileFromStorage = async (fileUrl: string, bucket: string): Promise<void> => {
+  try {
+    if (!fileUrl) return;
+    
+    // Extract file path from URL
+    const urlParts = fileUrl.split('/');
+    const fileName = urlParts[urlParts.length - 1];
+    const filePath = `${fileName}`;
+
+    const { error } = await supabase.storage
+      .from(bucket)
+      .remove([filePath]);
+
+    if (error) {
+      console.error('Error deleting file from storage:', error);
+      // Don't throw here, just log the error as file deletion is not critical
+    }
+  } catch (error) {
+    console.error('Error processing file deletion:', error);
+  }
+};
+
 export const getUnpaidOrdersForCustomer = async (
   customerId: string, 
   dateFrom?: string, 

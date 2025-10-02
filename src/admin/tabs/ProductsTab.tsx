@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, CreditCard as Edit, Trash2, Eye, Package } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
-import CrudModal from '../components/CrudModal';
+import EditProductModal from '../components/EditProductModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { createProduct, updateProduct, deleteProduct, getCategories } from '../api/supabaseHelpers';
 import { AdminProduct, Category, PaginationParams } from '../types';
@@ -162,44 +162,9 @@ const ProductsTab: React.FC = () => {
   };
 
   const handleModalSubmit = async (formData: any) => {
-    try {
-      if (modalMode === 'create') {
-        await createProduct(formData);
-      } else if (selectedProduct) {
-        await updateProduct(selectedProduct.id, formData);
-      }
-      await refetch();
-    } catch (error) {
-      console.error('Error saving product:', error);
-      throw error;
-    }
+    // This function is no longer needed as EditProductModal handles its own submission
+    await refetch();
   };
-
-  const productFields = [
-    { key: 'title', label: 'Product Title', type: 'text' as const, required: true },
-    { key: 'description', label: 'Description', type: 'textarea' as const, colSpan: 2 },
-    { 
-      key: 'category_id', 
-      label: 'Category', 
-      type: 'select' as const,
-      options: [
-        { value: '', label: 'No Category' },
-        ...categories.map(cat => ({ value: cat.id, label: cat.name }))
-      ]
-    },
-    { key: 'image_url', label: 'Image URL', type: 'text' as const },
-    { key: 'price', label: 'Price', type: 'number' as const, required: true, min: 0, step: 0.01 },
-    { 
-      key: 'status', 
-      label: 'Status', 
-      type: 'select' as const, 
-      required: true,
-      options: [
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' },
-      ]
-    },
-  ];
 
   const columns = [
     {
@@ -321,13 +286,15 @@ const ProductsTab: React.FC = () => {
       />
 
       {/* Product Modal */}
-      <CrudModal
+      <EditProductModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleModalSubmit}
-        title={modalMode === 'create' ? 'Add New Product' : 'Edit Product'}
-        fields={productFields}
-        initialData={selectedProduct}
+        product={selectedProduct}
+        mode={modalMode}
+        onSuccess={() => {
+          setIsModalOpen(false);
+          refetch();
+        }}
       />
 
       {/* Delete Confirmation Modal */}
