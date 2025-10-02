@@ -146,9 +146,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                             <Paperclip className="h-4 w-4 text-gray-500" />
                             <a
                               href={fileUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800 underline"
+                             download={`attachment-${index + 1}`}
+                             className="text-blue-600 hover:text-blue-800 underline"
                             >
                               Attachment {index + 1}
                             </a>

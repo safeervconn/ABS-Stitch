@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Loader, Paperclip, Trash2, Upload, Eye } from 'lucide-react';
+import { X, Save, Loader, Paperclip, Trash2, Upload, Download } from 'lucide-react';
 import { updateOrder, getSalesReps, getDesigners } from '../api/supabaseHelpers';
 import { AdminOrder, AdminUser } from '../types';
 import { supabase, getCurrentUser, getUserProfile } from '../../lib/supabase';
@@ -483,11 +483,18 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                             <div className="flex items-center space-x-2">
                               <button
                                 type="button"
-                                onClick={() => window.open(fileUrl, '_blank')}
-                                className="text-blue-600 hover:text-blue-800 transition-colors"
-                                title="View File"
+                               onClick={() => {
+                                 const link = document.createElement('a');
+                                 link.href = fileUrl;
+                                 link.download = getFileName(fileUrl);
+                                 document.body.appendChild(link);
+                                 link.click();
+                                 document.body.removeChild(link);
+                               }}
+                               className="text-blue-600 hover:text-blue-800 transition-colors"
+                               title="Download File"
                               >
-                                <Eye className="h-4 w-4" />
+                               <Download className="h-4 w-4" />
                               </button>
                               <button
                                 type="button"
