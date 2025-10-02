@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Loader, Paperclip, Trash2, Upload, Download } from 'lucide-react';
+import { X, Save, Loader, Paperclip, Trash2, Upload, Download, MessageSquare, Send } from 'lucide-react';
 import { updateOrder, getSalesReps, getDesigners } from '../api/supabaseHelpers';
 import { AdminOrder, AdminUser } from '../types';
 import { supabase, getCurrentUser, getUserProfile } from '../../lib/supabase';

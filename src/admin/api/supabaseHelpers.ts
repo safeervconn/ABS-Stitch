@@ -1288,7 +1288,7 @@ export const getOrderComments = async (orderId: string): Promise<OrderComment[]>
       .from('order_comments')
       .select(`
         *,
-        author:employees(full_name)
+        author:employees!order_comments_author_id_fkey(full_name)
       `)
       .eq('order_id', orderId)
       .order('created_at', { ascending: true });
@@ -1320,7 +1320,7 @@ export const addOrderComment = async (orderId: string, authorId: string, content
       }])
       .select(`
         *,
-        author:employees(full_name)
+        author:employees!order_comments_author_id_fkey(full_name)
       `)
       .single();
 
