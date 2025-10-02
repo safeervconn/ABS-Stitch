@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Loader, Paperclip, Trash2, Upload, Download, MessageSquare, Send } from 'lucide-react';
-import { updateOrder, getSalesReps, getDesigners } from '../api/supabaseHelpers';
+import { updateOrder, getSalesReps, getDesigners, getOrderComments, addOrderComment } from '../api/supabaseHelpers';
 import { AdminOrder, AdminUser } from '../types';
 import { supabase, getCurrentUser, getUserProfile } from '../../lib/supabase';
 
@@ -38,6 +38,10 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [loadingComments, setLoadingComments] = useState(false);
+  const [orderComments, setOrderComments] = useState<any[]>([]);
+  const [newCommentContent, setNewCommentContent] = useState('');
+  const [addingComment, setAddingComment] = useState(false);
 
   useEffect(() => {
     if (isOpen && order) {
@@ -65,6 +69,9 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
       
       // Fetch current user
       fetchCurrentUser();
+      
+      // Fetch order comments
+      fetchOrderComments();
     }
   }, [isOpen, order]);
 
@@ -77,6 +84,36 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
       }
     } catch (error) {
       console.error('Error fetching current user:', error);
+    }
+  };
+
+  const fetchOrderComments = async () => {
+    if (!order) return;
+    
+    try {
+      setLoadingComments(true);
+      const comments = await getOrderComments(order.id);
+      setOrderComments(comments);
+    } catch (error) {
+      console.error('Error fetching order comments:', error);
+    } finally {
+      setLoadingComments(false);
+    }
+  };
+
+  const handleAddComment = async () => {
+    if (!order || !newCommentContent.trim() || !currentUser) return;
+    
+    try {
+      setAddingComment(true);
+      await addOrderComment(order.id, currentUser.id, newCommentContent.trim());
+      setNewCommentContent('');
+      await fetchOrderComments(); // Refresh comments
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      setError('Failed to add comment. Please try again.');
+    } finally {
+      setAddingComment(false);
     }
   };
 
