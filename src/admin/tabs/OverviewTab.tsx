@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Users, DollarSign, Package, TrendingUp, Eye } from 'lucide-react';
+import { ShoppingBag, Users, DollarSign, Package, TrendingUp, Eye, AlertCircle, Clock } from 'lucide-react';
 import { useAdminData } from '../hooks/useAdminData';
 import { AdminOrder } from '../types';
 
@@ -61,6 +61,18 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
       icon: Package,
       color: 'indigo',
     },
+    {
+      title: 'New Orders',
+      value: stats.newOrdersCount.toString(),
+      icon: AlertCircle,
+      color: 'blue',
+    },
+    {
+      title: 'Under Review',
+      value: stats.underReviewOrdersCount.toString(),
+      icon: Clock,
+      color: 'orange',
+    },
   ];
 
   const getStatusColor = (status: string) => {
@@ -114,7 +126,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
         </button>
       </div>
 
-      {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {statCards.map((stat, index) => {
           const IconComponent = stat.icon;

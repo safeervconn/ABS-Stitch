@@ -45,12 +45,25 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       .select('*', { count: 'exact', head: true })
       .eq('status', 'active');
 
+    // New orders count
+    const { count: newOrdersCount } = await supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'new');
+
+    // Under review orders count
+    const { count: underReviewOrdersCount } = await supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'under_review');
     return {
       totalOrdersThisMonth: totalOrdersThisMonth || 0,
       newCustomersThisMonth: newCustomersThisMonth || 0,
       totalRevenueThisMonth,
       inProgressOrders: inProgressOrders || 0,
       activeProducts: activeProducts || 0,
+      newOrdersCount: newOrdersCount || 0,
+      underReviewOrdersCount: underReviewOrdersCount || 0,
     };
   } catch (error) {
     console.error('Error fetching admin stats:', error);
@@ -60,6 +73,8 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       totalRevenueThisMonth: 0,
       inProgressOrders: 0,
       activeProducts: 0,
+      newOrdersCount: 0,
+      underReviewOrdersCount: 0,
     };
   }
 };

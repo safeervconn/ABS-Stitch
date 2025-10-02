@@ -5,6 +5,8 @@ export interface AdminStats {
   totalRevenueThisMonth: number;
   inProgressOrders: number;
   activeProducts: number;
+  newOrdersCount: number;
+  underReviewOrdersCount: number;
 }
 
 export interface AdminUser {
