@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+zzimport React, { useState, useEffect } from 'react';
 import { FileText, Download, Eye, CreditCard, Calendar } from 'lucide-react';
 import { supabase, getCurrentUser } from '../../lib/supabase';
 import InvoiceDetailsModal from '../../admin/components/InvoiceDetailsModal';
@@ -25,7 +25,7 @@ const CustomerInvoicesTab: React.FC = () => {
         .from('invoices')
         .select(`
           *,
-          customer:customers(full_name, company_name)
+          customer:customers(full_name, email)
         `)
         .eq('customer_id', user.id)
         .order('created_at', { ascending: false });
@@ -36,7 +36,7 @@ const CustomerInvoicesTab: React.FC = () => {
         id: invoice.id,
         customer_id: invoice.customer_id,
         customer_name: invoice.customer?.full_name,
-        customer_company_name: invoice.customer?.company_name,
+        customer_email: invoice.customer?.email,
         invoice_title: invoice.invoice_title,
         month_year: invoice.month_year,
         payment_link: invoice.payment_link,
@@ -126,8 +126,8 @@ const CustomerInvoicesTab: React.FC = () => {
                   </div>
                   <div className="flex items-center space-x-4">
                     <div className="text-right">
-                      <p className="font-semibold bg-red-100 text-red-800">${invoice.total_amount.toFixed(2)}</p>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium  ${getStatusColor(invoice.status)}`}>
+                      <p className="font-semibold text-gray-900">${invoice.total_amount.toFixed(2)}</p>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(invoice.status)}`}>
                         {invoice.status.replace('_', ' ')}
                       </span>
                     </div>
