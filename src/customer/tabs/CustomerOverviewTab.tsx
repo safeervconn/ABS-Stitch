@@ -4,6 +4,8 @@ import { useOrders } from '../../contexts/OrderContext';
 
 const CustomerOverviewTab: React.FC = () => {
   const { orders } = useOrders();
+  const [isPlaceOrderOpen, setIsPlaceOrderOpen] = React.useState(false);
+
   
   // Get recent orders (last 10)
   const recentOrders = orders.slice(0, 10);
