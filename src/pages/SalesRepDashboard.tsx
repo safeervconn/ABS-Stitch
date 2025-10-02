@@ -57,7 +57,7 @@ const SalesRepDashboard: React.FC = () => {
   
   // Filter states
   const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({
-    status: ['new', 'under_review'], // Default to new and under_review
+    status: ['new', 'under_review', 'in_progress'], // Default to new and under_review
     dateFrom: '',
     dateTo: '',
     customer: '',
@@ -70,7 +70,7 @@ const SalesRepDashboard: React.FC = () => {
     search: '',
     sortBy: 'created_at',
     sortOrder: 'desc',
-    status: ['new', 'under_review'], // Default to new and under_review
+    status: ['new', 'under_review', 'in_progress'], // Default to new and under_review
   });
   
   // Assignment options
@@ -235,7 +235,7 @@ const SalesRepDashboard: React.FC = () => {
 
   const handleClearFilters = () => {
     setFilterValues({
-      status: ['new', 'under_review'], // Reset to default
+      status: ['new', 'under_review', 'in_progress'], // Reset to default
       dateFrom: '',
       dateTo: '',
       customer: '',
@@ -244,7 +244,7 @@ const SalesRepDashboard: React.FC = () => {
     updateParams({
       ...initialParams,
       salesRepId: user?.id, // Keep sales rep filter
-      status: ['new', 'under_review'], // Reset to default status
+      status: ['new', 'under_review', 'in_progress'], // Reset to default status
     });
   };
 
