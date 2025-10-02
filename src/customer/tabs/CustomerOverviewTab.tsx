@@ -135,6 +135,22 @@ const CustomerOverviewTab: React.FC = () => {
           )}
         </div>
       </div>
+      <div className="text-center py-12">
+              <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500 mb-4">
+                {orders.length === 0 ? 'No orders yet' : 'No orders match your filters'}
+              </p>
+              {orders.length === 0 && (
+                <button
+                  onClick={() => setIsPlaceOrderOpen(true)}
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold"
+                >
+                  Place Your First Order
+                </button>
+              )}
+            </div>
+          )}
+        </div>
     </div>
   );
 };
