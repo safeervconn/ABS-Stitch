@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Save, Loader, Paperclip, Trash2, Upload, Eye } from 'lucide-react';
 import { updateOrder, getSalesReps, getDesigners } from '../api/supabaseHelpers';
 import { AdminOrder, AdminUser } from '../types';
-import { supabase } from '../../lib/supabase';
+import { supabase, getCurrentUser, getUserProfile } from '../../lib/supabase';
 
 interface EditOrderModalProps {
   isOpen: boolean;
@@ -34,6 +34,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   const [filesToDelete, setFilesToDelete] = useState<string[]>([]);
   const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
   const [designers, setDesigners] = useState<AdminUser[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -61,8 +62,23 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
 
       // Fetch assignment options
       fetchAssignmentOptions();
+      
+      // Fetch current user
+      fetchCurrentUser();
     }
   }, [isOpen, order]);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const user = await getCurrentUser();
+      if (user) {
+        const profile = await getUserProfile(user.id);
+        setCurrentUser(profile);
+      }
+    } catch (error) {
+      console.error('Error fetching current user:', error);
+    }
+  };
 
   const fetchAssignmentOptions = async () => {
     try {
