@@ -15,7 +15,10 @@ const DesignerDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
+
+  // State to store user ID before initializing the hook
+  const [userId, setUserId] = useState<string | null>(null);
+
   // Use the paginated data hook for orders
   const { data: orders, params, loading: ordersLoading, error: ordersError, updateParams, refetch } = usePaginatedData(
     getOrders,
@@ -25,7 +28,8 @@ const DesignerDashboard: React.FC = () => {
       search: '',
       sortBy: 'created_at',
       sortOrder: 'desc',
-      assignedDesignerId: undefined, // Will be set once user is loaded
+      assignedDesignerId: userId || undefined,
+      status: ['in_progress'],
     }
   );
   
@@ -76,15 +80,18 @@ const DesignerDashboard: React.FC = () => {
           const profile = await getUserProfile(currentUser.id);
           if (profile && profile.role === 'designer') {
             setUser(profile);
+            setUserId(profile.id);
             // Fetch dashboard stats for this designer
             const stats = await getDesignerDashboardStats(profile.id);
             setDashboardStats(stats);
-            
-            // Apply designer filter and default status to orders
-            updateParams({
-              assignedDesignerId: profile.id,
-              status: ['in_progress']
-            });
+
+            // Apply designer filter and default status to orders only if not already set
+            if (!userId) {
+              updateParams({
+                assignedDesignerId: profile.id,
+                status: ['in_progress']
+              });
+            }
           } else {
             console.error('Access denied: User role is', profile?.role, 'but designer required');
             window.location.href = '/login';
@@ -99,9 +106,9 @@ const DesignerDashboard: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     checkUser();
-  }, [updateParams]);
+  }, []);
 
   const handleSignOut = async () => {
     try {

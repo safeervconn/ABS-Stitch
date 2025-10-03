@@ -33,6 +33,9 @@ const SalesRepDashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
+  // State to store user ID before initializing the hook
+  const [userId, setUserId] = useState<string | null>(null);
+
   // Use the paginated data hook for orders
   const { data: orders, params, loading: ordersLoading, error: ordersError, updateParams, refetch } = usePaginatedData(
     getOrders,
@@ -42,6 +45,8 @@ const SalesRepDashboard: React.FC = () => {
       search: '',
       sortBy: 'created_at',
       sortOrder: 'desc',
+      salesRepId: userId || undefined,
+      status: ['new', 'under_review'],
     }
   );
   
@@ -102,10 +107,11 @@ const SalesRepDashboard: React.FC = () => {
           const profile = await getUserProfile(currentUser.id);
           if (profile && profile.role === 'sales_rep') {
             setUser(profile);
+            setUserId(profile.id);
             // Fetch dashboard stats for this sales rep
             const stats = await getSalesRepDashboardStats(profile.id);
             setDashboardStats(stats);
-            
+
             // Fetch assignment options
             const [salesRepsData, designersData] = await Promise.all([
               getSalesReps(),
@@ -113,12 +119,14 @@ const SalesRepDashboard: React.FC = () => {
             ]);
             setSalesReps(salesRepsData);
             setDesigners(designersData);
-            
-            // Apply sales rep filter and default status to orders
-            updateParams({
-              salesRepId: profile.id,
-              status: ['new', 'under_review']
-            });
+
+            // Apply sales rep filter and default status to orders only if not already set
+            if (!userId) {
+              updateParams({
+                salesRepId: profile.id,
+                status: ['new', 'under_review']
+              });
+            }
           } else {
             console.error('Access denied: User role is', profile?.role, 'but sales_rep required');
             window.location.href = '/login';
@@ -133,7 +141,7 @@ const SalesRepDashboard: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     checkUser();
   }, []);
 
