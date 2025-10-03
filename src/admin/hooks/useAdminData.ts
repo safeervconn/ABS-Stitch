@@ -155,9 +155,13 @@ export const usePaginatedData = <T>(
     });
   }, [fetchDataDebounced]);
 
-  // Initial fetch
+  // Initial fetch - use ref to ensure it only runs once
+  const initialFetchDone = useRef(false);
   useEffect(() => {
-    fetchDataDebounced(params);
+    if (!initialFetchDone.current) {
+      initialFetchDone.current = true;
+      fetchDataDebounced(params);
+    }
   }, []);
 
   return {
