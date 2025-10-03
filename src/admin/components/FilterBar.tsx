@@ -103,7 +103,6 @@ const MultiSelectDropdown: React.FC<{
                       type="checkbox"
                       checked={isSelected}
                       onChange={(e) => {
-                        e.preventDefault(); // ✅ stop scroll-to-top issue
                         toggleOption(option.value, e.target.checked);
                       }}
                       className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
