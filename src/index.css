@@ -13,7 +13,16 @@ body {
 * {
   transition: all 0.2s ease-in-out;
 }
+/* Hide number input arrows */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
+input[type=number] {
+  -moz-appearance: textfield; /* Firefox */
+}
 /* Background spotlight effects */
 .spotlight {
   position: absolute;
