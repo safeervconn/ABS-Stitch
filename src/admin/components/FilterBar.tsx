@@ -1,16 +1,16 @@
 /**
  * Reusable Filter Bar Component
- * 
- * This component provides a consistent interface for filtering data across
- * different admin sections (Users, Orders, Products). It includes:
+ *
+ * Provides a consistent interface for filtering data across admin sections.
+ * Features:
  * - Search input with debouncing
- * - Multiple filter dropdowns
+ * - Multiple filter dropdowns (multi-select, date, number, etc.)
  * - Clear filters functionality
- * - Responsive design for mobile
+ * - Responsive layout
  */
 
-import React from 'react';
-import { Search, Filter, X } from 'lucide-react';
+import React, { useState } from "react";
+import { Search, Filter, X } from "lucide-react";
 
 export interface FilterOption {
   value: string;
@@ -22,7 +22,7 @@ export interface FilterConfig {
   label: string;
   options: FilterOption[];
   placeholder?: string;
-  type?: 'select' | 'search' | 'date' | 'number';
+  type?: "select" | "search" | "date" | "number";
   multi?: boolean;
 }
 
@@ -38,6 +38,87 @@ interface FilterBarProps {
   loading?: boolean;
 }
 
+const MultiSelectDropdown: React.FC<{
+  filter: FilterConfig;
+  selectedValues: string[];
+  onChange: (values: string[]) => void;
+}> = ({ filter, selectedValues, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleOption = (value: string, checked: boolean) => {
+    if (checked) {
+      onChange([...selectedValues, value]);
+    } else {
+      onChange(selectedValues.filter((v) => v !== value));
+    }
+  };
+
+  const displayLabel =
+    selectedValues.length === 0
+      ? filter.placeholder || `All ${filter.label}`
+      : selectedValues.length === 1
+      ? filter.options.find((opt) => opt.value === selectedValues[0])?.label
+      : `${selectedValues.length} selected`;
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm text-left bg-white flex items-center justify-between"
+      >
+        <span className="truncate">{displayLabel}</span>
+        <svg
+          className="w-4 h-4 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <>
+          {/* backdrop for closing */}
+          <div
+            className="fixed inset-0 z-10"
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-48 overflow-y-auto">
+            <div className="p-2">
+              {filter.options.map((option) => {
+                const isSelected = selectedValues.includes(option.value);
+                return (
+                  <label
+                    key={option.value}
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={(e) =>
+                        toggleOption(option.value, e.target.checked)
+                      }
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-700">{option.label}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 const FilterBar: React.FC<FilterBarProps> = ({
   searchValue,
   onSearchChange,
@@ -49,44 +130,45 @@ const FilterBar: React.FC<FilterBarProps> = ({
   resultCount,
   loading = false,
 }) => {
-  const hasActiveFilters = searchValue || Object.values(filterValues).some(value => value);
+  const hasActiveFilters =
+    searchValue || Object.values(filterValues).some((value) => value);
 
   const renderFilter = (filter: FilterConfig) => {
-    const value = filterValues[filter.key] || (filter.multi ? [] : '');
+    const value = filterValues[filter.key] || (filter.multi ? [] : "");
 
     switch (filter.type) {
-      case 'search':
+      case "search":
         return (
           <div key={filter.key} className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <input
               type="text"
               placeholder={filter.placeholder || filter.label}
-              value={Array.isArray(value) ? '' : value}
+              value={Array.isArray(value) ? "" : value}
               onChange={(e) => onFilterChange(filter.key, e.target.value)}
               className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
             />
           </div>
         );
 
-      case 'date':
+      case "date":
         return (
           <input
             key={filter.key}
             type="date"
-            value={Array.isArray(value) ? '' : value}
+            value={Array.isArray(value) ? "" : value}
             onChange={(e) => onFilterChange(filter.key, e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
           />
         );
 
-      case 'number':
+      case "number":
         return (
           <input
             key={filter.key}
             type="number"
             placeholder={filter.placeholder || filter.label}
-            value={Array.isArray(value) ? '' : value}
+            value={Array.isArray(value) ? "" : value}
             onChange={(e) => onFilterChange(filter.key, e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
           />
@@ -95,72 +177,29 @@ const FilterBar: React.FC<FilterBarProps> = ({
       default:
         if (filter.multi) {
           const selectedValues = Array.isArray(value) ? value : [];
-          const [isOpen, setIsOpen] = React.useState(false);
-          
           return (
-            <div key={filter.key} className="relative">
-              <button
-                type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm text-left bg-white flex items-center justify-between"
-              >
-                <span className="truncate">
-                  {selectedValues.length === 0 
-                    ? filter.placeholder || `All ${filter.label}`
-                    : selectedValues.length === 1
-                    ? filter.options.find(opt => opt.value === selectedValues[0])?.label
-                    : `${selectedValues.length} selected`
-                  }
-                </span>
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              
-              {isOpen && (
-                <>
-                  <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-48 overflow-y-auto">
-                    <div className="p-2">
-                      {filter.options.map(option => {
-                        const isSelected = selectedValues.includes(option.value);
-                        return (
-                          <label
-                            key={option.value}
-                            className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={(e) => {
-                                const newValues = e.target.checked
-                                  ? [...selectedValues, option.value]
-                                  : selectedValues.filter(v => v !== option.value);
-                                onFilterChange(filter.key, newValues.join(','));
-                              }}
-                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                            <span className="text-sm text-gray-700">{option.label}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
+            <MultiSelectDropdown
+              key={filter.key}
+              filter={filter}
+              selectedValues={selectedValues}
+              onChange={(newValues) =>
+                onFilterChange(filter.key, newValues.join(","))
+              }
+            />
           );
         }
-        
+
         return (
           <select
             key={filter.key}
-            value={Array.isArray(value) ? '' : value}
+            value={Array.isArray(value) ? "" : value}
             onChange={(e) => onFilterChange(filter.key, e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
           >
-            <option value="">{filter.placeholder || `All ${filter.label}`}</option>
-            {filter.options.map(option => (
+            <option value="">
+              {filter.placeholder || `All ${filter.label}`}
+            </option>
+            {filter.options.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -185,13 +224,14 @@ const FilterBar: React.FC<FilterBarProps> = ({
           />
         </div>
 
-        {/* Filter Controls */}
+        {/* Filters */}
         {filters.map(renderFilter)}
 
         {/* Clear Filters & Results Count */}
         <div className="flex items-center justify-between lg:col-span-2 xl:col-span-1">
           {hasActiveFilters && (
             <button
+              type="button"
               onClick={onClearFilters}
               className="flex items-center space-x-1 px-3 py-2 text-sm text-gray-600 hover:text-red-600 transition-colors"
             >
@@ -199,12 +239,12 @@ const FilterBar: React.FC<FilterBarProps> = ({
               <span>Clear</span>
             </button>
           )}
-          
+
           {resultCount !== undefined && (
             <div className="flex items-center text-gray-600 text-sm">
               <Filter className="h-4 w-4 mr-1" />
               <span>
-                {loading ? 'Loading...' : `${resultCount} results`}
+                {loading ? "Loading..." : `${resultCount} results`}
               </span>
             </div>
           )}
