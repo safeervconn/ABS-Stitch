@@ -100,13 +100,14 @@ const MultiSelectDropdown: React.FC<{
                     className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
                   >
                     <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={(e) =>
-                        toggleOption(option.value, e.target.checked)
-                      }
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
+  type="checkbox"
+  checked={isSelected}
+  onChange={(e) =>
+    toggleOption(option.value, e.target.checked)
+  }
+  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+/>
+
                     <span className="text-sm text-gray-700">{option.label}</span>
                   </label>
                 );
