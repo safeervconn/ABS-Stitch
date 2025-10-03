@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Palette, Clock, CheckCircle, LogOut, Bell, Upload, MessageSquare, Award, Briefcase, Eye, CreditCard as Edit, UserCircle } from 'lucide-react';
+import { Palette, Clock, CheckCircle, LogOut, Bell, Upload, MessageSquare, Award, Briefcase, Eye, CreditCard as Edit, CircleUser as UserCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
 import { getDesignerDashboardStats } from '../admin/api/supabaseHelpers';

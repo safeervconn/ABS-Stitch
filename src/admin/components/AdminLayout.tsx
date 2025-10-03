@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, ShoppingBag, Package, BarChart3, Bell, LogOut, FileText, UserCircle } from 'lucide-react';
+import { Users, ShoppingBag, Package, BarChart3, Bell, LogOut, FileText, CircleUser as UserCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import NotificationDropdown from '../../components/NotificationDropdown';
 import { signOut, getCurrentUser, getUserProfile } from '../../lib/supabase';
