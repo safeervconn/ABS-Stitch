@@ -40,7 +40,6 @@ const SalesRepDashboard: React.FC = () => {
       search: '',
       sortBy: 'created_at',
       sortOrder: 'desc',
-      status: ['new', 'under_review', 'in_progress'], // Default to new and under_review
     }
   );
   
@@ -57,7 +56,7 @@ const SalesRepDashboard: React.FC = () => {
   
   // Filter states
   const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({
-    status: ['new', 'under_review', 'in_progress'], // Default to new, under_review, and in_progress
+    status: [],
     dateFrom: '',
     dateTo: '',
     customer: '',
@@ -70,7 +69,6 @@ const SalesRepDashboard: React.FC = () => {
     search: '',
     sortBy: 'created_at',
     sortOrder: 'desc',
-    status: ['new', 'under_review', 'in_progress'], // Default to new, under_review, and in_progress
   });
   
   // Assignment options
@@ -114,9 +112,8 @@ const SalesRepDashboard: React.FC = () => {
             setDesigners(designersData);
             
             // Apply sales rep filter to orders
-            updateParams({ 
-              salesRepId: profile.id,
-              status: ['new', 'under_review', 'in_progress'] // Set default status filter
+            updateParams({
+              salesRepId: profile.id
             });
           } else {
             console.error('Access denied: User role is', profile?.role, 'but sales_rep required');
@@ -203,42 +200,42 @@ const SalesRepDashboard: React.FC = () => {
     updateParams({ search, page: 1 });
   };
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value: string | string[]) => {
     if (key === 'status') {
       // Handle multi-select status filter
-      const statusArray = value ? value.split(',') : [];
+      const statusArray = Array.isArray(value) ? value : [];
       setFilterValues(prev => ({ ...prev, [key]: statusArray }));
-      
+
       const newParams: Partial<PaginationParams> = { page: 1 };
       if (statusArray.length > 0) {
         newParams.status = statusArray;
       } else {
-        // When no status is selected, show all orders
         newParams.status = undefined;
       }
       updateParams(newParams);
       return;
     }
-    
-    setFilterValues(prev => ({ ...prev, [key]: value }));
-    
+
+    const stringValue = Array.isArray(value) ? value.join(',') : value;
+    setFilterValues(prev => ({ ...prev, [key]: stringValue }));
+
     // Apply filters to search params
     const newParams: Partial<PaginationParams> = { page: 1 };
-    
-    if (key === 'customer' && value) {
-      newParams.customerSearch = value;
-    } else if (key === 'dateFrom' && value) {
-      newParams.dateFrom = value;
-    } else if (key === 'dateTo' && value) {
-      newParams.dateTo = value;
+
+    if (key === 'customer') {
+      newParams.customerSearch = stringValue || undefined;
+    } else if (key === 'dateFrom') {
+      newParams.dateFrom = stringValue || undefined;
+    } else if (key === 'dateTo') {
+      newParams.dateTo = stringValue || undefined;
     }
-    
+
     updateParams(newParams);
   };
 
   const handleClearFilters = () => {
     setFilterValues({
-      status: ['new', 'under_review', 'in_progress'], // Reset to default
+      status: [],
       dateFrom: '',
       dateTo: '',
       customer: '',
@@ -246,7 +243,6 @@ const SalesRepDashboard: React.FC = () => {
     updateParams({
       ...initialParams,
       salesRepId: user?.id, // Keep sales rep filter
-      status: ['new', 'under_review', 'in_progress'], // Reset to default status
     });
   };
 

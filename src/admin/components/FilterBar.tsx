@@ -1,15 +1,16 @@
 /**
  * Reusable Filter Bar Component
  *
- * Provides a consistent interface for filtering data across admin sections.
+ * Production-ready filter bar with proper state management and scroll behavior.
  * Features:
  * - Search input with debouncing
  * - Multiple filter dropdowns (multi-select, date, number, etc.)
- * - Clear filters functionality
+ * - Clear filters functionality with proper reset
+ * - No page scroll on filter changes
  * - Responsive layout
  */
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Search, Filter, X } from "lucide-react";
 
 export interface FilterOption {
@@ -20,7 +21,7 @@ export interface FilterOption {
 export interface FilterConfig {
   key: string;
   label: string;
-  options: FilterOption[];
+  options?: FilterOption[];
   placeholder?: string;
   type?: "select" | "search" | "date" | "number";
   multi?: boolean;
@@ -32,7 +33,7 @@ interface FilterBarProps {
   searchPlaceholder?: string;
   filters: FilterConfig[];
   filterValues: Record<string, string | string[]>;
-  onFilterChange: (key: string, value: string) => void;
+  onFilterChange: (key: string, value: string | string[]) => void;
   onClearFilters: () => void;
   resultCount?: number;
   loading?: boolean;
@@ -44,32 +45,53 @@ const MultiSelectDropdown: React.FC<{
   onChange: (values: string[]) => void;
 }> = ({ filter, selectedValues, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const toggleOption = (value: string, checked: boolean) => {
-    if (checked) {
-      onChange([...selectedValues, value]);
-    } else {
-      onChange(selectedValues.filter((v) => v !== value));
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
     }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  const toggleOption = (value: string) => {
+    const newValues = selectedValues.includes(value)
+      ? selectedValues.filter((v) => v !== value)
+      : [...selectedValues, value];
+
+    onChange(newValues);
   };
 
   const displayLabel =
     selectedValues.length === 0
       ? filter.placeholder || `All ${filter.label}`
       : selectedValues.length === 1
-      ? filter.options.find((opt) => opt.value === selectedValues[0])?.label
+      ? filter.options?.find((opt) => opt.value === selectedValues[0])?.label
       : `${selectedValues.length} selected`;
 
   return (
-    <div className="relative">
+    <div ref={dropdownRef} className="relative">
       <button
-        type="button" // ✅ prevents accidental form submission
-        onClick={() => setIsOpen(!isOpen)}
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          setIsOpen(!isOpen);
+        }}
         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm text-left bg-white flex items-center justify-between"
       >
         <span className="truncate">{displayLabel}</span>
         <svg
-          className="w-4 h-4 text-gray-400"
+          className="w-4 h-4 text-gray-400 flex-shrink-0 ml-2"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -84,36 +106,33 @@ const MultiSelectDropdown: React.FC<{
       </button>
 
       {isOpen && (
-        <>
-          {/* backdrop for closing */}
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-          />
-          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-48 overflow-y-auto">
-            <div className="p-2">
-              {filter.options.map((option) => {
-                const isSelected = selectedValues.includes(option.value);
-                return (
-                  <label
-                    key={option.value}
-                    className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={(e) => {
-                        toggleOption(option.value, e.target.checked);
-                      }}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-gray-700">{option.label}</span>
-                  </label>
-                );
-              })}
-            </div>
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-48 overflow-y-auto">
+          <div className="p-2">
+            {filter.options?.map((option) => {
+              const isSelected = selectedValues.includes(option.value);
+              return (
+                <div
+                  key={option.value}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleOption(option.value);
+                  }}
+                  className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => {}} // Controlled by parent div click
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 pointer-events-none"
+                  />
+                  <span className="text-sm text-gray-700">{option.label}</span>
+                </div>
+              );
+            })}
           </div>
-        </>
+        </div>
       )}
     </div>
   );
@@ -131,10 +150,19 @@ const FilterBar: React.FC<FilterBarProps> = ({
   loading = false,
 }) => {
   const hasActiveFilters =
-    searchValue || Object.values(filterValues).some((value) => value);
+    searchValue ||
+    Object.entries(filterValues).some(([key, value]) => {
+      if (Array.isArray(value)) {
+        return value.length > 0;
+      }
+      return value !== '' && value !== null && value !== undefined;
+    });
 
   const renderFilter = (filter: FilterConfig) => {
-    const value = filterValues[filter.key] || (filter.multi ? [] : "");
+    const value = filterValues[filter.key];
+    const normalizedValue = value === undefined || value === null
+      ? (filter.multi ? [] : "")
+      : value;
 
     switch (filter.type) {
       case "search":
@@ -144,7 +172,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
             <input
               type="text"
               placeholder={filter.placeholder || filter.label}
-              value={Array.isArray(value) ? "" : value}
+              value={Array.isArray(normalizedValue) ? "" : normalizedValue}
               onChange={(e) => onFilterChange(filter.key, e.target.value)}
               className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
             />
@@ -156,7 +184,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           <input
             key={filter.key}
             type="date"
-            value={Array.isArray(value) ? "" : value}
+            value={Array.isArray(normalizedValue) ? "" : normalizedValue}
             onChange={(e) => onFilterChange(filter.key, e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
           />
@@ -168,23 +196,23 @@ const FilterBar: React.FC<FilterBarProps> = ({
             key={filter.key}
             type="number"
             placeholder={filter.placeholder || filter.label}
-            value={Array.isArray(value) ? "" : value}
+            value={Array.isArray(normalizedValue) ? "" : normalizedValue}
             onChange={(e) => onFilterChange(filter.key, e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
+            min="0"
+            step="0.01"
           />
         );
 
       default:
         if (filter.multi) {
-          const selectedValues = Array.isArray(value) ? value : [];
+          const selectedValues = Array.isArray(normalizedValue) ? normalizedValue : [];
           return (
             <MultiSelectDropdown
               key={filter.key}
               filter={filter}
               selectedValues={selectedValues}
-              onChange={(newValues) =>
-                onFilterChange(filter.key, newValues.join(","))
-              }
+              onChange={(newValues) => onFilterChange(filter.key, newValues)}
             />
           );
         }
@@ -192,14 +220,14 @@ const FilterBar: React.FC<FilterBarProps> = ({
         return (
           <select
             key={filter.key}
-            value={Array.isArray(value) ? "" : value}
+            value={Array.isArray(normalizedValue) ? "" : normalizedValue}
             onChange={(e) => onFilterChange(filter.key, e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
           >
             <option value="">
               {filter.placeholder || `All ${filter.label}`}
             </option>
-            {filter.options.map((option) => (
+            {filter.options?.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -231,8 +259,11 @@ const FilterBar: React.FC<FilterBarProps> = ({
         <div className="flex items-center justify-between lg:col-span-2 xl:col-span-1">
           {hasActiveFilters && (
             <button
-              type="button" // ✅ fix here
-              onClick={onClearFilters}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                onClearFilters();
+              }}
               className="flex items-center space-x-1 px-3 py-2 text-sm text-gray-600 hover:text-red-600 transition-colors"
             >
               <X className="h-4 w-4" />

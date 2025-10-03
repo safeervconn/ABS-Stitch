@@ -110,57 +110,57 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     updateParams({ search, page: 1 });
   };
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value: string | string[]) => {
     if (key === 'status') {
       // Handle multi-select status filter
-      const statusArray = value ? value.split(',') : [];
+      const statusArray = Array.isArray(value) ? value : [];
       setFilterValues(prev => ({ ...prev, [key]: statusArray }));
-      
+
       const newParams: Partial<PaginationParams> = { page: 1 };
       if (statusArray.length > 0) {
         newParams.status = statusArray;
       } else {
-        // When no status is selected, show all orders
         newParams.status = undefined;
       }
       updateParams(newParams);
       return;
     }
-    
-    setFilterValues(prev => ({ ...prev, [key]: value }));
-    
+
+    const stringValue = Array.isArray(value) ? value.join(',') : value;
+    setFilterValues(prev => ({ ...prev, [key]: stringValue }));
+
     // Apply filters to search params
     const newParams: Partial<PaginationParams> = { page: 1 };
-    
+
     // Apply filter-specific logic
-    if (key === 'paymentStatus' && value) {
-      newParams.paymentStatus = value;
-    } else if (key === 'customer' && value) {
-      newParams.customerSearch = value;
-    } else if (key === 'dateFrom' && value) {
-      newParams.dateFrom = value;
-    } else if (key === 'dateTo' && value) {
-      newParams.dateTo = value;
-    } else if (key === 'amountMin' && value) {
-      const numValue = parseFloat(value);
-      if (!isNaN(numValue) && numValue >= 0) {
-        newParams.amountMin = numValue;
+    if (key === 'paymentStatus') {
+      newParams.paymentStatus = stringValue || undefined;
+    } else if (key === 'customer') {
+      newParams.customerSearch = stringValue || undefined;
+    } else if (key === 'dateFrom') {
+      newParams.dateFrom = stringValue || undefined;
+    } else if (key === 'dateTo') {
+      newParams.dateTo = stringValue || undefined;
+    } else if (key === 'amountMin') {
+      if (stringValue) {
+        const numValue = parseFloat(stringValue);
+        if (!isNaN(numValue) && numValue >= 0) {
+          newParams.amountMin = numValue;
+        }
+      } else {
+        newParams.amountMin = undefined;
       }
-    } else if (key === 'amountMax' && value) {
-      const numValue = parseFloat(value);
-      if (!isNaN(numValue) && numValue >= 0) {
-        newParams.amountMax = numValue;
+    } else if (key === 'amountMax') {
+      if (stringValue) {
+        const numValue = parseFloat(stringValue);
+        if (!isNaN(numValue) && numValue >= 0) {
+          newParams.amountMax = numValue;
+        }
+      } else {
+        newParams.amountMax = undefined;
       }
     }
-    
-    // Clear amount filters if empty string
-    if (key === 'amountMin' && !value) {
-      newParams.amountMin = undefined;
-    }
-    if (key === 'amountMax' && !value) {
-      newParams.amountMax = undefined;
-    }
-    
+
     updateParams(newParams);
   };
 

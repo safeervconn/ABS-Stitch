@@ -24,7 +24,6 @@ const DesignerDashboard: React.FC = () => {
       sortBy: 'created_at',
       sortOrder: 'desc',
       assignedDesignerId: undefined, // Will be set once user is loaded
-      status: ['in_progress'], // Default to in_progress only
     }
   );
   
@@ -39,7 +38,7 @@ const DesignerDashboard: React.FC = () => {
   
   // Filter states
   const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({
-    status: ['in_progress'], // Default to in_progress only
+    status: [],
     dateFrom: '',
     dateTo: '',
     customer: '',
@@ -52,7 +51,6 @@ const DesignerDashboard: React.FC = () => {
     search: '',
     sortBy: 'created_at',
     sortOrder: 'desc',
-    status: ['in_progress'], // Default to in_progress only
   });
 
   // Color mapping for stat cards
@@ -80,9 +78,8 @@ const DesignerDashboard: React.FC = () => {
             setDashboardStats(stats);
             
             // Apply designer filter to orders
-            updateParams({ 
-              assignedDesignerId: profile.id,
-              status: ['in_progress'] // Set default status filter to in_progress only
+            updateParams({
+              assignedDesignerId: profile.id
             });
           } else {
             console.error('Access denied: User role is', profile?.role, 'but designer required');
@@ -167,42 +164,42 @@ const DesignerDashboard: React.FC = () => {
     updateParams({ search, page: 1 });
   };
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value: string | string[]) => {
     if (key === 'status') {
       // Handle multi-select status filter
-      const statusArray = value ? value.split(',') : [];
+      const statusArray = Array.isArray(value) ? value : [];
       setFilterValues(prev => ({ ...prev, [key]: statusArray }));
-      
+
       const newParams: Partial<PaginationParams> = { page: 1 };
       if (statusArray.length > 0) {
         newParams.status = statusArray;
       } else {
-        // When no status is selected, show all orders
         newParams.status = undefined;
       }
       updateParams(newParams);
       return;
     }
-    
-    setFilterValues(prev => ({ ...prev, [key]: value }));
-    
+
+    const stringValue = Array.isArray(value) ? value.join(',') : value;
+    setFilterValues(prev => ({ ...prev, [key]: stringValue }));
+
     // Apply filters to search params
     const newParams: Partial<PaginationParams> = { page: 1 };
-    
-    if (key === 'customer' && value) {
-      newParams.customerSearch = value;
-    } else if (key === 'dateFrom' && value) {
-      newParams.dateFrom = value;
-    } else if (key === 'dateTo' && value) {
-      newParams.dateTo = value;
+
+    if (key === 'customer') {
+      newParams.customerSearch = stringValue || undefined;
+    } else if (key === 'dateFrom') {
+      newParams.dateFrom = stringValue || undefined;
+    } else if (key === 'dateTo') {
+      newParams.dateTo = stringValue || undefined;
     }
-    
+
     updateParams(newParams);
   };
 
   const handleClearFilters = () => {
     setFilterValues({
-      status: ['in_progress'], // Reset to in_progress only
+      status: [],
       dateFrom: '',
       dateTo: '',
       customer: '',
@@ -210,7 +207,6 @@ const DesignerDashboard: React.FC = () => {
     updateParams({
       ...initialParams,
       assignedDesignerId: user?.id, // Keep designer filter
-      status: ['in_progress'], // Reset to in_progress only
     });
   };
 
