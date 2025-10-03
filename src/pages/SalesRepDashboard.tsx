@@ -195,31 +195,32 @@ const SalesRepDashboard: React.FC = () => {
   ];
 
   // NOTE: merge with current params to avoid replacing whole params object
-  const handleParamsChange = (newParams: Partial<PaginationParams>) => {
-    updateParams({ ...(params || {}), ...newParams });
-  };
+  const handleFilterChange = (key: string, value: string | string[]) => {
+  const newFilterValues = { ...filterValues };
 
-  const handleSearch = (search: string) => {
-    updateParams({ ...(params || {}), search, page: 1 });
-  };
+  if (key === 'status') {
+    const statusArray = Array.isArray(value) ? value : value.split(',').filter(Boolean);
+    newFilterValues.status = statusArray;
 
-  const handleFilterChange = (key: string, value: string) => {
-    if (key === 'status') {
-      // Handle multi-select status filter
-      const statusArray = value ? value.split(',') : [];
-      setFilterValues(prev => ({ ...prev, [key]: statusArray }));
-      
-      const merged = {
-        ...(params || {}),
-        page: 1,
-        status: statusArray.length > 0 ? statusArray : undefined,
-      } as Partial<PaginationParams>;
+    updateParams({
+      page: 1,
+      status: statusArray.length > 0 ? statusArray : undefined,
+    });
+  } else {
+    newFilterValues[key] = value as string;
 
-      updateParams(merged);
-      return;
-    }
-    
-    setFilterValues(prev => ({ ...prev, [key]: value }));
+    const newParams: Partial<PaginationParams> = { page: 1 };
+    if (key === 'customer' && value) newParams.customerSearch = value as string;
+    if (key === 'dateFrom' && value) newParams.dateFrom = value as string;
+    if (key === 'dateTo' && value) newParams.dateTo = value as string;
+
+    updateParams(newParams);
+  }
+
+  // ✅ Only one state update after all changes
+  setFilterValues(newFilterValues);
+};
+
     
     // Apply filters to search params - merge with existing params
     const merged: Partial<PaginationParams> = {
