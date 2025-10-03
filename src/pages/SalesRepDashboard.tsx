@@ -114,8 +114,10 @@ const SalesRepDashboard: React.FC = () => {
             setDesigners(designersData);
             
             // Apply sales rep filter to orders
-            // Merge with existing params to avoid replacing unrelated params
-            updateParams({ ...(params || {}), salesRepId: profile.id, status: ['new', 'under_review', 'in_progress'] });
+            updateParams({ 
+              salesRepId: profile.id,
+              status: ['new', 'under_review', 'in_progress'] // Set default status filter
+            });
           } else {
             console.error('Access denied: User role is', profile?.role, 'but sales_rep required');
             window.location.href = '/login';
@@ -132,8 +134,7 @@ const SalesRepDashboard: React.FC = () => {
     };
     
     checkUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // run once on mount
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -162,7 +163,7 @@ const SalesRepDashboard: React.FC = () => {
     { title: 'Under Review Orders', value: dashboardStats.underReviewOrdersCount.toString(), icon: Clock, color: 'orange' }
   ];
 
- // Filter configurations
+  // Filter configurations
   const filterConfigs: FilterConfig[] = [
     {
       key: 'status',
@@ -194,54 +195,45 @@ const SalesRepDashboard: React.FC = () => {
     },
   ];
 
-  // NOTE: merge with current params to avoid replacing whole params object
-  const handleFilterChange = (key: string, value: string | string[]) => {
-  const newFilterValues = { ...filterValues };
-
-  if (key === 'status') {
-    const statusArray = Array.isArray(value) ? value : value.split(',').filter(Boolean);
-    newFilterValues.status = statusArray;
-
-    updateParams({
-      page: 1,
-      status: statusArray.length > 0 ? statusArray : undefined,
-    });
-  } else {
-    newFilterValues[key] = value as string;
-
-    const newParams: Partial<PaginationParams> = { page: 1 };
-    if (key === 'customer' && value) newParams.customerSearch = value as string;
-    if (key === 'dateFrom' && value) newParams.dateFrom = value as string;
-    if (key === 'dateTo' && value) newParams.dateTo = value as string;
-
+  const handleParamsChange = (newParams: Partial<PaginationParams>) => {
     updateParams(newParams);
-  }
+  };
 
-  // ✅ Only one state update after all changes
-  setFilterValues(newFilterValues);
-};
+  const handleSearch = (search: string) => {
+    updateParams({ search, page: 1 });
+  };
 
-    
-    // Apply filters to search params - merge with existing params
-    const merged: Partial<PaginationParams> = {
-      ...(params || {}),
-      page: 1,
-    };
-    
-    if (key === 'customer' && value) {
-      merged.customerSearch = value;
-    } else if (key === 'dateFrom' && value) {
-      merged.dateFrom = value;
-    } else if (key === 'dateTo' && value) {
-      merged.dateTo = value;
-    } else {
-      // if the incoming value is empty, ensure the param is removed
-      if (key === 'customer') merged.customerSearch = undefined;
-      if (key === 'dateFrom') merged.dateFrom = undefined;
-      if (key === 'dateTo') merged.dateTo = undefined;
+  const handleFilterChange = (key: string, value: string) => {
+    if (key === 'status') {
+      // Handle multi-select status filter
+      const statusArray = value ? value.split(',') : [];
+      setFilterValues(prev => ({ ...prev, [key]: statusArray }));
+      
+      const newParams: Partial<PaginationParams> = { page: 1 };
+      if (statusArray.length > 0) {
+        newParams.status = statusArray;
+      } else {
+        // When no status is selected, show all orders
+        newParams.status = undefined;
+      }
+      updateParams(newParams);
+      return;
     }
     
-    updateParams(merged);
+    setFilterValues(prev => ({ ...prev, [key]: value }));
+    
+    // Apply filters to search params
+    const newParams: Partial<PaginationParams> = { page: 1 };
+    
+    if (key === 'customer' && value) {
+      newParams.customerSearch = value;
+    } else if (key === 'dateFrom' && value) {
+      newParams.dateFrom = value;
+    } else if (key === 'dateTo' && value) {
+      newParams.dateTo = value;
+    }
+    
+    updateParams(newParams);
   };
 
   const handleClearFilters = () => {
@@ -251,13 +243,10 @@ const SalesRepDashboard: React.FC = () => {
       dateTo: '',
       customer: '',
     });
-
-    // Merge initial params but keep salesRepId from current params or user
-    const keepSalesRepId = params?.salesRepId || user?.id;
     updateParams({
-      ...(initialParams || {}),
-      salesRepId: keepSalesRepId,
-      status: ['new', 'under_review', 'in_progress'],
+      ...initialParams,
+      salesRepId: user?.id, // Keep sales rep filter
+      status: ['new', 'under_review', 'in_progress'], // Reset to default status
     });
   };
 
@@ -352,7 +341,6 @@ const SalesRepDashboard: React.FC = () => {
       render: (order: AdminOrder) => (
         <div className="flex items-center space-x-2">
           <button
-            type="button"
             onClick={() => handleEditOrder(order)}
             className="text-blue-600 hover:text-blue-900 transition-colors"
             title="Edit Order"
@@ -360,7 +348,6 @@ const SalesRepDashboard: React.FC = () => {
             <Edit className="h-4 w-4" />
           </button>
           <button
-            type="button"
             onClick={() => handleViewOrder(order)}
             className="text-green-600 hover:text-green-900 transition-colors"
             title="View Details"
@@ -384,7 +371,7 @@ const SalesRepDashboard: React.FC = () => {
               <h1 className="text-2xl font-bold text-gray-900">Sales Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <button type="button" className="p-2 text-gray-400 hover:text-gray-600 transition-colors relative">
+              <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors relative">
                 <Bell className="h-6 w-6" />
               </button>
               <div className="flex items-center space-x-3">
@@ -393,7 +380,6 @@ const SalesRepDashboard: React.FC = () => {
                   <p className="text-xs text-gray-500 capitalize">{user?.role || 'sales_rep'}</p>
                 </div>
                 <button
-                  type="button"
                   onClick={handleSignOut}
                   className="p-2 text-gray-400 hover:text-red-600 transition-colors"
                   title="Sign Out"
@@ -452,14 +438,14 @@ const SalesRepDashboard: React.FC = () => {
 
           {/* Filter Bar */}
           <FilterBar
-            searchValue={params?.search || ''}
+            searchValue={params.search || ''}
             onSearchChange={handleSearch}
             searchPlaceholder="Search by order number..."
             filters={filterConfigs}
             filterValues={filterValues}
             onFilterChange={handleFilterChange}
             onClearFilters={handleClearFilters}
-            resultCount={orders?.total || 0}
+            resultCount={orders.total}
             loading={ordersLoading}
           />
 
@@ -475,7 +461,7 @@ const SalesRepDashboard: React.FC = () => {
             data={orders}
             columns={columns}
             onParamsChange={handleParamsChange}
-            currentParams={params || (initialParams as PaginationParams)}
+            currentParams={params}
             loading={ordersLoading}
           />
         </div>
