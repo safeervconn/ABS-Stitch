@@ -63,7 +63,7 @@ const MultiSelectDropdown: React.FC<{
   return (
     <div className="relative">
       <button
-        type="button"
+        type="button" // ✅ prevents accidental form submission
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm text-left bg-white flex items-center justify-between"
       >
@@ -100,16 +100,16 @@ const MultiSelectDropdown: React.FC<{
                     className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
                   >
                     <input
-  type="checkbox"
-  checked={isSelected}
-  onChange={(e) =>
-    toggleOption(option.value, e.target.checked)
-  }
-  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-/>
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={(e) => {
+                        e.preventDefault(); // ✅ stop scroll-to-top issue
+                        toggleOption(option.value, e.target.checked);
+                      }}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
                     <span className="text-sm text-gray-700">{option.label}</span>
                   </label>
-                  
                 );
               })}
             </div>
@@ -119,7 +119,6 @@ const MultiSelectDropdown: React.FC<{
     </div>
   );
 };
-
 
 const FilterBar: React.FC<FilterBarProps> = ({
   searchValue,
@@ -233,7 +232,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
         <div className="flex items-center justify-between lg:col-span-2 xl:col-span-1">
           {hasActiveFilters && (
             <button
-              type="button"
+              type="button" // ✅ fix here
               onClick={onClearFilters}
               className="flex items-center space-x-1 px-3 py-2 text-sm text-gray-600 hover:text-red-600 transition-colors"
             >
