@@ -318,8 +318,9 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
                             <span className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '75.00'}</span>
                           </div>
                           <p className="text-sm text-gray-500">
-                            {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • 
-                            {new Date(order.created_at).toLocaleDateString()}
+                            {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} •
+                            {new Date(order.created_at).toLocaleDateString()} •
+                            <span className="capitalize">{(order.status || 'unknown').replace('_', ' ')}</span>
                           </p>
                           {order.custom_description && (
                             <p className="text-sm text-gray-600 mt-1 truncate">{order.custom_description}</p>
