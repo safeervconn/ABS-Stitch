@@ -174,7 +174,8 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       amountMin: '',
       amountMax: '',
     });
-    updateParams(initialParams);
+    const resetParams = { ...initialParams };
+    updateParams(resetParams);
   };
 
   const handleEditOrder = (order: AdminOrder) => {

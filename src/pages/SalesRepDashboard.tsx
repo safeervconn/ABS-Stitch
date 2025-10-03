@@ -54,21 +54,22 @@ const SalesRepDashboard: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [orderToEdit, setOrderToEdit] = useState<AdminOrder | null>(null);
   
-  // Filter states
+  // Filter states with default status for sales rep
   const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({
-    status: [],
+    status: ['new', 'under_review'],
     dateFrom: '',
     dateTo: '',
     customer: '',
   });
-  
-  // Initial params for reset
+
+  // Initial params for reset with default status
   const [initialParams] = useState<PaginationParams>({
     page: 1,
     limit: 25,
     search: '',
     sortBy: 'created_at',
     sortOrder: 'desc',
+    status: ['new', 'under_review'],
   });
   
   // Assignment options
@@ -111,9 +112,10 @@ const SalesRepDashboard: React.FC = () => {
             setSalesReps(salesRepsData);
             setDesigners(designersData);
             
-            // Apply sales rep filter to orders
+            // Apply sales rep filter and default status to orders
             updateParams({
-              salesRepId: profile.id
+              salesRepId: profile.id,
+              status: ['new', 'under_review']
             });
           } else {
             console.error('Access denied: User role is', profile?.role, 'but sales_rep required');
@@ -235,15 +237,17 @@ const SalesRepDashboard: React.FC = () => {
 
   const handleClearFilters = () => {
     setFilterValues({
-      status: [],
+      status: ['new', 'under_review'],
       dateFrom: '',
       dateTo: '',
       customer: '',
     });
-    updateParams({
+    const resetParams = {
       ...initialParams,
-      salesRepId: user?.id, // Keep sales rep filter
-    });
+      salesRepId: user?.id,
+      status: ['new', 'under_review'],
+    };
+    updateParams(resetParams);
   };
 
   const handleEditOrder = (order: any) => {

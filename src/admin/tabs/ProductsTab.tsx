@@ -127,7 +127,8 @@ const ProductsTab: React.FC = () => {
       priceMin: '',
       priceMax: '',
     });
-    updateParams(initialParams);
+    const resetParams = { ...initialParams };
+    updateParams(resetParams);
   };
 
   const handleCreateProduct = () => {

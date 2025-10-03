@@ -36,21 +36,22 @@ const DesignerDashboard: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [orderToEdit, setOrderToEdit] = useState<AdminOrder | null>(null);
   
-  // Filter states
+  // Filter states with default status for designer
   const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({
-    status: [],
+    status: ['in_progress'],
     dateFrom: '',
     dateTo: '',
     customer: '',
   });
-  
-  // Initial params for reset
+
+  // Initial params for reset with default status
   const [initialParams] = useState<PaginationParams>({
     page: 1,
     limit: 25,
     search: '',
     sortBy: 'created_at',
     sortOrder: 'desc',
+    status: ['in_progress'],
   });
 
   // Color mapping for stat cards
@@ -77,9 +78,10 @@ const DesignerDashboard: React.FC = () => {
             const stats = await getDesignerDashboardStats(profile.id);
             setDashboardStats(stats);
             
-            // Apply designer filter to orders
+            // Apply designer filter and default status to orders
             updateParams({
-              assignedDesignerId: profile.id
+              assignedDesignerId: profile.id,
+              status: ['in_progress']
             });
           } else {
             console.error('Access denied: User role is', profile?.role, 'but designer required');
@@ -199,15 +201,17 @@ const DesignerDashboard: React.FC = () => {
 
   const handleClearFilters = () => {
     setFilterValues({
-      status: [],
+      status: ['in_progress'],
       dateFrom: '',
       dateTo: '',
       customer: '',
     });
-    updateParams({
+    const resetParams = {
       ...initialParams,
-      assignedDesignerId: user?.id, // Keep designer filter
-    });
+      assignedDesignerId: user?.id,
+      status: ['in_progress'],
+    };
+    updateParams(resetParams);
   };
 
   const handleEditOrder = (order: any) => {

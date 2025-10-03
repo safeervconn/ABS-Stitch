@@ -90,7 +90,8 @@ const EmployeesTab: React.FC = () => {
       role: '',
       status: '',
     });
-    updateParams(initialParams);
+    const resetParams = { ...initialParams };
+    updateParams(resetParams);
   };
 
   const handleCreateEmployee = () => {

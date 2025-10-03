@@ -112,7 +112,8 @@ const InvoiceManagementTab: React.FC = () => {
       dateFrom: '',
       dateTo: '',
     });
-    updateParams(initialParams);
+    const resetParams = { ...initialParams };
+    updateParams(resetParams);
   };
 
   const getStatusColor = (status: string) => {
