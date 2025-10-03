@@ -199,7 +199,7 @@ const SalesRepDashboard: React.FC = () => {
       <span>{option.label}</span>
     </label>
   );
-})}
+})};
 
     {
       key: 'customer',
