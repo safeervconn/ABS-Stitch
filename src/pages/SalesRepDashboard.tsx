@@ -14,7 +14,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Users, ShoppingBag, DollarSign, LogOut, Bell, Phone, Mail, TrendingUp, Target, Eye, UserPlus, CreditCard as Edit, Clock, Package } from 'lucide-react';
+import { Users, ShoppingBag, DollarSign, LogOut, Bell, Phone, Mail, TrendingUp, Target, Eye, UserPlus, CreditCard as Edit, Clock, Package, UserCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
 import { useOrders } from '../contexts/OrderContext';
 import { getSalesRepDashboardStats, updateOrder, getSalesReps, getDesigners } from '../admin/api/supabaseHelpers';
@@ -28,6 +29,7 @@ import { getOrders } from '../admin/api/supabaseHelpers';
 import { PaginationParams } from '../admin/types';
 
 const SalesRepDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
@@ -382,6 +384,13 @@ const SalesRepDashboard: React.FC = () => {
                   <p className="text-sm font-semibold text-gray-900">{user?.full_name || 'Sales Rep'}</p>
                   <p className="text-xs text-gray-500 capitalize">{user?.role || 'sales_rep'}</p>
                 </div>
+                <button
+                  onClick={() => navigate('/profile')}
+                  className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                  title="Profile Settings"
+                >
+                  <UserCircle className="h-5 w-5" />
+                </button>
                 <button
                   onClick={handleSignOut}
                   className="p-2 text-gray-400 hover:text-red-600 transition-colors"

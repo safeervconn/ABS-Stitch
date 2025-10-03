@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { User, ShoppingBag, FileText, Bell, LogOut } from 'lucide-react';
+import { User, ShoppingBag, FileText, Bell, LogOut, UserCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import NotificationDropdown from '../../components/NotificationDropdown';
 import { signOut, getCurrentUser, getUserProfile } from '../../lib/supabase';
 
@@ -10,6 +11,7 @@ interface CustomerLayoutProps {
 }
 
 const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children, activeTab, onTabChange }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -84,6 +86,13 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children, activeTab, on
                   <p className="text-sm font-semibold text-gray-900">{user?.full_name || 'Customer'}</p>
                   <p className="text-xs text-gray-500 capitalize">{user?.role || 'customer'}</p>
                 </div>
+                <button
+                  onClick={() => navigate('/profile')}
+                  className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                  title="Profile Settings"
+                >
+                  <UserCircle className="h-5 w-5" />
+                </button>
                 <button
                   onClick={handleSignOut}
                   className="p-2 text-gray-400 hover:text-red-600 transition-colors"

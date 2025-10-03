@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Palette, Clock, CheckCircle, LogOut, Bell, Upload, MessageSquare, Award, Briefcase, Eye, CreditCard as Edit } from 'lucide-react';
+import { Palette, Clock, CheckCircle, LogOut, Bell, Upload, MessageSquare, Award, Briefcase, Eye, CreditCard as Edit, UserCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
 import { getDesignerDashboardStats } from '../admin/api/supabaseHelpers';
 import { AdminOrder, AdminUser, PaginationParams } from '../admin/types';
@@ -11,6 +12,7 @@ import { usePaginatedData } from '../admin/hooks/useAdminData';
 import { getOrders } from '../admin/api/supabaseHelpers';
 
 const DesignerDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
@@ -330,6 +332,13 @@ const DesignerDashboard: React.FC = () => {
                   <p className="text-sm font-semibold text-gray-900">{user?.full_name || 'Designer'}</p>
                   <p className="text-xs text-gray-500 capitalize">{user?.role || 'designer'}</p>
                 </div>
+                <button
+                  onClick={() => navigate('/profile')}
+                  className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                  title="Profile Settings"
+                >
+                  <UserCircle className="h-5 w-5" />
+                </button>
                 <button
                   onClick={handleSignOut}
                   className="p-2 text-gray-400 hover:text-red-600 transition-colors"

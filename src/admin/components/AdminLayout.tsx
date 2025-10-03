@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Users, ShoppingBag, Package, BarChart3, Bell, LogOut, FileText } from 'lucide-react';
+import { Users, ShoppingBag, Package, BarChart3, Bell, LogOut, FileText, UserCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import NotificationDropdown from '../../components/NotificationDropdown';
 import { signOut, getCurrentUser, getUserProfile } from '../../lib/supabase';
 
@@ -10,6 +11,7 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabChange }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -87,6 +89,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
                   <p className="text-sm font-semibold text-gray-900">{user?.full_name || 'Admin'}</p>
                   <p className="text-xs text-gray-500 capitalize">{user?.role || 'admin'}</p>
                 </div>
+                <button
+                  onClick={() => navigate('/profile')}
+                  className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                  title="Profile Settings"
+                >
+                  <UserCircle className="h-5 w-5" />
+                </button>
                 <button
                   onClick={handleSignOut}
                   className="p-2 text-gray-400 hover:text-red-600 transition-colors"
