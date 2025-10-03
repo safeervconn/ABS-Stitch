@@ -174,7 +174,16 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       amountMin: '',
       amountMax: '',
     });
-    const resetParams = { ...initialParams };
+    const resetParams: PaginationParams = {
+      ...initialParams,
+      status: undefined,
+      paymentStatus: undefined,
+      customerSearch: undefined,
+      dateFrom: undefined,
+      dateTo: undefined,
+      amountMin: undefined,
+      amountMax: undefined,
+    };
     updateParams(resetParams);
   };
 

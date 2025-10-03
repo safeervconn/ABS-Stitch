@@ -127,7 +127,13 @@ const ProductsTab: React.FC = () => {
       priceMin: '',
       priceMax: '',
     });
-    const resetParams = { ...initialParams };
+    const resetParams: PaginationParams = {
+      ...initialParams,
+      categoryId: undefined,
+      status: undefined,
+      priceMin: undefined,
+      priceMax: undefined,
+    };
     updateParams(resetParams);
   };
 

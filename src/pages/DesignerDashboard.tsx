@@ -206,10 +206,13 @@ const DesignerDashboard: React.FC = () => {
       dateTo: '',
       customer: '',
     });
-    const resetParams = {
+    const resetParams: PaginationParams = {
       ...initialParams,
       assignedDesignerId: user?.id,
       status: ['in_progress'],
+      customerSearch: undefined,
+      dateFrom: undefined,
+      dateTo: undefined,
     };
     updateParams(resetParams);
   };

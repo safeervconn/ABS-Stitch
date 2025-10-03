@@ -112,7 +112,12 @@ const InvoiceManagementTab: React.FC = () => {
       dateFrom: '',
       dateTo: '',
     });
-    const resetParams = { ...initialParams };
+    const resetParams: PaginationParams = {
+      ...initialParams,
+      invoiceStatus: undefined,
+      dateFrom: undefined,
+      dateTo: undefined,
+    };
     updateParams(resetParams);
   };
 

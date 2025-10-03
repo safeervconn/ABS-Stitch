@@ -90,7 +90,11 @@ const EmployeesTab: React.FC = () => {
       role: '',
       status: '',
     });
-    const resetParams = { ...initialParams };
+    const resetParams: PaginationParams = {
+      ...initialParams,
+      role: undefined,
+      status: undefined,
+    };
     updateParams(resetParams);
   };
 

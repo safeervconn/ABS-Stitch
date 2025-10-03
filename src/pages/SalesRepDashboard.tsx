@@ -242,10 +242,13 @@ const SalesRepDashboard: React.FC = () => {
       dateTo: '',
       customer: '',
     });
-    const resetParams = {
+    const resetParams: PaginationParams = {
       ...initialParams,
       salesRepId: user?.id,
       status: ['new', 'under_review'],
+      customerSearch: undefined,
+      dateFrom: undefined,
+      dateTo: undefined,
     };
     updateParams(resetParams);
   };

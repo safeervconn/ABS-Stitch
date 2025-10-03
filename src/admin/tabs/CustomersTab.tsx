@@ -124,7 +124,13 @@ const CustomersTab: React.FC = () => {
       dateFrom: '',
       dateTo: '',
     });
-    const resetParams = { ...initialParams };
+    const resetParams: PaginationParams = {
+      ...initialParams,
+      status: undefined,
+      salesRepId: undefined,
+      dateFrom: undefined,
+      dateTo: undefined,
+    };
     updateParams(resetParams);
   };
 
