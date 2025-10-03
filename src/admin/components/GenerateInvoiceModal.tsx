@@ -95,6 +95,17 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
       .reduce((sum, order) => sum + (order.total_amount || 0), 0);
   };
 
+  const getOrderStatusColor = (status: string) => {
+    switch (status) {
+      case 'new': return 'bg-blue-100 text-blue-800';
+      case 'in_progress': return 'bg-purple-100 text-purple-800';
+      case 'under_review': return 'bg-orange-100 text-orange-800';
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -317,11 +328,15 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
                             <span className="font-medium text-gray-900">{order.order_number}</span>
                             <span className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '75.00'}</span>
                           </div>
-                          <p className="text-sm text-gray-500">
-                            {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} •
-                            {new Date(order.created_at).toLocaleDateString()} •
-                            <span className="capitalize">{(order.status || 'unknown').replace('_', ' ')}</span>
-                          </p>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <p className="text-sm text-gray-500">
+                              {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} •
+                              {new Date(order.created_at).toLocaleDateString()}
+                            </p>
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getOrderStatusColor(order.status)}`}>
+                              {(order.status || 'unknown').replace('_', ' ')}
+                            </span>
+                          </div>
                           {order.custom_description && (
                             <p className="text-sm text-gray-600 mt-1 truncate">{order.custom_description}</p>
                           )}
