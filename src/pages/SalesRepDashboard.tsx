@@ -163,43 +163,21 @@ const SalesRepDashboard: React.FC = () => {
     { title: 'Under Review Orders', value: dashboardStats.underReviewOrdersCount.toString(), icon: Clock, color: 'orange' }
   ];
 
-  // // Filter configurations
-  // const filterConfigs: FilterConfig[] = [
-  //   {
-  //     key: 'status',
-  //     label: 'Status',
-  //     multi: true,
-  //     options: [
-  //       { value: 'new', label: 'New' },
-  //       { value: 'in_progress', label: 'In Progress' },
-  //       { value: 'under_review', label: 'Under Review' },
-  //       { value: 'completed', label: 'Completed' },
-  //       { value: 'cancelled', label: 'Cancelled' },
-  //     ],
-  //   },
+ // Filter configurations
+  const filterConfigs: FilterConfig[] = [
+    {
+      key: 'status',
+      label: 'Status',
+      multi: true,
+      options: [
+        { value: 'new', label: 'New' },
+        { value: 'in_progress', label: 'In Progress' },
+        { value: 'under_review', label: 'Under Review' },
+        { value: 'completed', label: 'Completed' },
+        { value: 'cancelled', label: 'Cancelled' },
+      ],
+    },
 
-  {filter.options.map((option) => {
-  const isSelected = selectedValues.includes(option.value);
-  return (
-    <label
-      key={option.value}
-      htmlFor={`${filter.key}-${option.value}`}
-      className="flex items-center space-x-2 px-4 py-2 cursor-pointer hover:bg-gray-50"
-    >
-      <input
-        id={`${filter.key}-${option.value}`}
-        type="checkbox"
-        checked={isSelected}
-        onChange={(e) => {
-          e.stopPropagation();  // ✅ stop bubbling up
-          onFilterChange(filter.key, option.value, e.target.checked);
-        }}
-        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-      />
-      <span>{option.label}</span>
-    </label>
-  );
-})};
 
     {
       key: 'customer',
