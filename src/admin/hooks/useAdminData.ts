@@ -113,7 +113,8 @@ export const useAdminData = (options: UseAdminDataOptions = {}) => {
 // Hook for paginated data with filters
 export const usePaginatedData = <T>(
   fetchFunction: (params: PaginationParams) => Promise<PaginatedResponse<T>>,
-  initialParams: PaginationParams
+  initialParams: PaginationParams,
+  options?: { skipInitialFetch?: boolean }
 ) => {
   const [data, setData] = useState<PaginatedResponse<T>>({
     data: [],
@@ -122,7 +123,7 @@ export const usePaginatedData = <T>(
     limit: 25,
     totalPages: 0,
   });
-  
+
   const [params, setParams] = useState<PaginationParams>(initialParams);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -158,7 +159,7 @@ export const usePaginatedData = <T>(
   // Initial fetch - use ref to ensure it only runs once
   const initialFetchDone = useRef(false);
   useEffect(() => {
-    if (!initialFetchDone.current) {
+    if (!initialFetchDone.current && !options?.skipInitialFetch) {
       initialFetchDone.current = true;
       fetchDataDebounced(params);
     }

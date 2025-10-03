@@ -36,7 +36,7 @@ const SalesRepDashboard: React.FC = () => {
   // State to store user ID before initializing the hook
   const [userId, setUserId] = useState<string | null>(null);
 
-  // Use the paginated data hook for orders
+  // Use the paginated data hook for orders - skip initial fetch until user is loaded
   const { data: orders, params, loading: ordersLoading, error: ordersError, updateParams, refetch } = usePaginatedData(
     getOrders,
     {
@@ -47,7 +47,8 @@ const SalesRepDashboard: React.FC = () => {
       sortOrder: 'desc',
       salesRepId: userId || undefined,
       status: ['new', 'under_review'],
-    }
+    },
+    { skipInitialFetch: true }
   );
   
   const [dashboardStats, setDashboardStats] = useState({
@@ -120,13 +121,11 @@ const SalesRepDashboard: React.FC = () => {
             setSalesReps(salesRepsData);
             setDesigners(designersData);
 
-            // Apply sales rep filter and default status to orders only if not already set
-            if (!userId) {
-              updateParams({
-                salesRepId: profile.id,
-                status: ['new', 'under_review']
-              });
-            }
+            // Apply sales rep filter and default status to orders
+            updateParams({
+              salesRepId: profile.id,
+              status: ['new', 'under_review']
+            });
           } else {
             console.error('Access denied: User role is', profile?.role, 'but sales_rep required');
             window.location.href = '/login';

@@ -19,7 +19,7 @@ const DesignerDashboard: React.FC = () => {
   // State to store user ID before initializing the hook
   const [userId, setUserId] = useState<string | null>(null);
 
-  // Use the paginated data hook for orders
+  // Use the paginated data hook for orders - skip initial fetch until user is loaded
   const { data: orders, params, loading: ordersLoading, error: ordersError, updateParams, refetch } = usePaginatedData(
     getOrders,
     {
@@ -30,7 +30,8 @@ const DesignerDashboard: React.FC = () => {
       sortOrder: 'desc',
       assignedDesignerId: userId || undefined,
       status: ['in_progress'],
-    }
+    },
+    { skipInitialFetch: true }
   );
   
   const [dashboardStats, setDashboardStats] = useState({
@@ -85,13 +86,11 @@ const DesignerDashboard: React.FC = () => {
             const stats = await getDesignerDashboardStats(profile.id);
             setDashboardStats(stats);
 
-            // Apply designer filter and default status to orders only if not already set
-            if (!userId) {
-              updateParams({
-                assignedDesignerId: profile.id,
-                status: ['in_progress']
-              });
-            }
+            // Apply designer filter and default status to orders
+            updateParams({
+              assignedDesignerId: profile.id,
+              status: ['in_progress']
+            });
           } else {
             console.error('Access denied: User role is', profile?.role, 'but designer required');
             window.location.href = '/login';
