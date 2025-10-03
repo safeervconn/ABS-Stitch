@@ -218,7 +218,7 @@ const SalesRepDashboard: React.FC = () => {
       }
       updateParams(newParams);
       return;
-    }
+    };
     
     setFilterValues(prev => ({ ...prev, [key]: value }));
     
