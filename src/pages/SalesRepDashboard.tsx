@@ -177,8 +177,6 @@ const SalesRepDashboard: React.FC = () => {
         { value: 'cancelled', label: 'Cancelled' },
       ],
     },
-
-
     {
       key: 'customer',
       label: 'Customer',
