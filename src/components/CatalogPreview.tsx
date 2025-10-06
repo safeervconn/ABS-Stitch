@@ -94,20 +94,20 @@ const CatalogPreview: React.FC = () => {
                   />
                 </div>
 
-                {/* Product Info - Flex layout to push button to bottom */}
-                <div className="p-4 flex flex-col h-full">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-gray-800">{product.title}</h3>
+               {/* Product Info - Flex layout to push button to bottom */}
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors text-lg">
+                      {product.title}
+                    </h3>
                     <div className="text-right">
-                      <span className="text-blue-600 font-bold">${product.price.toFixed(2)}</span>
+                      <span className="text-blue-600 font-bold text-xl">${product.price.toFixed(2)}</span>
                     </div>
                   </div>
                   
-                  <p className="text-gray-500 text-sm mb-3">{product.category?.name}</p>
+                  <p className="text-blue-500 text-sm mb-2 font-medium">{product.category?.name}</p>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed flex-grow">{product.description}</p>
                   
-                  {/* Spacer to push button to bottom */}
-                  <div className="flex-grow"></div>
-                                   
                   {/* Add to Cart Button */}
                   <AddToCartButton
                     item={{
@@ -117,7 +117,7 @@ const CatalogPreview: React.FC = () => {
                       image: product.image_url,
                       category: product.category?.name || 'Uncategorized'
                     }}
-                    className="w-full text-sm"
+                    className="w-full shadow-lg transform hover:scale-105 mt-auto"
                   />
                 </div>
               </div>
