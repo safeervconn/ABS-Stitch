@@ -195,7 +195,7 @@ const EmployeesTab: React.FC = () => {
               employee.status === 'active'
                 ? 'text-orange-600 hover:text-orange-900'
                 : 'text-green-600 hover:text-green-900'
-            }`}
+            }}
             title={employee.status === 'active' ? 'Disable Employee' : 'Enable Employee'}
           >
             {employee.status === 'active' ? <UserX className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
