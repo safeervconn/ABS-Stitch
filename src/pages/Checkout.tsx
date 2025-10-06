@@ -142,8 +142,6 @@ const Checkout: React.FC = () => {
           <span>Back to Catalog</span>
         </button>
 
-       
-        ) : (
           /* Checkout Form */
           <div className="max-w-4xl mx-auto">
             <div className="glass rounded-2xl shadow-2xl overflow-hidden">
