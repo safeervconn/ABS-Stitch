@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Send, Paperclip, Loader, Trash2, CheckCircle, Eye, Plus } from 'lucide-react';
-import { getCurrentUser, getUserProfile } from '../lib/supabase';
+import { getCurrentUser, getUserProfile, getApparelTypes } from '../lib/supabase';
 import { useOrders } from '../contexts/OrderContext';
 import { toast } from '../utils/toast';
 
@@ -10,15 +10,15 @@ interface PlaceOrderModalProps {
 }
 
 const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) => {
+  const [apparelTypes, setApparelTypes] = useState<{id: string, type_name: string}[]>([]);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     countryCode: '+1',
     phoneNumber: '',
-    designSize: '',
     customWidth: '',
     customHeight: '',
-    apparelType: '',
+    apparelTypeId: '',
     designInstructions: '',
     files: [] as File[]
   });
@@ -44,6 +44,10 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
             }));
           }
         }
+        
+        // Fetch apparel types
+        const apparelTypesData = await getApparelTypes();
+        setApparelTypes(apparelTypesData);
       } catch (error) {
         console.error('Error checking user:', error);
       }
@@ -85,9 +89,8 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
       // Prepare order data with proper field mapping
       const orderData = {
         order_type: 'custom',
-        designInstructions: formData.designInstructions,
-        designSize: formData.designSize,
-        apparelType: formData.apparelType,
+        custom_description: formData.designInstructions,
+        apparel_type_id: formData.apparelTypeId,
         customWidth: formData.customWidth,
         customHeight: formData.customHeight,
       };
@@ -116,10 +119,9 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
       email: '',
       countryCode: '+1',
       phoneNumber: '',
-      designSize: '',
       customWidth: '',
       customHeight: '',
-      apparelType: '',
+      apparelTypeId: '',
       designInstructions: '',
       files: []
     });
@@ -189,10 +191,9 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
                         email: currentUser?.email || '',
                         countryCode: '+1',
                         phoneNumber: '',
-                        designSize: '',
                         customWidth: '',
                         customHeight: '',
-                        apparelType: '',
+                       apparelTypeId: '',
                         designInstructions: '',
                         files: []
                       });
@@ -310,76 +311,57 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
               )}
 
               {/* Order-Specific Fields */}
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Design Size
-                  </label>
-                  <select
-                    name="designSize"
-                    value={formData.designSize}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Select Size</option>
-                    <option value="small">Small (3" x 3")</option>
-                    <option value="medium">Medium (5" x 5")</option>
-                    <option value="large">Large (8" x 10")</option>
-                    <option value="xl">Extra Large (12" x 12")</option>
-                    <option value="custom">Custom Size</option>
-                  </select>
-                </div>
-
+              <div className="grid md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Apparel Type
                   </label>
                   <select
-                    name="apparelType"
-                    value={formData.apparelType}
+                    name="apparelTypeId"
+                    value={formData.apparelTypeId}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Select Type</option>
-                    <option value="t-shirt">T-shirt</option>
-                    <option value="jacket">Jacket</option>
-                    <option value="cap">Cap</option>
-                    <option value="other">Other</option>
+                    {apparelTypes.map(type => (
+                      <option key={type.id} value={type.id}>{type.type_name}</option>
+                    ))}
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Width (inches)
+                  </label>
+                  <input
+                    type="number"
+                    name="customWidth"
+                    step="0.1"
+                    min="0.1"
+                    value={formData.customWidth}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Width"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Height (inches)
+                  </label>
+                  <input
+                    type="number"
+                    name="customHeight"
+                    step="0.1"
+                    min="0.1"
+                    value={formData.customHeight}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Height"
+                  />
                 </div>
               </div>
 
-              {/* Custom Size Fields */}
-              {formData.designSize === 'custom' && (
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Width (inches)
-                    </label>
-                    <input
-                      type="number"
-                      name="customWidth"
-                      step="0.1"
-                      value={formData.customWidth}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Height (inches)
-                    </label>
-                    <input
-                      type="number"
-                      name="customHeight"
-                      step="0.1"
-                      value={formData.customHeight}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                  </div>
-                </div>
-              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

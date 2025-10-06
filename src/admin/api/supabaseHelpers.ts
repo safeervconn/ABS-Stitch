@@ -191,6 +191,7 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
         *,
         customer:customers!inner(full_name, email, phone, company_name),
         product:products(title),
+        apparel_type:apparel_types(type_name),
         sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
         designer:employees!orders_assigned_designer_id_fkey(full_name)
       `)
@@ -214,8 +215,8 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
       product_title: order.product?.title,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
-      design_size: order.design_size,
-      apparel_type: order.apparel_type,
+      apparel_type_id: order.apparel_type_id,
+      apparel_type_name: order.apparel_type?.type_name,
       custom_width: order.custom_width,
       custom_height: order.custom_height,
       status: order.status,
@@ -560,6 +561,7 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
         *,
         customer:customers!inner(full_name, email, phone, company_name),
         product:products(title),
+        apparel_type:apparel_types(type_name),
         sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
         designer:employees!orders_assigned_designer_id_fkey(full_name)
       `, { count: 'exact' });
@@ -643,8 +645,8 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       product_title: order.product?.title,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
-      design_size: order.design_size,
-      apparel_type: order.apparel_type,
+      apparel_type_id: order.apparel_type_id,
+      apparel_type_name: order.apparel_type?.type_name,
       custom_width: order.custom_width,
       custom_height: order.custom_height,
       total_amount: order.total_amount,
@@ -697,7 +699,7 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
     // Get current order to check status and track changes
     const { data: currentOrder, error: fetchError } = await supabase
       .from('orders')
-      .select('status, assigned_designer_id, customer_id')
+      .select('status, assigned_designer_id, customer_id, apparel_type_id')
       .eq('id', id)
       .single();
 
@@ -715,8 +717,7 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
       .from('orders')
       .update({
         order_type: orderData.order_type,
-        design_size: orderData.design_size,
-        apparel_type: orderData.apparel_type,
+        apparel_type_id: orderData.apparel_type_id,
         custom_width: orderData.custom_width,
         custom_height: orderData.custom_height,
         total_amount: orderData.total_amount,
@@ -785,6 +786,7 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
         *,
         customer:customers!inner(full_name, email, phone, company_name),
         product:products(title),
+        apparel_type:apparel_types(type_name),
         sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
         designer:employees!orders_assigned_designer_id_fkey(full_name)
       `)
@@ -806,8 +808,8 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
       product_title: data.product?.title,
       custom_description: data.custom_description,
       file_urls: data.file_urls,
-      design_size: data.design_size,
-      apparel_type: data.apparel_type,
+      apparel_type_id: data.apparel_type_id,
+      apparel_type_name: data.apparel_type?.type_name,
       custom_width: data.custom_width,
       custom_height: data.custom_height,
       total_amount: data.total_amount,
@@ -834,7 +836,7 @@ export const getProducts = async (params: PaginationParams): Promise<PaginatedRe
       .from('products')
       .select(`
         *,
-        category:categories(name)
+        apparel_type:apparel_types(type_name)
       `, { count: 'exact' });
 
     // Apply search filter
@@ -842,9 +844,9 @@ export const getProducts = async (params: PaginationParams): Promise<PaginatedRe
       query = query.or(`title.ilike.%${params.search}%,description.ilike.%${params.search}%`);
     }
 
-    // Apply category filter
-    if (params.categoryId) {
-      query = query.eq('category_id', params.categoryId);
+    // Apply apparel type filter
+    if (params.apparelTypeId) {
+      query = query.eq('apparel_type_id', params.apparelTypeId);
     }
 
     // Apply status filter
@@ -880,7 +882,7 @@ export const getProducts = async (params: PaginationParams): Promise<PaginatedRe
 
     const transformedData = (data || []).map(product => ({
       ...product,
-      category_name: product.category?.name,
+      apparel_type_name: product.apparel_type?.type_name,
     }));
 
     return {
@@ -946,34 +948,34 @@ export const deleteProduct = async (id: string): Promise<void> => {
   }
 };
 
-// Categories Operations
-export const getCategories = async (): Promise<Category[]> => {
+// Apparel Types Operations
+export const getApparelTypes = async (): Promise<ApparelType[]> => {
   try {
     const { data, error } = await supabase
-      .from('categories')
+      .from('apparel_types')
       .select('*')
-      .order('name');
+      .order('type_name');
 
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('Error fetching categories:', error);
+    console.error('Error fetching apparel types:', error);
     return [];
   }
 };
 
-export const createCategory = async (categoryData: Partial<Category>): Promise<Category> => {
+export const createApparelType = async (apparelTypeData: Partial<ApparelType>): Promise<ApparelType> => {
   try {
     const { data, error } = await supabase
-      .from('categories')
-      .insert([categoryData])
+      .from('apparel_types')
+      .insert([apparelTypeData])
       .select()
       .single();
 
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Error creating category:', error);
+    console.error('Error creating apparel type:', error);
     throw error;
   }
 };
@@ -1222,7 +1224,8 @@ export const getOrdersByIds = async (orderIds: string[]): Promise<AdminOrder[]> 
       .select(`
         *,
         customer:customers!inner(full_name, email, phone, company_name),
-        product:products(title)
+        product:products(title),
+        apparel_type:apparel_types(type_name)
       `)
       .in('id', orderIds)
       .order('created_at', { ascending: false });
@@ -1242,8 +1245,8 @@ export const getOrdersByIds = async (orderIds: string[]): Promise<AdminOrder[]> 
       product_title: order.product?.title,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
-      design_size: order.design_size,
-      apparel_type: order.apparel_type,
+      apparel_type_id: order.apparel_type_id,
+      apparel_type_name: order.apparel_type?.type_name,
       custom_width: order.custom_width,
       custom_height: order.custom_height,
       total_amount: order.total_amount,
@@ -1269,7 +1272,8 @@ export const getAllCustomerOrders = async (customerId: string): Promise<AdminOrd
       .select(`
         *,
         customer:customers!inner(full_name, email, phone, company_name),
-        product:products(title)
+        product:products(title),
+        apparel_type:apparel_types(type_name)
       `)
       .eq('customer_id', customerId)
       .order('created_at', { ascending: false });
@@ -1289,8 +1293,8 @@ export const getAllCustomerOrders = async (customerId: string): Promise<AdminOrd
       product_title: order.product?.title,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
-      design_size: order.design_size,
-      apparel_type: order.apparel_type,
+      apparel_type_id: order.apparel_type_id,
+      apparel_type_name: order.apparel_type?.type_name,
       custom_width: order.custom_width,
       custom_height: order.custom_height,
       total_amount: order.total_amount,
@@ -1358,7 +1362,8 @@ export const getUnpaidOrdersForCustomer = async (
       .select(`
         *,
         customer:customers!inner(full_name, email, phone, company_name),
-        product:products(title)
+        product:products(title),
+        apparel_type:apparel_types(type_name)
       `)
       .eq('customer_id', customerId)
       .eq('payment_status', 'unpaid');
@@ -1389,8 +1394,8 @@ export const getUnpaidOrdersForCustomer = async (
       product_title: order.product?.title,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
-      design_size: order.design_size,
-      apparel_type: order.apparel_type,
+      apparel_type_id: order.apparel_type_id,
+      apparel_type_name: order.apparel_type?.type_name,
       custom_width: order.custom_width,
       custom_height: order.custom_height,
       total_amount: order.total_amount,

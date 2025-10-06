@@ -106,6 +106,7 @@ const CatalogPreview: React.FC = () => {
                   </div>
                   
                   <p className="text-blue-500 text-sm mb-2 font-medium">{product.category?.name}</p>
+                  <p className="text-blue-500 text-sm mb-2 font-medium">{product.apparel_type?.type_name}</p>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed flex-grow">{product.description}</p>
                   
                   {/* Add to Cart Button */}
@@ -115,7 +116,7 @@ const CatalogPreview: React.FC = () => {
                       title: product.title,
                       price: `$${product.price.toFixed(2)}`,
                       image: product.image_url,
-                      category: product.category?.name || 'Uncategorized'
+                      apparelType: product.apparel_type?.type_name || 'Uncategorized'
                     }}
                     className="w-full shadow-lg transform hover:scale-105 mt-auto"
                   />

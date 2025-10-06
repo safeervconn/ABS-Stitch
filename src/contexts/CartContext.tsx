@@ -5,13 +5,17 @@ export interface CartItem {
   title: string;
   price: string;
   image: string;
-  category: string;
+  apparelType: string;
   quantity: number;
+  selectedApparelTypeId?: string;
+  customWidth?: number;
+  customHeight?: number;
 }
 
 interface CartContextType {
   items: CartItem[];
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
+  updateCartItem: (id: string, updates: Partial<CartItem>) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
   getTotalItems: () => number;
@@ -44,11 +48,24 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         return prevItems;
       } else {
         // If new item, add with quantity 1
-        return [...prevItems, { ...newItem, quantity: 1 }];
+        return [...prevItems, { 
+          ...newItem, 
+          quantity: 1,
+          selectedApparelTypeId: undefined,
+          customWidth: undefined,
+          customHeight: undefined
+        }];
       }
     });
   };
 
+  const updateCartItem = (id: string, updates: Partial<CartItem>) => {
+    setItems(prevItems => 
+      prevItems.map(item => 
+        item.id === id ? { ...item, ...updates } : item
+      )
+    );
+  };
   const removeFromCart = (id: string) => {
     setItems(prevItems => prevItems.filter(item => item.id !== id));
   };
@@ -72,6 +89,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const value: CartContextType = {
     items,
     addToCart,
+    updateCartItem,
     removeFromCart,
     clearCart,
     getTotalItems,

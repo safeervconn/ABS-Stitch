@@ -42,11 +42,18 @@ export interface Category {
   created_at: string;
 }
 
+export interface ApparelType {
+  id: string;
+  type_name: string;
+  description?: string;
+  created_at: string;
+}
+
 export interface Product {
   id: string;
   title: string;
   description?: string;
-  category_id?: string;
+  apparel_type_id?: string;
   image_url?: string;
   price: number;
   status: 'active' | 'inactive';
@@ -283,7 +290,7 @@ export const getDashboardRoute = (role: string): string | null => {
 
 // Product database functions
 export const getProducts = async (filters?: {
-  category?: string;
+  apparelType?: string;
   search?: string;
   sortBy?: string;
   limit?: number;
@@ -293,14 +300,14 @@ export const getProducts = async (filters?: {
   .from('products')
   .select(`
     *,
-    category:categories(name)
+    apparel_type:apparel_types(type_name)
   `)
   .eq('status', 'active');
 
 
   // Apply filters
-  if (filters?.category && filters.category !== 'All') {
-    query = query.eq('categories.name', filters.category);
+  if (filters?.apparelType && filters.apparelType !== 'All') {
+    query = query.eq('apparel_types.type_name', filters.apparelType);
   }
 
   if (filters?.search) {
@@ -339,19 +346,18 @@ export const getProducts = async (filters?: {
   return data;
 };
 
-export const getProductCategories = async () => {
+export const getApparelTypes = async () => {
   const { data, error } = await supabase
-    .from('categories')
-    .select('name')
-    .order('name');
+    .from('apparel_types')
+    .select('id, type_name')
+    .order('type_name');
   
   if (error) {
-    console.error('Error fetching categories:', error);
-    return ['All'];
+    console.error('Error fetching apparel types:', error);
+    return [];
   }
   
-  const categories = data.map(item => item.name);
-  return ['All', ...categories];
+  return data || [];
 };
 
 export const getProductById = async (id: string) => {
@@ -359,7 +365,7 @@ export const getProductById = async (id: string) => {
     .from('products')
     .select(`
       *,
-      category:categories(name)
+      apparel_type:apparel_types(type_name)
     `)
     .eq('id', id)
     .eq('status', 'active')

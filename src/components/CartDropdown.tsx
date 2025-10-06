@@ -85,7 +85,7 @@ const CartDropdown: React.FC = () => {
                         <h4 className="text-sm font-medium text-gray-800 truncate">
                           {item.title}
                         </h4>
-                        <p className="text-xs text-gray-500">{item.category}</p>
+                        <p className="text-xs text-gray-500">{item.apparelType}</p>
                         <p className="text-sm font-semibold text-blue-600">{item.price}</p>
                       </div>
 

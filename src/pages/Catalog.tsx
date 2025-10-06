@@ -19,7 +19,7 @@ interface Product {
   id: string;
   title: string;
   description: string;
-  category: { name: string } | null;
+  apparel_type: { type_name: string } | null;
   price: number;
   image_url: string;
   created_at: string;
@@ -27,13 +27,13 @@ interface Product {
 
 const Catalog: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>(['All']);
+  const [apparelTypes, setApparelTypes] = useState<{id: string, type_name: string}[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
   // State for filters and search
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedApparelType, setSelectedApparelType] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
 
   // Fetch products and categories on component mount
@@ -43,15 +43,15 @@ const Catalog: React.FC = () => {
         setLoading(true);
         const [productsData, categoriesData] = await Promise.all([
           getProducts({
-            category: selectedCategory,
+            apparelType: selectedApparelType,
             search: searchTerm,
             sortBy: sortBy
           }),
-          getProductCategories()
+          getApparelTypes()
         ]);
         
         setProducts(productsData || []);
-        setCategories(categoriesData || ['All']);
+        setApparelTypes(apparelTypesData || []);
       } catch (err: any) {
         setError(err.message || 'Failed to load products');
         console.error('Error fetching catalog data:', err);
@@ -61,14 +61,14 @@ const Catalog: React.FC = () => {
     };
 
     fetchData();
-  }, [selectedCategory, searchTerm, sortBy]);
+  }, [selectedApparelType, searchTerm, sortBy]);
 
   const handleSearch = async (term: string) => {
     setSearchTerm(term);
   };
 
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
+  const handleApparelTypeChange = (apparelType: string) => {
+    setSelectedApparelType(apparelType);
   };
 
   const handleSortChange = (sort: string) => {
@@ -118,12 +118,13 @@ const Catalog: React.FC = () => {
 
             {/* Category Filter */}
             <select
-              value={selectedCategory}
-              onChange={(e) => handleCategoryChange(e.target.value)}
+              value={selectedApparelType}
+              onChange={(e) => handleApparelTypeChange(e.target.value)}
               className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
             >
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
+              <option value="All">All Types</option>
+              {apparelTypes.map(apparelType => (
+                <option key={apparelType.id} value={apparelType.type_name}>{apparelType.type_name}</option>
               ))}
             </select>
 
@@ -194,6 +195,7 @@ const Catalog: React.FC = () => {
                   </div>
                   
                   <p className="text-blue-500 text-sm mb-2 font-medium">{product.category?.name}</p>
+                  <p className="text-blue-500 text-sm mb-2 font-medium">{product.apparel_type?.type_name}</p>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed flex-grow">{product.description}</p>
                   
                   {/* Add to Cart Button */}
@@ -203,7 +205,7 @@ const Catalog: React.FC = () => {
                       title: product.title,
                       price: `$${product.price.toFixed(2)}`,
                       image: product.image_url,
-                      category: product.category?.name || 'Uncategorized'
+                      apparelType: product.apparel_type?.type_name || 'Uncategorized'
                     }}
                     className="w-full shadow-lg transform hover:scale-105 mt-auto"
                   />
@@ -223,7 +225,7 @@ const Catalog: React.FC = () => {
               <button
                 onClick={() => {
                   setSearchTerm('');
-                  setSelectedCategory('All');
+                  setSelectedApparelType('All');
                   setSortBy('newest');
                 }}
                 className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold transform hover:scale-105"

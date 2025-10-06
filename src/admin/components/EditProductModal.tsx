@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Loader, Upload, Trash2, Eye, Package } from 'lucide-react';
-import { createProduct, updateProduct, getCategories, deleteFileFromStorage } from '../api/supabaseHelpers';
-import { AdminProduct, Category } from '../types';
+import { createProduct, updateProduct, getApparelTypes, deleteFileFromStorage } from '../api/supabaseHelpers';
+import { AdminProduct, ApparelType } from '../types';
 import { supabase } from '../../lib/supabase';
 import { toast } from '../../utils/toast';
 
@@ -23,7 +23,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    category_id: '',
+    apparel_type_id: '',
     price: 0,
     status: 'active' as 'active' | 'inactive',
   });
@@ -31,7 +31,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
   const [existingImageUrl, setExistingImageUrl] = useState<string>('');
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [imageToDelete, setImageToDelete] = useState<string>('');
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [apparelTypes, setApparelTypes] = useState<ApparelType[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -43,7 +43,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         setFormData({
           title: product.title,
           description: product.description || '',
-          category_id: product.category_id || '',
+          apparel_type_id: product.apparel_type_id || '',
           price: product.price,
           status: product.status,
         });
@@ -53,7 +53,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         setFormData({
           title: '',
           description: '',
-          category_id: '',
+          apparel_type_id: '',
           price: 0,
           status: 'active',
         });
@@ -63,18 +63,18 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
       setNewImageFile(null);
       setImageToDelete('');
       setError('');
-      fetchCategories();
+      fetchApparelTypes();
     }
   }, [isOpen, mode, product]);
 
-  const fetchCategories = async () => {
+  const fetchApparelTypes = async () => {
     try {
       setLoading(true);
-      const categoriesData = await getCategories();
-      setCategories(categoriesData);
+      const apparelTypesData = await getApparelTypes();
+      setApparelTypes(apparelTypesData);
     } catch (error) {
-      console.error('Error fetching categories:', error);
-      setError('Failed to load categories');
+      console.error('Error fetching apparel types:', error);
+      setError('Failed to load apparel types');
     } finally {
       setLoading(false);
     }
@@ -269,18 +269,18 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                   {/* Category */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Category *
+                      Apparel Type *
                     </label>
                     <select
-                      name="category_id"
-                      value={formData.category_id}
+                      name="apparel_type_id"
+                      value={formData.apparel_type_id}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     >
-                      <option value="">No Category</option>
-                      {categories.map(category => (
-                        <option key={category.id} value={category.id}>
-                          {category.name}
+                      <option value="">No Type</option>
+                      {apparelTypes.map(type => (
+                        <option key={type.id} value={type.id}>
+                          {type.type_name}
                         </option>
                       ))}
                     </select>

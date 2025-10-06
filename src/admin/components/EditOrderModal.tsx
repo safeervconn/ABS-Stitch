@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Loader, Paperclip, Trash2, Upload, Download, MessageSquare, Send } from 'lucide-react';
-import { updateOrder, getSalesReps, getDesigners, getOrderComments, addOrderComment } from '../api/supabaseHelpers';
+import { updateOrder, getSalesReps, getDesigners, getOrderComments, addOrderComment, getApparelTypes } from '../api/supabaseHelpers';
 import { AdminOrder, AdminUser } from '../types';
 import { supabase, getCurrentUser, getUserProfile } from '../../lib/supabase';
 import { toast } from '../../utils/toast';
@@ -23,8 +23,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   const [formData, setFormData] = useState({
     order_type: '',
     status: '',
-    design_size: '',
-    apparel_type: '',
+    apparel_type_id: '',
     assigned_sales_rep_id: '',
     assigned_designer_id: '',
     total_amount: 0,
@@ -37,6 +36,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   const [filesToDelete, setFilesToDelete] = useState<string[]>([]);
   const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
   const [designers, setDesigners] = useState<AdminUser[]>([]);
+  const [apparelTypes, setApparelTypes] = useState<{id: string, type_name: string}[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(propCurrentUser || null);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -59,8 +59,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
       setFormData({
         order_type: order.order_type || 'custom',
         status: order.status,
-        design_size: order.design_size || '',
-        apparel_type: order.apparel_type || '',
+        apparel_type_id: order.apparel_type_id || '',
         assigned_sales_rep_id: order.assigned_sales_rep_id || '',
         assigned_designer_id: order.assigned_designer_id || '',
         total_amount: order.total_amount || 0,
@@ -134,12 +133,14 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   const fetchAssignmentOptions = async () => {
     try {
       setLoading(true);
-      const [salesRepsData, designersData] = await Promise.all([
+      const [salesRepsData, designersData, apparelTypesData] = await Promise.all([
         getSalesReps(),
         getDesigners(),
+        getApparelTypes(),
       ]);
       setSalesReps(salesRepsData);
       setDesigners(designersData);
+      setApparelTypes(apparelTypesData);
     } catch (error) {
       console.error('Error fetching assignment options:', error);
       setError('Failed to load assignment options');
@@ -404,45 +405,59 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                     </select>
                   </div>
 
-                  {/* Design Size */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Design Size
-                    </label>
-                    <select
-                      name="design_size"
-                      value={formData.design_size}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
-                      disabled={isDesigner || isFormDisabled}
-                    >
-                      <option value="">Select Size</option>
-                      <option value="small">Small (3" x 3")</option>
-                      <option value="medium">Medium (5" x 5")</option>
-                      <option value="large">Large (8" x 10")</option>
-                      <option value="xl">Extra Large (12" x 12")</option>
-                      <option value="custom">Custom Size</option>
-                    </select>
-                  </div>
-
                   {/* Apparel Type */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Apparel Type
                     </label>
                     <select
-                      name="apparel_type"
-                      value={formData.apparel_type}
+                      name="apparel_type_id"
+                      value={formData.apparel_type_id}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
                       disabled={isDesigner || isFormDisabled}
                     >
                       <option value="">Select Type</option>
-                      <option value="t-shirt">T-shirt</option>
-                      <option value="jacket">Jacket</option>
-                      <option value="cap">Cap</option>
-                      <option value="other">Other</option>
+                      {apparelTypes.map(type => (
+                        <option key={type.id} value={type.id}>{type.type_name}</option>
+                      ))}
                     </select>
+                  </div>
+
+                  {/* Custom Width */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Width (inches)
+                    </label>
+                    <input
+                      type="number"
+                      name="custom_width"
+                      value={formData.custom_width}
+                      onChange={handleInputChange}
+                      step="0.1"
+                      min="0"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      disabled={isDesigner || isFormDisabled}
+                      placeholder="Width"
+                    />
+                  </div>
+
+                  {/* Custom Height */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Height (inches)
+                    </label>
+                    <input
+                      type="number"
+                      name="custom_height"
+                      value={formData.custom_height}
+                      onChange={handleInputChange}
+                      step="0.1"
+                      min="0"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      disabled={isDesigner || isFormDisabled}
+                      placeholder="Height"
+                    />
                   </div>
 
                   {/* Assigned Sales Rep */}
@@ -508,41 +523,6 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                   )}
                 </div>
 
-                {/* Custom Size Fields */}
-                {formData.design_size === 'custom' && (
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Width (inches)
-                      </label>
-                      <input
-                        type="number"
-                        name="custom_width"
-                        value={formData.custom_width}
-                        onChange={handleInputChange}
-                        step="0.1"
-                        min="0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        disabled={isDesigner}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Height (inches)
-                      </label>
-                      <input
-                        type="number"
-                        name="custom_height"
-                        value={formData.custom_height}
-                        onChange={handleInputChange}
-                        step="0.1"
-                        min="0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        disabled={isDesigner}
-                      />
-                    </div>
-                  </div>
-                )}
 
                 {/* Design Description (Read-only) */}
                 {order.custom_description && (

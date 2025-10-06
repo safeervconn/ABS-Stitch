@@ -16,18 +16,19 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useCart } from '../contexts/CartContext';
 import { useOrders } from '../contexts/OrderContext';
-import { getCurrentUser, getUserProfile } from '../lib/supabase';
+import { getCurrentUser, getUserProfile, getApparelTypes } from '../lib/supabase';
 import { toast } from '../utils/toast';
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
-  const { items, getTotalPrice, clearCart, removeFromCart } = useCart();
+  const { items, getTotalPrice, clearCart, removeFromCart, updateCartItem } = useCart();
   const { addOrder } = useOrders();
   
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [apparelTypes, setApparelTypes] = useState<{id: string, type_name: string}[]>([]);
 
   useEffect(() => {
     const checkUserAndCart = async () => {
@@ -50,6 +51,10 @@ const Checkout: React.FC = () => {
         if (profile) {
           setCurrentUser(profile);
         }
+
+        // Fetch apparel types
+        const apparelTypesData = await getApparelTypes();
+        setApparelTypes(apparelTypesData);
       } catch (error) {
         console.error('Error checking user:', error);
         navigate('/login');
@@ -69,6 +74,21 @@ const Checkout: React.FC = () => {
       return;
     }
 
+    // Validate that all items have required fields
+    for (const item of items) {
+      if (!item.selectedApparelTypeId) {
+        setError(`Please select an apparel type for ${item.title}`);
+        return;
+      }
+      if (!item.customWidth || item.customWidth <= 0) {
+        setError(`Please enter a valid width for ${item.title}`);
+        return;
+      }
+      if (!item.customHeight || item.customHeight <= 0) {
+        setError(`Please enter a valid height for ${item.title}`);
+        return;
+      }
+    }
     setIsSubmitting(true);
     setError('');
 
@@ -83,6 +103,9 @@ const Checkout: React.FC = () => {
           order_type: 'catalog',
           product_id: item.id,
           custom_description: `${item.title}`,
+          apparel_type_id: item.selectedApparelTypeId,
+          custom_width: item.customWidth,
+          custom_height: item.customHeight,
           total_amount: itemTotal,
         };
 
@@ -107,6 +130,10 @@ const Checkout: React.FC = () => {
   };
 
   
+
+  const handleBackToCart = () => {
+    navigate('/catalog');
+  };
 
   if (loading) {
     return (
@@ -165,7 +192,7 @@ const Checkout: React.FC = () => {
                     
                     <div className="space-y-4 mb-6">
                       {items.map((item) => (
-                        <div key={item.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <div key={item.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                           <div className="flex items-center space-x-4">
                             <img
                               src={item.image}
@@ -177,7 +204,7 @@ const Checkout: React.FC = () => {
                             />
                             <div className="flex-1">
                               <h3 className="font-semibold text-gray-800">{item.title}</h3>
-                              <p className="text-sm text-gray-500">{item.category}</p>
+                              <p className="text-sm text-gray-500">{item.apparelType}</p>
                               <div className="flex items-center justify-between mt-2">
                                 <span className="text-sm text-gray-600">Quantity: 1</span>
                                 <span className="font-bold text-blue-600">
@@ -192,6 +219,64 @@ const Checkout: React.FC = () => {
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
+                          </div>
+                          
+                          {/* Custom Fields for Each Item */}
+                          <div className="mt-4 pt-4 border-t border-gray-100">
+                            <h4 className="text-sm font-medium text-gray-700 mb-3">Customization Options</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              {/* Apparel Type Dropdown */}
+                              <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1">
+                                  Apparel Type *
+                                </label>
+                                <select
+                                  value={item.selectedApparelTypeId || ''}
+                                  onChange={(e) => updateCartItem(item.id, { selectedApparelTypeId: e.target.value })}
+                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                  required
+                                >
+                                  <option value="">Select Type</option>
+                                  {apparelTypes.map(type => (
+                                    <option key={type.id} value={type.id}>{type.type_name}</option>
+                                  ))}
+                                </select>
+                              </div>
+                              
+                              {/* Custom Width */}
+                              <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1">
+                                  Width (inches) *
+                                </label>
+                                <input
+                                  type="number"
+                                  value={item.customWidth || ''}
+                                  onChange={(e) => updateCartItem(item.id, { customWidth: parseFloat(e.target.value) || 0 })}
+                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                  placeholder="Width"
+                                  min="0.1"
+                                  step="0.1"
+                                  required
+                                />
+                              </div>
+                              
+                              {/* Custom Height */}
+                              <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1">
+                                  Height (inches) *
+                                </label>
+                                <input
+                                  type="number"
+                                  value={item.customHeight || ''}
+                                  onChange={(e) => updateCartItem(item.id, { customHeight: parseFloat(e.target.value) || 0 })}
+                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                  placeholder="Height"
+                                  min="0.1"
+                                  step="0.1"
+                                  required
+                                />
+                              </div>
+                            </div>
                           </div>
                         </div>
                       ))}

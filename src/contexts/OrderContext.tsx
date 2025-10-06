@@ -10,8 +10,7 @@ interface OrderContextType {
     product_id?: string;
     custom_description: string;
     total_amount: number;
-    design_size?: string;
-    apparel_type?: string;
+    apparel_type_id?: string;
     custom_width?: number;
     custom_height?: number;
   }, files?: File[]) => Promise<void>;
@@ -44,8 +43,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     product_id?: string;
     custom_description: string;
     total_amount: number;
-    design_size?: string;
-    apparel_type?: string;
+    apparel_type_id?: string;
     custom_width?: number;
     custom_height?: number;
   }, files?: File[]) => {
@@ -104,8 +102,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           order_type: orderData.order_type,
           product_id: orderData.product_id || null,
           custom_description: orderData.custom_description,
-          design_size: orderData.design_size || null,
-          apparel_type: orderData.apparel_type || null,
+          apparel_type_id: orderData.apparel_type_id || null,
           custom_width: orderData.custom_width || null,
           custom_height: orderData.custom_height || null,
           file_urls: fileUrls.length > 0 ? fileUrls : null,
@@ -125,6 +122,13 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         
         // Get order number for notifications
         const orderNumber = newOrderData.order_number || `ORD-${newOrderData.id.slice(0, 8)}`;
+        
+        // Notify the customer who placed the order
+        await createNotification(
+          profile.id,
+          'order',
+          `Your ${orderData.order_type} order ${orderNumber} has been placed successfully! We'll keep you updated on the progress.`
+        );
         
         // Notify all admins
         const admins = await getAllAdmins();
@@ -172,7 +176,8 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     // Build fields dynamically in an array
     const selectParts = [
       "*",
-      "customer:customers(id, full_name, email, phone, company_name)"
+      "customer:customers(id, full_name, email, phone, company_name)",
+      "apparel_type:apparel_types(type_name)"
     ];
 
     if (profile.role !== "customer") {
@@ -215,8 +220,8 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       created_at: order.created_at,
       updated_at: order.updated_at,
       custom_description: order.custom_description,
-      design_size: order.design_size,
-      apparel_type: order.apparel_type,
+      apparel_type_id: order.apparel_type_id,
+      apparel_type_name: order.apparel_type?.type_name,
       custom_width: order.custom_width,
       custom_height: order.custom_height,
       assigned_sales_rep_id: order.assigned_sales_rep_id,

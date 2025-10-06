@@ -10,7 +10,7 @@ interface AddToCartButtonProps {
     title: string;
     price: string;
     image: string;
-    category: string;
+    apparelType: string;
   };
   className?: string;
 }
