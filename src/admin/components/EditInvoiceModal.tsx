@@ -3,6 +3,7 @@ import { X, Save, Loader, FileText, Package } from 'lucide-react';
 import { getInvoiceById, getAllCustomerOrders, updateInvoice } from '../api/supabaseHelpers';
 import { Invoice, AdminOrder } from '../types';
 import ConfirmationModal from './ConfirmationModal';
+import { toast } from '../../utils/toast';
 
 interface EditInvoiceModalProps {
   isOpen: boolean;
@@ -122,10 +123,12 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
         total_amount: totalAmount,
       });
 
+      toast.success('Invoice updated successfully');
       onSuccess();
       onClose();
     } catch (error) {
       console.error('Error updating invoice:', error);
+      toast.error('Failed to update invoice');
       setError('Failed to update invoice. Please try again.');
     } finally {
       setSubmitting(false);

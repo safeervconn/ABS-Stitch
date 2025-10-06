@@ -189,6 +189,48 @@ export const createEmployeeProfile = async (employeeData: {
   return data;
 };
 
+// Create employee profile for self-signup (always disabled status)
+export const createEmployeeProfileSelfSignup = async (employeeData: {
+  id: string;
+  email: string;
+  full_name: string;
+  phone?: string;
+  role: 'sales_rep' | 'designer';
+}) => {
+  const { data, error } = await supabase
+    .from('employees')
+    .insert([{
+      ...employeeData,
+      status: 'disabled' // Always disabled for self-signup
+    }])
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return data;
+};
+
+// Enhanced sign in with status check
+export const signInWithStatusCheck = async (email: string, password: string) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+  
+  if (error) throw error;
+  
+  if (data.user) {
+    // Check if user account is active
+    const profile = await getUserProfile(data.user.id);
+    if (profile && 'status' in profile && profile.status === 'disabled') {
+      // Sign out the user immediately
+      await supabase.auth.signOut();
+      throw new Error('Your account is currently inactive and will be activated by an administrator after review.');
+    }
+  }
+  
+  return data;
+};
 // Get dashboard route based on user role
 export const getDashboardRoute = (role: string): string | null => {
   switch (role) {

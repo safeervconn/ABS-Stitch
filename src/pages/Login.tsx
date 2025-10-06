@@ -11,7 +11,7 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
-import { signIn, getUserProfile, getDashboardRoute } from '../lib/supabase';
+import { signInWithStatusCheck, getUserProfile, getDashboardRoute } from '../lib/supabase';
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -34,7 +34,7 @@ const Login: React.FC = () => {
     setError('');
 
     try {
-      const { user } = await signIn(formData.email, formData.password);
+      const { user } = await signInWithStatusCheck(formData.email, formData.password);
       
       if (user) {
         // Wait for the session to be established

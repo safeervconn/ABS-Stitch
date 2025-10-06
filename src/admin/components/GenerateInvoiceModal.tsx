@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Save, Loader, Calendar, User, FileText } from 'lucide-react';
 import { getCustomersForInvoice, getUnpaidOrdersForCustomer, createInvoice } from '../api/supabaseHelpers';
 import { AdminOrder } from '../types';
+import { toast } from '../../utils/toast';
 
 interface GenerateInvoiceModalProps {
   isOpen: boolean;
@@ -136,6 +137,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
         status: 'unpaid',
       });
 
+      toast.success('Invoice generated successfully');
       onSuccess();
       
       // Reset form
@@ -150,6 +152,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
       setError('');
     } catch (error) {
       console.error('Error creating invoice:', error);
+      toast.error('Failed to generate invoice');
       setError('Failed to create invoice. Please try again.');
     } finally {
       setSubmitting(false);

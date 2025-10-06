@@ -8,6 +8,7 @@ import { updateCustomer, deleteCustomer, getSalesReps } from '../api/supabaseHel
 import { AdminCustomer, AdminUser, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { getCustomers } from '../api/supabaseHelpers';
+import { toast } from '../../utils/toast';
 
 const CustomersTab: React.FC = () => {
   // Use the new paginated data hook
@@ -150,11 +151,12 @@ const CustomersTab: React.FC = () => {
     try {
       await deleteCustomer(customerToDelete.id);
       await refetch();
+      toast.success(`Customer ${customerToDelete.full_name} deleted successfully`);
       setIsConfirmationOpen(false);
       setCustomerToDelete(null);
     } catch (error) {
       console.error('Error deleting customer:', error);
-      alert('Error deleting customer. Please try again.');
+      toast.error('Failed to delete customer. Please try again.');
     }
   };
 
@@ -163,9 +165,10 @@ const CustomersTab: React.FC = () => {
       const newStatus = customer.status === 'active' ? 'disabled' : 'active';
       await updateCustomer(customer.id, { status: newStatus });
       await refetch();
+      toast.success(`Customer ${customer.full_name} ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`);
     } catch (error) {
       console.error('Error updating customer status:', error);
-      alert('Error updating customer status. Please try again.');
+      toast.error('Failed to update customer status. Please try again.');
     }
   };
 
@@ -173,10 +176,12 @@ const CustomersTab: React.FC = () => {
     try {
       if (selectedCustomer) {
         await updateCustomer(selectedCustomer.id, formData);
+        toast.success(`Customer ${formData.full_name} updated successfully`);
       }
       await refetch();
     } catch (error) {
       console.error('Error saving customer:', error);
+      toast.error('Failed to save customer changes');
       throw error;
     }
   };

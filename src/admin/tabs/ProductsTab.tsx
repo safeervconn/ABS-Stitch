@@ -8,6 +8,7 @@ import { createProduct, updateProduct, deleteProduct, getCategories } from '../a
 import { AdminProduct, Category, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { getProducts } from '../api/supabaseHelpers';
+import { toast } from '../../utils/toast';
 
 const ProductsTab: React.FC = () => {
   // Use the new paginated data hook
@@ -160,11 +161,12 @@ const ProductsTab: React.FC = () => {
     try {
       await deleteProduct(productToDelete.id);
       await refetch();
+      toast.success(`Product ${productToDelete.title} deleted successfully`);
       setIsConfirmationOpen(false);
       setProductToDelete(null);
     } catch (error) {
       console.error('Error deleting product:', error);
-      alert('Error deleting product. Please try again.');
+      toast.error('Failed to delete product. Please try again.');
     }
   };
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Send, Paperclip, Loader, Trash2, CheckCircle, Eye, Plus } from 'lucide-react';
 import { getCurrentUser, getUserProfile } from '../lib/supabase';
 import { useOrders } from '../contexts/OrderContext';
+import { toast } from '../utils/toast';
 
 interface PlaceOrderModalProps {
   isOpen: boolean;
@@ -96,10 +97,11 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
       // Generate a mock order number for display
       const mockOrderNumber = `ORD-${Date.now().toString().slice(-8)}`;
       setOrderNumber(mockOrderNumber);
+      toast.success('Order placed successfully!');
       setShowSuccessMessage(true);
     } catch (error) {
       console.error('Error placing order:', error);
-      alert('Failed to place order. Please try again.');
+      toast.error('Failed to place order. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

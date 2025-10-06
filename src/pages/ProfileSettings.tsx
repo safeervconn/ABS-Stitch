@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase, getUserProfile, getDashboardRoute } from '../lib/supabase';
 import { User, Lock, Mail, Phone, Building, Shield, ArrowLeft, Save, Eye, EyeOff } from 'lucide-react';
+import { toast } from '../utils/toast';
 
 interface UserData {
   id: string;
@@ -116,9 +117,11 @@ const ProfileSettings: React.FC = () => {
         ...formData,
       });
 
-      setMessage({ type: 'success', text: 'Profile updated successfully' });
+      toast.success('Profile updated successfully');
+      setMessage(null);
     } catch (error: any) {
       console.error('Error updating profile:', error);
+      toast.error('Failed to update profile');
       setMessage({ type: 'error', text: error.message || 'Failed to update profile' });
     } finally {
       setSaving(false);
@@ -153,9 +156,11 @@ const ProfileSettings: React.FC = () => {
         confirmPassword: '',
       });
 
-      setMessage({ type: 'success', text: 'Password updated successfully' });
+      toast.success('Password updated successfully');
+      setMessage(null);
     } catch (error: any) {
       console.error('Error updating password:', error);
+      toast.error('Failed to update password');
       setMessage({ type: 'error', text: error.message || 'Failed to update password' });
     } finally {
       setSaving(false);

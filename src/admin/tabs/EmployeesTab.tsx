@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Plus, CreditCard as Edit, Trash2, UserCheck, UserX } from 'lucide-react';
+import { Copy, CreditCard as Edit, Trash2, UserCheck, UserX } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
-import CrudModal from '../components/CrudModal';
-import { createUser, updateUser, deleteUser } from '../api/supabaseHelpers';
+import { updateUser, deleteUser } from '../api/supabaseHelpers';
 import { AdminUser, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { getUsers } from '../api/supabaseHelpers';
+import { toast } from '../../utils/toast';
 
 const EmployeesTab: React.FC = () => {
   // Use the new paginated data hook
@@ -37,8 +37,6 @@ const EmployeesTab: React.FC = () => {
   });
 
   // Modal states
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [selectedEmployee, setSelectedEmployee] = useState<AdminUser | null>(null);
 
   // Filter configurations
@@ -98,16 +96,19 @@ const EmployeesTab: React.FC = () => {
     updateParams(resetParams);
   };
 
-  const handleCreateEmployee = () => {
-    setModalMode('create');
-    setSelectedEmployee(null);
-    setIsModalOpen(true);
+  const handleCopySignupUrl = () => {
+    const signupUrl = `${window.location.origin}/employee-signup`;
+    navigator.clipboard.writeText(signupUrl).then(() => {
+      toast.success('Employee signup URL copied to clipboard!');
+    }).catch(() => {
+      toast.error('Failed to copy URL to clipboard');
+    });
   };
 
   const handleEditEmployee = (employee: AdminUser) => {
-    setModalMode('edit');
     setSelectedEmployee(employee);
-    setIsModalOpen(true);
+    // Edit functionality would go here - for now just show toast
+    toast.info('Employee editing functionality coming soon');
   };
 
   const handleDeleteEmployee = async (employee: AdminUser) => {
@@ -115,9 +116,10 @@ const EmployeesTab: React.FC = () => {
       try {
         await deleteUser(employee.id);
         await refetch();
+        toast.success(`Employee ${employee.full_name} deleted successfully`);
       } catch (error) {
         console.error('Error deleting employee:', error);
-        alert('Error deleting employee. Please try again.');
+        toast.error('Failed to delete employee. Please try again.');
       }
     }
   };
@@ -127,52 +129,14 @@ const EmployeesTab: React.FC = () => {
       const newStatus = employee.status === 'active' ? 'disabled' : 'active';
       await updateUser(employee.id, { status: newStatus });
       await refetch();
+      toast.success(`Employee ${employee.full_name} ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`);
     } catch (error) {
       console.error('Error updating employee status:', error);
-      alert('Error updating employee status. Please try again.');
+      toast.error('Failed to update employee status. Please try again.');
     }
   };
 
-  const handleModalSubmit = async (formData: any) => {
-    try {
-      if (modalMode === 'create') {
-        await createUser(formData);
-      } else if (selectedEmployee) {
-        await updateUser(selectedEmployee.id, formData);
-      }
-      await refetch();
-    } catch (error) {
-      console.error('Error saving employee:', error);
-      throw error;
-    }
-  };
 
-  const employeeFields = [
-    { key: 'full_name', label: 'Full Name', type: 'text' as const, required: true },
-    { key: 'email', label: 'Email', type: 'email' as const, required: true },
-    { key: 'phone', label: 'Phone', type: 'text' as const },
-    { 
-      key: 'role', 
-      label: 'Role', 
-      type: 'select' as const, 
-      required: true,
-      options: [
-        { value: 'admin', label: 'Administrator' },
-        { value: 'sales_rep', label: 'Sales Representative' },
-        { value: 'designer', label: 'Designer' },
-      ]
-    },
-    { 
-      key: 'status', 
-      label: 'Status', 
-      type: 'select' as const, 
-      required: true,
-      options: [
-        { value: 'active', label: 'Active' },
-        { value: 'disabled', label: 'Disabled' },
-      ]
-    },
-  ];
 
   const columns = [
     { key: 'full_name', label: 'Name', sortable: true },
@@ -193,13 +157,18 @@ const EmployeesTab: React.FC = () => {
       label: 'Status',
       sortable: true,
       render: (employee: AdminUser) => (
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          employee.status === 'active' 
-            ? 'bg-green-100 text-green-800' 
-            : 'bg-red-100 text-red-800'
-        }`}>
-          {employee.status}
-        </span>
+        <div className="flex items-center space-x-2">
+          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            employee.status === 'active' 
+              ? 'bg-green-100 text-green-800' 
+              : 'bg-red-100 text-red-800'
+          }`}>
+            {employee.status}
+          </span>
+          {employee.status === 'disabled' && (
+            <span className="text-xs text-orange-600 font-medium">Pending Approval</span>
+          )}
+        </div>
       ),
     },
     {
@@ -249,17 +218,32 @@ const EmployeesTab: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Employee Management</h2>
-          <p className="text-gray-600 mt-1">Manage employees: administrators, sales representatives, and designers</p>
+          <p className="text-gray-600 mt-1">Manage employees and share signup URL with new team members</p>
         </div>
         <button
-          onClick={handleCreateEmployee}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-lg"
+          onClick={handleCopySignupUrl}
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold flex items-center space-x-2"
         >
-          <Plus className="h-4 w-4" />
-          <span>Add Employee</span>
+          <Copy className="h-5 w-5" />
+          <span>Copy Signup URL</span>
         </button>
       </div>
 
+      {/* Info Card */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="flex items-start space-x-3">
+          <div className="bg-blue-100 p-2 rounded-lg">
+            <Copy className="h-5 w-5 text-blue-600" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-blue-900 mb-1">Employee Signup Process</h3>
+            <p className="text-sm text-blue-800 leading-relaxed">
+              Share the signup URL with new employees. They can create their accounts, which will be disabled by default. 
+              You can then activate their accounts using the status toggle in the table below.
+            </p>
+          </div>
+        </div>
+      </div>
       {/* Enhanced Filter Bar */}
       <FilterBar
         searchValue={params.search || ''}
@@ -289,15 +273,6 @@ const EmployeesTab: React.FC = () => {
         loading={loading}
       />
 
-      {/* Employee Modal */}
-      <CrudModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleModalSubmit}
-        title={modalMode === 'create' ? 'Add New Employee' : 'Edit Employee'}
-        fields={employeeFields}
-        initialData={selectedEmployee}
-      />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { X, Save, Loader, Upload, Trash2, Eye, Package } from 'lucide-react';
 import { createProduct, updateProduct, getCategories, deleteFileFromStorage } from '../api/supabaseHelpers';
 import { AdminProduct, Category } from '../types';
 import { supabase } from '../../lib/supabase';
+import { toast } from '../../utils/toast';
 
 interface EditProductModalProps {
   isOpen: boolean;
@@ -174,14 +175,17 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 
       if (mode === 'create') {
         await createProduct(productData);
+        toast.success('Product created successfully');
       } else if (product) {
         await updateProduct(product.id, productData);
+        toast.success('Product updated successfully');
       }
 
       onSuccess();
       onClose();
     } catch (error) {
       console.error('Error saving product:', error);
+      toast.error(`Failed to ${mode === 'create' ? 'create' : 'update'} product`);
       setError('Failed to save product. Please try again.');
     } finally {
       setSubmitting(false);

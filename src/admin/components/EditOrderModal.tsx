@@ -3,6 +3,7 @@ import { X, Save, Loader, Paperclip, Trash2, Upload, Download, MessageSquare, Se
 import { updateOrder, getSalesReps, getDesigners, getOrderComments, addOrderComment } from '../api/supabaseHelpers';
 import { AdminOrder, AdminUser } from '../types';
 import { supabase, getCurrentUser, getUserProfile } from '../../lib/supabase';
+import { toast } from '../../utils/toast';
 
 interface EditOrderModalProps {
   isOpen: boolean;
@@ -118,10 +119,12 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     try {
       setAddingComment(true);
       await addOrderComment(order.id, currentUser.id, newCommentContent.trim());
+      toast.success('Comment added successfully');
       setNewCommentContent('');
       await fetchOrderComments(); // Refresh comments
     } catch (error) {
       console.error('Error adding comment:', error);
+      toast.error('Failed to add comment');
       setError('Failed to add comment. Please try again.');
     } finally {
       setAddingComment(false);
@@ -245,10 +248,12 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
         file_urls: finalFileUrls.length > 0 ? finalFileUrls : null,
       });
 
+      toast.success('Order updated successfully');
       onSuccess();
       onClose();
     } catch (error) {
       console.error('Error updating order:', error);
+      toast.error('Failed to update order');
       setError('Failed to update order. Please try again.');
     } finally {
       setSubmitting(false);
