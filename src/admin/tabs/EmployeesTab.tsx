@@ -165,8 +165,7 @@ const EmployeesTab: React.FC = () => {
           }`}>
             {employee.status}
           </span>
-          {employee.status === 'disabled' && (
-            <span className="text-xs text-orange-600 font-medium">Pending Approval</span>
+         
           )}
         </div>
       ),
