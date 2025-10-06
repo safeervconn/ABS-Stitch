@@ -331,6 +331,20 @@ export const createUser = async (userData: Partial<AdminUser>): Promise<AdminUse
       throw error;
     }
     
+    // Notify all admins about new employee creation
+    try {
+      const admins = await getAllAdmins();
+      for (const admin of admins) {
+        await createNotification(
+          admin.id,
+          'user',
+          `Admin created new employee: ${userData.full_name} (${userData.role?.replace('_', ' ')})`
+        );
+      }
+    } catch (notificationError) {
+      console.error('Error creating employee creation notifications:', notificationError);
+    }
+
     return data;
   } catch (error) {
     console.error('Error creating user:', error);
@@ -407,6 +421,20 @@ export const createCustomer = async (customerData: Partial<AdminCustomer>): Prom
       throw error;
     }
     
+    // Notify all admins about new customer creation
+    try {
+      const admins = await getAllAdmins();
+      for (const admin of admins) {
+        await createNotification(
+          admin.id,
+          'user',
+          `Admin created new customer: ${customerData.full_name}`
+        );
+      }
+    } catch (notificationError) {
+      console.error('Error creating customer creation notifications:', notificationError);
+    }
+
     return data;
   } catch (error) {
     console.error('Error creating customer:', error);
@@ -666,10 +694,10 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
       throw new Error('User profile not found');
     }
 
-    // Get current order to check status
+    // Get current order to check status and track changes
     const { data: currentOrder, error: fetchError } = await supabase
       .from('orders')
-      .select('status')
+      .select('status, assigned_designer_id, customer_id')
       .eq('id', id)
       .single();
 
@@ -704,13 +732,45 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
 
     if (error) throw error;
 
-    // Create notification for assigned user
-    if (orderData.assigned_sales_rep_id || orderData.assigned_designer_id) {
-      const assignedUserId = orderData.assigned_sales_rep_id || orderData.assigned_designer_id;
-      await createNotification(assignedUserId!, 'order', `Order ${id} has been assigned to you.`);
+    // Get the updated order with full details for notifications
+    const updatedOrder = await getOrderById(id);
+
+    // Notification triggers based on changes
+    try {
+      // If order status changed to under_review
+      if (orderData.status === 'under_review' && currentOrder.status !== 'under_review') {
+        if (updatedOrder.assigned_sales_rep_id) {
+          await createNotification(
+            updatedOrder.assigned_sales_rep_id, 
+            'order', 
+            `Order ${updatedOrder.order_number} is now under review. Please check it.`
+          );
+        }
+      }
+
+      // If designer assignment changed
+      if (orderData.assigned_designer_id && orderData.assigned_designer_id !== currentOrder.assigned_designer_id) {
+        await createNotification(
+          orderData.assigned_designer_id, 
+          'order', 
+          `Order ${updatedOrder.order_number} has been assigned to you.`
+        );
+      }
+
+      // If order status changed to completed
+      if (orderData.status === 'completed' && currentOrder.status !== 'completed') {
+        await createNotification(
+          currentOrder.customer_id, 
+          'order', 
+          `Your order ${updatedOrder.order_number} has been completed!`
+        );
+      }
+    } catch (notificationError) {
+      console.error('Error creating notifications:', notificationError);
+      // Don't throw here as the order update was successful
     }
 
-    return await getOrderById(id);
+    return updatedOrder;
   } catch (error) {
     console.error('Error updating order:', error);
     throw error;
@@ -1363,6 +1423,97 @@ export const getNotifications = async (userId: string, limit: number = 20): Prom
     return data || [];
   } catch (error) {
     console.error('Error fetching notifications:', error);
+    return [];
+  }
+};
+
+export const getNotificationsWithUnreadCount = async (userId: string, limit: number = 20): Promise<{ notifications: any[], unreadCount: number }> => {
+  try {
+    // Fetch notifications
+    const { data: notifications, error: notificationsError } = await supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (notificationsError) throw notificationsError;
+
+    // Fetch unread count
+    const { count: unreadCount, error: countError } = await supabase
+      .from('notifications')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('read', false);
+
+    if (countError) throw countError;
+
+    return {
+      notifications: notifications || [],
+      unreadCount: unreadCount || 0
+    };
+  } catch (error) {
+    console.error('Error fetching notifications with unread count:', error);
+    return { notifications: [], unreadCount: 0 };
+  }
+};
+
+export const markNotificationAsRead = async (notificationId: number): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('notifications')
+      .update({ read: true })
+      .eq('id', notificationId);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error marking notification as read:', error);
+    throw error;
+  }
+};
+
+export const markNotificationAsUnread = async (notificationId: number): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('notifications')
+      .update({ read: false })
+      .eq('id', notificationId);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error marking notification as unread:', error);
+    throw error;
+  }
+};
+
+export const markAllNotificationsAsRead = async (userId: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('notifications')
+      .update({ read: true })
+      .eq('user_id', userId)
+      .eq('read', false);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error marking all notifications as read:', error);
+    throw error;
+  }
+};
+
+// Helper function to get all admins
+export const getAllAdmins = async (): Promise<AdminUser[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('employees')
+      .select('*')
+      .eq('role', 'admin')
+      .eq('status', 'active');
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching admins:', error);
     return [];
   }
 };

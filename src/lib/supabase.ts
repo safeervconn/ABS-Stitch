@@ -167,6 +167,23 @@ export const createCustomerProfile = async (customerData: {
     .single();
   
   if (error) throw error;
+  
+  // Notify all admins about new customer signup
+  try {
+    const { getAllAdmins, createNotification } = await import('../admin/api/supabaseHelpers');
+    const admins = await getAllAdmins();
+    for (const admin of admins) {
+      await createNotification(
+        admin.id,
+        'user',
+        `New customer ${customerData.full_name} has signed up`
+      );
+    }
+  } catch (notificationError) {
+    console.error('Error creating customer signup notifications:', notificationError);
+    // Don't throw here as the customer was created successfully
+  }
+  
   return data;
 };
 
@@ -207,6 +224,23 @@ export const createEmployeeProfileSelfSignup = async (employeeData: {
     .single();
   
   if (error) throw error;
+  
+  // Notify all admins about new employee self-signup
+  try {
+    const { getAllAdmins, createNotification } = await import('../admin/api/supabaseHelpers');
+    const admins = await getAllAdmins();
+    for (const admin of admins) {
+      await createNotification(
+        admin.id,
+        'user',
+        `New employee ${employeeData.full_name} has signed up (${employeeData.role.replace('_', ' ')}) - pending approval`
+      );
+    }
+  } catch (notificationError) {
+    console.error('Error creating employee signup notifications:', notificationError);
+    // Don't throw here as the employee was created successfully
+  }
+  
   return data;
 };
 

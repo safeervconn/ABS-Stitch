@@ -107,6 +107,35 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
       if (error) throw error;
 
+      // Create notifications for new order
+      try {
+        const { getAllAdmins, createNotification } = await import('../admin/api/supabaseHelpers');
+        
+        // Get order number for notifications
+        const orderNumber = orderData.order_number || `ORD-${orderData.id.slice(0, 8)}`;
+        
+        // Notify all admins
+        const admins = await getAllAdmins();
+        for (const admin of admins) {
+          await createNotification(
+            admin.id,
+            'order',
+            `New order ${orderNumber} has been placed by ${profile.full_name}`
+          );
+        }
+        
+        // Notify assigned sales rep if exists
+        if (customerProfile.assigned_sales_rep_id) {
+          await createNotification(
+            customerProfile.assigned_sales_rep_id,
+            'order',
+            `New order ${orderNumber} has been placed by your assigned customer ${profile.full_name}`
+          );
+        }
+      } catch (notificationError) {
+        console.error('Error creating order notifications:', notificationError);
+        // Don't throw here as the order was created successfully
+      }
       await fetchOrders();
       
       // Show success message
