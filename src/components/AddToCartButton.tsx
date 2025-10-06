@@ -21,8 +21,8 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ item, className = "" 
   const handleAddToCart = async () => {
     const currentUser = await getCurrentUser();
     if (!currentUser) {
-      // Redirect unauthenticated users to sign-in page
-      window.location.href = '/login';
+      // Show toast notification for unauthenticated users
+      toast.info('Please sign in or create an account to add items to your cart');
       return;
     }
 
