@@ -142,7 +142,69 @@ const Checkout: React.FC = () => {
           <span>Back to Catalog</span>
         </button>
 
-        
+        {showSuccessMessage ? (
+          /* Success Message */
+          <div className="max-w-2xl mx-auto">
+            <div className="glass rounded-2xl shadow-2xl p-8 text-center">
+              <div className="bg-gradient-to-r from-green-100 to-emerald-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <CheckCircle className="h-10 w-10 text-green-600" />
+              </div>
+              
+              <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                Orders Placed Successfully!
+              </h1>
+              
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                Thank you for your order! We've received your {items.length} catalog item{items.length > 1 ? 's' : ''} and our team will begin processing them shortly.
+              </p>
+              
+              <div className="bg-blue-50 rounded-lg p-4 mb-6">
+                <p className="text-sm text-gray-600 mb-2">Your Order Numbers:</p>
+                <div className="space-y-1">
+                  {orderNumbers.map((orderNumber, index) => (
+                    <p key={index} className="text-lg font-bold text-blue-600">{orderNumber}</p>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    onClick={() => navigate('/customer/dashboard')}
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2 shadow-lg font-semibold"
+                  >
+                    <Eye className="h-5 w-5" />
+                    <span>View My Orders</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => navigate('/catalog')}
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all flex items-center justify-center space-x-2 shadow-lg font-semibold"
+                  >
+                    <Plus className="h-5 w-5" />
+                    <span>Continue Shopping</span>
+                  </button>
+                </div>
+                
+                <button
+                  onClick={() => {
+                    setShowSuccessMessage(false);
+                    setOrderNumbers([]);
+                    navigate('/catalog');
+                  }}
+                  className="w-full bg-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-400 transition-all font-semibold"
+                >
+                  Close
+                </button>
+              </div>
+              
+              <div className="mt-6 text-sm text-gray-500">
+                <p>📧 You'll receive email confirmations shortly</p>
+                <p>⏱️ Expected completion: 2-3 business days per item</p>
+              </div>
+            </div>
+          </div>
+        ) : (
           /* Checkout Form */
           <div className="max-w-4xl mx-auto">
             <div className="glass rounded-2xl shadow-2xl overflow-hidden">
@@ -253,10 +315,7 @@ const Checkout: React.FC = () => {
                           <span className="text-gray-600">Items ({items.length})</span>
                           <span className="font-medium">${getTotalPrice().toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Processing Fee</span>
-                          <span className="font-medium">$0.00</span>
-                        </div>
+                        
                         <hr className="border-gray-200" />
                         <div className="flex justify-between text-lg font-bold">
                           <span>Total</span>
