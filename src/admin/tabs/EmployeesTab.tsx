@@ -191,7 +191,7 @@ const EmployeesTab: React.FC = () => {
           </button>
           <button
             onClick={() => handleToggleStatus(employee)}
-            className={`transition-colors ${
+            className={\`transition-colors ${
               employee.status === 'active'
                 ? 'text-orange-600 hover:text-orange-900'
                 : 'text-green-600 hover:text-green-900'
