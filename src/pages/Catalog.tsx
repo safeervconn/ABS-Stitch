@@ -19,7 +19,7 @@ interface Product {
   id: string;
   title: string;
   description: string;
-  category: string;
+  category: { name: string } | null;
   price: number;
   original_price?: number;
   image_url: string;
@@ -243,7 +243,7 @@ const Catalog: React.FC = () => {
                       title: product.title,
                       price: `$${product.price.toFixed(2)}`,
                       image: product.image_url,
-                      category: product.category
+                      category: product.category?.name || 'Uncategorized'
                     }}
                     className="w-full shadow-lg transform hover:scale-105"
                   />

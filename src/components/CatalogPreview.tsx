@@ -122,7 +122,7 @@ const CatalogPreview: React.FC = () => {
                       title: product.title,
                       price: `$${product.price.toFixed(2)}`,
                       image: product.image_url,
-                      category: product.category?.name || product.category
+                      category: product.category?.name || 'Uncategorized'
                     }}
                     className="w-full mt-3 text-sm"
                   />
