@@ -17,6 +17,20 @@ interface AddToCartButtonProps {
 
 const AddToCartButton: React.FC<AddToCartButtonProps> = ({ item, className = "" }) => {
   const { addToCart, items } = useCart();
+  const [currentUser, setCurrentUser] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const user = await getCurrentUser();
+        setCurrentUser(user);
+      } catch (error) {
+        console.error('Error checking user:', error);
+      }
+    };
+    
+    checkUser();
+  }, []);
 
   const handleAddToCart = async () => {
     if (!currentUser) {

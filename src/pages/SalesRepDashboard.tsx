@@ -14,7 +14,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Users, ShoppingBag, DollarSign, LogOut, Bell, Phone, Mail, TrendingUp, Target, Eye, UserPlus, CreditCard as Edit, Clock, Package, CircleUser as UserCircle } from 'lucide-react';
+import { Users, ShoppingBag, DollarSign, LogOut, Bell, Phone, Mail, TrendingUp, Target, Eye, UserPlus, CreditCard as Edit, Clock, Package, CircleUser as UserCircle, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import NotificationDropdown from '../components/NotificationDropdown';
 import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
@@ -382,6 +382,14 @@ const SalesRepDashboard: React.FC = () => {
                 <TrendingUp className="h-6 w-6 text-green-600" />
               </div>
               <h1 className="text-2xl font-bold text-gray-900">Sales Dashboard</h1>
+              <button
+                onClick={() => navigate('/')}
+                className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                title="Go to Homepage"
+              >
+                <Home className="h-5 w-5" />
+                <span className="text-sm font-medium">Home</span>
+              </button>
             </div>
             <div className="flex items-center space-x-4">
               <NotificationDropdown />

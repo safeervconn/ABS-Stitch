@@ -29,25 +29,6 @@ import Checkout from './pages/Checkout';
 
 // Homepage Component
 const Homepage: React.FC = () => {
-  const [isPlaceOrderOpen, setIsPlaceOrderOpen] = React.useState(false);
-
-  React.useEffect(() => {
-    // Listen for place order modal events
-    const handleOpenPlaceOrderModal = () => {
-      setIsPlaceOrderOpen(true);
-    };
-
-    window.addEventListener('openPlaceOrderModal', handleOpenPlaceOrderModal);
-    return () => {
-      window.removeEventListener('openPlaceOrderModal', handleOpenPlaceOrderModal);
-    };
-  }, []);
-
-  const handlePlaceOrder = (orderData: any) => {
-    // Order handling is now done in the PlaceOrderModal component
-    setIsPlaceOrderOpen(false);
-  };
-
   return (
     <>
       <Navbar />
@@ -80,17 +61,25 @@ const Homepage: React.FC = () => {
       </section>
       
       <Footer />
-      
-      {/* Place Order Modal */}
-      <PlaceOrderModal
-        isOpen={isPlaceOrderOpen}
-        onClose={() => setIsPlaceOrderOpen(false)}
-      />
     </>
   );
 };
 
 function App() {
+  const [isPlaceOrderOpen, setIsPlaceOrderOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    // Listen for place order modal events
+    const handleOpenPlaceOrderModal = () => {
+      setIsPlaceOrderOpen(true);
+    };
+
+    window.addEventListener('openPlaceOrderModal', handleOpenPlaceOrderModal);
+    return () => {
+      window.removeEventListener('openPlaceOrderModal', handleOpenPlaceOrderModal);
+    };
+  }, []);
+
   return (
     <CartProvider>
       <OrderProvider>
@@ -111,6 +100,12 @@ function App() {
               <Route path="/admin" element={<AdminModule />} />
               <Route path="/admin/*" element={<AdminModule />} />
             </Routes>
+            
+            {/* Place Order Modal - Available globally */}
+            <PlaceOrderModal
+              isOpen={isPlaceOrderOpen}
+              onClose={() => setIsPlaceOrderOpen(false)}
+            />
           </div>
         </Router>
       </OrderProvider>
