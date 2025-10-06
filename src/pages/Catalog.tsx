@@ -107,18 +107,18 @@ const Catalog: React.FC = () => {
             </div>
 
             {/* Apparel Type Filter */}
-            <select
-              value={selectedApparelType}
-              onChange={(e) => handleApparelTypeChange(e.target.value)}
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
-            >
-              <option value="All">All Types</option>
-              {apparelTypes.map((type) => (
-                <option key={type.id} value={type.type_name}>
-                  {type.type_name}
-                </option>
-              ))}
-            </select>
+<select
+  value={selectedApparelType}
+  onChange={(e) => handleApparelTypeChange(e.target.value)}
+  className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
+>
+  <option value="All">All Types</option>
+  {apparelTypes.map((type) => (
+    <option key={type.id} value={type.id}>
+      {type.type_name}
+    </option>
+  ))}
+</select>
 
             {/* Sort By */}
             <select
