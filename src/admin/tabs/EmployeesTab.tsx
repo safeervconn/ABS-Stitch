@@ -165,8 +165,7 @@ const EmployeesTab: React.FC = () => {
           }`}>
             {employee.status}
           </span>
-         
-          )}
+        
         </div>
       ),
     },
