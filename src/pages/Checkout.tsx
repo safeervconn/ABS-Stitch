@@ -10,7 +10,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ShoppingCart, User, Mail, Phone, Loader, CheckCircle, Eye, Plus } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, User, Mail, Phone, Loader, CheckCircle, Eye, Plus, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -21,14 +21,12 @@ import { toast } from '../utils/toast';
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
-  const { items, getTotalPrice, clearCart } = useCart();
+  const { items, getTotalPrice, clearCart, removeFromCart } = useCart();
   const { addOrder } = useOrders();
   
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [orderNumbers, setOrderNumbers] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -75,7 +73,6 @@ const Checkout: React.FC = () => {
     setError('');
 
     try {
-      const createdOrderNumbers: string[] = [];
 
       // Create a separate order for each cart item
       for (const item of items) {
@@ -91,18 +88,15 @@ const Checkout: React.FC = () => {
 
         await addOrder(orderData);
         
-        // Generate a mock order number for display
-        const mockOrderNumber = `ORD-${Date.now().toString().slice(-8)}-${Math.random().toString(36).substring(2, 5)}`;
-        createdOrderNumbers.push(mockOrderNumber);
-        
         // Small delay between orders to ensure unique timestamps
         await new Promise(resolve => setTimeout(resolve, 100));
       }
 
-      setOrderNumbers(createdOrderNumbers);
       clearCart();
       toast.success(`${items.length} order${items.length > 1 ? 's' : ''} placed successfully!`);
-      setShowSuccessMessage(true);
+      
+      // Navigate to customer dashboard instead of showing success modal
+      navigate('/customer/dashboard');
     } catch (error) {
       console.error('Error placing orders:', error);
       toast.error('Failed to place orders. Please try again.');
@@ -257,6 +251,13 @@ const Checkout: React.FC = () => {
                                 </span>
                               </div>
                             </div>
+                            <button
+                              onClick={() => removeFromCart(item.id)}
+                              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Remove from cart"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
                           </div>
                         </div>
                       ))}
