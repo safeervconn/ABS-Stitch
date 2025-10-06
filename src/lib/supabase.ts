@@ -297,24 +297,23 @@ export const getProducts = async (filters?: {
   offset?: number;
 }) => {
   let query = supabase
-  .from('products')
-  .select(`
-    *,
-    apparel_type:apparel_types(type_name)
-  `)
-  .eq('status', 'active');
+    .from('products')
+    .select(`
+      *,
+      apparel_type:apparel_types(type_name)
+    `)
+    .eq('status', 'active');
 
-
-  // Apply filters
+  // ✅ Fix: Filter by apparel_type_id instead of type_name
   if (filters?.apparelType && filters.apparelType !== 'All') {
-    query = query.eq('apparel_types.type_name', filters.apparelType);
+    query = query.eq('apparel_type_id', filters.apparelType);
   }
 
   if (filters?.search) {
     query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
   }
 
-  // Apply sorting
+  // Sorting
   switch (filters?.sortBy) {
     case 'price-low':
       query = query.order('price', { ascending: true });
@@ -329,7 +328,7 @@ export const getProducts = async (filters?: {
       query = query.order('created_at', { ascending: false });
   }
 
-  // Apply pagination
+  // Pagination
   if (filters?.limit) {
     query = query.limit(filters.limit);
   }
@@ -338,13 +337,14 @@ export const getProducts = async (filters?: {
   }
 
   const { data, error } = await query;
-  
+
   if (error) {
     console.error('Error fetching products:', error);
     return [];
   }
   return data;
 };
+
 
 export const getApparelTypes = async () => {
   const { data, error } = await supabase
