@@ -142,15 +142,14 @@ const Checkout: React.FC = () => {
           <span>Back to Catalog</span>
         </button>
 
-        {/* Checkout Form */}
-          <div className="max-w-4xl mx-auto">
-            <div className="glass rounded-2xl shadow-2xl overflow-hidden">
-              
-              {/* Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
-                <h1 className="text-3xl font-bold mb-2">Checkout</h1>
-                <p className="text-blue-100">Review your items and place your orders</p>
-              </div>
+                {/* Checkout Form */}
+        <div className="max-w-4xl mx-auto">
+          <div className="glass rounded-2xl shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
+              <h1 className="text-3xl font-bold mb-2">Checkout</h1>
+              <p className="text-blue-100">Review your items and place your orders</p>
+            </div>
 
               <div className="p-6">
                 {/* Error Message */}
