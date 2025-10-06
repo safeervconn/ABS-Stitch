@@ -120,6 +120,16 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     </div>
                     
                     <div className="flex items-center space-x-3">
+                      <Package className="h-5 w-5 text-blue-600" />
+                      <div>
+                        <p className="text-sm text-gray-500">Order Type</p>
+                        <p className="font-medium text-gray-800 capitalize">
+                          {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-3">
                       <FileText className="h-5 w-5 text-orange-600" />
                       <div>
                         <p className="text-sm text-gray-500">Status</p>
