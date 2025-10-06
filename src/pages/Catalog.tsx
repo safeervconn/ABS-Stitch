@@ -10,7 +10,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Search, Filter, Star, Loader } from 'lucide-react';
+import { ArrowLeft, Search, Filter, Loader } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import AddToCartButton from '../components/AddToCartButton';
 import { getProducts, getProductCategories } from '../lib/supabase';
@@ -75,15 +75,6 @@ const Catalog: React.FC = () => {
 
   const handleSortChange = (sort: string) => {
     setSortBy(sort);
-  };
-
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={`h-4 w-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-      />
-    ));
   };
 
   return (
@@ -216,14 +207,6 @@ const Catalog: React.FC = () => {
                   
                   <p className="text-blue-500 text-sm mb-2 font-medium">{product.category?.name}</p>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">{product.description}</p>
-                  
-                  {/* Rating */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-1">
-                      {renderStars(5)}
-                      <span className="text-gray-500 text-sm ml-2">(5.0)</span>
-                    </div>
-                  </div>
                   
                   {/* Tags */}
                   {product.tags && product.tags.length > 0 && (

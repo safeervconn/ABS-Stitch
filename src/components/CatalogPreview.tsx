@@ -9,7 +9,7 @@
  */
 
 import React from 'react';
-import { Star, Loader } from 'lucide-react';
+import { Loader } from 'lucide-react';
 import AddToCartButton from './AddToCartButton';
 import { getProducts } from '../lib/supabase';
 
