@@ -13,7 +13,6 @@ interface CartContextType {
   items: CartItem[];
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
   removeFromCart: (id: string) => void;
-  updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
@@ -41,12 +40,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       const existingItem = prevItems.find(item => item.id === newItem.id);
       
       if (existingItem) {
-        // If item already exists, increase quantity
-        return prevItems.map(item =>
-          item.id === newItem.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
+        // If item already exists, keep quantity at 1 (no change)
+        return prevItems;
       } else {
         // If new item, add with quantity 1
         return [...prevItems, { ...newItem, quantity: 1 }];
@@ -58,18 +53,6 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     setItems(prevItems => prevItems.filter(item => item.id !== id));
   };
 
-  const updateQuantity = (id: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(id);
-      return;
-    }
-    
-    setItems(prevItems =>
-      prevItems.map(item =>
-        item.id === id ? { ...item, quantity } : item
-      )
-    );
-  };
 
   const clearCart = () => {
     setItems([]);
@@ -90,7 +73,6 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     items,
     addToCart,
     removeFromCart,
-    updateQuantity,
     clearCart,
     getTotalItems,
     getTotalPrice

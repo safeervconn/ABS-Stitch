@@ -92,28 +92,21 @@ const CatalogPreview: React.FC = () => {
                       (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=400';
                     }}
                   />
-                  
-                  {/* Sale Badge */}
-                  {product.original_price && product.original_price > product.price && (
-                    <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
-                      SALE
-                    </div>
-                  )}
                 </div>
 
-                {/* Product Info */}
-                <div className="p-4">
+                {/* Product Info - Flex layout to push button to bottom */}
+                <div className="p-4 flex flex-col h-full">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-semibold text-gray-800">{product.title}</h3>
                     <div className="text-right">
                       <span className="text-blue-600 font-bold">${product.price.toFixed(2)}</span>
-                      {product.original_price && product.original_price > product.price && (
-                        <span className="text-gray-400 line-through text-sm ml-1">${product.original_price.toFixed(2)}</span>
-                      )}
                     </div>
                   </div>
                   
                   <p className="text-gray-500 text-sm mb-3">{product.category?.name}</p>
+                  
+                  {/* Spacer to push button to bottom */}
+                  <div className="flex-grow"></div>
                                    
                   {/* Add to Cart Button */}
                   <AddToCartButton
@@ -124,7 +117,7 @@ const CatalogPreview: React.FC = () => {
                       image: product.image_url,
                       category: product.category?.name || 'Uncategorized'
                     }}
-                    className="w-full mt-3 text-sm"
+                    className="w-full text-sm"
                   />
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, X, Plus, Minus, Trash2 } from 'lucide-react';
+import { ShoppingCart, X, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { getCurrentUser } from '../lib/supabase';
@@ -7,7 +7,7 @@ import { getCurrentUser } from '../lib/supabase';
 const CartDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const { items, removeFromCart, updateQuantity, getTotalItems, getTotalPrice, clearCart } = useCart();
+  const { items, removeFromCart, getTotalItems, getTotalPrice, clearCart } = useCart();
 
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
@@ -89,24 +89,6 @@ const CartDropdown: React.FC = () => {
                         <p className="text-sm font-semibold text-blue-600">{item.price}</p>
                       </div>
 
-                      {/* Quantity Controls */}
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="p-1 hover:bg-gray-100 rounded"
-                        >
-                          <Minus className="h-3 w-3" />
-                        </button>
-                        <span className="text-sm font-medium w-6 text-center">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="p-1 hover:bg-gray-100 rounded"
-                        >
-                          <Plus className="h-3 w-3" />
-                        </button>
-                      </div>
 
                       {/* Remove Button */}
                       <button

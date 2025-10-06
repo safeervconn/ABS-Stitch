@@ -170,7 +170,7 @@ const Catalog: React.FC = () => {
         {!loading && !error && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map((product) => (
-              <div key={product.id} className="glass rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 group transform hover:scale-105">
+              <div key={product.id} className="glass rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 group transform hover:scale-105 flex flex-col">
                 
                 {/* Product Image */}
                 <div className="relative">
@@ -182,42 +182,21 @@ const Catalog: React.FC = () => {
                       (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=400';
                     }}
                   />
-                  
-                  {/* Sale Badge */}
-                  {product.original_price && product.original_price > product.price && (
-                    <div className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                      SALE
-                    </div>
-                  )}
                 </div>
 
-                {/* Product Info */}
-                <div className="p-6">
+                {/* Product Info - Flex layout to push button to bottom */}
+                <div className="p-6 flex flex-col flex-grow">
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors text-lg">
                       {product.title}
                     </h3>
                     <div className="text-right">
                       <span className="text-blue-600 font-bold text-xl">${product.price.toFixed(2)}</span>
-                      {product.original_price && product.original_price > product.price && (
-                        <span className="text-gray-400 line-through text-sm ml-2">${product.original_price.toFixed(2)}</span>
-                      )}
                     </div>
                   </div>
                   
                   <p className="text-blue-500 text-sm mb-2 font-medium">{product.category?.name}</p>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">{product.description}</p>
-                  
-                  {/* Tags */}
-                  {product.tags && product.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-4">
-                      {product.tags.slice(0, 3).map((tag, index) => (
-                        <span key={index} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed flex-grow">{product.description}</p>
                   
                   {/* Add to Cart Button */}
                   <AddToCartButton
@@ -228,7 +207,7 @@ const Catalog: React.FC = () => {
                       image: product.image_url,
                       category: product.category?.name || 'Uncategorized'
                     }}
-                    className="w-full shadow-lg transform hover:scale-105"
+                    className="w-full shadow-lg transform hover:scale-105 mt-auto"
                   />
                 </div>
               </div>
