@@ -21,9 +21,7 @@ interface Product {
   description: string;
   category: { name: string } | null;
   price: number;
-  original_price?: number;
   image_url: string;
-  tags: string[];
   created_at: string;
 }
 

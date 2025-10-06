@@ -16,10 +16,9 @@ interface AddToCartButtonProps {
 }
 
 const AddToCartButton: React.FC<AddToCartButtonProps> = ({ item, className = "" }) => {
-  const { addToCart } = useCart();
+  const { addToCart, items } = useCart();
 
   const handleAddToCart = async () => {
-    const currentUser = await getCurrentUser();
     if (!currentUser) {
       // Show toast notification for unauthenticated users
       toast.info('Please sign in or create an account to add items to your cart');

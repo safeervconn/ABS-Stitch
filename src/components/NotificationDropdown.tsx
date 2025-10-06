@@ -54,6 +54,23 @@ const NotificationDropdown: React.FC = () => {
       if (!user) return;
 
       const { notifications: data, unreadCount: count } = await getNotificationsWithUnreadCount(user.id, 20);
+      
+      // Show toast for new order completion notifications
+      if (data && data.length > 0) {
+        const newCompletionNotifications = data.filter(notification => 
+          !notification.read && 
+          notification.type === 'order' && 
+          notification.message.includes('completed')
+        );
+        
+        if (newCompletionNotifications.length > 0) {
+          const { toast } = await import('../utils/toast');
+          newCompletionNotifications.forEach(notification => {
+            toast.success(notification.message);
+          });
+        }
+      }
+      
       setNotifications(data);
       setUnreadCount(count);
     } catch (error) {

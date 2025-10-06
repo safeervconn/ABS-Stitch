@@ -80,12 +80,12 @@ const Checkout: React.FC = () => {
       // Create a separate order for each cart item
       for (const item of items) {
         const itemPrice = parseFloat(item.price.replace('$', ''));
-        const itemTotal = itemPrice * item.quantity;
+        const itemTotal = itemPrice; // Always quantity 1
 
         const orderData = {
           order_type: 'catalog',
           product_id: item.id,
-          custom_description: `${item.title} (Quantity: ${item.quantity})`,
+          custom_description: `${item.title}`,
           total_amount: itemTotal,
         };
 
@@ -193,10 +193,14 @@ const Checkout: React.FC = () => {
                 </div>
                 
                 <button
-                  onClick={() => navigate('/')}
+                  onClick={() => {
+                    setShowSuccessMessage(false);
+                    setOrderNumbers([]);
+                    navigate('/catalog');
+                  }}
                   className="w-full bg-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-400 transition-all font-semibold"
                 >
-                  Back to Homepage
+                  Close
                 </button>
               </div>
               
@@ -247,9 +251,9 @@ const Checkout: React.FC = () => {
                               <h3 className="font-semibold text-gray-800">{item.title}</h3>
                               <p className="text-sm text-gray-500">{item.category}</p>
                               <div className="flex items-center justify-between mt-2">
-                                <span className="text-sm text-gray-600">Quantity: {item.quantity}</span>
+                                <span className="text-sm text-gray-600">Quantity: 1</span>
                                 <span className="font-bold text-blue-600">
-                                  {item.price} × {item.quantity} = ${(parseFloat(item.price.replace('$', '')) * item.quantity).toFixed(2)}
+                                  {item.price}
                                 </span>
                               </div>
                             </div>

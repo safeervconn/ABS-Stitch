@@ -150,7 +150,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       }
       await fetchOrders();
       
-      // Show success message
+      // Show success toast for customer
+      const { toast } = await import('../utils/toast');
+      toast.success('Order placed successfully! You will receive updates as we process your order.');
      
     } catch (error) {
       console.error('Error adding order:', error);
