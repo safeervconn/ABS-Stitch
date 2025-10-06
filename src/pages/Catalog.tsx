@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Search, Filter, Loader } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import AddToCartButton from '../components/AddToCartButton';
-import { getProducts, getProductCategories } from '../lib/supabase';
+import { getProducts, getProductCategories, getApparelTypes } from '../lib/supabase';
 
 interface Product {
   id: string;
