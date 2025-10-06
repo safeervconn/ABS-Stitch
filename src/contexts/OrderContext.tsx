@@ -5,7 +5,16 @@ import { CustomerOrder } from '../admin/types';
 
 interface OrderContextType {
   orders: CustomerOrder[];
-  addOrder: (order: any, files?: File[]) => Promise<void>;
+  addOrder: (orderData: {
+    order_type: 'custom' | 'catalog';
+    product_id?: string;
+    custom_description: string;
+    total_amount: number;
+    design_size?: string;
+    apparel_type?: string;
+    custom_width?: number;
+    custom_height?: number;
+  }, files?: File[]) => Promise<void>;
   updateOrderStatus: (orderId: string, status: CustomerOrder['status']) => void;
   assignDesigner: (orderId: string, designerId: string, designerName: string) => void;
   getOrdersByRole: () => CustomerOrder[];
@@ -30,7 +39,16 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
 
   // Add new order
-  const addOrder = async (formData: any, files?: File[]) => {
+  const addOrder = async (orderData: {
+    order_type: 'custom' | 'catalog';
+    product_id?: string;
+    custom_description: string;
+    total_amount: number;
+    design_size?: string;
+    apparel_type?: string;
+    custom_width?: number;
+    custom_height?: number;
+  }, files?: File[]) => {
     try {
       const user = await getCurrentUser();
       if (!user) return;
@@ -79,26 +97,20 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         }
       }
 
-      // Calculate total amount based on order type and specifications
-      let totalAmount = 0.00; // Default for custom orders
-      if (formData.order_type === 'catalog' && formData.product_id) {
-        // For catalog orders, you might want to fetch the product price
-        totalAmount = 0.00; // Placeholder - should fetch from products table
-      }
-
-      const { data: orderData, error } = await supabase
+      const { data: newOrderData, error } = await supabase
         .from('orders')
         .insert({
           customer_id: profile.id,
-          order_type: formData.order_type || 'custom',
-          custom_description: formData.designInstructions || '',
-          design_size: formData.designSize,
-          apparel_type: formData.apparelType,
-          custom_width: formData.customWidth ? parseFloat(formData.customWidth) : null,
-          custom_height: formData.customHeight ? parseFloat(formData.customHeight) : null,
+          order_type: orderData.order_type,
+          product_id: orderData.product_id || null,
+          custom_description: orderData.custom_description,
+          design_size: orderData.design_size || null,
+          apparel_type: orderData.apparel_type || null,
+          custom_width: orderData.custom_width || null,
+          custom_height: orderData.custom_height || null,
           file_urls: fileUrls.length > 0 ? fileUrls : null,
           assigned_sales_rep_id: customerProfile.assigned_sales_rep_id,
-          total_amount: totalAmount,
+          total_amount: orderData.total_amount,
           payment_status: 'unpaid',
           status: 'new',
         })
@@ -112,7 +124,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         const { getAllAdmins, createNotification } = await import('../admin/api/supabaseHelpers');
         
         // Get order number for notifications
-        const orderNumber = orderData.order_number || `ORD-${orderData.id.slice(0, 8)}`;
+        const orderNumber = newOrderData.order_number || `ORD-${newOrderData.id.slice(0, 8)}`;
         
         // Notify all admins
         const admins = await getAllAdmins();
@@ -120,7 +132,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           await createNotification(
             admin.id,
             'order',
-            `New order ${orderNumber} has been placed by ${profile.full_name}`
+            `New ${orderData.order_type} order ${orderNumber} has been placed by ${profile.full_name}`
           );
         }
         
@@ -129,7 +141,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           await createNotification(
             customerProfile.assigned_sales_rep_id,
             'order',
-            `New order ${orderNumber} has been placed by your assigned customer ${profile.full_name}`
+            `New ${orderData.order_type} order ${orderNumber} has been placed by your assigned customer ${profile.full_name}`
           );
         }
       } catch (notificationError) {

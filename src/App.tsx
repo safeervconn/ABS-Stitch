@@ -25,6 +25,7 @@ import DesignerDashboard from './pages/DesignerDashboard';
 import CustomerDashboard from './pages/CustomerDashboard';
 import AdminModule from './admin/AdminDashboard';
 import ProfileSettings from './pages/ProfileSettings';
+import Checkout from './pages/Checkout';
 
 // Homepage Component
 const Homepage: React.FC = () => {
@@ -103,6 +104,7 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/employee-signup" element={<EmployeeSignup />} />
               <Route path="/profile" element={<ProfileSettings />} />
+              <Route path="/checkout" element={<Checkout />} />
               <Route path="/sales/dashboard" element={<SalesRepDashboard />} />
               <Route path="/designer/dashboard" element={<DesignerDashboard />} />
               <Route path="/customer/dashboard" element={<CustomerDashboard />} />

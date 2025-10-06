@@ -2,6 +2,7 @@ import React from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { getCurrentUser } from '../lib/supabase';
+import { toast } from '../utils/toast';
 
 interface AddToCartButtonProps {
   item: {
@@ -27,6 +28,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ item, className = "" 
 
     // Add item to cart for authenticated users
     addToCart(item);
+    toast.success(`${item.title} added to cart!`);
   };
 
   return (

@@ -1,13 +1,29 @@
 import React, { useState } from 'react';
 import { ShoppingCart, X, Plus, Minus, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
+import { getCurrentUser } from '../lib/supabase';
 
 const CartDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
   const { items, removeFromCart, updateQuantity, getTotalItems, getTotalPrice, clearCart } = useCart();
 
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
+
+  const handleCheckout = async () => {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) {
+      // Redirect unauthenticated users to login page
+      window.location.href = '/login';
+      return;
+    }
+
+    // Navigate to checkout page for authenticated users
+    setIsOpen(false);
+    navigate('/checkout');
+  };
 
   return (
     <div className="relative">
@@ -119,11 +135,7 @@ const CartDropdown: React.FC = () => {
                 {/* Action Buttons */}
                 <div className="space-y-2">
                   <button
-                    onClick={() => {
-                      setIsOpen(false);
-                      // Navigate to checkout page (implement later)
-                      alert('Checkout functionality coming soon!');
-                    }}
+                    onClick={handleCheckout}
                     className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-2 px-4 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all font-semibold shadow-lg"
                   >
                     Checkout ({totalItems} items)
