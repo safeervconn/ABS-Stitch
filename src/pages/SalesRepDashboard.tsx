@@ -16,6 +16,7 @@
 import React, { useState, useEffect } from 'react';
 import { Users, ShoppingBag, DollarSign, LogOut, Bell, Phone, Mail, TrendingUp, Target, Eye, UserPlus, CreditCard as Edit, Clock, Package, CircleUser as UserCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import NotificationDropdown from '../components/NotificationDropdown';
 import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
 import { useOrders } from '../contexts/OrderContext';
 import { getSalesRepDashboardStats, updateOrder, getSalesReps, getDesigners } from '../admin/api/supabaseHelpers';
@@ -383,9 +384,7 @@ const SalesRepDashboard: React.FC = () => {
               <h1 className="text-2xl font-bold text-gray-900">Sales Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors relative">
-                <Bell className="h-6 w-6" />
-              </button>
+              <NotificationDropdown />
               <div className="flex items-center space-x-3">
                 <div className="text-right">
                   <p className="text-sm font-semibold text-gray-900">{user?.full_name || 'Sales Rep'}</p>
