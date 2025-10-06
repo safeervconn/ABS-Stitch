@@ -655,6 +655,34 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
 
 export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): Promise<AdminOrder> => {
   try {
+    // Get current user to validate permissions
+    const currentUser = await getSupabaseCurrentUser();
+    if (!currentUser) {
+      throw new Error('Authentication required');
+    }
+
+    const userProfile = await getSupabaseUserProfile(currentUser.id);
+    if (!userProfile) {
+      throw new Error('User profile not found');
+    }
+
+    // Get current order to check status
+    const { data: currentOrder, error: fetchError } = await supabase
+      .from('orders')
+      .select('status')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) {
+      throw new Error('Failed to fetch current order status');
+    }
+
+    // Validate edit permissions for completed/cancelled orders
+    if ((currentOrder.status === 'completed' || currentOrder.status === 'cancelled') && 
+        userProfile.role !== 'admin' && userProfile.role !== 'sales_rep') {
+      throw new Error('Only administrators and sales representatives can edit completed or cancelled orders');
+    }
+
     const { data, error } = await supabase
       .from('orders')
       .update({

@@ -227,6 +227,13 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     
     if (!order) return;
 
+    // Validate edit permissions for completed/cancelled orders
+    if ((order.status === 'completed' || order.status === 'cancelled') && 
+        currentUser?.role !== 'admin' && currentUser?.role !== 'sales_rep') {
+      setError('Only administrators and sales representatives can edit completed or cancelled orders.');
+      return;
+    }
+
     setSubmitting(true);
     setError('');
 
@@ -268,6 +275,9 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   if (!isOpen || !order) return null;
 
   const isDesigner = currentUser?.role === 'designer';
+  const isCompletedOrCancelled = order.status === 'completed' || order.status === 'cancelled';
+  const canEditCompletedOrder = currentUser?.role === 'admin' || currentUser?.role === 'sales_rep';
+  const isFormDisabled = isCompletedOrCancelled && !canEditCompletedOrder;
 
   return (
     <>
@@ -309,6 +319,23 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
               </div>
             ) : (
               <>
+                {/* Order Status Warning */}
+                {isFormDisabled && (
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
+                    <div className="flex items-center space-x-2">
+                      <div className="bg-orange-100 p-1 rounded">
+                        <X className="h-4 w-4 text-orange-600" />
+                      </div>
+                      <div>
+                        <p className="text-orange-800 font-medium text-sm">Edit Restricted</p>
+                        <p className="text-orange-700 text-sm">
+                          Only administrators and sales representatives can edit {order.status} orders.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Customer Info (Read-only) */}
                 <div className="bg-gray-50 rounded-lg p-4 mb-6">
                   <h3 className="text-lg font-medium text-gray-900 mb-2">Customer Information</h3>
@@ -349,7 +376,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       value={formData.order_type}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
-                      disabled={isDesigner}
+                      disabled={isDesigner || isFormDisabled}
                     >
                       <option value="custom">Custom</option>
                       <option value="catalog">Catalog</option>
@@ -365,7 +392,8 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       name="status"
                       value={formData.status}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      disabled={isFormDisabled}
                       required
                     >
                       {!isDesigner && <option value="new">New</option>}
@@ -386,7 +414,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       value={formData.design_size}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
-                      disabled={isDesigner}
+                      disabled={isDesigner || isFormDisabled}
                     >
                       <option value="">Select Size</option>
                       <option value="small">Small (3" x 3")</option>
@@ -407,7 +435,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       value={formData.apparel_type}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
-                      disabled={isDesigner}
+                      disabled={isDesigner || isFormDisabled}
                     >
                       <option value="">Select Type</option>
                       <option value="t-shirt">T-shirt</option>
@@ -448,7 +476,8 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       name="assigned_designer_id"
                       value={formData.assigned_designer_id}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      disabled={isFormDisabled}
                     >
                       <option value="">Unassigned</option>
                       {designers.map(designer => (
@@ -471,7 +500,9 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       onChange={handleInputChange}
                       min="0"
                       step="0.01"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      disabled={isFormDisabled}
+                      disabled={isFormDisabled}
                     />
                     </div>
                   )}
@@ -706,7 +737,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
               <button
                 type="submit"
                 className="px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={submitting || loading}
+                disabled={submitting || loading || isFormDisabled}
               >
                 {submitting ? (
                   <>
@@ -716,7 +747,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                 ) : (
                   <>
                     <Save className="h-4 w-4" />
-                    <span>Update Order</span>
+                    <span>{isFormDisabled ? 'Edit Restricted' : 'Update Order'}</span>
                   </>
                 )}
               </button>
