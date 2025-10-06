@@ -106,9 +106,7 @@ const Checkout: React.FC = () => {
     }
   };
 
-  const handleBackToCart = () => {
-    navigate('/catalog');
-  };
+  
 
   if (loading) {
     return (
