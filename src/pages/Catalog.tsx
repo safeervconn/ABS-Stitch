@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Search, Filter, Loader } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import AddToCartButton from '../components/AddToCartButton';
-import { getProducts, getProductCategories, getApparelTypes } from '../lib/supabase';
+import { getProducts, getApparelTypes } from '../lib/supabase';
 
 interface Product {
   id: string;
@@ -194,7 +194,6 @@ const Catalog: React.FC = () => {
                     </div>
                   </div>
                   
-                  <p className="text-blue-500 text-sm mb-2 font-medium">{product.category?.name}</p>
                   <p className="text-blue-500 text-sm mb-2 font-medium">{product.apparel_type?.type_name}</p>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed flex-grow">{product.description}</p>
                   
