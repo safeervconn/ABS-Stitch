@@ -30,6 +30,10 @@ const NotificationDropdown: React.FC = () => {
     }
     // Also fetch unread count when component mounts
     fetchUnreadCount();
+    
+    // Set up periodic refresh for unread count
+    const interval = setInterval(fetchUnreadCount, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
   }, [isOpen]);
 
   const fetchUnreadCount = async () => {
