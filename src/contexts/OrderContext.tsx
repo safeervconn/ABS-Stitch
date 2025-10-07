@@ -123,12 +123,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         // Get order number for notifications
         const orderNumber = newOrderData.order_number || `ORD-${newOrderData.id.slice(0, 8)}`;
         
-        // Notify the customer who placed the order
-        await createNotification(
-          profile.id,
-          'order',
-          `Your ${orderData.order_type} order ${orderNumber} has been placed successfully! We'll keep you updated on the progress.`
-        );
+
         
         // Notify all admins
         const admins = await getAllAdmins();
