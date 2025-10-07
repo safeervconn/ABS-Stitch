@@ -241,6 +241,7 @@ const About: React.FC = () => {
           </Card>
         </div>
       </div>
+      </div>
     </PageLayout>
   );
 };
