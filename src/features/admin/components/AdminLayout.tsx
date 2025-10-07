@@ -10,8 +10,7 @@
 + * - Responsive design with mobile support
 + */
 +
- import React, { useState, useEffect } from 'react';
-import NotificationDropdown from '../../../components/NotificationDropdown';
-import { signOut, getCurrentUser, getUserProfile } from '../../../core/api/supabase';
+import { signOut, getCurrentUser } from '../../../api/auth';
+import { getUserProfile } from '../../../api/users';
 +import NotificationDropdown from '../../notifications/NotificationDropdown';
 +import { signOut, getCurrentUser, getUserProfile } from '../../../core/api/supabase';

@@ -11,7 +11,8 @@
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import { getCurrentUser, getUserProfile } from '../../core/api/supabase';
+import { getCurrentUser } from '../../api/auth';
+import { getUserProfile } from '../../api/users';
 
 const Hero: React.FC = React.memo(() => {
   const [currentUser, setCurrentUser] = useState<any>(null);

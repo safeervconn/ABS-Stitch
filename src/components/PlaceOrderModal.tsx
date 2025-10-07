@@ -12,9 +12,11 @@
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { X, Send, Paperclip, Loader, Trash2, CheckCircle, Eye, Plus } from 'lucide-react';
-import { getCurrentUser, getUserProfile, getApparelTypes } from '../core/api/supabase';
+import { getCurrentUser } from '../api/auth';
+import { getUserProfile } from '../api/users';
+import { getApparelTypes } from '../api/products';
 import { useOrders } from '../features/orders/OrderContext';
-import { toast } from '../core/utils/toast';
+import { toast } from '../utils/toast';
 
 interface PlaceOrderModalProps {
   isOpen: boolean;

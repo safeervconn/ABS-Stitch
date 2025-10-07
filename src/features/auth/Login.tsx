@@ -13,7 +13,8 @@
 import React, { useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
-import { signInWithStatusCheck, getUserProfile, getDashboardRoute } from '../../core/api/supabase';
+import { signInWithStatusCheck, getDashboardRoute } from '../../api/auth';
+import { getUserProfile } from '../../api/users';
 
 const Login: React.FC = React.memo(() => {
   const [formData, setFormData] = useState({

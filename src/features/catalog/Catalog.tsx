@@ -15,7 +15,7 @@ import { Helmet } from 'react-helmet-async';
 import { Search, Filter, Loader } from 'lucide-react';
 import Navbar from '../../layout/Navbar';
 import AddToCartButton from './AddToCartButton';
-import { getProducts, getApparelTypes } from '../../core/api/supabase';
+import { getProducts, getApparelTypes } from '../../api/products';
 
 interface Product {
   id: string;

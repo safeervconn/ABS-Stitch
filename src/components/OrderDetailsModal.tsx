@@ -12,10 +12,11 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { X, Calendar, User, Package, FileText, Paperclip, MessageSquare } from 'lucide-react';
-import { getCurrentUser, getUserProfile } from '../core/api/supabase';
+import { getCurrentUser } from '../api/auth';
+import { getUserProfile } from '../api/users';
 import { Order } from '../types';
 import { OrderComment } from '../types';
-import { getOrderComments } from '../features/admin/api/supabaseHelpers';
+import { getOrderComments } from '../api/orders';
 
 interface OrderDetailsModalProps {
   isOpen: boolean;

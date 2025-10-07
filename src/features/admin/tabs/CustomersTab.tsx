@@ -8,4 +8,4 @@ import { updateCustomer, deleteCustomer, getSalesReps } from '../api/supabaseHel
 import { AdminCustomer, AdminUser, PaginationParams } from '../../../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { getCustomers } from '../api/supabaseHelpers';
-import { toast } from '../../../core/utils/toast';
+import { toast } from '../../../utils/toast';

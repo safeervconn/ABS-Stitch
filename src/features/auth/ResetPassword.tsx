@@ -12,7 +12,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Lock, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react';
-import { supabase } from '../../core/api/supabase';
+import { supabase } from '../../api/client';
 
 const ResetPassword: React.FC = () => {
   const [formData, setFormData] = useState({

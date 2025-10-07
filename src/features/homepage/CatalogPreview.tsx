@@ -13,7 +13,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Loader } from 'lucide-react';
 import AddToCartButton from '../catalog/AddToCartButton';
-import { getProducts } from '../../core/api/supabase';
+import { getProducts } from '../../api/products';
 
 const CatalogPreview: React.FC = React.memo(() => {
   const [products, setProducts] = useState<any[]>([]);

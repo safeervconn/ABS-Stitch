@@ -11,13 +11,13 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Bell, X, Check, CheckCheck, Eye, EyeOff } from 'lucide-react';
-import { getCurrentUser } from '../core/api/supabase';
+import { getCurrentUser } from '../api/auth';
 import { 
-  getNotificationsWithUnreadCount, 
-  markNotificationAsRead, 
-  markNotificationAsUnread, 
-  markAllNotificationsAsRead 
-} from '../features/admin/api/supabaseHelpers';
+  getNotificationsWithUnreadCount,
+  markNotificationAsRead,
+  markNotificationAsUnread,
+  markAllNotificationsAsRead
+} from '../api/admin';
 
 interface Notification {
   id: number;

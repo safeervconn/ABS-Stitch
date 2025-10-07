@@ -12,8 +12,10 @@
  */
 
 import React, { createContext, useContext, useState, ReactNode, useCallback, useMemo } from 'react';
-import { getCurrentUser, getUserProfile, supabase } from '../../core/api/supabase';
-import { createNotification } from '../admin/api/supabaseHelpers';
+import { getCurrentUser } from '../../api/auth';
+import { getUserProfile } from '../../api/users';
+import { supabase } from '../../api/client';
+import { createNotification } from '../../api/admin';
 import { CustomerOrder } from '../../types';
 
 interface OrderContextType {
@@ -189,7 +191,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = React.memo(({ childre
       await fetchOrders();
       
       // Display success message to user
-      const { toast } = await import('../../core/utils/toast');
+      const { toast } = await import('../../utils/toast');
       toast.success('Order placed successfully! You will receive updates as we process your order.');
      
     } catch (error) {

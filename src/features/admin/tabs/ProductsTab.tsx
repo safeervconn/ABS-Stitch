@@ -9,7 +9,7 @@
 -import { AdminProduct, ApparelType, PaginationParams } from '../types';
 +import { AdminProduct, ApparelType, PaginationParams } from '../../../types';
  import { usePaginatedData } from '../hooks/useAdminData';
- import { getProducts } from '../api/supabaseHelpers';
+import { toast } from '../../../utils/toast';
 -import { toast } from '../../utils/toast';
 +import { toast } from '../../../core/utils/toast';
 

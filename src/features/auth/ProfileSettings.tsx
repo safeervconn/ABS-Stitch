@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase, getUserProfile, getDashboardRoute } from '../../core/api/supabase';
+import { supabase } from '../../api/client';
+import { getUserProfile } from '../../api/users';
+import { getDashboardRoute } from '../../api/auth';
 import { User, Lock, Mail, Phone, Building, Shield, ArrowLeft, Save, Eye, EyeOff } from 'lucide-react';
-import { toast } from '../../core/utils/toast';
+import { toast } from '../../utils/toast';
 
 interface UserData {
   id: string;

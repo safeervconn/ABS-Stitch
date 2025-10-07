@@ -12,7 +12,8 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Eye, EyeOff, User, Mail, Phone, AlertCircle, CheckCircle, Lock } from 'lucide-react';
-import { signUp, createCustomerProfile } from '../../core/api/supabase';
+import { signUp } from '../../api/auth';
+import { createCustomerProfile } from '../../api/users';
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({

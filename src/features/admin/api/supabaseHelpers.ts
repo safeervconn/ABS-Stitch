@@ -10,8 +10,9 @@
  * - Optimized queries with proper error handling
  */
 
-import { supabase } from '../../../core/api/supabase';
-import { getCurrentUser as getSupabaseCurrentUser, getUserProfile as getSupabaseUserProfile } from '../../../core/api/supabase';
+import { supabase } from '../../../api/client';
+import { getCurrentUser as getSupabaseCurrentUser } from '../../../api/auth';
+import { getUserProfile as getSupabaseUserProfile } from '../../../api/users';
 import { AdminUser, AdminCustomer, AdminOrder, AdminProduct, AdminStats, PaginatedResponse, PaginationParams, Invoice, OrderComment } from '../../../types';
 
 /**
@@ -546,50 +547,6 @@ export const updateProduct = async (id: string, productData: Partial<AdminProduc
         *,
         apparel_type:apparel_types(type_name)
       `)
-      .single();
-
-    if (error) throw error;
-
-    return {
-      ...data,
-      apparel_type_name: data.apparel_type?.type_name
-    };
-  } catch (error) {
-    console.error('Error updating product:', error);
-    throw error;
-  }
-};
-
-/**
- * Delete product with image cleanup
- */
-export const deleteProduct = async (id: string): Promise<void> => {
-  try {
-    // Get product to check for image URL
-    const { data: product } = await supabase
-      .from('products')
-      .select('image_url')
-      .eq('id', id)
-      .single();
-
-    // Delete product
-    const { error } = await supabase
-      .from('products')
-      .delete()
-      .eq('id', id);
-
-    if (error) throw error;
-
-    // Clean up image file if exists
-    if (product?.image_url) {
-      await deleteFileFromStorage(product.image_url);
-    }
-  } catch (error) {
-    console.error('Error deleting product:', error);
-    throw error;
-  }
-};
-
 /**
  * Get all sales representatives for assignment dropdowns
  */
@@ -631,40 +588,11 @@ export const getDesigners = async (): Promise<AdminUser[]> => {
 };
 
 /**
- * Get all admin users for notifications
- */
-export const getAllAdmins = async (): Promise<AdminUser[]> => {
-  try {
-    const { data, error } = await supabase
-      .from('employees')
-      .select('id, full_name, email')
-      .eq('role', 'admin')
-      .eq('status', 'active');
-
-    if (error) throw error;
-    return data || [];
-  } catch (error) {
-    console.error('Error fetching admins:', error);
-    throw error;
-  }
-};
-
-/**
  * Get apparel types for product forms
  */
 export const getApparelTypes = async () => {
-  try {
-    const { data, error } = await supabase
-      .from('apparel_types')
-      .select('id, type_name')
-      .order('type_name');
-
-    if (error) throw error;
-    return data || [];
-  } catch (error) {
-    console.error('Error fetching apparel types:', error);
-    throw error;
-  }
+  const { getApparelTypes: getApparelTypesFromProducts } = await import('../../../api/products');
+  return getApparelTypesFromProducts();
 };
 
 /**
@@ -708,176 +636,6 @@ export const deleteFileFromStorage = async (fileUrl: string): Promise<void> => {
   } catch (error) {
     console.error('Error deleting file:', error);
     // Don't throw here as file deletion is not critical
-  }
-};
-
-/**
- * Create notification for user
- */
-export const createNotification = async (
-  userId: string,
-  type: 'order' | 'user' | 'product' | 'system',
-  message: string
-): Promise<void> => {
-  try {
-    const { error } = await supabase
-      .from('notifications')
-      .insert([{
-        user_id: userId,
-        type,
-        message,
-        read: false
-      }]);
-
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error creating notification:', error);
-    throw error;
-  }
-};
-
-/**
- * Get notifications with unread count for user
- */
-export const getNotificationsWithUnreadCount = async (
-  userId: string,
-  limit: number = 20
-): Promise<{ notifications: any[], unreadCount: number }> => {
-  try {
-    const [notificationsResult, unreadCountResult] = await Promise.all([
-      supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(limit),
-      
-      supabase
-        .from('notifications')
-        .select('id', { count: 'exact' })
-        .eq('user_id', userId)
-        .eq('read', false)
-    ]);
-
-    return {
-      notifications: notificationsResult.data || [],
-      unreadCount: unreadCountResult.count || 0
-    };
-  } catch (error) {
-    console.error('Error fetching notifications:', error);
-    throw error;
-  }
-};
-
-/**
- * Mark notification as read
- */
-export const markNotificationAsRead = async (notificationId: number): Promise<void> => {
-  try {
-    const { error } = await supabase
-      .from('notifications')
-      .update({ read: true })
-      .eq('id', notificationId);
-
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error marking notification as read:', error);
-    throw error;
-  }
-};
-
-/**
- * Mark notification as unread
- */
-export const markNotificationAsUnread = async (notificationId: number): Promise<void> => {
-  try {
-    const { error } = await supabase
-      .from('notifications')
-      .update({ read: false })
-      .eq('id', notificationId);
-
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error marking notification as unread:', error);
-    throw error;
-  }
-};
-
-/**
- * Mark all notifications as read for user
- */
-export const markAllNotificationsAsRead = async (userId: string): Promise<void> => {
-  try {
-    const { error } = await supabase
-      .from('notifications')
-      .update({ read: true })
-      .eq('user_id', userId)
-      .eq('read', false);
-
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error marking all notifications as read:', error);
-    throw error;
-  }
-};
-
-/**
- * Get order comments for order details
- */
-export const getOrderComments = async (orderId: string): Promise<OrderComment[]> => {
-  try {
-    const { data, error } = await supabase
-      .from('order_comments')
-      .select(`
-        *,
-        author:employees(full_name)
-      `)
-      .eq('order_id', orderId)
-      .order('created_at', { ascending: true });
-
-    if (error) throw error;
-
-    return (data || []).map(comment => ({
-      ...comment,
-      author_name: comment.author?.full_name || 'Unknown'
-    }));
-  } catch (error) {
-    console.error('Error fetching order comments:', error);
-    throw error;
-  }
-};
-
-/**
- * Add comment to order
- */
-export const addOrderComment = async (
-  orderId: string,
-  authorId: string,
-  content: string
-): Promise<OrderComment> => {
-  try {
-    const { data, error } = await supabase
-      .from('order_comments')
-      .insert([{
-        order_id: orderId,
-        author_id: authorId,
-        content
-      }])
-      .select(`
-        *,
-        author:employees(full_name)
-      `)
-      .single();
-
-    if (error) throw error;
-
-    return {
-      ...data,
-      author_name: data.author?.full_name || 'Unknown'
-    };
-  } catch (error) {
-    console.error('Error adding order comment:', error);
-    throw error;
   }
 };
 

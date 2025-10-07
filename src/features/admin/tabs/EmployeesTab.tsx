@@ -7,7 +7,7 @@
 -import { AdminUser, PaginationParams } from '../types';
 +import { AdminUser, PaginationParams } from '../../../types';
  import { usePaginatedData } from '../hooks/useAdminData';
- import { getUsers } from '../api/supabaseHelpers';
+import { toast } from '../../../utils/toast';
 -import { toast } from '../../utils/toast';
 +import { toast } from '../../../core/utils/toast';
 

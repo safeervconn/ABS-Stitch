@@ -14,7 +14,8 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Menu, X, Palette, User, Settings, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react';
 import CartDropdown from '../features/cart/CartDropdown';
 import NotificationDropdown from '../components/NotificationDropdown';
-import { signOut, getCurrentUser, getUserProfile, getDashboardRoute } from '../core/api/supabase';
+import { signOut, getCurrentUser, getDashboardRoute } from '../api/auth';
+import { getUserProfile } from '../api/users';
 
 const Navbar: React.FC = React.memo(() => {
   // State management for mobile menu and user profile

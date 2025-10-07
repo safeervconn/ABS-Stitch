@@ -12,10 +12,13 @@
 +
  import React, { useState, useEffect } from 'react';
  import { X, Save, Loader, Paperclip, Trash2, Upload, Download, MessageSquare, Send } from 'lucide-react';
- import { updateOrder, getSalesReps, getDesigners, getOrderComments, addOrderComment, getApparelTypes } from '../api/supabaseHelpers';
+import { updateOrder, getSalesReps, getDesigners, getApparelTypes } from '../api/supabaseHelpers';
+import { getOrderComments, addOrderComment } from '../../../api/orders';
 import { AdminOrder, AdminUser } from '../../../types';
--import { supabase, getCurrentUser, getUserProfile } from '../../lib/supabase';
--import { toast } from '../../utils/toast';
+import { supabase } from '../../../api/client';
+import { getCurrentUser } from '../../../api/auth';
+import { getUserProfile } from '../../../api/users';
+import { toast } from '../../../utils/toast';
 +import { supabase, getCurrentUser, getUserProfile } from '../../../core/api/supabase';
 +import { toast } from '../../../core/utils/toast';
 

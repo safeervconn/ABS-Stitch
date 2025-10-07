@@ -18,8 +18,10 @@ import Navbar from '../../layout/Navbar';
 import Footer from '../../layout/Footer';
 import { useCart } from '../cart/CartContext';
 import { useOrders } from '../orders/OrderContext';
-import { getCurrentUser, getUserProfile, getApparelTypes } from '../../core/api/supabase';
-import { toast } from '../../core/utils/toast';
+import { getCurrentUser } from '../../api/auth';
+import { getUserProfile } from '../../api/users';
+import { getApparelTypes } from '../../api/products';
+import { toast } from '../../utils/toast';
 
 const Checkout: React.FC = React.memo(() => {
   const navigate = useNavigate();

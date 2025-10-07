@@ -11,8 +11,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../cart/CartContext';
-import { getCurrentUser } from '../../core/api/supabase';
-import { toast } from '../../core/utils/toast';
+import { getCurrentUser } from '../../api/auth';
+import { toast } from '../../utils/toast';
 
 interface AddToCartButtonProps {
   item: {

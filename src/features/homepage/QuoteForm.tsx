@@ -12,7 +12,7 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { Send, Paperclip } from 'lucide-react';
-import { getApparelTypes } from '../../core/api/supabase';
+import { getApparelTypes } from '../../api/products';
 
 const QuoteForm: React.FC = React.memo(() => {
   // Form state management
