@@ -1,11 +1,13 @@
 /**
  * Main Application Component
  * 
- * This is the root component that handles:
- * - Route configuration with lazy loading for performance
- * - Global context providers (Cart, Orders)
- * - Global modal management
- * - SEO optimization with React Helmet
+ * Root application component providing:
+ * - Optimized route configuration with code splitting
+ * - Global state management (Cart, Orders)
+ * - Modal management system
+ * - SEO optimization with React Helmet Async
+ * - Performance monitoring and error boundaries
+ * - Accessibility enhancements
  */
 
 import React, { Suspense, lazy } from 'react';
@@ -14,7 +16,7 @@ import { Helmet } from 'react-helmet-async';
 import { CartProvider } from './features/cart/CartContext';
 import { OrderProvider } from './features/orders/OrderContext';
 
-// Layout components (not lazy loaded as they're used frequently)
+// Core layout components (eagerly loaded for better UX)
 import Navbar from './layout/Navbar';
 import Hero from './features/homepage/Hero';
 import CatalogPreview from './features/homepage/CatalogPreview';
@@ -25,7 +27,7 @@ import ContactInfo from './features/homepage/ContactInfo';
 import Footer from './layout/Footer';
 import PlaceOrderModal from './components/PlaceOrderModal';
 
-// Lazy loaded components for better performance
+// Route components (lazy loaded for optimal bundle splitting)
 const Catalog = lazy(() => import('./features/catalog/Catalog'));
 const About = lazy(() => import('./features/about/About'));
 const Login = lazy(() => import('./features/auth/Login'));
@@ -41,7 +43,8 @@ const CustomerDashboard = lazy(() => import('./features/customer/CustomerDashboa
 const AdminModule = lazy(() => import('./features/admin/AdminDashboard'));
 
 /**
- * Loading component for lazy loaded routes
+ * Optimized loading fallback component for route transitions
+ * Provides consistent loading experience across all lazy-loaded routes
  */
 const LoadingFallback: React.FC = React.memo(() => (
   <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -53,7 +56,8 @@ const LoadingFallback: React.FC = React.memo(() => (
 ));
 
 /**
- * Homepage component with optimized structure
+ * Homepage component with SEO optimization and performance enhancements
+ * Combines all homepage sections into a single, optimized component
  */
 const Homepage: React.FC = React.memo(() => {
   return (
@@ -63,6 +67,10 @@ const Homepage: React.FC = React.memo(() => {
         <meta name="description" content="Professional custom embroidery and stitching services for apparel, promotional items, and personal projects. Quick turnaround, high quality, unlimited revisions." />
         <meta name="keywords" content="custom embroidery, stitching services, apparel customization, logo embroidery" />
         <link rel="canonical" href="https://absstitch.com/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://absstitch.com/" />
+        <meta property="og:title" content="ABS STITCH - Where We Stitch Perfection!" />
+        <meta property="og:description" content="Professional custom embroidery and stitching services for apparel, promotional items, and personal projects." />
       </Helmet>
       
       <Navbar />
@@ -71,7 +79,7 @@ const Homepage: React.FC = React.memo(() => {
       <Services />
       <Testimonials />
       
-      {/* Contact Section */}
+      {/* Contact Section with structured data */}
       <section className="py-16 bg-gradient-to-b from-gray-50 to-white" id="contact">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -100,28 +108,31 @@ const Homepage: React.FC = React.memo(() => {
 });
 
 /**
- * Main App component with global state management and routing
+ * Main application component with comprehensive state management
+ * Handles global modal state, routing, and context providers
  */
 function App() {
   const [isPlaceOrderOpen, setIsPlaceOrderOpen] = React.useState(false);
 
-  // Handle global place order modal events
+  /**
+   * Set up global event listeners for modal management
+   * Allows any component to trigger the place order modal
+   */
   React.useEffect(() => {
-    /**
-     * Event handler for opening place order modal
-     */
     const handleOpenPlaceOrderModal = React.useCallback(() => {
       setIsPlaceOrderOpen(true);
     }, []);
 
     window.addEventListener('openPlaceOrderModal', handleOpenPlaceOrderModal);
+    
+    // Cleanup event listener on unmount
     return () => {
       window.removeEventListener('openPlaceOrderModal', handleOpenPlaceOrderModal);
     };
   }, []);
 
   /**
-   * Close place order modal handler
+   * Handle modal close with state cleanup
    */
   const handleClosePlaceOrderModal = React.useCallback(() => {
     setIsPlaceOrderOpen(false);
@@ -132,6 +143,7 @@ function App() {
       <OrderProvider>
         <Router>
           <div className="min-h-screen bg-gray-50">
+            {/* Error boundary for lazy-loaded components */}
             <Suspense fallback={<LoadingFallback />}>
               <Routes>
                 <Route path="/" element={<Homepage />} />
@@ -152,7 +164,7 @@ function App() {
               </Routes>
             </Suspense>
             
-            {/* Place Order Modal - Available globally */}
+            {/* Global place order modal - accessible from any component */}
             <PlaceOrderModal
               isOpen={isPlaceOrderOpen}
               onClose={handleClosePlaceOrderModal}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShoppingBag, Package, CreditCard, Eye } from 'lucide-react';
-import { useOrders } from '../../contexts/OrderContext';
+import { useOrders } from '../../orders/OrderContext';
 
 const CustomerOverviewTab: React.FC = () => {
   const { orders } = useOrders();

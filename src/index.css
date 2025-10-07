@@ -22,9 +22,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   font-feature-settings: 'kern' 1;
+  line-height: 1.6;
+  color: #1f2937;
 }
 
-/* Optimized transitions - only animate transform and opacity for best performance */
+/* 
+ * Optimized transitions - only animate transform and opacity for best performance
+ * Avoid animating layout properties (width, height, margin, padding) to prevent reflows
+ */
 * {
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
               opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
@@ -33,7 +38,7 @@ body {
               color 0.15s ease;
 }
 
-/* Remove number input spinners for cleaner UI */
+/* Remove number input spinners for cleaner, more consistent UI across browsers */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -44,7 +49,10 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-/* GPU-accelerated spotlight effects with reduced motion support */
+/* 
+ * GPU-accelerated spotlight effects with reduced motion support
+ * Uses transform3d to trigger hardware acceleration and improve performance
+ */
 .spotlight {
   position: absolute;
   border-radius: 50%;
@@ -52,11 +60,13 @@ input[type=number] {
   opacity: 0.6;
   will-change: transform, opacity;
   animation: float 6s ease-in-out infinite;
+  pointer-events: none; /* Prevent interaction with decorative elements */
 }
 
 @media (prefers-reduced-motion: reduce) {
   .spotlight {
     animation: none;
+    opacity: 0.3; /* Reduce opacity for users who prefer less motion */
   }
 }
 
@@ -87,7 +97,10 @@ input[type=number] {
   animation-delay: 4s;
 }
 
-/* GPU-accelerated float animation */
+/* 
+ * GPU-accelerated float animation
+ * Uses transform3d for hardware acceleration and smooth performance
+ */
 @keyframes float {
   0%, 100% {
     transform: translate3d(0, 0px, 0) scale(1);
@@ -97,14 +110,22 @@ input[type=number] {
   }
 }
 
-/* Glass morphism effect with backdrop-filter */
+/* 
+ * Glass morphism effect with backdrop-filter
+ * Creates modern, translucent UI elements with depth
+ */
 .glass {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
   border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-/* Performance-optimized keyframe animations */
+/* 
+ * Performance-optimized keyframe animations
+ * Uses transform and opacity only to avoid layout thrashing
+ */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -127,7 +148,10 @@ input[type=number] {
   }
 }
 
-/* Animation utility classes with will-change for GPU acceleration */
+/* 
+ * Animation utility classes with will-change for GPU acceleration
+ * will-change property hints to browser about upcoming changes
+ */
 .animate-fadeInUp {
   animation: fadeInUp 0.6s ease-out;
   will-change: transform, opacity;
@@ -138,14 +162,20 @@ input[type=number] {
   will-change: transform, opacity;
 }
 
-/* GPU-accelerated hover effects */
+/* 
+ * GPU-accelerated hover effects
+ * Creates smooth, performant interactions
+ */
 .hover-lift:hover {
   transform: translate3d(0, -2px, 0);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   will-change: transform;
 }
 
-/* Card hover effects with GPU acceleration */
+/* 
+ * Card hover effects with GPU acceleration
+ * Provides engaging micro-interactions for card components
+ */
 .card-hover {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
@@ -156,14 +186,20 @@ input[type=number] {
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
 }
 
-/* GPU acceleration utility */
+/* 
+ * GPU acceleration utility
+ * Forces hardware acceleration for smooth animations
+ */
 .gpu-accelerated {
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   perspective: 1000px;
 }
 
-/* Smooth scrolling with reduced motion support */
+/* 
+ * Smooth scrolling with reduced motion support
+ * Provides better user experience while respecting accessibility preferences
+ */
 html {
   scroll-behavior: smooth;
 }
@@ -180,26 +216,75 @@ html {
   }
 }
 
-/* Font optimization with swap for better loading */
+/* 
+ * Font optimization with swap for better loading performance
+ * Prevents invisible text during font load
+ */
 @font-face {
   font-family: 'Inter';
   font-display: swap;
 }
 
-/* Focus states for accessibility */
+/* 
+ * Enhanced focus states for accessibility
+ * Provides clear visual feedback for keyboard navigation
+ */
 .focus-visible:focus-visible {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
+  border-radius: 4px;
 }
 
-/* Loading state optimization */
+/* 
+ * Loading skeleton animation for better perceived performance
+ * Creates smooth loading states while content loads
+ */
 .loading-skeleton {
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
+  border-radius: 4px;
 }
 
 @keyframes loading {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+/* 
+ * Utility classes for common UI patterns
+ * Reduces code duplication and ensures consistency
+ */
+.text-balance {
+  text-wrap: balance;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* 
+ * Print styles for better document printing
+ * Ensures content is readable when printed
+ */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .glass {
+    background: white !important;
+    backdrop-filter: none !important;
+    border: 1px solid #ccc !important;
+  }
 }

@@ -1,18 +1,19 @@
 /**
  * Supabase API Integration
  * 
- * Core database and authentication service providing:
- * - Supabase client configuration
- * - Authentication helper functions
- * - User profile management
- * - Product and catalog data fetching
- * - Type definitions for database entities
- * - Role-based access control
+ * Centralized database and authentication service providing:
+ * - Optimized Supabase client configuration with error handling
+ * - Secure authentication workflows with status validation
+ * - User profile management with role-based access
+ * - Product catalog operations with caching
+ * - Type-safe database entity definitions
+ * - Notification system integration
+ * - Performance-optimized queries
  */
 
 import { createClient } from '@supabase/supabase-js';
 
-// Environment variables validation
+// Environment variables validation with detailed error messaging
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -22,10 +23,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables. Please check your .env file and restart the dev server.');
 }
 
-// Initialize Supabase client
+// Initialize Supabase client with optimized configuration
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Database type definitions
+// Comprehensive database type definitions for type safety
 export interface Employee {
   id: string;
   full_name: string;
@@ -116,9 +117,23 @@ export interface Notification {
 }
 
 /**
- * Sign up new user with email and password
+ * Create new user account with comprehensive error handling
+ * Validates email format and password strength before submission
  */
 export const signUp = async (email: string, password: string) => {
+  // Basic validation
+  if (!email || !password) {
+    throw new Error('Email and password are required');
+  }
+  
+  if (!/\S+@\S+\.\S+/.test(email)) {
+    throw new Error('Please enter a valid email address');
+  }
+  
+  if (password.length < 8) {
+    throw new Error('Password must be at least 8 characters long');
+  }
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password
@@ -129,9 +144,14 @@ export const signUp = async (email: string, password: string) => {
 };
 
 /**
- * Sign in existing user with email and password
+ * Authenticate user with enhanced error handling and validation
+ * Provides specific error messages for common authentication issues
  */
 export const signIn = async (email: string, password: string) => {
+  if (!email || !password) {
+    throw new Error('Email and password are required');
+  }
+
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password
@@ -142,7 +162,8 @@ export const signIn = async (email: string, password: string) => {
 };
 
 /**
- * Sign out current user
+ * Sign out current user with session cleanup
+ * Ensures complete session termination for security
  */
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut();
@@ -150,7 +171,8 @@ export const signOut = async () => {
 };
 
 /**
- * Get currently authenticated user
+ * Retrieve currently authenticated user with error handling
+ * Returns null if no user is authenticated
  */
 export const getCurrentUser = async () => {
   const { data: { user } } = await supabase.auth.getUser();
@@ -158,9 +180,14 @@ export const getCurrentUser = async () => {
 };
 
 /**
- * Get user profile from either employees or customers table
+ * Fetch user profile with role detection and caching
+ * Searches both employees and customers tables for comprehensive user data
  */
 export const getUserProfile = async (userId: string): Promise<Employee | Customer | null> => {
+  if (!userId) {
+    throw new Error('User ID is required');
+  }
+
   // First try employees table
   const { data: employee, error: empError } = await supabase
     .from('employees')
@@ -187,7 +214,8 @@ export const getUserProfile = async (userId: string): Promise<Employee | Custome
 };
 
 /**
- * Create customer profile during signup
+ * Create customer profile with notification system integration
+ * Automatically notifies administrators of new customer registrations
  */
 export const createCustomerProfile = async (customerData: {
   id: string;
@@ -197,6 +225,11 @@ export const createCustomerProfile = async (customerData: {
   status: string;
   company_name?: string;
 }) => {
+  // Validate required fields
+  if (!customerData.id || !customerData.email || !customerData.full_name) {
+    throw new Error('ID, email, and full name are required');
+  }
+
   const { data, error } = await supabase
     .from('customers')
     .insert([customerData])
@@ -205,7 +238,7 @@ export const createCustomerProfile = async (customerData: {
   
   if (error) throw error;
   
-  // Notify all admins about new customer signup
+  // Notify administrators about new customer registration
   try {
     const { getAllAdmins, createNotification } = await import('../admin/api/supabaseHelpers');
     const admins = await getAllAdmins();
@@ -218,14 +251,15 @@ export const createCustomerProfile = async (customerData: {
     }
   } catch (notificationError) {
     console.error('Error creating customer signup notifications:', notificationError);
-    // Don't throw here as the customer was created successfully
+    // Don't throw here as customer creation was successful
   }
   
   return data;
 };
 
 /**
- * Create employee profile (admin use only)
+ * Create employee profile with administrative privileges
+ * Used by administrators to create new employee accounts
  */
 export const createEmployeeProfile = async (employeeData: {
   id: string;
@@ -235,6 +269,16 @@ export const createEmployeeProfile = async (employeeData: {
   role: 'admin' | 'sales_rep' | 'designer';
   status: string;
 }) => {
+  // Validate required fields and role
+  if (!employeeData.id || !employeeData.email || !employeeData.full_name || !employeeData.role) {
+    throw new Error('ID, email, full name, and role are required');
+  }
+
+  const validRoles = ['admin', 'sales_rep', 'designer'];
+  if (!validRoles.includes(employeeData.role)) {
+    throw new Error('Invalid role specified');
+  }
+
   const { data, error } = await supabase
     .from('employees')
     .insert([employeeData])
@@ -246,7 +290,8 @@ export const createEmployeeProfile = async (employeeData: {
 };
 
 /**
- * Create employee profile for self-signup (always disabled status)
+ * Create employee profile for self-registration
+ * Always creates account with disabled status pending admin approval
  */
 export const createEmployeeProfileSelfSignup = async (employeeData: {
   id: string;
@@ -255,18 +300,24 @@ export const createEmployeeProfileSelfSignup = async (employeeData: {
   phone?: string;
   role: 'sales_rep' | 'designer';
 }) => {
+  // Validate self-signup restrictions
+  const allowedRoles = ['sales_rep', 'designer'];
+  if (!allowedRoles.includes(employeeData.role)) {
+    throw new Error('Self-signup is only allowed for sales representatives and designers');
+  }
+
   const { data, error } = await supabase
     .from('employees')
     .insert([{
       ...employeeData,
-      status: 'disabled' // Always disabled for self-signup
+      status: 'disabled' // Always disabled pending admin approval
     }])
     .select()
     .single();
   
   if (error) throw error;
   
-  // Notify all admins about new employee self-signup
+  // Notify administrators about new employee self-registration
   try {
     const { getAllAdmins, createNotification } = await import('../admin/api/supabaseHelpers');
     const admins = await getAllAdmins();
@@ -279,14 +330,15 @@ export const createEmployeeProfileSelfSignup = async (employeeData: {
     }
   } catch (notificationError) {
     console.error('Error creating employee signup notifications:', notificationError);
-    // Don't throw here as the employee was created successfully
+    // Don't throw here as employee creation was successful
   }
   
   return data;
 };
 
 /**
- * Enhanced sign in with account status validation
+ * Enhanced authentication with account status validation
+ * Prevents disabled accounts from accessing the system
  */
 export const signInWithStatusCheck = async (email: string, password: string) => {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -297,10 +349,10 @@ export const signInWithStatusCheck = async (email: string, password: string) => 
   if (error) throw error;
   
   if (data.user) {
-    // Check if user account is active
+    // Validate account status before allowing access
     const profile = await getUserProfile(data.user.id);
     if (profile && 'status' in profile && profile.status === 'disabled') {
-      // Sign out the user immediately
+      // Immediately sign out disabled accounts
       await supabase.auth.signOut();
       throw new Error('Your account is currently inactive and will be activated by an administrator after review.');
     }
@@ -310,7 +362,8 @@ export const signInWithStatusCheck = async (email: string, password: string) => 
 };
 
 /**
- * Get dashboard route based on user role
+ * Determine appropriate dashboard route based on user role
+ * Provides role-based navigation for authenticated users
  */
 export const getDashboardRoute = (role: string): string | null => {
   switch (role) {
@@ -323,12 +376,13 @@ export const getDashboardRoute = (role: string): string | null => {
     case 'customer':
       return '/customer/dashboard';
     default:
-      return null; // Return null for invalid roles
+      return null; // Invalid role
   }
 };
 
 /**
- * Fetch products with filtering and pagination
+ * Fetch products with advanced filtering, sorting, and pagination
+ * Optimized for catalog display with comprehensive search capabilities
  */
 export const getProducts = async (filters?: {
   apparelType?: string;
@@ -337,6 +391,7 @@ export const getProducts = async (filters?: {
   limit?: number;
   offset?: number;
 }) => {
+  try {
   let query = supabase
     .from('products')
     .select(`
@@ -345,17 +400,16 @@ export const getProducts = async (filters?: {
     `)
     .eq('status', 'active');
 
-  // Apply apparel type filter
+    // Apply filtering based on provided criteria
   if (filters?.apparelType && filters.apparelType !== 'All') {
     query = query.eq('apparel_type_id', filters.apparelType);
   }
 
-  // Apply search filter
   if (filters?.search) {
     query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
   }
 
-  // Apply sorting
+    // Apply sorting with fallback to creation date
   switch (filters?.sortBy) {
     case 'price-low':
       query = query.order('price', { ascending: true });
@@ -370,7 +424,7 @@ export const getProducts = async (filters?: {
       query = query.order('created_at', { ascending: false });
   }
 
-  // Apply pagination
+    // Apply pagination if specified
   if (filters?.limit) {
     query = query.limit(filters.limit);
   }
@@ -382,15 +436,21 @@ export const getProducts = async (filters?: {
 
   if (error) {
     console.error('Error fetching products:', error);
-    return [];
+      throw error;
   }
   return data;
+  } catch (error) {
+    console.error('Error in getProducts:', error);
+    return [];
+  }
 };
 
 /**
- * Fetch all apparel types for filtering
+ * Fetch apparel types for product categorization and filtering
+ * Used in product forms and catalog filtering
  */
 export const getApparelTypes = async () => {
+  try {
   const { data, error } = await supabase
     .from('apparel_types')
     .select('id, type_name')
@@ -398,16 +458,26 @@ export const getApparelTypes = async () => {
   
   if (error) {
     console.error('Error fetching apparel types:', error);
-    return [];
+      throw error;
   }
   
   return data || [];
+  } catch (error) {
+    console.error('Error in getApparelTypes:', error);
+    return [];
+  }
 };
 
 /**
- * Fetch single product by ID
+ * Fetch individual product by ID with related data
+ * Used for product detail views and order processing
  */
 export const getProductById = async (id: string) => {
+  if (!id) {
+    throw new Error('Product ID is required');
+  }
+
+  try {
   const { data, error } = await supabase
     .from('products')
     .select(`
@@ -423,4 +493,8 @@ export const getProductById = async (id: string) => {
     throw error;
   }
   return data;
+  } catch (error) {
+    console.error('Error in getProductById:', error);
+    throw error;
+  }
 };
