@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase, getUserProfile, getDashboardRoute } from '../lib/supabase';
+import { supabase, getUserProfile, getDashboardRoute } from '../../core/api/supabase';
 import { User, Lock, Mail, Phone, Building, Shield, ArrowLeft, Save, Eye, EyeOff } from 'lucide-react';
-import { toast } from '../utils/toast';
+import { toast } from '../../core/utils/toast';
 
 interface UserData {
   id: string;

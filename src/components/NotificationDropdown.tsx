@@ -11,13 +11,13 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Bell, X, Check, CheckCheck, Eye, EyeOff } from 'lucide-react';
-import { getCurrentUser } from '../../core/api/supabase';
+import { getCurrentUser } from '../core/api/supabase';
 import { 
   getNotificationsWithUnreadCount, 
   markNotificationAsRead, 
   markNotificationAsUnread, 
   markAllNotificationsAsRead 
-} from '../admin/api/supabaseHelpers';
+} from '../features/admin/api/supabaseHelpers';
 
 interface Notification {
   id: number;
@@ -70,7 +70,7 @@ const NotificationDropdown: React.FC = React.memo(() => {
         );
         
         if (newCompletionNotifications.length > 0) {
-          const { toast } = await import('../../core/utils/toast');
+          const { toast } = await import('../core/utils/toast');
           newCompletionNotifications.forEach(notification => {
             toast.success(notification.message);
           });

@@ -11,7 +11,7 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Mail, Send, CheckCircle, AlertCircle } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../core/api/supabase';
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');

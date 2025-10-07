@@ -6,8 +6,8 @@ import CustomersTab from './tabs/CustomersTab';
 import OrdersTab from './tabs/OrdersTab';
 import ProductsTab from './tabs/ProductsTab';
 import InvoiceManagementTab from './tabs/InvoiceManagementTab';
-import OrderDetailsModal from '../components/OrderDetailsModal';
-import { AdminOrder } from './types';
+import OrderDetailsModal from '../../components/OrderDetailsModal';
+import { AdminOrder } from '../../types';
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');

@@ -16,18 +16,18 @@
 import React, { useState, useEffect } from 'react';
 import { Users, ShoppingBag, DollarSign, LogOut, Bell, Phone, Mail, TrendingUp, Target, Eye, UserPlus, CreditCard as Edit, Clock, Package, CircleUser as UserCircle, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import NotificationDropdown from '../components/NotificationDropdown';
-import { signOut, getCurrentUser, getUserProfile } from '../lib/supabase';
-import { useOrders } from '../contexts/OrderContext';
+import NotificationDropdown from '../../components/NotificationDropdown';
+import { signOut, getCurrentUser, getUserProfile } from '../../core/api/supabase';
+import { useOrders } from '../orders/OrderContext';
 import { getSalesRepDashboardStats, updateOrder, getSalesReps, getDesigners } from '../admin/api/supabaseHelpers';
-import { AdminOrder, AdminUser } from '../admin/types';
-import OrderDetailsModal from '../components/OrderDetailsModal';
-import EditOrderModal from '../admin/components/EditOrderModal';
-import FilterBar, { FilterConfig } from '../admin/components/FilterBar';
-import DataTable from '../admin/components/DataTable';
-import { usePaginatedData } from '../admin/hooks/useAdminData';
+import { AdminOrder, AdminUser } from '../../types';
+import OrderDetailsModal from '../../components/OrderDetailsModal';
+import EditOrderModal from './components/EditOrderModal';
+import FilterBar, { FilterConfig } from './components/FilterBar';
+import DataTable from './components/DataTable';
+import { usePaginatedData } from './hooks/useAdminData';
 import { getOrders } from '../admin/api/supabaseHelpers';
-import { PaginationParams } from '../admin/types';
+import { PaginationParams } from '../../types';
 
 const SalesRepDashboard: React.FC = () => {
   const navigate = useNavigate();

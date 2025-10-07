@@ -23,7 +23,7 @@ import Testimonials from './features/homepage/Testimonials';
 import QuoteForm from './features/homepage/QuoteForm';
 import ContactInfo from './features/homepage/ContactInfo';
 import Footer from './layout/Footer';
-import PlaceOrderModal from './features/orders/PlaceOrderModal';
+import PlaceOrderModal from './components/PlaceOrderModal';
 
 // Lazy loaded components for better performance
 const Catalog = lazy(() => import('./features/catalog/Catalog'));

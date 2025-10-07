@@ -13,7 +13,7 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useMemo } from 'react';
 import { getCurrentUser, getUserProfile, supabase } from '../../core/api/supabase';
 import { createNotification } from '../admin/api/supabaseHelpers';
-import { CustomerOrder } from '../admin/types';
+import { CustomerOrder } from '../../types';
 
 interface OrderContextType {
   orders: CustomerOrder[];

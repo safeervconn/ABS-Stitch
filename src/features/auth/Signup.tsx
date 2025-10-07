@@ -12,7 +12,7 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Eye, EyeOff, User, Mail, Phone, AlertCircle, CheckCircle, Lock } from 'lucide-react';
-import { signUp, createUserProfile, createCustomerProfile, supabase } from '../lib/supabase';
+import { signUp, createCustomerProfile } from '../../core/api/supabase';
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({

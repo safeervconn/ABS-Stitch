@@ -1,3 +1,14 @@
+/**
+ * Global Type Definitions
+ * 
+ * Centralized type definitions for the entire application including:
+ * - Database entity types (User, Customer, Order, Product, etc.)
+ * - API response types and pagination
+ * - Form data interfaces
+ * - Component prop types
+ * - Authentication and role-based types
+ */
+
 // Base types for admin interface
 export interface AdminStats {
   totalOrdersThisMonth: number;
@@ -66,8 +77,8 @@ export interface AdminProduct {
   id: string;
   title: string;
   description?: string;
-  category_id?: string;
-  category_name?: string;
+  apparel_type_id?: string;
+  apparel_type_name?: string;
   image_url?: string;
   price: number;
   status: 'active' | 'inactive';
@@ -86,8 +97,9 @@ export interface Invoice {
   id: string;
   customer_id: string;
   customer_name?: string;
-  apparel_type_id?: string;
-  apparel_type_name?: string;
+  customer_email?: string;
+  customer_company_name?: string;
+  invoice_title: string;
   month_year: string;
   payment_link?: string;
   order_ids: string[];
@@ -154,7 +166,7 @@ export interface CustomerOrder {
   customerId: string;
   order_type: 'custom' | 'catalog';
   file_urls?: string[] | null;
-  status: 'in_progress' | 'under_review' | 'completed' | 'cancelled';
+  status: 'new' | 'in_progress' | 'under_review' | 'completed' | 'cancelled';
   payment_status: 'paid' | 'unpaid';
   total_amount: number;
   created_at: string;

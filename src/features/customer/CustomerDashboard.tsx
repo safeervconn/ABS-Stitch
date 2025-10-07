@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import CustomerLayout from '../customer/components/CustomerLayout';
-import CustomerOverviewTab from '../customer/tabs/CustomerOverviewTab';
-import CustomerOrdersTab from '../customer/tabs/CustomerOrdersTab';
-import CustomerInvoicesTab from '../customer/tabs/CustomerInvoicesTab';
+import CustomerLayout from './components/CustomerLayout';
+import CustomerOverviewTab from './tabs/CustomerOverviewTab';
+import CustomerOrdersTab from './tabs/CustomerOrdersTab';
+import CustomerInvoicesTab from './tabs/CustomerInvoicesTab';
 
 const CustomerDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');

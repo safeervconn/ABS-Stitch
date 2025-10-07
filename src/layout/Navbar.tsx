@@ -13,7 +13,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Menu, X, Palette, User, Settings, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react';
 import CartDropdown from '../features/cart/CartDropdown';
-import NotificationDropdown from '../features/notifications/NotificationDropdown';
+import NotificationDropdown from '../components/NotificationDropdown';
 import { signOut, getCurrentUser, getUserProfile, getDashboardRoute } from '../core/api/supabase';
 
 const Navbar: React.FC = React.memo(() => {

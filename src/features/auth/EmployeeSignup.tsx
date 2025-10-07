@@ -11,7 +11,7 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, Eye, EyeOff, User, Mail, Phone, AlertCircle, CheckCircle, Lock, Users } from 'lucide-react';
-import { signUp, createEmployeeProfileSelfSignup } from '../lib/supabase';
+import { signUp, createEmployeeProfileSelfSignup } from '../../core/api/supabase';
 
 const EmployeeSignup: React.FC = () => {
   const [formData, setFormData] = useState({

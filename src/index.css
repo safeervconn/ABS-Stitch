@@ -9,26 +9,31 @@
  * 
  * This file contains:
  * - Base typography and font settings
- * - Optimized CSS animations using transform and opacity
+ * - GPU-accelerated animations using transform3d and will-change
  * - Utility classes for enhanced user experience
  * - Performance-optimized animation keyframes
+ * - Reduced motion support for accessibility
  */
 
 body {
   font-family: 'Inter';
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  /* Optimize text rendering for better performance */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1;
 }
 
-/* Optimized animations and transitions - using transform and opacity for GPU acceleration */
+/* Optimized transitions - only animate transform and opacity for best performance */
 * {
-  transition: all 0.2s ease-in-out;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.15s ease,
+              border-color 0.15s ease,
+              color 0.15s ease;
 }
 
-/* Hide number input arrows */
+/* Remove number input spinners for cleaner UI */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -36,17 +41,23 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 input[type=number] {
-  -moz-appearance: textfield; /* Firefox */
+  -moz-appearance: textfield;
 }
 
-/* Optimized background spotlight effects using transform and opacity */
+/* GPU-accelerated spotlight effects with reduced motion support */
 .spotlight {
   position: absolute;
   border-radius: 50%;
   filter: blur(40px);
   opacity: 0.6;
-  animation: float 6s ease-in-out infinite;
   will-change: transform, opacity;
+  animation: float 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight {
+    animation: none;
+  }
 }
 
 .spotlight-1 {
@@ -76,7 +87,7 @@ input[type=number] {
   animation-delay: 4s;
 }
 
-/* Optimized float animation using only transform for GPU acceleration */
+/* GPU-accelerated float animation */
 @keyframes float {
   0%, 100% {
     transform: translate3d(0, 0px, 0) scale(1);
@@ -86,27 +97,14 @@ input[type=number] {
   }
 }
 
-/* Glass morphism effect */
+/* Glass morphism effect with backdrop-filter */
 .glass {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-/* Enhanced gradient backgrounds */
-.gradient-bg {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.gradient-bg-light {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.gradient-bg-cool {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-/* Optimized custom animation classes using transform and opacity */
+/* Performance-optimized keyframe animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -129,24 +127,7 @@ input[type=number] {
   }
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
+/* Animation utility classes with will-change for GPU acceleration */
 .animate-fadeInUp {
   animation: fadeInUp 0.6s ease-out;
   will-change: transform, opacity;
@@ -157,62 +138,14 @@ input[type=number] {
   will-change: transform, opacity;
 }
 
-.animate-pulse-slow {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
-}
-
-/* Optimized hover effects using transform for GPU acceleration */
+/* GPU-accelerated hover effects */
 .hover-lift:hover {
   transform: translate3d(0, -2px, 0);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   will-change: transform;
 }
 
-.hover-glow:hover {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-}
-
-/* Loading spinner optimization */
-.spinner {
-  background: conic-gradient(from 0deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  mask: radial-gradient(circle at center, transparent 40%, black 42%);
-  will-change: transform;
-}
-
-@keyframes spin {
-  0% { transform: rotate3d(0, 0, 1, 0deg); }
-  100% { transform: rotate3d(0, 0, 1, 360deg); }
-}
-
-/* Optimized gradient button effects */
-.gradient-button {
-  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
-  background-size: 300% 300%;
-  animation: gradientShift 3s ease infinite;
-  will-change: background-position, transform;
-}
-
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.gradient-button:hover {
-  animation-duration: 1s;
-  transform: translate3d(0, -2px, 0);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-}
-
-/* Optimized card hover effects using transform */
+/* Card hover effects with GPU acceleration */
 .card-hover {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
@@ -223,28 +156,50 @@ input[type=number] {
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
 }
 
-/* Improved focus states */
-.focus-ring:focus {
-  outline: none;
-  ring: 2px;
-  ring-color: #3b82f6;
-  ring-offset: 2px;
-}
-
-/* Performance optimizations */
+/* GPU acceleration utility */
 .gpu-accelerated {
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   perspective: 1000px;
 }
 
-/* Smooth scrolling for better UX */
+/* Smooth scrolling with reduced motion support */
 html {
   scroll-behavior: smooth;
 }
 
-/* Optimize font loading */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Font optimization with swap for better loading */
 @font-face {
   font-family: 'Inter';
   font-display: swap;
+}
+
+/* Focus states for accessibility */
+.focus-visible:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Loading state optimization */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
