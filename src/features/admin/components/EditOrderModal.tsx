@@ -18,3 +18,5 @@
 -import { toast } from '../../utils/toast';
 +import { supabase, getCurrentUser, getUserProfile } from '../../../core/api/supabase';
 +import { toast } from '../../../core/utils/toast';
+
+export default React
