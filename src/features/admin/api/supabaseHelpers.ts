@@ -547,6 +547,8 @@ export const updateProduct = async (id: string, productData: Partial<AdminProduc
         *,
         apparel_type:apparel_types(type_name)
       `)
+  }
+}
 /**
  * Get all sales representatives for assignment dropdowns
  */
