@@ -5,7 +5,8 @@
  * debouncing, throttling, lazy loading, and memoization helpers.
  */
 
-import { useCallback, useRef, useEffect, useMemo } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import type { DependencyList } from 'react';
 
 /**
  * Debounce function to limit the rate of function execution
@@ -53,7 +54,7 @@ export function throttle<T extends (...args: any[]) => any>(
  * @returns Debounced value
  */
 export function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = React.useState<T>(value);
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -74,7 +75,7 @@ export function useDebounce<T>(value: T, delay: number): T {
  * @returns Ref and isIntersecting state
  */
 export function useIntersectionObserver(options?: IntersectionObserverInit) {
-  const [isIntersecting, setIsIntersecting] = React.useState(false);
+  const [isIntersecting, setIsIntersecting] = useState(false);
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -103,7 +104,7 @@ export function useIntersectionObserver(options?: IntersectionObserverInit) {
  */
 export function useMemoizedCalculation<T>(
   calculation: () => T,
-  dependencies: React.DependencyList
+  dependencies: DependencyList
 ): T {
   return useMemo(calculation, dependencies);
 }
