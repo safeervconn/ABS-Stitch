@@ -1,38 +1,70 @@
-import React from 'react';
+/**
+ * Main Application Component
+ * 
+ * This is the root component that handles:
+ * - Route configuration with lazy loading for performance
+ * - Global context providers (Cart, Orders)
+ * - Global modal management
+ * - SEO optimization with React Helmet
+ */
+
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { CartProvider } from './contexts/CartContext';
-import { OrderProvider } from './contexts/OrderContext';
+import { Helmet } from 'react-helmet-async';
+import { CartProvider } from './features/cart/CartContext';
+import { OrderProvider } from './features/orders/OrderContext';
 
-// Components
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import CatalogPreview from './components/CatalogPreview';
-import Services from './components/Services';
-import Testimonials from './components/Testimonials';
-import QuoteForm from './components/QuoteForm';
-import ContactInfo from './components/ContactInfo';
-import Footer from './components/Footer';
-import PlaceOrderModal from './components/PlaceOrderModal';
+// Layout components (not lazy loaded as they're used frequently)
+import Navbar from './layout/Navbar';
+import Hero from './features/homepage/Hero';
+import CatalogPreview from './features/homepage/CatalogPreview';
+import Services from './features/homepage/Services';
+import Testimonials from './features/homepage/Testimonials';
+import QuoteForm from './features/homepage/QuoteForm';
+import ContactInfo from './features/homepage/ContactInfo';
+import Footer from './layout/Footer';
+import PlaceOrderModal from './features/orders/PlaceOrderModal';
 
-// Pages
-import Catalog from './pages/Catalog';
-import About from './pages/About';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import EmployeeSignup from './pages/EmployeeSignup';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import SalesRepDashboard from './pages/SalesRepDashboard';
-import DesignerDashboard from './pages/DesignerDashboard';
-import CustomerDashboard from './pages/CustomerDashboard';
-import AdminModule from './admin/AdminDashboard';
-import ProfileSettings from './pages/ProfileSettings';
-import Checkout from './pages/Checkout';
+// Lazy loaded components for better performance
+const Catalog = lazy(() => import('./features/catalog/Catalog'));
+const About = lazy(() => import('./features/about/About'));
+const Login = lazy(() => import('./features/auth/Login'));
+const Signup = lazy(() => import('./features/auth/Signup'));
+const EmployeeSignup = lazy(() => import('./features/auth/EmployeeSignup'));
+const ForgotPassword = lazy(() => import('./features/auth/ForgotPassword'));
+const ResetPassword = lazy(() => import('./features/auth/ResetPassword'));
+const ProfileSettings = lazy(() => import('./features/auth/ProfileSettings'));
+const Checkout = lazy(() => import('./features/checkout/Checkout'));
+const SalesRepDashboard = lazy(() => import('./features/admin/SalesRepDashboard'));
+const DesignerDashboard = lazy(() => import('./features/admin/DesignerDashboard'));
+const CustomerDashboard = lazy(() => import('./features/customer/CustomerDashboard'));
+const AdminModule = lazy(() => import('./features/admin/AdminDashboard'));
 
-// Homepage Component
-const Homepage: React.FC = () => {
+/**
+ * Loading component for lazy loaded routes
+ */
+const LoadingFallback: React.FC = React.memo(() => (
+  <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="text-center">
+      <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-gray-600 font-medium">Loading...</p>
+    </div>
+  </div>
+));
+
+/**
+ * Homepage component with optimized structure
+ */
+const Homepage: React.FC = React.memo(() => {
   return (
     <>
+      <Helmet>
+        <title>ABS STITCH - Where We Stitch Perfection! | Custom Embroidery Services</title>
+        <meta name="description" content="Professional custom embroidery and stitching services for apparel, promotional items, and personal projects. Quick turnaround, high quality, unlimited revisions." />
+        <meta name="keywords" content="custom embroidery, stitching services, apparel customization, logo embroidery" />
+        <link rel="canonical" href="https://absstitch.com/" />
+      </Helmet>
+      
       <Navbar />
       <Hero />
       <CatalogPreview />
@@ -65,16 +97,22 @@ const Homepage: React.FC = () => {
       <Footer />
     </>
   );
-};
+});
 
+/**
+ * Main App component with global state management and routing
+ */
 function App() {
   const [isPlaceOrderOpen, setIsPlaceOrderOpen] = React.useState(false);
 
+  // Handle global place order modal events
   React.useEffect(() => {
-    // Listen for place order modal events
-    const handleOpenPlaceOrderModal = () => {
+    /**
+     * Event handler for opening place order modal
+     */
+    const handleOpenPlaceOrderModal = React.useCallback(() => {
       setIsPlaceOrderOpen(true);
-    };
+    }, []);
 
     window.addEventListener('openPlaceOrderModal', handleOpenPlaceOrderModal);
     return () => {
@@ -82,33 +120,42 @@ function App() {
     };
   }, []);
 
+  /**
+   * Close place order modal handler
+   */
+  const handleClosePlaceOrderModal = React.useCallback(() => {
+    setIsPlaceOrderOpen(false);
+  }, []);
+
   return (
     <CartProvider>
       <OrderProvider>
         <Router>
           <div className="min-h-screen bg-gray-50">
-            <Routes>
-              <Route path="/" element={<Homepage />} />
-              <Route path="/catalog" element={<Catalog />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/employee-signup" element={<EmployeeSignup />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/profile" element={<ProfileSettings />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/sales/dashboard" element={<SalesRepDashboard />} />
-              <Route path="/designer/dashboard" element={<DesignerDashboard />} />
-              <Route path="/customer/dashboard" element={<CustomerDashboard />} />
-              <Route path="/admin" element={<AdminModule />} />
-              <Route path="/admin/*" element={<AdminModule />} />
-            </Routes>
+            <Suspense fallback={<LoadingFallback />}>
+              <Routes>
+                <Route path="/" element={<Homepage />} />
+                <Route path="/catalog" element={<Catalog />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/employee-signup" element={<EmployeeSignup />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/profile" element={<ProfileSettings />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/sales/dashboard" element={<SalesRepDashboard />} />
+                <Route path="/designer/dashboard" element={<DesignerDashboard />} />
+                <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+                <Route path="/admin" element={<AdminModule />} />
+                <Route path="/admin/*" element={<AdminModule />} />
+              </Routes>
+            </Suspense>
             
             {/* Place Order Modal - Available globally */}
             <PlaceOrderModal
               isOpen={isPlaceOrderOpen}
-              onClose={() => setIsPlaceOrderOpen(false)}
+              onClose={handleClosePlaceOrderModal}
             />
           </div>
         </Router>

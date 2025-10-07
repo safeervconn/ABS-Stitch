@@ -4,15 +4,30 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+/**
+ * Global Styles and Animations
+ * 
+ * This file contains:
+ * - Base typography and font settings
+ * - Optimized CSS animations using transform and opacity
+ * - Utility classes for enhanced user experience
+ * - Performance-optimized animation keyframes
+ */
+
 body {
   font-family: 'Inter';
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  /* Optimize text rendering for better performance */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* Smooth animations and transitions */
+/* Optimized animations and transitions - using transform and opacity for GPU acceleration */
 * {
   transition: all 0.2s ease-in-out;
 }
+
 /* Hide number input arrows */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
@@ -23,13 +38,15 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
   -moz-appearance: textfield; /* Firefox */
 }
-/* Background spotlight effects */
+
+/* Optimized background spotlight effects using transform and opacity */
 .spotlight {
   position: absolute;
   border-radius: 50%;
   filter: blur(40px);
   opacity: 0.6;
   animation: float 6s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 .spotlight-1 {
@@ -59,12 +76,13 @@ input[type=number] {
   animation-delay: 4s;
 }
 
+/* Optimized float animation using only transform for GPU acceleration */
 @keyframes float {
   0%, 100% {
-    transform: translateY(0px) scale(1);
+    transform: translate3d(0, 0px, 0) scale(1);
   }
   50% {
-    transform: translateY(-20px) scale(1.1);
+    transform: translate3d(0, -20px, 0) scale(1.1);
   }
 }
 
@@ -88,26 +106,26 @@ input[type=number] {
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
-/* Custom animation classes */
+/* Optimized custom animation classes using transform and opacity */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translate3d(0, 20px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translate3d(20px, 0, 0);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -131,10 +149,12 @@ input[type=number] {
 
 .animate-fadeInUp {
   animation: fadeInUp 0.6s ease-out;
+  will-change: transform, opacity;
 }
 
 .animate-slideInRight {
   animation: slideInRight 0.6s ease-out;
+  will-change: transform, opacity;
 }
 
 .animate-pulse-slow {
@@ -147,10 +167,11 @@ input[type=number] {
   animation: shimmer 2s infinite;
 }
 
-/* Smooth hover effects */
+/* Optimized hover effects using transform for GPU acceleration */
 .hover-lift:hover {
-  transform: translateY(-2px);
+  transform: translate3d(0, -2px, 0);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  will-change: transform;
 }
 
 .hover-glow:hover {
@@ -163,30 +184,20 @@ input[type=number] {
   border-radius: 50%;
   animation: spin 1s linear infinite;
   mask: radial-gradient(circle at center, transparent 40%, black 42%);
+  will-change: transform;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% { transform: rotate3d(0, 0, 1, 0deg); }
+  100% { transform: rotate3d(0, 0, 1, 360deg); }
 }
 
-/* Ensure consistent font family across all elements */
-* {
-  font-family: 'Inter', sans-serif;
-}
-
-/* Optimize text rendering */
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-
-/* Enhanced gradient button effects */
+/* Optimized gradient button effects */
 .gradient-button {
   background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
   background-size: 300% 300%;
   animation: gradientShift 3s ease infinite;
+  will-change: background-position, transform;
 }
 
 @keyframes gradientShift {
@@ -197,16 +208,18 @@ body {
 
 .gradient-button:hover {
   animation-duration: 1s;
-  transform: translateY(-2px);
+  transform: translate3d(0, -2px, 0);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
-/* Card hover effects */
+
+/* Optimized card hover effects using transform */
 .card-hover {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 .card-hover:hover {
-  transform: translateY(-8px);
+  transform: translate3d(0, -8px, 0);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
 }
 
@@ -216,4 +229,22 @@ body {
   ring: 2px;
   ring-color: #3b82f6;
   ring-offset: 2px;
+}
+
+/* Performance optimizations */
+.gpu-accelerated {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Smooth scrolling for better UX */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optimize font loading */
+@font-face {
+  font-family: 'Inter';
+  font-display: swap;
 }
