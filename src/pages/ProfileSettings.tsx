@@ -26,6 +26,22 @@ const ProfileSettings: React.FC = () => {
     newPassword: '',
     confirmPassword: '',
   });
+  
+  // Password strength validation
+  const getPasswordStrength = (password: string) => {
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+    return strength;
+  };
+
+  const passwordStrength = getPasswordStrength(passwordData.newPassword);
+  const passwordStrengthText = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'][passwordStrength];
+  const passwordStrengthColor = ['red', 'orange', 'yellow', 'blue', 'green'][passwordStrength];
+  
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -131,15 +147,21 @@ const ProfileSettings: React.FC = () => {
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!passwordData.newPassword.trim()) {
+      setMessage({ type: 'error', text: 'New password is required' });
+      return;
+    }
+
+    if (passwordData.newPassword.length < 8) {
+      setMessage({ type: 'error', text: 'Password must be at least 8 characters long' });
+      return;
+    }
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       setMessage({ type: 'error', text: 'Passwords do not match' });
       return;
     }
 
-    if (passwordData.newPassword.length < 6) {
-      setMessage({ type: 'error', text: 'Password must be at least 6 characters' });
-      return;
-    }
 
     try {
       setSaving(true);
@@ -373,7 +395,26 @@ const ProfileSettings: React.FC = () => {
                           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">Must be at least 6 characters</p>
+                      
+                      {/* Password Strength Indicator */}
+                      {passwordData.newPassword && (
+                        <div className="mt-2">
+                          <div className="flex items-center space-x-2">
+                            <div className="flex-1 bg-gray-200 rounded-full h-2">
+                              <div 
+                                className={`h-2 rounded-full transition-all bg-${passwordStrengthColor}-500`}
+                                style={{ width: `${(passwordStrength / 5) * 100}%` }}
+                              ></div>
+                            </div>
+                            <span className={`text-xs text-${passwordStrengthColor}-600`}>
+                              {passwordStrengthText}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Use 8+ characters with uppercase, lowercase, numbers, and symbols
+                          </p>
+                        </div>
+                      )}
                     </div>
                     <div>
                       <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
@@ -398,6 +439,20 @@ const ProfileSettings: React.FC = () => {
                           {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                       </div>
+                      
+                      {/* Password Match Indicator */}
+                      {passwordData.confirmPassword && (
+                        <div className="mt-2">
+                          {passwordData.newPassword === passwordData.confirmPassword ? (
+                            <p className="text-xs text-green-600 flex items-center">
+                              <span className="w-3 h-3 bg-green-500 rounded-full mr-1"></span>
+                              Passwords match
+                            </p>
+                          ) : (
+                            <p className="text-xs text-red-600">Passwords do not match</p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

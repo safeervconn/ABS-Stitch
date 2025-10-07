@@ -20,6 +20,8 @@ import About from './pages/About';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import EmployeeSignup from './pages/EmployeeSignup';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import SalesRepDashboard from './pages/SalesRepDashboard';
 import DesignerDashboard from './pages/DesignerDashboard';
 import CustomerDashboard from './pages/CustomerDashboard';
@@ -92,6 +94,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/employee-signup" element={<EmployeeSignup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/profile" element={<ProfileSettings />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/sales/dashboard" element={<SalesRepDashboard />} />
