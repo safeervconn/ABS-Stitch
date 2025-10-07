@@ -133,7 +133,7 @@ const Login: React.FC = () => {
   return (
     <PageLayout seoPage="login">
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-        <OptimizedNavbar />
+       
         
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-md mx-auto">
