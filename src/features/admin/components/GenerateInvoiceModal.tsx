@@ -6,3 +6,5 @@
 -import { toast } from '../../utils/toast';
 +import { AdminOrder } from '../../../types';
 +import { toast } from '../../../core/utils/toast';
+
+export default React

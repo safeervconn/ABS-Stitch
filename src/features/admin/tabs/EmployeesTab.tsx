@@ -10,3 +10,5 @@
  import { getUsers } from '../api/supabaseHelpers';
 -import { toast } from '../../utils/toast';
 +import { toast } from '../../../core/utils/toast';
+
+export default FilterBar
