@@ -30,7 +30,7 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
   delay = 0,
   onClick,
 }) => {
-  const { ref, isIntersecting } = useIntersectionObserver({
+  const { ref, isIntersecting, hasIntersected } = useIntersectionObserver({
     threshold: 0.1,
     rootMargin: '50px',
   });
@@ -42,7 +42,7 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
 
   const getEntranceClasses = () => {
     if (entranceAnimation === 'none') return '';
-    if (!isIntersecting) return 'opacity-0 translate-y-4';
+    if (!hasIntersected) return 'opacity-0 translate-y-4';
     return animationClasses[entranceAnimation];
   };
 

@@ -76,6 +76,7 @@ export function useDebounce<T>(value: T, delay: number): T {
  */
 export function useIntersectionObserver(options?: IntersectionObserverInit) {
   const [isIntersecting, setIsIntersecting] = useState(false);
+  const [hasIntersected, setHasIntersected] = useState(false);
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -84,6 +85,10 @@ export function useIntersectionObserver(options?: IntersectionObserverInit) {
 
     const observer = new IntersectionObserver(([entry]) => {
       setIsIntersecting(entry.isIntersecting);
+      // Once intersected, keep hasIntersected as true to prevent re-animation
+      if (entry.isIntersecting && !hasIntersected) {
+        setHasIntersected(true);
+      }
     }, options);
 
     observer.observe(element);
@@ -91,9 +96,9 @@ export function useIntersectionObserver(options?: IntersectionObserverInit) {
     return () => {
       observer.unobserve(element);
     };
-  }, [options]);
+  }, [options, hasIntersected]);
 
-  return { ref, isIntersecting };
+  return { ref, isIntersecting, hasIntersected };
 }
 
 /**
