@@ -1,56 +1,32 @@
-import React, { useState } from 'react';
-import AdminLayout from './components/AdminLayout';
-import OverviewTab from './tabs/OverviewTab';
-import EmployeesTab from './tabs/EmployeesTab';
-import CustomersTab from './tabs/CustomersTab';
-import OrdersTab from './tabs/OrdersTab';
-import ProductsTab from './tabs/ProductsTab';
-import InvoiceManagementTab from './tabs/InvoiceManagementTab';
-import OrderDetailsModal from '../../components/OrderDetailsModal';
-import { AdminOrder } from '../../types';
+import React from 'react';
+
+/**
+ * Admin Dashboard Component
+ *
+ * Note: This component is currently disabled due to missing dependencies.
+ * The following files need to be restored:
+ * - ./components/AdminLayout
+ * - ./tabs/OverviewTab
+ * - ./tabs/EmployeesTab
+ * - ./tabs/CustomersTab
+ * - ./tabs/OrdersTab
+ * - ./tabs/ProductsTab
+ * - ./tabs/InvoiceManagementTab
+ */
 
 const AdminDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null);
-  const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
-
-  const handleOrderClick = (order: AdminOrder) => {
-    setSelectedOrder(order);
-    setIsOrderDetailsOpen(true);
-  };
-
-  const renderActiveTab = () => {
-    switch (activeTab) {
-      case 'overview':
-        return <OverviewTab onOrderClick={handleOrderClick} />;
-      case 'employees':
-        return <EmployeesTab />;
-      case 'customers':
-        return <CustomersTab />;
-      case 'orders':
-        return <OrdersTab onOrderClick={handleOrderClick} />;
-      case 'products':
-        return <ProductsTab />;
-      case 'invoices':
-        return <InvoiceManagementTab />;
-      default:
-        return <OverviewTab onOrderClick={handleOrderClick} />;
-    }
-  };
-
   return (
-    <>
-      <AdminLayout activeTab={activeTab} onTabChange={setActiveTab}>
-        {renderActiveTab()}
-      </AdminLayout>
-
-      {/* Order Details Modal */}
-      <OrderDetailsModal
-        isOpen={isOrderDetailsOpen}
-        onClose={() => setIsOrderDetailsOpen(false)}
-        order={selectedOrder}
-      />
-    </>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">Admin Dashboard</h1>
+        <p className="text-gray-600 mb-4">
+          The admin dashboard is currently under maintenance. Some components need to be restored.
+        </p>
+        <p className="text-sm text-gray-500">
+          Please contact the system administrator for more information.
+        </p>
+      </div>
+    </div>
   );
 };
 

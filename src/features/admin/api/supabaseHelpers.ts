@@ -547,8 +547,37 @@ export const updateProduct = async (id: string, productData: Partial<AdminProduc
         *,
         apparel_type:apparel_types(type_name)
       `)
+      .single();
+
+    if (error) throw error;
+
+    return {
+      ...data,
+      apparel_type_name: data.apparel_type?.type_name
+    };
+  } catch (error) {
+    console.error('Error updating product:', error);
+    throw error;
   }
-}
+};
+
+/**
+ * Delete product
+ */
+export const deleteProduct = async (id: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    throw error;
+  }
+};
+
 /**
  * Get all sales representatives for assignment dropdowns
  */

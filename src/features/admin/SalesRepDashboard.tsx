@@ -23,9 +23,8 @@ import { useOrders } from '../orders/OrderContext';
 import { getSalesRepDashboardStats, updateOrder, getSalesReps, getDesigners } from '../admin/api/supabaseHelpers';
 import { AdminOrder, AdminUser } from '../../types';
 import OrderDetailsModal from '../../components/OrderDetailsModal';
-import EditOrderModal from './components/EditOrderModal';
-import FilterBar, { FilterConfig } from './components/FilterBar';
-import DataTable from './components/DataTable';
+import FilterBar, { FilterConfig } from '../../components/FilterBar';
+import DataTable from '../../components/DataTable';
 import { usePaginatedData } from './hooks/useAdminData';
 import { getOrders } from '../admin/api/supabaseHelpers';
 import { PaginationParams } from '../../types';
@@ -501,7 +500,8 @@ const SalesRepDashboard: React.FC = () => {
         order={selectedOrder}
       />
 
-      {/* Order Edit Modal */}
+      {/* Order Edit Modal - Temporarily disabled */}
+      {/*
       <EditOrderModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
@@ -516,6 +516,7 @@ const SalesRepDashboard: React.FC = () => {
           }
         }}
       />
+      */}
     </div>
   );
 };

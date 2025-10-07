@@ -1,29 +1,28 @@
-import React, { useState } from 'react';
-import CustomerLayout from './components/CustomerLayout';
-import CustomerOverviewTab from './tabs/CustomerOverviewTab';
-import CustomerOrdersTab from './tabs/CustomerOrdersTab';
-import CustomerInvoicesTab from './tabs/CustomerInvoicesTab';
+import React from 'react';
+
+/**
+ * Customer Dashboard Component
+ *
+ * Note: This component is currently disabled due to missing dependencies.
+ * The following files need to be restored:
+ * - ./components/CustomerLayout
+ * - ./tabs/CustomerOrdersTab
+ * - ./tabs/CustomerInvoicesTab
+ */
 
 const CustomerDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('overview');
-
-  const renderActiveTab = () => {
-    switch (activeTab) {
-      case 'overview':
-        return <CustomerOverviewTab />;
-      case 'orders':
-        return <CustomerOrdersTab />;
-      case 'invoices':
-        return <CustomerInvoicesTab />;
-      default:
-        return <CustomerOverviewTab />;
-    }
-  };
-
   return (
-    <CustomerLayout activeTab={activeTab} onTabChange={setActiveTab}>
-      {renderActiveTab()}
-    </CustomerLayout>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">Customer Dashboard</h1>
+        <p className="text-gray-600 mb-4">
+          The customer dashboard is currently under maintenance. Some components need to be restored.
+        </p>
+        <p className="text-sm text-gray-500">
+          Please contact the system administrator for more information.
+        </p>
+      </div>
+    </div>
   );
 };
 

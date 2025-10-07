@@ -70,7 +70,7 @@ const NotificationDropdown: React.FC = React.memo(() => {
         );
         
         if (newCompletionNotifications.length > 0) {
-          const { toast } = await import('../core/utils/toast');
+          const { toast } = await import('../utils/toast');
           newCompletionNotifications.forEach(notification => {
             toast.success(notification.message);
           });

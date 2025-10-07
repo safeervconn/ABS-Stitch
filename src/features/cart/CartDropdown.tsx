@@ -13,7 +13,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { ShoppingCart, X, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from './CartContext';
-import { getCurrentUser } from '../../core/api/supabase';
+import { getCurrentUser } from '../../api/auth';
 
 const CartDropdown: React.FC = React.memo(() => {
   const [isOpen, setIsOpen] = useState(false);
