@@ -1,8 +1,16 @@
+/**
+ * Add to Cart Button Component
+ * 
+ * Optimized button component for adding products to cart with
+ * authentication checks and user feedback.
+ */
+
 import React from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { getCurrentUser } from '../lib/supabase';
 import { toast } from '../utils/toast';
+import Button from './ui/Button';
 
 interface AddToCartButtonProps {
   item: {
@@ -15,10 +23,17 @@ interface AddToCartButtonProps {
   className?: string;
 }
 
+/**
+ * Optimized add to cart button with authentication and feedback
+ * Provides clear user feedback and handles authentication flow
+ */
 const AddToCartButton: React.FC<AddToCartButtonProps> = ({ item, className = "" }) => {
   const { addToCart, items } = useCart();
   const [currentUser, setCurrentUser] = React.useState<any>(null);
 
+  /**
+   * Check current user authentication status
+   */
   React.useEffect(() => {
     const checkUser = async () => {
       try {
@@ -32,6 +47,9 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ item, className = "" 
     checkUser();
   }, []);
 
+  /**
+   * Handle add to cart with authentication check
+   */
   const handleAddToCart = async () => {
     if (!currentUser) {
       // Show toast notification for unauthenticated users
@@ -45,13 +63,15 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ item, className = "" 
   };
 
   return (
-    <button 
+    <Button
       onClick={handleAddToCart}
-      className={`bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2 shadow-lg ${className}`}
+      variant="primary"
+      icon={<ShoppingCart className="h-4 w-4" />}
+      animation="lift"
+      className={className}
     >
-      <ShoppingCart className="h-4 w-4" />
-      <span>Add to Cart</span>
-    </button>
+      Add to Cart
+    </Button>
   );
 };
 

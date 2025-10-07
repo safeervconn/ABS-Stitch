@@ -8,11 +8,27 @@
  * - Responsive design
  */
 
+/**
+ * Testimonials Component
+ * 
+ * Optimized testimonials carousel with smooth animations,
+ * performance-conscious rendering, and accessibility features.
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Star, Quote } from 'lucide-react';
+import Card from './ui/Card';
+import LazyImage from './ui/LazyImage';
+import { animationClasses } from '../utils/animations';
 
+/**
+ * Testimonials carousel with continuous smooth scrolling
+ * Optimized for performance with CSS transforms and memoization
+ */
 const Testimonials: React.FC = () => {
-  // Extended testimonials data for continuous carousel
+  /**
+   * Testimonials data configuration
+   */
   const testimonials = [
     {
       id: 1,
@@ -64,14 +80,17 @@ const Testimonials: React.FC = () => {
     }
   ];
 
-  // Duplicate testimonials for seamless loop
+  /**
+   * Duplicate testimonials for seamless infinite loop
+   */
   const extendedTestimonials = [...testimonials, ...testimonials];
   
   const [currentOffset, setCurrentOffset] = useState(0);
   const cardWidth = 320; // Width of each card including margin
-  const visibleCards = 3; // Number of cards visible at once
 
-  // Auto-slide effect
+  /**
+   * Auto-slide effect with performance optimization
+   */
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentOffset(prev => {
@@ -82,17 +101,74 @@ const Testimonials: React.FC = () => {
         }
         return newOffset;
       });
-    }, 3000); // Move every 3 seconds
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [testimonials.length]);
 
+  /**
+   * Memoized testimonial card component
+   */
+  const TestimonialCard = React.memo<{ testimonial: typeof testimonials[0]; index: number }>(
+    ({ testimonial, index }) => (
+      <div 
+        className="flex-shrink-0 px-3"
+        style={{ width: `${cardWidth}px` }}
+      >
+        <Card
+          background="gradient"
+          hoverEffect="lift"
+          className="h-80 flex flex-col"
+        >
+          {/* Quote Icon */}
+          <div className="text-blue-200 mb-3">
+            <Quote className="h-6 w-6" />
+          </div>
+
+          {/* Customer Photo with lazy loading */}
+          <div className="flex items-center mb-4">
+            <LazyImage
+              src={testimonial.image}
+              alt={testimonial.name}
+              className="w-12 h-12 rounded-full object-cover mr-3"
+              containerClassName="w-12 h-12 mr-3"
+            />
+            <div>
+              <p className="font-bold text-gray-800 text-sm">{testimonial.name}</p>
+              <p className="text-gray-500 text-xs">{testimonial.company}</p>
+            </div>
+          </div>
+
+          {/* Rating stars */}
+          <div className="flex mb-3" role="img" aria-label={`${testimonial.rating} out of 5 stars`}>
+            {[...Array(5)].map((_, i) => (
+              <Star 
+                key={i} 
+                className={`h-4 w-4 ${i < testimonial.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+              />
+            ))}
+          </div>
+
+          {/* Testimonial Text */}
+          <blockquote className="text-gray-700 text-sm leading-relaxed flex-grow">
+            "{testimonial.text}"
+          </blockquote>
+        </Card>
+      </div>
+    )
+  );
+
+  TestimonialCard.displayName = 'TestimonialCard';
+
   return (
-    <section className="py-16 bg-gradient-to-b from-white to-gray-50">
+    <section 
+      className="py-16 bg-gradient-to-b from-white to-gray-50"
+      aria-label="Customer testimonials"
+    >
       <div className="container mx-auto px-4">
         
-        {/* Section Header */}
-        <div className="text-center mb-12">
+        {/* Section Header with animation */}
+        <div className={`text-center mb-12 ${animationClasses.fadeInUp}`}>
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-4">
             What Our Clients Say
           </h2>
@@ -101,62 +177,28 @@ const Testimonials: React.FC = () => {
           </p>
         </div>
 
-        {/* Continuous Carousel Container */}
+        {/* Optimized Carousel Container */}
         <div className="relative overflow-hidden">
           <div 
-            className="flex transition-transform duration-1000 ease-in-out"
+            className="flex transition-transform duration-1000 ease-in-out will-change-transform"
             style={{ 
               transform: `translateX(-${currentOffset * cardWidth}px)`,
               width: `${extendedTestimonials.length * cardWidth}px`
             }}
+            role="region"
+            aria-label="Testimonials carousel"
           >
             {extendedTestimonials.map((testimonial, index) => (
-              <div 
+              <TestimonialCard
                 key={`${testimonial.id}-${Math.floor(index / testimonials.length)}`}
-                className="flex-shrink-0 px-3"
-                style={{ width: `${cardWidth}px` }}
-              >
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 shadow-sm h-80 flex flex-col">
-                  
-                  {/* Quote Icon */}
-                  <div className="text-blue-200 mb-3">
-                    <Quote className="h-6 w-6" />
-                  </div>
-
-                  {/* Customer Photo */}
-                  <div className="flex items-center mb-4">
-                    <img 
-                      src={testimonial.image} 
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full object-cover mr-3"
-                    />
-                    <div>
-                      <p className="font-bold text-gray-800 text-sm">{testimonial.name}</p>
-                      <p className="text-gray-500 text-xs">{testimonial.company}</p>
-                    </div>
-                  </div>
-
-                  {/* Rating */}
-                  <div className="flex mb-3">
-                    {[...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`h-4 w-4 ${i < testimonial.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Testimonial Text */}
-                  <blockquote className="text-gray-700 text-sm leading-relaxed flex-grow">
-                    "{testimonial.text}"
-                  </blockquote>
-                </div>
-              </div>
+                testimonial={testimonial}
+                index={index}
+              />
             ))}
           </div>
         </div>
 
-        {/* Progress Indicators */}
+        {/* Progress Indicators with accessibility */}
         <div className="flex justify-center mt-8 space-x-2">
           {testimonials.map((_, index) => (
             <div
@@ -164,6 +206,8 @@ const Testimonials: React.FC = () => {
               className={`w-2 h-2 rounded-full transition-colors duration-300 ${
                 index === (currentOffset % testimonials.length) ? 'bg-blue-600' : 'bg-gray-300'
               }`}
+              role="button"
+              aria-label={`Go to testimonial ${index + 1}`}
             />
           ))}
         </div>

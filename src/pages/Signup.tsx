@@ -13,7 +13,13 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Eye, EyeOff, User, Mail, Phone, AlertCircle, CheckCircle, Lock } from 'lucide-react';
 import { signUp, createUserProfile, createCustomerProfile, supabase } from '../lib/supabase';
+import PageLayout from '../components/layout/PageLayout';
+import Button from '../components/ui/Button';
+import Card from '../components/ui/Card';
 
+/**
+ * Signup page component with SEO optimization and enhanced UX
+ */
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
     full_name: '',
@@ -31,7 +37,9 @@ const Signup: React.FC = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  // Password strength validation
+  /**
+   * Calculate password strength for visual feedback
+   */
   const getPasswordStrength = (password: string) => {
     let strength = 0;
     if (password.length >= 8) strength++;
@@ -46,6 +54,9 @@ const Signup: React.FC = () => {
   const passwordStrengthText = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'][passwordStrength];
   const passwordStrengthColor = ['red', 'orange', 'yellow', 'blue', 'green'][passwordStrength];
 
+  /**
+   * Handle form input changes with validation
+   */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
@@ -58,6 +69,9 @@ const Signup: React.FC = () => {
     if (error) setError(''); // Clear error when user starts typing
   };
 
+  /**
+   * Validate form data before submission
+   */
   const validateForm = () => {
     if (!formData.full_name.trim()) {
       setError('Full name is required');
@@ -92,6 +106,9 @@ const Signup: React.FC = () => {
     return true;
   };
 
+  /**
+   * Handle form submission with comprehensive error handling
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -140,12 +157,58 @@ const Signup: React.FC = () => {
     }
   };
 
+  /**
+   * Navigate back to homepage
+   */
   const handleBackToHome = () => {
     window.location.href = '/';
   };
 
+  // Success state
   if (success) {
     return (
+      <PageLayout seoPage="signup">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center py-12 px-4 relative overflow-hidden">
+          {/* Background spotlight effects */}
+          <div className="absolute inset-0">
+            <div className="spotlight spotlight-1"></div>
+            <div className="spotlight spotlight-2"></div>
+            <div className="spotlight spotlight-3"></div>
+          </div>
+          
+          <div className="max-w-md w-full">
+            <Card
+              background="glass"
+              shadow="xl"
+              rounded="2xl"
+              entranceAnimation="scaleIn"
+              className="text-center relative z-10"
+            >
+              <div className="bg-gradient-to-r from-green-100 to-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <CheckCircle className="h-8 w-8 text-green-600" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-4">Account Created!</h1>
+              <p className="text-gray-600 mb-6">
+                Your account has been successfully created. You can now sign in to access your dashboard.
+              </p>
+              <Button
+                onClick={() => window.location.href = '/login'}
+                variant="success"
+                size="lg"
+                fullWidth
+                animation="lift"
+              >
+                Go to Login
+              </Button>
+            </Card>
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
+
+  return (
+    <PageLayout seoPage="signup">
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center py-12 px-4 relative overflow-hidden">
         {/* Background spotlight effects */}
         <div className="absolute inset-0">
@@ -155,140 +218,160 @@ const Signup: React.FC = () => {
         </div>
         
         <div className="max-w-md w-full">
-          <div className="glass rounded-2xl shadow-2xl p-8 text-center relative z-10">
-            <div className="bg-gradient-to-r from-green-100 to-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <CheckCircle className="h-8 w-8 text-green-600" />
-            </div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">Account Created!</h1>
-            <p className="text-gray-600 mb-6">
-              Your account has been successfully created. You can now sign in to access your dashboard.
-            </p>
-            <button
-              onClick={() => window.location.href = '/login'}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-6 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all shadow-xl font-semibold transform hover:scale-105"
-            >
-              Go to Login
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center py-12 px-4 relative overflow-hidden">
-      {/* Background spotlight effects */}
-      <div className="absolute inset-0">
-        <div className="spotlight spotlight-1"></div>
-        <div className="spotlight spotlight-2"></div>
-        <div className="spotlight spotlight-3"></div>
-      </div>
-      
-      <div className="max-w-md w-full">
-        
-        {/* Back to Homepage */}
-        <button 
-          onClick={handleBackToHome}
-          className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors mb-8 relative z-10"
-        >
-          <ArrowLeft className="h-5 w-5" />
-          <span>Back to Homepage</span>
-        </button>
-
-        {/* Signup Card */}
-        <div className="glass rounded-2xl shadow-2xl p-8 relative z-10">
           
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="bg-gradient-to-r from-blue-100 to-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <User className="h-8 w-8 text-blue-600" />
-            </div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h1>
-            <p className="text-gray-600">Join ABS STITCH today</p>
-          </div>
+          {/* Back to Homepage */}
+          <Button
+            onClick={handleBackToHome}
+            variant="ghost"
+            icon={<ArrowLeft className="h-5 w-5" />}
+            className="mb-8 relative z-10"
+            animation="none"
+          >
+            Back to Homepage
+          </Button>
 
-          {/* Error Message */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-center space-x-3">
-              <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
-              <span className="text-red-700 text-sm">{error}</span>
+          {/* Signup Card */}
+          <Card
+            background="glass"
+            shadow="xl"
+            rounded="2xl"
+            entranceAnimation="scaleIn"
+            className="relative z-10"
+          >
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="bg-gradient-to-r from-blue-100 to-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <User className="h-8 w-8 text-blue-600" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h1>
+              <p className="text-gray-600">Join ABS STITCH today</p>
             </div>
-          )}
 
-          {/* Signup Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            
-            {/* Full Name */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Full Name
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-center space-x-3">
+                <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
+                <span className="text-red-700 text-sm">{error}</span>
+              </div>
+            )}
+
+            {/* Signup Form */}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              
+              {/* Full Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type="text"
+                    name="full_name"
+                    required
+                    value={formData.full_name}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm focus-ring"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm focus-ring"
+                    placeholder="Enter your email"
+                  />
+                </div>
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Phone Number
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm focus-ring"
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+              </div>
+
+              {/* Company Name (Optional for customers) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Company Name (Optional)
+                </label>
                 <input
                   type="text"
-                  name="full_name"
-                  required
-                  value={formData.full_name}
+                  name="company_name"
+                  value={formData.company_name}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
-                  placeholder="Enter your full name"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm focus-ring"
+                  placeholder="Enter your company name"
                 />
               </div>
-            </div>
 
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
-                  placeholder="Enter your email"
-                />
+              {/* Password with strength indicator */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    required
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm focus-ring"
+                    placeholder="Create a password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+                
+                {/* Password Strength Indicator */}
+                {formData.password && (
+                  <div className="mt-2">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex-1 bg-gray-200 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full transition-all bg-${passwordStrengthColor}-500`}
+                          style={{ width: `${(passwordStrength / 5) * 100}%` }}
+                        ></div>
+                      </div>
+                      <span className={`text-xs text-${passwordStrengthColor}-600`}>
+                        {passwordStrengthText}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-
-            {/* Phone */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number
-              </label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
-                  placeholder="Enter your phone number"
-                />
-              </div>
-            </div>
-
-
-            {/* Company Name (Optional for customers) */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Company Name (Optional)
-              </label>
-              <input
-                type="text"
-                name="company_name"
-                value={formData.company_name}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
-                placeholder="Enter your company name"
-              />
-            </div>
 
             {/* Password */}
             <div>
@@ -310,54 +393,56 @@ const Signup: React.FC = () => {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              </div>
-              
-              {/* Password Strength Indicator */}
-              {formData.password && (
-                <div className="mt-2">
-                  <div className="flex items-center space-x-2">
-                    <div className="flex-1 bg-gray-200 rounded-full h-2">
-                      <div 
-                        className={`h-2 rounded-full transition-all bg-${passwordStrengthColor}-500`}
-                        style={{ width: `${(passwordStrength / 5) * 100}%` }}
-                      ></div>
-                    </div>
-                    <span className={`text-xs text-${passwordStrengthColor}-600`}>
-                      {passwordStrengthText}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Confirm Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              {/* Terms and Conditions */}
+              <div className="flex items-start space-x-3">
                 <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  name="confirmPassword"
-                  required
-                  value={formData.confirmPassword}
+                  type="checkbox"
+                  name="acceptTerms"
+                  id="acceptTerms"
+                  checked={formData.acceptTerms}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
-                  placeholder="Confirm your password"
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
+                <label htmlFor="acceptTerms" className="text-sm text-gray-600">
+                  I agree to the{' '}
+                  <a href="/terms" className="text-blue-600 hover:text-blue-700 transition-colors">Terms of Service</a>
+                  {' '}and{' '}
+                  <a href="/privacy" className="text-blue-600 hover:text-blue-700 transition-colors">Privacy Policy</a>
+                </label>
               </div>
-            </div>
+                <div className="mt-2">
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={isLoading}
+                loading={isLoading}
+                variant="success"
+                size="lg"
+                fullWidth
+                animation="lift"
+              >
+                {isLoading ? 'Creating Account...' : 'Create Account'}
+              </Button>
+            </form>
+
+            {/* Login Link */}
+            <div className="mt-8 text-center">
+              <p className="text-gray-600">
+                Already have an account?{' '}
+                <a href="/login" className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-indigo-700 font-semibold transition-all">
+                  Sign In
+                </a>
+              </p>
+              </label>
+          </Card>
+        </div>
+      </div>
+    </PageLayout>
+  );
+};
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+export default Signup;
+
 
             {/* Terms and Conditions */}
             <div className="flex items-start space-x-3">
@@ -392,17 +477,32 @@ const Signup: React.FC = () => {
                 'Create Account'
               )}
             </button>
-          </form>
-
-          {/* Login Link */}
-          <div className="mt-8 text-center">
-            <p className="text-gray-600">
-              Already have an account?{' '}
-              <a href="/login" className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-indigo-700 font-semibold transition-all">
-                Sign In
-              </a>
-            </p>
-          </div>
+              {/* Confirm Password */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    name="confirmPassword"
+                    required
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm focus-ring"
+                    placeholder="Confirm your password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
 
         </div>
       </div>

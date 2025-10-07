@@ -1,5 +1,13 @@
+/**
+ * Supabase Client Configuration and Database Utilities
+ * 
+ * Centralized Supabase client setup with type definitions,
+ * authentication helpers, and optimized database operations.
+ */
+
 import { createClient } from '@supabase/supabase-js';
 
+// Environment variables validation
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -9,9 +17,23 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables. Please check your .env file and restart the dev server.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Create optimized Supabase client
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+  db: {
+    schema: 'public',
+  },
+  global: {
+    headers: {
+      'x-client-info': 'abs-stitch-app',
+    },
+  },
+});
 
-// Database types
+// Database types with improved type safety
 export interface Employee {
   id: string;
   full_name: string;
@@ -101,7 +123,12 @@ export interface Notification {
   created_at: string;
 }
 
-// Auth helper functions
+/**
+ * Sign up a new user with email and password
+ * @param email - User email address
+ * @param password - User password
+ * @returns Promise with user data
+ */
 export const signUp = async (email: string, password: string) => {
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -112,6 +139,12 @@ export const signUp = async (email: string, password: string) => {
   return data;
 };
 
+/**
+ * Sign in user with email and password
+ * @param email - User email address
+ * @param password - User password
+ * @returns Promise with user data
+ */
 export const signIn = async (email: string, password: string) => {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
@@ -122,16 +155,28 @@ export const signIn = async (email: string, password: string) => {
   return data;
 };
 
+/**
+ * Sign out current user
+ */
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
 };
 
+/**
+ * Get current authenticated user
+ * @returns Promise with current user or null
+ */
 export const getCurrentUser = async () => {
   const { data: { user } } = await supabase.auth.getUser();
   return user;
 };
 
+/**
+ * Get user profile from employees or customers table
+ * @param userId - User ID to fetch profile for
+ * @returns Promise with user profile or null
+ */
 export const getUserProfile = async (userId: string): Promise<Employee | Customer | null> => {
   // First try employees table
   const { data: employee, error: empError } = await supabase
@@ -158,7 +203,11 @@ export const getUserProfile = async (userId: string): Promise<Employee | Custome
   return null;
 };
 
-// Create customer profile (used only during signup)
+/**
+ * Create customer profile during signup
+ * @param customerData - Customer profile data
+ * @returns Promise with created customer data
+ */
 export const createCustomerProfile = async (customerData: {
   id: string;
   email: string;
@@ -194,7 +243,11 @@ export const createCustomerProfile = async (customerData: {
   return data;
 };
 
-// Create employee profile (used only by admin via dashboard or create-admin script)
+/**
+ * Create employee profile (admin use only)
+ * @param employeeData - Employee profile data
+ * @returns Promise with created employee data
+ */
 export const createEmployeeProfile = async (employeeData: {
   id: string;
   email: string;
@@ -213,7 +266,11 @@ export const createEmployeeProfile = async (employeeData: {
   return data;
 };
 
-// Create employee profile for self-signup (always disabled status)
+/**
+ * Create employee profile for self-signup (always disabled status)
+ * @param employeeData - Employee profile data for self-signup
+ * @returns Promise with created employee data
+ */
 export const createEmployeeProfileSelfSignup = async (employeeData: {
   id: string;
   email: string;
@@ -251,7 +308,12 @@ export const createEmployeeProfileSelfSignup = async (employeeData: {
   return data;
 };
 
-// Enhanced sign in with status check
+/**
+ * Enhanced sign in with status validation
+ * @param email - User email
+ * @param password - User password
+ * @returns Promise with user data
+ */
 export const signInWithStatusCheck = async (email: string, password: string) => {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
@@ -272,7 +334,12 @@ export const signInWithStatusCheck = async (email: string, password: string) => 
   
   return data;
 };
-// Get dashboard route based on user role
+
+/**
+ * Get dashboard route based on user role
+ * @param role - User role
+ * @returns Dashboard route or null
+ */
 export const getDashboardRoute = (role: string): string | null => {
   switch (role) {
     case 'admin':
@@ -284,11 +351,15 @@ export const getDashboardRoute = (role: string): string | null => {
     case 'customer':
       return '/customer/dashboard';
     default:
-      return null; // Return null for invalid roles
+      return null;
   }
 };
 
-// Product database functions
+/**
+ * Fetch products with filtering and pagination
+ * @param filters - Filter options
+ * @returns Promise with products array
+ */
 export const getProducts = async (filters?: {
   apparelType?: string;
   search?: string;
@@ -304,7 +375,7 @@ export const getProducts = async (filters?: {
     `)
     .eq('status', 'active');
 
-  // ✅ Fix: Filter by apparel_type_id instead of type_name
+  // Apply filters
   if (filters?.apparelType && filters.apparelType !== 'All') {
     query = query.eq('apparel_type_id', filters.apparelType);
   }
@@ -313,7 +384,7 @@ export const getProducts = async (filters?: {
     query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
   }
 
-  // Sorting
+  // Apply sorting
   switch (filters?.sortBy) {
     case 'price-low':
       query = query.order('price', { ascending: true });
@@ -328,7 +399,7 @@ export const getProducts = async (filters?: {
       query = query.order('created_at', { ascending: false });
   }
 
-  // Pagination
+  // Apply pagination
   if (filters?.limit) {
     query = query.limit(filters.limit);
   }
@@ -345,7 +416,10 @@ export const getProducts = async (filters?: {
   return data;
 };
 
-
+/**
+ * Fetch all apparel types
+ * @returns Promise with apparel types array
+ */
 export const getApparelTypes = async () => {
   const { data, error } = await supabase
     .from('apparel_types')
@@ -360,6 +434,11 @@ export const getApparelTypes = async () => {
   return data || [];
 };
 
+/**
+ * Fetch single product by ID
+ * @param id - Product ID
+ * @returns Promise with product data
+ */
 export const getProductById = async (id: string) => {
   const { data, error } = await supabase
     .from('products')
