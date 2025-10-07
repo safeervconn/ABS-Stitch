@@ -4,3 +4,5 @@
  import { getInvoiceById, getOrdersByIds } from '../api/supabaseHelpers';
 -import { Invoice, AdminOrder } from '../types';
 +import { Invoice, AdminOrder } from '../../../types';
+
+export default React

@@ -9,3 +9,5 @@
 +import { AdminOrder, AdminUser, PaginationParams } from '../../../types';
  import { usePaginatedData } from '../hooks/useAdminData';
  import { getOrders } from '../api/supabaseHelpers';
+
+export default EditOrderModal

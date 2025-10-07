@@ -8,3 +8,5 @@
 +import { AdminProduct, ApparelType } from '../../../types';
 +import { supabase } from '../../../core/api/supabase';
 +import { toast } from '../../../core/utils/toast';
+
+export default React

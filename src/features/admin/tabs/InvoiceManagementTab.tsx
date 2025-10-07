@@ -10,3 +10,5 @@
 -import { Invoice, PaginationParams } from '../types';
 +import { Invoice, PaginationParams } from '../../../types';
  import { usePaginatedData } from '../hooks/useAdminData';
+
+export default EditInvoiceModal

@@ -4,3 +4,5 @@
  import { useAdminData } from '../hooks/useAdminData';
 -import { AdminOrder } from '../types';
 +import { AdminOrder } from '../../../types';
+
+export default React
