@@ -14,7 +14,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, Loader } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import PageLayout from '../components/layout/PageLayout';
-import OptimizedNavbar from '../components/optimized/OptimizedNavbar';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { showToast } from '../utils/toast';
