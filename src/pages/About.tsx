@@ -240,7 +240,6 @@ const About: React.FC = () => {
             </div>
           </Card>
         </div>
-          </div>
         </div>
       </div>
     </PageLayout>

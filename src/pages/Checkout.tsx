@@ -10,9 +10,9 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ShoppingCart, User, Mail, Phone, Loader, CheckCircle, Eye, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, User, Mail, Phone, Loader, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import OptimizedNavbar from '../components/optimized/OptimizedNavbar';
 import Footer from '../components/Footer';
 import { useCart } from '../contexts/CartContext';
 import { useOrders } from '../contexts/OrderContext';
@@ -148,7 +148,7 @@ const Checkout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
-      <Navbar />
+      <OptimizedNavbar />
       
       {/* Background spotlight effects */}
       <div className="absolute inset-0 -z-10">
