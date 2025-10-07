@@ -98,58 +98,43 @@ const Homepage: React.FC = () => {
 
 // Main App Component
 function App() {
-  // State to control the global "Place Order" modal
   const [isPlaceOrderOpen, setIsPlaceOrderOpen] = React.useState(false);
 
-  // Listen for events to open the place order modal
   React.useEffect(() => {
-    // Function to handle opening the modal
     const handleOpenPlaceOrderModal = () => {
       setIsPlaceOrderOpen(true);
     };
-
-    // Listen for custom event from navbar or other components
     window.addEventListener('openPlaceOrderModal', handleOpenPlaceOrderModal);
-    // Cleanup event listener when component unmounts
     return () => {
       window.removeEventListener('openPlaceOrderModal', handleOpenPlaceOrderModal);
     };
   }, []);
 
   return (
-    Context providers wrap entire app to provide global state
+    // Context providers wrap entire app to provide global state
     <CartProvider>
       <OrderProvider>
-        {/* Router enables navigation between different pages */}
         <Router>
           <div className="min-h-screen bg-gray-50">
-            {/* Route definitions - maps URLs to page components */}
             <Routes>
-              {/* Homepage route */}
               <Route path="/" element={<Homepage />} />
-              {/* Product catalog page */}
               <Route path="/catalog" element={<Catalog />} />
-              {/* About us page */}
               <Route path="/about" element={<About />} />
-              {/* Authentication pages */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/employee-signup" element={<EmployeeSignup />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
-              {/* User account pages */}
               <Route path="/profile" element={<ProfileSettings />} />
               <Route path="/checkout" element={<Checkout />} />
-              {/* Role-specific dashboard pages */}
               <Route path="/sales/dashboard" element={<SalesRepDashboard />} />
               <Route path="/designer/dashboard" element={<DesignerDashboard />} />
               <Route path="/customer/dashboard" element={<CustomerDashboard />} />
-              {/* Admin pages - handles multiple admin routes */}
               <Route path="/admin" element={<AdminModule />} />
               <Route path="/admin/*" element={<AdminModule />} />
             </Routes>
-            
-            {/* Global Place Order Modal - can be opened from any page */}
+
+            {/* Global Place Order Modal */}
             <PlaceOrderModal
               isOpen={isPlaceOrderOpen}
               onClose={() => setIsPlaceOrderOpen(false)}
@@ -160,5 +145,6 @@ function App() {
     </CartProvider>
   );
 }
+
 
 export default App;
