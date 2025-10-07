@@ -95,7 +95,6 @@ const About: React.FC = () => {
                 ))}
               </div>
             </Card>
-            </div>
           </div>
 
           {/* Why Choose Us section with optimized animations */}
@@ -240,7 +239,6 @@ const About: React.FC = () => {
             </div>
           </Card>
         </div>
-      </div>
       </div>
     </PageLayout>
   );

@@ -127,3 +127,6 @@ class ToastManager {
 
 // Export singleton instance
 export const toast = new ToastManager();
+
+// Export showToast as an alias for backwards compatibility
+export const showToast = (message: string, options?: ToastOptions) => toast.show(message, options);
