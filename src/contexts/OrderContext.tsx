@@ -150,9 +150,6 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       }
       await fetchOrders();
       
-      // Show success toast for customer
-      const { toast } = await import('../utils/toast');
-      toast.success('Order placed successfully! You will receive updates as we process your order.');
       
       // Return the actual order number from the database
       return newOrderData.order_number || `ORD-${newOrderData.id.slice(0, 8)}`;
