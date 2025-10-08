@@ -12,7 +12,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, Loader } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase, signInWithStatusCheck, getUserProfile, getDashboardRoute } from '../lib/supabase';
 import PageLayout from '../components/layout/PageLayout';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -60,60 +60,31 @@ const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (error) {
-        throw error;
-      }
+      const { data } = await signInWithStatusCheck(formData.email, formData.password);
 
       if (data.user) {
         showToast('Login successful!', 'success');
         
-        // Check user role and redirect accordingly
-        const { data: customerData } = await supabase
-          .from('customers')
-          .select('id')
-          .eq('id', data.user.id)
-          .single();
-
-        const { data: employeeData } = await supabase
-          .from('employees')
-          .select('role, status')
-          .eq('id', data.user.id)
-          .single();
-
-        if (employeeData) {
-          if (employeeData.status === 'disabled') {
-            showToast('Your account is disabled. Please contact an administrator.', 'error');
-            await supabase.auth.signOut();
-            return;
+        // Get user profile and redirect to appropriate dashboard
+        const profile = await getUserProfile(data.user.id);
+        if (profile) {
+          const dashboardRoute = getDashboardRoute(profile.role || 'customer');
+          if (dashboardRoute) {
+            navigate(dashboardRoute);
+          } else {
+            navigate('/');
           }
-
-          switch (employeeData.role) {
-            case 'admin':
-              navigate('/admin');
-              break;
-            case 'sales_rep':
-              navigate('/sales-rep');
-              break;
-            case 'designer':
-              navigate('/designer');
-              break;
-            default:
-              navigate('/');
-          }
-        } else if (customerData) {
-          navigate('/customer');
         } else {
           navigate('/');
         }
       }
     } catch (error: any) {
       console.error('Login error:', error);
-      showToast(error.message || 'Login failed. Please try again.', 'error');
+      if (error.message.includes('inactive')) {
+        showToast(error.message, 'error');
+      } else {
+        showToast(error.message || 'Login failed. Please try again.', 'error');
+      }
     } finally {
       setIsLoading(false);
     }
