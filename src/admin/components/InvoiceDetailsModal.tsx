@@ -148,7 +148,7 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
                         <Package className="h-5 w-5 text-orange-600" />
                         <div>
                           <p className="text-sm text-gray-500">Company</p>
-                          <p className="font-medium text-gray-800">{invoice.customer_company_name || 'No company'}</p>
+                          <p className="font-medium text-gray-800">{invoice.customer_company_name || 'No Company'}</p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-3">
