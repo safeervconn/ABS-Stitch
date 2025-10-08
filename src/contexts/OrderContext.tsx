@@ -13,7 +13,7 @@ interface OrderContextType {
     apparel_type_id?: string;
     custom_width?: number;
     custom_height?: number;
-  }, files?: File[]) => Promise<void>;
+  }, files?: File[]) => Promise<any>;
   updateOrderStatus: (orderId: string, status: CustomerOrder['status']) => void;
   assignDesigner: (orderId: string, designerId: string, designerName: string) => void;
   getOrdersByRole: () => CustomerOrder[];
@@ -153,6 +153,8 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         // Don't throw here as the order was created successfully
       }
       await fetchOrders();
+      
+      return newOrderData;
       
     } catch (error) {
       console.error('Error adding order:', error);

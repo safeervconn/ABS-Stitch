@@ -26,7 +26,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [orderNumber, setOrderNumber] = useState('');
+  const [createdOrder, setCreatedOrder] = useState<any>(null);
   const { addOrder } = useOrders();
 
   React.useEffect(() => {
@@ -91,15 +91,14 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
         order_type: 'custom',
         custom_description: formData.designInstructions,
         apparel_type_id: formData.apparelTypeId,
-        customWidth: formData.customWidth,
-        customHeight: formData.customHeight,
+        custom_width: parseFloat(formData.customWidth) || null,
+        custom_height: parseFloat(formData.customHeight) || null,
+        total_amount: 75.00, // Default amount for custom orders
       };
       
-      await addOrder(orderData, formData.files);
+      const newOrder = await addOrder(orderData, formData.files);
+      setCreatedOrder(newOrder);
       
-      // Generate a mock order number for display
-      const mockOrderNumber = `ORD-${Date.now().toString().slice(-8)}`;
-      setOrderNumber(mockOrderNumber);
       toast.success('Order placed successfully!');
       setShowSuccessMessage(true);
     } catch (error) {
@@ -113,7 +112,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
   const handleCloseModal = () => {
     // Reset all states when closing
     setShowSuccessMessage(false);
-    setOrderNumber('');
+    setCreatedOrder(null);
     setFormData({
       fullName: '',
       email: '',
@@ -169,7 +168,9 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
               
               <div className="bg-blue-50 rounded-lg p-4 mb-6">
                 <p className="text-sm text-gray-600 mb-2">Your Order Number:</p>
-                <p className="text-xl font-bold text-blue-600">{orderNumber}</p>
+                <p className="text-xl font-bold text-blue-600">
+                  {createdOrder?.order_number || `ORD-${createdOrder?.id?.slice(0, 8) || 'PENDING'}`}
+                </p>
               </div>
               
               <div className="space-y-4">
@@ -185,7 +186,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
                   <button
                     onClick={() => {
                       setShowSuccessMessage(false);
-                      setOrderNumber('');
+                      setCreatedOrder(null);
                       setFormData({
                         fullName: currentUser?.full_name || '',
                         email: currentUser?.email || '',
