@@ -106,7 +106,7 @@ const Login: React.FC = () => {
               navigate('/');
           }
         } else if (customerData) {
-          navigate('/customer/dashboard');
+          navigate('/customer');
         } else {
           navigate('/');
         }
