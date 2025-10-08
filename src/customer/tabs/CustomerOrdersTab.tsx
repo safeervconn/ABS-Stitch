@@ -220,18 +220,7 @@ const CustomerOrdersTab: React.FC = () => {
         </span>
       ),
     },
-    {
-      key: 'custom_dimensions',
-      label: 'Dimensions',
-      render: (order: AdminOrder) => (
-        <span className="text-sm text-gray-600">
-          {order.custom_width && order.custom_height 
-            ? `${order.custom_width}" × ${order.custom_height}"`
-            : '-'
-          }
-        </span>
-      ),
-    },
+  ,
     {
       key: 'total_amount',
       label: 'Total',
