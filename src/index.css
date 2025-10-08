@@ -6,7 +6,7 @@
 
 /* Global font enforcement */
 * {
-  font-family: 'Roboto', monospace !important;
+  font-family: 'Roboto', sans-serif !important;
 }
 
 body {
