@@ -1,10 +1,9 @@
 import React from 'react';
-import { ShoppingBag, Package, CreditCard, Eye, FileText } from 'lucide-react';
+import { ShoppingBag, Package, CreditCard } from 'lucide-react';
 import { getCurrentUser, supabase } from '../../lib/supabase';
 
 const CustomerOverviewTab: React.FC = () => {
   const [orders, setOrders] = React.useState<any[]>([]);
-  const [invoices, setInvoices] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   
   React.useEffect(() => {
@@ -26,18 +25,7 @@ const CustomerOverviewTab: React.FC = () => {
 
         if (ordersError) throw ordersError;
 
-        // Fetch recent invoices (last 5)
-        const { data: invoicesData, error: invoicesError } = await supabase
-          .from('invoices')
-          .select('*')
-          .eq('customer_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(5);
-
-        if (invoicesError) throw invoicesError;
-
         setOrders(ordersData || []);
-        setInvoices(invoicesData || []);
       } catch (error) {
         console.error('Error fetching overview data:', error);
       } finally {
@@ -197,57 +185,6 @@ const CustomerOverviewTab: React.FC = () => {
             <div className="text-center py-8">
               <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
               <p className="text-gray-500">No orders yet</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Recent Invoices */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="p-6 border-b border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">Recent Invoices</h3>
-              <p className="text-sm text-gray-600 mt-1">Your last 5 invoices</p>
-            </div>
-            <button
-              onClick={() => window.location.href = '/customer/dashboard?tab=invoices'}
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-            >
-              View All Invoices
-            </button>
-          </div>
-        </div>
-        
-        <div className="p-6">
-          {invoices.length > 0 ? (
-            <div className="space-y-4">
-              {invoices.map((invoice) => (
-                <div key={invoice.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="flex items-center space-x-4">
-                    <div className="bg-purple-100 p-2 rounded-lg">
-                      <FileText className="h-5 w-5 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{invoice.invoice_title}</p>
-                      <p className="text-sm text-gray-500">{invoice.month_year} • {invoice.order_ids.length} orders</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="text-right">
-                      <p className="font-semibold text-gray-900">${invoice.total_amount.toFixed(2)}</p>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(invoice.status)}`}>
-                        {invoice.status.replace('_', ' ')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <FileText className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">No invoices yet</p>
             </div>
           )}
         </div>
