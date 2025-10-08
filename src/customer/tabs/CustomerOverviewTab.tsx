@@ -26,7 +26,7 @@ const CustomerOverviewTab: React.FC = () => {
 
   const stats = [
     { 
-      title: 'Total Orders', 
+      title: 'Total Orders this Month', 
       value: orders.length.toString(), 
       icon: ShoppingBag, 
       color: 'blue' 
