@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, User, FileText, DollarSign, Package, Eye } from 'lucide-react';
+import { X, Calendar, User, FileText, Package, Eye } from 'lucide-react';
 import { getInvoiceById, getOrdersByIds } from '../api/supabaseHelpers';
 import { Invoice, AdminOrder } from '../types';
 
