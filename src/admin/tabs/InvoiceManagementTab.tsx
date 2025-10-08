@@ -169,8 +169,8 @@ const InvoiceManagementTab: React.FC = () => {
       sortable: true,
       render: (invoice: Invoice) => (
         <div className="flex items-center">
-          <DollarSign className="h-4 w-4 mr-1 text-gray-400" />
-          {invoice.total_amount.toFixed(2)}
+          
+          ${invoice.total_amount.toFixed(2)}
         </div>
       ),
     },
