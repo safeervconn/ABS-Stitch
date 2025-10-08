@@ -93,7 +93,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
         apparel_type_id: formData.apparelTypeId,
         custom_width: parseFloat(formData.customWidth) || null,
         custom_height: parseFloat(formData.customHeight) || null,
-        total_amount: 75.00, // Default amount for custom orders
+        total_amount: 0, // Default amount for custom orders
       };
       
       const newOrder = await addOrder(orderData, formData.files);
