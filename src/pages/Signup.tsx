@@ -66,7 +66,19 @@ const Signup: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await signUp(formData.email, formData.password, formData.fullName);
+      const { user } = await signUp(formData.email, formData.password, formData.fullName);
+      
+      if (user) {
+        // Create customer profile
+        const { createCustomerProfile } = await import('../lib/supabase');
+        await createCustomerProfile({
+          id: user.id,
+          email: formData.email,
+          full_name: formData.fullName,
+          status: 'active'
+        });
+      }
+      
       toast.success('Account created successfully! Please check your email to verify your account.');
       navigate('/login');
     } catch (error: any) {

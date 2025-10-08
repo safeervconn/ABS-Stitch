@@ -91,15 +91,15 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
         order_type: 'custom',
         custom_description: formData.designInstructions,
         apparel_type_id: formData.apparelTypeId,
-        customWidth: formData.customWidth,
-        customHeight: formData.customHeight,
+        custom_width: parseFloat(formData.customWidth) || 0,
+        custom_height: parseFloat(formData.customHeight) || 0,
+        total_amount: 75.00, // Default amount for custom orders
       };
       
-      await addOrder(orderData, formData.files);
+      const actualOrderNumber = await addOrder(orderData, formData.files);
       
-      // Generate a mock order number for display
-      const mockOrderNumber = `ORD-${Date.now().toString().slice(-8)}`;
-      setOrderNumber(mockOrderNumber);
+      // Use the actual order number from the database
+      setOrderNumber(actualOrderNumber);
       toast.success('Order placed successfully!');
       setShowSuccessMessage(true);
     } catch (error) {

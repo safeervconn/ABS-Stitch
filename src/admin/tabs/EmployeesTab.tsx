@@ -37,6 +37,7 @@ const EmployeesTab: React.FC = () => {
   });
 
   // Modal states
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<AdminUser | null>(null);
 
   // Filter configurations
@@ -107,8 +108,7 @@ const EmployeesTab: React.FC = () => {
 
   const handleEditEmployee = (employee: AdminUser) => {
     setSelectedEmployee(employee);
-    // Edit functionality would go here - for now just show toast
-    toast.info('Employee editing functionality coming soon');
+    setIsEditModalOpen(true);
   };
 
   const handleDeleteEmployee = async (employee: AdminUser) => {
@@ -136,6 +136,46 @@ const EmployeesTab: React.FC = () => {
     }
   };
 
+  const handleModalSubmit = async (formData: any) => {
+    try {
+      if (selectedEmployee) {
+        await updateUser(selectedEmployee.id, formData);
+        toast.success(`Employee ${formData.full_name} updated successfully`);
+      }
+      await refetch();
+    } catch (error) {
+      console.error('Error saving employee:', error);
+      toast.error('Failed to save employee changes');
+      throw error;
+    }
+  };
+
+  const employeeFields = [
+    { key: 'full_name', label: 'Full Name', type: 'text' as const, required: true },
+    { key: 'email', label: 'Email', type: 'email' as const, required: true },
+    { key: 'phone', label: 'Phone', type: 'text' as const },
+    { 
+      key: 'role', 
+      label: 'Role', 
+      type: 'select' as const, 
+      required: true,
+      options: [
+        { value: 'admin', label: 'Administrator' },
+        { value: 'sales_rep', label: 'Sales Representative' },
+        { value: 'designer', label: 'Designer' },
+      ]
+    },
+    { 
+      key: 'status', 
+      label: 'Status', 
+      type: 'select' as const, 
+      required: true,
+      options: [
+        { value: 'active', label: 'Active' },
+        { value: 'disabled', label: 'Disabled' },
+      ]
+    },
+  ];
 
 
   const columns = [
@@ -271,6 +311,15 @@ const EmployeesTab: React.FC = () => {
         loading={loading}
       />
 
+      {/* Employee Edit Modal */}
+      <CrudModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSubmit={handleModalSubmit}
+        title="Edit Employee"
+        fields={employeeFields}
+        initialData={selectedEmployee}
+      />
     </div>
   );
 };

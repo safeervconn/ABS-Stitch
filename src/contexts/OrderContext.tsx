@@ -36,6 +36,7 @@ interface OrderProviderProps {
 
 export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   // Add new order
   const addOrder = async (orderData: {
@@ -46,13 +47,13 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     apparel_type_id?: string;
     custom_width?: number;
     custom_height?: number;
-  }, files?: File[]) => {
+  }, files?: File[]): Promise<string> => {
     try {
       const user = await getCurrentUser();
-      if (!user) return;
+      if (!user) throw new Error('User not authenticated');
 
       const profile = await getUserProfile(user.id);
-      if (!profile) return;
+      if (!profile) throw new Error('User profile not found');
 
       // Fetch customer profile to get assigned sales rep
       const { data: customerProfile, error: customerError } = await supabase
@@ -152,6 +153,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       // Show success toast for customer
       const { toast } = await import('../utils/toast');
       toast.success('Order placed successfully! You will receive updates as we process your order.');
+      
+      // Return the actual order number from the database
+      return newOrderData.order_number || `ORD-${newOrderData.id.slice(0, 8)}`;
      
     } catch (error) {
       console.error('Error adding order:', error);
@@ -163,10 +167,21 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const fetchOrders = async () => {
   try {
     const user = await getCurrentUser();
-    if (!user) return;
+    if (!user) {
+      setOrders([]);
+      setCurrentUserId(null);
+      return;
+    }
 
     const profile = await getUserProfile(user.id);
-    if (!profile) return;
+    if (!profile) {
+      setOrders([]);
+      setCurrentUserId(null);
+      return;
+    }
+
+    // Update current user ID
+    setCurrentUserId(user.id);
 
     // Build fields dynamically in an array
     const selectParts = [
@@ -228,13 +243,15 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     setOrders(transformedOrders);
   } catch (error) {
     console.error("Error fetching orders:", error);
+    setOrders([]);
   }
 };
 
 
+  // Fetch orders when component mounts and when user changes
   React.useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [currentUserId]);
 
   const updateOrderStatus = (orderId: string, status: CustomerOrder['status']) => {
     supabase

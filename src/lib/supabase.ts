@@ -127,12 +127,18 @@ export interface Notification {
  * Sign up a new user with email and password
  * @param email - User email address
  * @param password - User password
+ * @param fullName - User's full name
  * @returns Promise with user data
  */
-export const signUp = async (email: string, password: string) => {
+export const signUp = async (email: string, password: string, fullName?: string) => {
   const { data, error } = await supabase.auth.signUp({
     email,
-    password
+    password,
+    options: fullName ? {
+      data: {
+        full_name: fullName
+      }
+    } : undefined
   });
   
   if (error) throw error;
