@@ -225,7 +225,7 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
                   <div className="bg-blue-50 rounded-lg p-4">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Invoice Total</h3>
                     <div className="flex items-center space-x-2">
-                      <DollarSign className="h-6 w-6 text-blue-600" />
+                      
                       <div className="text-3xl font-bold text-blue-600">
                         ${invoice.total_amount.toFixed(2)}
                       </div>
