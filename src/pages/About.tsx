@@ -199,13 +199,13 @@ const About: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button 
               onClick={() => window.location.href = '/#contact'}
-              className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg font-semibold"
+              className="btn-success btn-large px-8"
             >
               Get Started Today
             </button>
             <button 
               onClick={() => window.location.href = '/catalog'}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg font-semibold"
+              className="btn-purple btn-large px-8"
             >
               Browse Our Work
             </button>

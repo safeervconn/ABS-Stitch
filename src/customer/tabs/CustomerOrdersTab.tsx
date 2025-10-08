@@ -62,7 +62,7 @@ const CustomerOrdersTab: React.FC = () => {
         </div>
         <button
           onClick={() => setIsPlaceOrderOpen(true)}
-          className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg font-semibold flex items-center space-x-2"
+          className="btn-success btn-large px-6 flex items-center space-x-2"
         >
           <Plus className="h-5 w-5" />
           <span>Place New Order</span>
@@ -171,7 +171,7 @@ const CustomerOrdersTab: React.FC = () => {
               {orders.length === 0 && (
                 <button
                   onClick={() => setIsPlaceOrderOpen(true)}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold"
+                  className="btn-primary px-6"
                 >
                   Place Your First Order
                 </button>

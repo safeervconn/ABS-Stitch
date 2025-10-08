@@ -151,7 +151,7 @@ const Catalog: React.FC = () => {
         {loading && (
           <div className="flex items-center justify-center py-16">
             <div className="text-center">
-              <Loader className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+              <div className="loading-spinner mx-auto mb-4"></div>
               <p className="text-gray-600 font-medium">Loading products...</p>
             </div>
           </div>
@@ -228,7 +228,7 @@ const Catalog: React.FC = () => {
                   setSelectedApparelType('All');
                   setSortBy('newest');
                 }}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold transform hover:scale-105"
+                className="btn-primary btn-large px-6"
               >
                 Clear Filters
               </button>

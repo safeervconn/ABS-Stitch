@@ -152,7 +152,7 @@ const Navbar: React.FC = () => {
               /* Combined Authentication Button for non-signed-in users */
               <button 
                 onClick={() => window.location.href = '/login'}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-bold shadow-lg"
+                className="btn-primary px-6"
               >
                 Sign In / Sign Up
               </button>
@@ -164,14 +164,14 @@ const Navbar: React.FC = () => {
                   const event = new CustomEvent('openPlaceOrderModal');
                   window.dispatchEvent(event);
                 }}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-bold shadow-lg"
+                className="btn-purple px-4"
               >
                 Place Order
               </button>
             ) : !currentUser ? (
               <button 
                 onClick={() => window.location.href = '/#contact'}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-bold shadow-lg"
+                className="btn-purple px-4"
               >
                 Get a Quote
               </button>
@@ -240,7 +240,7 @@ const Navbar: React.FC = () => {
                   /* Mobile Authentication Button */
                   <button 
                     onClick={() => window.location.href = '/login'}
-                    className="w-full text-left bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 mt-2 font-bold"
+                    className="w-full text-left btn-primary px-3 mt-2"
                   >
                     Sign In / Sign Up
                   </button>
@@ -252,14 +252,14 @@ const Navbar: React.FC = () => {
                       const event = new CustomEvent('openPlaceOrderModal');
                       window.dispatchEvent(event);
                     }}
-                    className="w-full text-left bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 mt-2 font-bold"
+                    className="w-full text-left btn-purple px-3 mt-2"
                   >
                     Place Order
                   </button>
                 ) : (
                   <button 
                     onClick={() => window.location.href = '/#contact'}
-                    className="w-full text-left bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 mt-2 font-bold"
+                    className="w-full text-left btn-purple px-3 mt-2"
                   >
                     Get a Quote
                   </button>

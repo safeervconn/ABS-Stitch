@@ -118,7 +118,7 @@ const CartDropdown: React.FC = () => {
                 <div className="space-y-2">
                   <button
                     onClick={handleCheckout}
-                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-2 px-4 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all font-semibold shadow-lg"
+                    className="w-full btn-success"
                   >
                     Checkout ({totalItems} items)
                   </button>
@@ -127,7 +127,7 @@ const CartDropdown: React.FC = () => {
                       clearCart();
                       setIsOpen(false);
                     }}
-                    className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-4 rounded-lg hover:from-red-600 hover:to-red-700 transition-all shadow-lg"
+                    className="w-full btn-danger"
                   >
                     Clear Cart
                   </button>

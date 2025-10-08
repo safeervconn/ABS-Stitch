@@ -260,7 +260,7 @@ const EmployeesTab: React.FC = () => {
         </div>
         <button
           onClick={handleCopySignupUrl}
-          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg font-semibold flex items-center space-x-2"
+          className="btn-primary btn-large px-6 flex items-center space-x-2"
         >
           <Copy className="h-5 w-5" />
           <span>Copy Signup URL</span>

@@ -139,7 +139,7 @@ const Checkout: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="loading-spinner mx-auto mb-4"></div>
           <p className="text-gray-600 font-medium">Loading checkout...</p>
         </div>
       </div>
@@ -352,11 +352,11 @@ const Checkout: React.FC = () => {
                         <button
                           type="submit"
                           disabled={isSubmitting || items.length === 0}
-                          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all flex items-center justify-center space-x-2 shadow-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full btn-success btn-large flex items-center justify-center space-x-2"
                         >
                           {isSubmitting ? (
                             <>
-                              <Loader className="h-5 w-5 animate-spin" />
+                              <div className="loading-spinner-white"></div>
                               <span>Placing Orders...</span>
                             </>
                           ) : (

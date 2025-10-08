@@ -356,7 +356,7 @@ const ProfileSettings: React.FC = () => {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="btn-primary flex items-center px-6"
                 >
                   <Save className="w-5 h-5 mr-2" />
                   {saving ? 'Saving...' : 'Save Changes'}
@@ -461,7 +461,7 @@ const ProfileSettings: React.FC = () => {
                   <button
                     type="submit"
                     disabled={saving || !passwordData.newPassword || !passwordData.confirmPassword}
-                    className="flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                    className="btn-primary flex items-center px-6"
                   >
                     <Lock className="w-5 h-5 mr-2" />
                     {saving ? 'Updating...' : 'Update Password'}

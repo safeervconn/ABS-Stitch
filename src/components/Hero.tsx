@@ -70,7 +70,7 @@ const Hero: React.FC = () => {
                   const event = new CustomEvent('openPlaceOrderModal');
                   window.dispatchEvent(event);
                 }}
-                className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-3 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all flex items-center justify-center shadow-xl font-semibold transform hover:scale-105"
+                className="btn-success btn-large px-8 flex items-center justify-center"
               >
                 Place Order
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -79,7 +79,7 @@ const Hero: React.FC = () => {
             {!currentUser ? (
               <button 
                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-8 py-3 rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center shadow-xl font-semibold transform hover:scale-105"
+                className="btn-primary btn-large px-8 flex items-center justify-center"
               >
                 Get Custom Artwork
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -87,7 +87,7 @@ const Hero: React.FC = () => {
             ) : null}
             <button 
               onClick={() => window.location.href = '/catalog'}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all shadow-xl font-semibold transform hover:scale-105"
+              className="btn-purple btn-large px-8"
             >
               Browse Catalog
             </button>

@@ -258,7 +258,7 @@ const ProductsTab: React.FC = () => {
         </div>
         <button
           onClick={handleCreateProduct}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 shadow-lg"
+          className="btn-primary flex items-center space-x-2"
         >
           <Plus className="h-4 w-4" />
           <span>Add Product</span>

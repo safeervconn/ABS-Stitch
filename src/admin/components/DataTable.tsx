@@ -102,7 +102,7 @@ function DataTable<T extends Record<string, any>>({
               <tr>
                 <td colSpan={columns.length} className="px-6 py-12 text-center">
                   <div className="flex items-center justify-center">
-                    <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-3"></div>
+                    <div className="loading-spinner-small mr-3"></div>
                     <span className="text-gray-500">Loading...</span>
                   </div>
                 </td>

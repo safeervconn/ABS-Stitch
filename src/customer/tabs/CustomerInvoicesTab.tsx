@@ -79,7 +79,7 @@ const CustomerInvoicesTab: React.FC = () => {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="loading-spinner mx-auto mb-4"></div>
           <p className="text-gray-600 font-medium">Loading invoices...</p>
         </div>
       </div>

@@ -118,14 +118,14 @@ const MultiSelectDropdown: React.FC<{
                     e.stopPropagation();
                     toggleOption(option.value);
                   }}
-                  className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
+                  className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer transition-colors"
                 >
                   <input
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => {}} // Controlled by parent div click
                     onClick={(e) => e.stopPropagation()}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 pointer-events-none"
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 pointer-events-none"
                   />
                   <span className="text-sm text-gray-700">{option.label}</span>
                 </div>
@@ -264,7 +264,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 e.preventDefault();
                 onClearFilters();
               }}
-              className="flex items-center space-x-1 px-3 py-2 text-sm text-gray-600 hover:text-red-600 transition-colors"
+              className="flex items-center space-x-1 px-3 py-2 text-sm text-gray-600 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50"
             >
               <X className="h-4 w-4" />
               <span>Clear</span>

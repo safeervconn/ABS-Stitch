@@ -177,7 +177,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
                     onClick={() => window.location.href = '/customer/dashboard'}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2 shadow-lg font-semibold"
+                    className="btn-primary btn-large flex items-center justify-center space-x-2"
                   >
                     <Eye className="h-5 w-5" />
                     <span>View My Orders</span>
@@ -199,7 +199,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
                         files: []
                       });
                     }}
-                    className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all flex items-center justify-center space-x-2 shadow-lg font-semibold"
+                    className="btn-success btn-large flex items-center justify-center space-x-2"
                   >
                     <Plus className="h-5 w-5" />
                     <span>Place Another Order</span>
@@ -208,7 +208,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
                 
                 <button
                   onClick={handleCloseModal}
-                  className="w-full bg-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-400 transition-all font-semibold"
+                  className="w-full btn-secondary btn-large"
                 >
                   Close
                 </button>
@@ -429,18 +429,18 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="flex-1 bg-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-400 transition-all font-semibold"
+                  className="flex-1 btn-secondary btn-large"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all flex items-center justify-center space-x-2 shadow-lg font-semibold"
+                  className="flex-1 btn-success btn-large flex items-center justify-center space-x-2"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader className="h-5 w-5 animate-spin" />
+                      <div className="loading-spinner-white"></div>
                       <span>Placing Order...</span>
                     </>
                   ) : (

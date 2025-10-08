@@ -55,7 +55,7 @@ const CatalogPreview: React.FC = () => {
         {loading && (
           <div className="flex items-center justify-center py-16">
             <div className="text-center">
-              <Loader className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+              <div className="loading-spinner mx-auto mb-4"></div>
               <p className="text-gray-600 font-medium">Loading designs...</p>
             </div>
           </div>
@@ -131,7 +131,7 @@ const CatalogPreview: React.FC = () => {
           <div className="text-center">
             <button 
               onClick={() => window.location.href = '/catalog'}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg font-semibold"
+              className="btn-purple btn-large px-8"
             >
               View All Designs
             </button>

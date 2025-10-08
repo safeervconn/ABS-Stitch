@@ -83,13 +83,13 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           <div className="flex justify-end space-x-3 p-6 border-t border-gray-200">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              className="btn-secondary text-sm"
             >
               {cancelText}
             </button>
             <button
               onClick={onConfirm}
-              className={`px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors ${styles.confirmBtn}`}
+              className={`btn-danger text-sm ${type === 'info' ? 'btn-primary' : type === 'warning' ? 'btn-warning' : 'btn-danger'}`}
             >
               {confirmText}
             </button>

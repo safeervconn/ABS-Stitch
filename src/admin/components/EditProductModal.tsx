@@ -244,7 +244,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <Loader className="h-6 w-6 animate-spin text-blue-600 mr-2" />
+                <div className="loading-spinner mr-2"></div>
                 <span className="text-gray-600">Loading product data...</span>
               </div>
             ) : (
@@ -397,19 +397,19 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                className="btn-secondary text-sm"
                 disabled={submitting}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary text-sm flex items-center space-x-2"
                 disabled={submitting || loading}
               >
                 {submitting ? (
                   <>
-                    <Loader className="h-4 w-4 animate-spin" />
+                    <div className="loading-spinner-white w-4 h-4"></div>
                     <span>{mode === 'create' ? 'Creating...' : 'Updating...'}</span>
                   </>
                 ) : (

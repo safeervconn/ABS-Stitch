@@ -102,7 +102,7 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
           <div className="p-6">
             {loading && (
               <div className="flex items-center justify-center py-12">
-                <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-3"></div>
+                <div className="loading-spinner mr-3"></div>
                 <span className="text-gray-600">Loading invoice details...</span>
               </div>
             )}
@@ -261,7 +261,7 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
                       <h3 className="text-lg font-semibold text-gray-800 mb-3">Payment</h3>
                       <button
                         onClick={() => window.open(invoice.payment_link, '_blank')}
-                        className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
+                        className="w-full btn-success"
                       >
                         Pay Now
                       </button>

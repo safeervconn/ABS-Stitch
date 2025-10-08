@@ -189,7 +189,7 @@ const NotificationDropdown: React.FC = () => {
             <div className="max-h-80 overflow-y-auto">
               {loading ? (
                 <div className="p-6 text-center">
-                  <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                  <div className="loading-spinner-small mx-auto mb-2"></div>
                   <p className="text-gray-500 text-sm">Loading notifications...</p>
                 </div>
               ) : notifications.length === 0 ? (

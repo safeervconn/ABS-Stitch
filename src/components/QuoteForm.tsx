@@ -284,7 +284,7 @@ const QuoteForm: React.FC = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all flex items-center justify-center space-x-2 shadow-lg font-semibold"
+          className="w-full btn-success btn-large flex items-center justify-center space-x-2"
         >
           <Send className="h-5 w-5" />
           <span>{isQuoteRequest ? 'Request Quote' : 'Send Message'}</span>

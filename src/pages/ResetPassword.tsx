@@ -140,13 +140,13 @@ const ResetPassword: React.FC = () => {
             <div className="space-y-3">
               <button
                 onClick={() => window.location.href = '/forgot-password'}
-                className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all shadow-xl font-semibold transform hover:scale-105"
+                className="w-full btn-primary btn-large"
               >
                 Request New Reset Link
               </button>
               <button
                 onClick={handleBackToLogin}
-                className="w-full bg-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-400 transition-all font-semibold"
+                className="w-full btn-secondary btn-large"
               >
                 Back to Login
               </button>
@@ -178,7 +178,7 @@ const ResetPassword: React.FC = () => {
             </p>
             <button
               onClick={handleBackToLogin}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-6 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all shadow-xl font-semibold transform hover:scale-105"
+              className="w-full btn-success btn-large"
             >
               Go to Login
             </button>
@@ -324,11 +324,11 @@ const ResetPassword: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-6 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all shadow-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+              className="w-full btn-success btn-large"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center space-x-2">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="loading-spinner-white"></div>
                   <span>Updating Password...</span>
                 </div>
               ) : (

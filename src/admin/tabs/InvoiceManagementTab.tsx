@@ -229,7 +229,7 @@ const InvoiceManagementTab: React.FC = () => {
         </div>
         <button
           onClick={() => setIsGenerateModalOpen(true)}
-          className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg font-semibold flex items-center space-x-2"
+          className="btn-success btn-large px-6 flex items-center space-x-2"
         >
           <Plus className="h-5 w-5" />
           <span>Generate Invoice</span>

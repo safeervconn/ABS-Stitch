@@ -47,7 +47,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ item, className = "" 
   return (
     <button 
       onClick={handleAddToCart}
-      className={`bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center justify-center space-x-2 shadow-lg ${className}`}
+      className={`btn-primary flex items-center justify-center space-x-2 ${className}`}
     >
       <ShoppingCart className="h-4 w-4" />
       <span>Add to Cart</span>

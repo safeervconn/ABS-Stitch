@@ -90,7 +90,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="loading-spinner mx-auto mb-4"></div>
           <p className="text-gray-600 font-medium">Loading overview...</p>
         </div>
       </div>
@@ -104,7 +104,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
           <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={() => refreshData(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="btn-primary"
           >
             Retry
           </button>
@@ -120,7 +120,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
         <button
           onClick={() => refreshData(true)}
           disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="btn-primary"
         >
           {loading ? 'Refreshing...' : 'Refresh Data'}
         </button>
