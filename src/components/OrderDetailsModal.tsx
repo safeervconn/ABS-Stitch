@@ -139,18 +139,21 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                       </div>
                     </div>
                     
-                    {/* Only show payment status for admin users */}
-                    {currentUser?.role === 'admin' && (
-                      <div className="flex items-center space-x-3">
-                        <FileText className="h-5 w-5 text-indigo-600" />
-                        <div>
-                          <p className="text-sm text-gray-500">Payment Status</p>
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status || 'unpaid')}`}>
-                            {(order.payment_status || 'unpaid').replace('_', ' ')}
-                          </span>
-                        </div>
-                      </div>
-                    )}
+                    {/* Only show payment status for admin or customer users */}
+{['admin', 'customer'].includes(currentUser?.role) && (
+  <div className="flex items-center space-x-3">
+    <FileText className="h-5 w-5 text-indigo-600" />
+    <div>
+      <p className="text-sm text-gray-500">Payment Status</p>
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status || 'unpaid')}`}
+      >
+        {(order.payment_status || 'unpaid').replace('_', ' ')}
+      </span>
+    </div>
+  </div>
+)}
+
                   </div>
                 </div>
 
