@@ -6,7 +6,7 @@
 
 /* Global font enforcement */
 * {
-  font-family: 'Inter', monospace !important;
+  font-family: 'Inter' !important;
 }
 
 body {
