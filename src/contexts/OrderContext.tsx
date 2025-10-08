@@ -107,7 +107,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           custom_height: orderData.custom_height || null,
           file_urls: fileUrls.length > 0 ? fileUrls : null,
           assigned_sales_rep_id: customerProfile.assigned_sales_rep_id,
-          total_amount: orderData.total_amount,
+          total_amount: orderData.total_amount, // Uses provided amount (0 for custom orders)
           payment_status: 'unpaid',
           status: 'new',
         })

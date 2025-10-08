@@ -1113,13 +1113,6 @@ export const createInvoice = async (invoiceData: Partial<Invoice>): Promise<Invo
 
     if (error) throw error;
 
-    // Update payment status of associated orders
-    if (invoiceData.order_ids && invoiceData.order_ids.length > 0) {
-      await supabase
-        .from('orders')
-        .update({ payment_status: 'paid' })
-        .in('id', invoiceData.order_ids);
-    }
 
     return data;
   } catch (error) {
