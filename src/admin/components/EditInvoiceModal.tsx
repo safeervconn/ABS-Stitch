@@ -82,7 +82,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   const calculateTotal = () => {
     return allOrders
       .filter(order => selectedOrderIds.includes(order.id))
-      .reduce((sum, order) => sum + (order.total_amount || 75), 0);
+      .reduce((sum, order) => sum + (order.total_amount || 0), 0);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
