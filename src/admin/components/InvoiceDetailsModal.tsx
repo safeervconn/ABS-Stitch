@@ -186,11 +186,7 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
                                     {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • 
                                     {new Date(order.created_at).toLocaleDateString()}
                                   </p>
-                                  {order.custom_description && (
-                                    <p className="text-sm text-gray-600 mt-1 truncate max-w-md">
-                                      {order.custom_description}
-                                    </p>
-                                  )}
+                                  
                                 </div>
                               </div>
                               <div className="flex items-center space-x-3">
