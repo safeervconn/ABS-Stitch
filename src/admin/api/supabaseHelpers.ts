@@ -1113,6 +1113,19 @@ export const createInvoice = async (invoiceData: Partial<Invoice>): Promise<Invo
 
     if (error) throw error;
 
+    // Notify customer about new invoice creation
+    try {
+      if (invoiceData.customer_id) {
+        await createNotification(
+          invoiceData.customer_id,
+          'order',
+          `A new invoice "${invoiceData.invoice_title}" has been generated for you. Please check your invoices section.`
+        );
+      }
+    } catch (notificationError) {
+      console.error('Error creating invoice notification:', notificationError);
+      // Don't throw here as the invoice was created successfully
+    }
 
     return data;
   } catch (error) {
@@ -1190,7 +1203,7 @@ export const getInvoiceById = async (id: string): Promise<Invoice> => {
       .from('invoices')
       .select(`
         *,
-        customer:customers(full_name, email)
+        customer:customers(full_name, email, company_name)
       `)
       .eq('id', id)
       .single();
@@ -1201,6 +1214,7 @@ export const getInvoiceById = async (id: string): Promise<Invoice> => {
       ...data,
       customer_name: data.customer?.full_name,
       customer_email: data.customer?.email,
+      customer_company_name: data.customer?.company_name,
     };
   } catch (error) {
     console.error('Error fetching invoice by ID:', error);
