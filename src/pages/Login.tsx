@@ -60,13 +60,13 @@ const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const { data } = await signInWithStatusCheck(formData.email, formData.password);
+      const { user } = await signInWithStatusCheck(formData.email, formData.password);
 
-      if (data.user) {
+      if (user) {
         showToast('Login successful!', 'success');
         
         // Get user profile and redirect to appropriate dashboard
-        const profile = await getUserProfile(data.user.id);
+        const profile = await getUserProfile(user.id);
         if (profile) {
           const dashboardRoute = getDashboardRoute(profile.role || 'customer');
           if (dashboardRoute) {
