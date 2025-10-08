@@ -131,7 +131,7 @@ const DesignerDashboard: React.FC = () => {
   }
 
   const stats = [
-    { title: 'Total Orders (This Month)', value: dashboardStats.totalOrdersThisMonth.toString(), icon: Briefcase, color: 'blue' },
+    { title: 'Total Orders this Month', value: dashboardStats.totalOrdersThisMonth.toString(), icon: Briefcase, color: 'blue' },
     { title: 'In-Progress Orders', value: dashboardStats.inProgressOrdersCount.toString(), icon: Clock, color: 'purple' }
   ];
 
