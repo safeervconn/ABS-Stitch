@@ -129,13 +129,14 @@ const CustomerOrdersTab: React.FC = () => {
                     <div>
                       <p className="font-medium text-gray-900">{order.order_number}</p>
                       <p className="text-sm text-gray-500">{order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • {new Date(order.created_at).toLocaleDateString()}</p>
-                      {order.custom_description && (
-                        <p className="text-sm text-gray-600 mt-1 max-w-md truncate">{order.custom_description}</p>
-                      )}
+                      
                       {order.apparel_type_name && (
                         <p className="text-xs text-gray-500 mt-1">
                           {order.apparel_type_name} • {order.custom_width}"×{order.custom_height}"
                         </p>
+                      )}
+                      {order.custom_description && (
+                        <p className="text-sm text-gray-600 mt-1 max-w-md truncate">{order.custom_description}</p>
                       )}
                     </div>
                   </div>
