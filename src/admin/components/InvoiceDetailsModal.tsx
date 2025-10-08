@@ -198,12 +198,12 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
                                     {order.status.replace('_', ' ')}
                                   </span>
                                 </div>
-                                {order.apparel_type_name && (
+                              </div>
+                              {order.apparel_type_name && (
                               <p className="text-xs text-gray-500 mt-1">
                                 {order.apparel_type_name} • {order.custom_width}"×{order.custom_height}"
                               </p>
                             )}
-                              </div>
                             </div>
                             
                           </div>
