@@ -38,7 +38,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
       color: 'blue',
     },
     {
-      title: 'New Customers',
+      title: 'New Customers this Month',
       value: stats.newCustomersThisMonth.toString(),
       icon: Users,
       color: 'green',
