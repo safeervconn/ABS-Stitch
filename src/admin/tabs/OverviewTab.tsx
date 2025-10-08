@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Users, Package, TrendingUp, Eye, AlertCircle, dollarsign, Clock } from 'lucide-react';
+import { ShoppingBag, Users, Package, TrendingUp, Eye, AlertCircle, DollarSign, Clock } from 'lucide-react';
 import { useAdminData } from '../hooks/useAdminData';
 import { AdminOrder } from '../types';
 
