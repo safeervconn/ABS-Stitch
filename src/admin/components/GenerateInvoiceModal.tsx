@@ -345,9 +345,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
                               {order.apparel_type_name} • {order.custom_width}"×{order.custom_height}"
                             </p>
                           )}
-                          {order.custom_description && (
-                            <p className="text-sm text-gray-600 mt-1 truncate">{order.custom_description}</p>
-                          )}
+                         
                         </div>
                       </label>
                     ))}
