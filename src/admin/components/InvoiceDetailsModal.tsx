@@ -196,7 +196,7 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
                               <div className="flex items-center space-x-3">
                                 <div className="text-right">
                                   <p className="font-semibold text-gray-900">
-                                    ${order.total_amount?.toFixed(2) || '75.00'}
+                                    ${order.total_amount?.toFixed(2) || '0'}
                                   </p>
                                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getOrderStatusColor(order.status)}`}>
                                     {order.status.replace('_', ' ')}
