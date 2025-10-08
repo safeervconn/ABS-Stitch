@@ -21,7 +21,6 @@ const EmployeeSignup: React.FC = () => {
     password: '',
     confirmPassword: '',
     role: 'sales_rep' as 'sales_rep' | 'designer',
-    acceptTerms: false
   });
   
   const [showPassword, setShowPassword] = useState(false);
@@ -80,11 +79,6 @@ const EmployeeSignup: React.FC = () => {
     
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
-      return false;
-    }
-    
-    if (!formData.acceptTerms) {
-      setError('You must accept the terms and conditions');
       return false;
     }
     
@@ -365,24 +359,6 @@ const EmployeeSignup: React.FC = () => {
                   {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
-            </div>
-
-            {/* Terms and Conditions */}
-            <div className="flex items-start space-x-3">
-              <input
-                type="checkbox"
-                name="acceptTerms"
-                id="acceptTerms"
-                checked={formData.acceptTerms}
-                onChange={handleInputChange}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1"
-              />
-              <label htmlFor="acceptTerms" className="text-sm text-gray-600">
-                I agree to the{' '}
-                <a href="/terms" className="text-blue-600 hover:text-blue-700">Terms of Service</a>
-                {' '}and{' '}
-                <a href="/privacy" className="text-blue-600 hover:text-blue-700">Privacy Policy</a>
-              </label>
             </div>
 
             {/* Submit Button */}
