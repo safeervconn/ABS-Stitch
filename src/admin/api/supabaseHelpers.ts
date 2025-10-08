@@ -1048,7 +1048,17 @@ export const getInvoices = async (params: PaginationParams): Promise<PaginatedRe
 
     // Apply search filter
     if (params.search) {
-      query = query.or(`invoice_title.ilike.%${params.search}%,customer.full_name.ilike.%${params.search}%,customer.email.ilike.%${params.search}%`);
+      // Handle customer-specific search (for customer dashboard)
+      if (params.search.includes('customer_id.eq.')) {
+        const [customerFilter, searchTerm] = params.search.split(',');
+        const customerId = customerFilter.replace('customer_id.eq.', '');
+        query = query.eq('customer_id', customerId);
+        if (searchTerm) {
+          query = query.ilike('invoice_title', `%${searchTerm}%`);
+        }
+      } else {
+        query = query.or(`invoice_title.ilike.%${params.search}%,customer.full_name.ilike.%${params.search}%,customer.email.ilike.%${params.search}%`);
+      }
     }
 
     // Apply status filter
@@ -1527,6 +1537,99 @@ export const getAllAdmins = async (): Promise<AdminUser[]> => {
   } catch (error) {
     console.error('Error fetching admins:', error);
     return [];
+  }
+};
+
+// Customer Orders CRUD Operations (for customer dashboard)
+export const getCustomerOrdersPaginated = async (params: PaginationParams & { customer_id: string }): Promise<PaginatedResponse<AdminOrder>> => {
+  try {
+    let query = supabase
+      .from('orders')
+      .select(`
+        *,
+        customer:customers!inner(full_name, email, phone, company_name),
+        product:products(title),
+        apparel_type:apparel_types(type_name),
+        sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
+        designer:employees!orders_assigned_designer_id_fkey(full_name)
+      `, { count: 'exact' })
+      .eq('customer_id', params.customer_id);
+
+    // Apply search filter
+    if (params.search) {
+      query = query.or(`order_number.ilike.%${params.search}%,custom_description.ilike.%${params.search}%`);
+    }
+
+    // Apply status filter
+    if (params.status) {
+      if (Array.isArray(params.status)) {
+        query = query.in('status', params.status);
+      } else {
+        query = query.eq('status', params.status);
+      }
+    }
+
+    // Apply date range filters
+    if (params.dateFrom) {
+      query = query.gte('created_at', params.dateFrom);
+    }
+    if (params.dateTo) {
+      query = query.lte('created_at', params.dateTo);
+    }
+
+    // Apply sorting
+    const sortBy = params.sortBy || 'created_at';
+    const sortOrder = params.sortOrder || 'desc';
+    query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+
+    // Apply pagination
+    const from = (params.page - 1) * params.limit;
+    const to = from + params.limit - 1;
+    query = query.range(from, to);
+
+    const { data, error, count } = await query;
+
+    if (error) throw error;
+
+    const transformedData = (data || []).map(order => ({
+      id: order.id,
+      order_number: order.order_number,
+      order_type: order.order_type,
+      customer_id: order.customer_id,
+      customer_name: order.customer?.full_name || 'Unknown',
+      customer_email: order.customer?.email || '',
+      customer_phone: order.customer?.phone || '',
+      customer_company_name: order.customer?.company_name || '',
+      product_id: order.product_id,
+      product_title: order.product?.title,
+      custom_description: order.custom_description,
+      file_urls: order.file_urls,
+      apparel_type_id: order.apparel_type_id,
+      apparel_type_name: order.apparel_type?.type_name,
+      custom_width: order.custom_width,
+      custom_height: order.custom_height,
+      total_amount: order.total_amount,
+      payment_status: order.payment_status,
+      status: order.status,
+      assigned_sales_rep_id: order.assigned_sales_rep_id,
+      assigned_sales_rep_name: order.sales_rep?.full_name,
+      assigned_designer_id: order.assigned_designer_id,
+      assigned_designer_name: order.designer?.full_name,
+      invoice_url: order.invoice_url,
+      created_at: order.created_at,
+      updated_at: order.updated_at,
+    }));
+
+    return {
+      data: transformedData,
+      total: count || 0,
+      page: params.page,
+      limit: params.limit,
+      totalPages: Math.ceil((count || 0) / params.limit),
+    };
+  } catch (error) {
+    console.error('Error fetching customer orders:', error);
+    throw error;
   }
 };
 

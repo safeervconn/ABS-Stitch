@@ -1,12 +1,63 @@
 import React from 'react';
-import { ShoppingBag, Package, CreditCard, Eye } from 'lucide-react';
-import { useOrders } from '../../contexts/OrderContext';
+import { ShoppingBag, Package, CreditCard, Eye, FileText } from 'lucide-react';
+import { getCurrentUser, supabase } from '../../lib/supabase';
 
 const CustomerOverviewTab: React.FC = () => {
-  const { orders } = useOrders();
+  const [orders, setOrders] = React.useState<any[]>([]);
+  const [invoices, setInvoices] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
   
-  // Get recent orders (last 10)
-  const recentOrders = orders.slice(0, 10);
+  React.useEffect(() => {
+    const fetchOverviewData = async () => {
+      try {
+        const user = await getCurrentUser();
+        if (!user) return;
+
+        // Fetch recent orders (last 10)
+        const { data: ordersData, error: ordersError } = await supabase
+          .from('orders')
+          .select(`
+            *,
+            apparel_type:apparel_types(type_name)
+          `)
+          .eq('customer_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        if (ordersError) throw ordersError;
+
+        // Fetch recent invoices (last 5)
+        const { data: invoicesData, error: invoicesError } = await supabase
+          .from('invoices')
+          .select('*')
+          .eq('customer_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        if (invoicesError) throw invoicesError;
+
+        setOrders(ordersData || []);
+        setInvoices(invoicesData || []);
+      } catch (error) {
+        console.error('Error fetching overview data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOverviewData();
+  }, []);
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="loading-spinner mx-auto mb-4"></div>
+          <p className="text-gray-600 font-medium">Loading overview...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Color mapping for stat cards
   const getColorClasses = (color: string) => {
@@ -26,7 +77,7 @@ const CustomerOverviewTab: React.FC = () => {
 
   const stats = [
     { 
-      title: 'Total Orders this Month', 
+      title: 'Total Orders', 
       value: orders.length.toString(), 
       icon: ShoppingBag, 
       color: 'blue' 
@@ -98,22 +149,37 @@ const CustomerOverviewTab: React.FC = () => {
       {/* Recent Orders */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100">
         <div className="p-6 border-b border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
-          <p className="text-sm text-gray-600 mt-1">Your last 10 orders</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
+              <p className="text-sm text-gray-600 mt-1">Your last 10 orders</p>
+            </div>
+            <button
+              onClick={() => window.location.href = '/customer/dashboard?tab=orders'}
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              View All Orders
+            </button>
+          </div>
         </div>
         
         <div className="p-6">
-          {recentOrders.length > 0 ? (
+          {orders.length > 0 ? (
             <div className="space-y-4">
-              {recentOrders.map((order) => (
+              {orders.map((order) => (
                 <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="flex items-center space-x-4">
                     <div className="bg-blue-100 p-2 rounded-lg">
                       <ShoppingBag className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{order.order_number}</p>
+                      <p className="font-medium text-gray-900">{order.order_number || `ORD-${order.id.slice(0, 8)}`}</p>
                       <p className="text-sm text-gray-500">{order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • {new Date(order.created_at).toLocaleDateString()}</p>
+                      {order.apparel_type?.type_name && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          {order.apparel_type.type_name} • {order.custom_width}"×{order.custom_height}"
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -131,6 +197,57 @@ const CustomerOverviewTab: React.FC = () => {
             <div className="text-center py-8">
               <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
               <p className="text-gray-500">No orders yet</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Recent Invoices */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="p-6 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Recent Invoices</h3>
+              <p className="text-sm text-gray-600 mt-1">Your last 5 invoices</p>
+            </div>
+            <button
+              onClick={() => window.location.href = '/customer/dashboard?tab=invoices'}
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              View All Invoices
+            </button>
+          </div>
+        </div>
+        
+        <div className="p-6">
+          {invoices.length > 0 ? (
+            <div className="space-y-4">
+              {invoices.map((invoice) => (
+                <div key={invoice.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-purple-100 p-2 rounded-lg">
+                      <FileText className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{invoice.invoice_title}</p>
+                      <p className="text-sm text-gray-500">{invoice.month_year} • {invoice.order_ids.length} orders</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="text-right">
+                      <p className="font-semibold text-gray-900">${invoice.total_amount.toFixed(2)}</p>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(invoice.status)}`}>
+                        {invoice.status.replace('_', ' ')}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <FileText className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500">No invoices yet</p>
             </div>
           )}
         </div>
