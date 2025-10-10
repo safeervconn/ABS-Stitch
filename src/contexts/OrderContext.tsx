@@ -127,7 +127,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         await createNotification(
           profile.id,
           'order',
-          `Your ${orderData.order_type} order ${orderNumber} has been placed successfully! We'll keep you updated on the progress.`
+          `Your ${orderData.order_type} order ${orderNumber} has been placed successfully!`
         );
         
         // Notify all admins
