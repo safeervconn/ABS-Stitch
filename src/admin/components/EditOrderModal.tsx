@@ -5,7 +5,7 @@ import { AdminOrder, AdminUser, OrderAttachment } from '../types';
 import { supabase, getCurrentUser, getUserProfile } from '../../lib/supabase';
 import { toast } from '../../utils/toast';
 import { AttachmentList } from '../../components/AttachmentList';
-import { fetchOrderAttachments, uploadAttachment } from '../../lib/attachmentService';
+import { fetchOrderAttachments, uploadAttachment, deleteAttachment } from '../../lib/attachmentService';
 
 interface EditOrderModalProps {
   isOpen: boolean;
@@ -45,6 +45,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   const [newCommentContent, setNewCommentContent] = useState('');
   const [addingComment, setAddingComment] = useState(false);
   const [attachments, setAttachments] = useState<OrderAttachment[]>([]);
+  const [pendingDeletions, setPendingDeletions] = useState<string[]>([]);
 
   useEffect(() => {
     // Use prop currentUser if provided, otherwise fetch it
@@ -183,10 +184,33 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     setError('');
 
     try {
-      // Update order (attachments are managed separately via AttachmentList component)
+      // Update order
       await updateOrder(order.id, formData);
 
-      toast.success('Order updated successfully');
+      // Process pending deletions after successful order update
+      if (pendingDeletions.length > 0) {
+        let deletedCount = 0;
+        let failedCount = 0;
+        for (const attachmentId of pendingDeletions) {
+          try {
+            await deleteAttachment(attachmentId);
+            deletedCount++;
+          } catch (error) {
+            console.error('Error deleting attachment:', error);
+            failedCount++;
+          }
+        }
+
+        if (deletedCount > 0) {
+          toast.success(`Order updated successfully. Deleted ${deletedCount} attachment(s).`);
+        }
+        if (failedCount > 0) {
+          toast.error(`Failed to delete ${failedCount} attachment(s).`);
+        }
+      } else {
+        toast.success('Order updated successfully');
+      }
+
       onSuccess();
       onClose();
     } catch (error) {
@@ -536,10 +560,14 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                 <div className="mb-6">
                   <AttachmentList
                     orderId={order.id}
+                    orderNumber={order.order_number}
                     attachments={attachments}
                     onAttachmentsChange={fetchAttachments}
                     canUpload={!isFormDisabled}
                     canDelete={currentUser?.role === 'admin'}
+                    pendingDeletions={pendingDeletions}
+                    onPendingDeletionsChange={setPendingDeletions}
+                    deferDeletion={true}
                   />
                 </div>
               </>

@@ -267,6 +267,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 <div>
                   <AttachmentList
                     orderId={order.id}
+                    orderNumber={order.order_number}
                     attachments={attachments}
                     onAttachmentsChange={async () => {
                       try {

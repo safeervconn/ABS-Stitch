@@ -13,18 +13,26 @@ import { toast } from '../utils/toast';
 
 interface AttachmentListProps {
   orderId: string;
+  orderNumber: string;
   attachments: OrderAttachment[];
   onAttachmentsChange: () => void;
   canUpload?: boolean;
   canDelete?: boolean;
+  pendingDeletions?: string[];
+  onPendingDeletionsChange?: (ids: string[]) => void;
+  deferDeletion?: boolean;
 }
 
 export function AttachmentList({
   orderId,
+  orderNumber,
   attachments,
   onAttachmentsChange,
   canUpload = true,
   canDelete = false,
+  pendingDeletions = [],
+  onPendingDeletionsChange,
+  deferDeletion = false,
 }: AttachmentListProps) {
   const [uploading, setUploading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -57,7 +65,7 @@ export function AttachmentList({
 
     for (const file of selectedFiles) {
       try {
-        await uploadAttachment(orderId, file);
+        await uploadAttachment(orderId, orderNumber, file);
         successCount++;
         setSelectedFiles(prev => prev.filter(f => f !== file));
       } catch (error) {
@@ -85,17 +93,30 @@ export function AttachmentList({
   };
 
   const handleDelete = async (attachmentId: string, filename: string) => {
-    if (!confirm(`Are you sure you want to delete ${filename}?`)) {
-      return;
-    }
+    if (deferDeletion && onPendingDeletionsChange) {
+      if (pendingDeletions.includes(attachmentId)) {
+        onPendingDeletionsChange(pendingDeletions.filter(id => id !== attachmentId));
+        toast.success('Removed from deletion queue');
+      } else {
+        if (!confirm(`Mark ${filename} for deletion? It will be deleted when you update the order.`)) {
+          return;
+        }
+        onPendingDeletionsChange([...pendingDeletions, attachmentId]);
+        toast.success('Marked for deletion');
+      }
+    } else {
+      if (!confirm(`Are you sure you want to delete ${filename}?`)) {
+        return;
+      }
 
-    try {
-      await deleteAttachment(attachmentId);
-      toast.success('Attachment deleted successfully');
-      onAttachmentsChange();
-    } catch (error) {
-      console.error('Delete error:', error);
-      toast.error('Failed to delete attachment');
+      try {
+        await deleteAttachment(attachmentId);
+        toast.success('Attachment deleted successfully');
+        onAttachmentsChange();
+      } catch (error) {
+        console.error('Delete error:', error);
+        toast.error('Failed to delete attachment');
+      }
     }
   };
 
@@ -166,22 +187,29 @@ export function AttachmentList({
         </div>
       ) : (
         <div className="space-y-2">
-          {attachments.map((attachment) => (
+          {attachments.map((attachment) => {
+            const isPendingDeletion = pendingDeletions.includes(attachment.id);
+            return (
             <div
               key={attachment.id}
-              className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-md hover:bg-gray-50"
+              className={`flex items-center justify-between p-3 bg-white border rounded-md hover:bg-gray-50 transition-all ${
+                isPendingDeletion ? 'border-red-300 bg-red-50 opacity-60' : 'border-gray-200'
+              }`}
             >
               <div className="flex items-center space-x-3 flex-1 min-w-0">
-                <span className="text-2xl flex-shrink-0">
+                <span className={`text-2xl flex-shrink-0 ${isPendingDeletion ? 'line-through' : ''}`}>
                   {getFileIcon(attachment.mime_type)}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+                  <p className={`text-sm font-medium truncate ${
+                    isPendingDeletion ? 'line-through text-gray-500' : 'text-gray-900'
+                  }`}>
                     {attachment.original_filename}
                   </p>
                   <p className="text-xs text-gray-500">
                     {formatFileSize(attachment.file_size)} •
                     {new Date(attachment.uploaded_at).toLocaleDateString()}
+                    {isPendingDeletion && <span className="text-red-600 ml-2 font-semibold">• Will be deleted</span>}
                   </p>
                 </div>
               </div>
@@ -190,21 +218,25 @@ export function AttachmentList({
                   onClick={() => handleDownload(attachment)}
                   className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded"
                   title="Download"
+                  disabled={isPendingDeletion}
                 >
                   <Download className="h-4 w-4" />
                 </button>
                 {canDelete && (
                   <button
                     onClick={() => handleDelete(attachment.id, attachment.original_filename)}
-                    className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded"
-                    title="Delete"
+                    className={`p-2 hover:bg-red-50 rounded ${
+                      isPendingDeletion ? 'text-orange-600 hover:text-orange-800' : 'text-red-600 hover:text-red-800'
+                    }`}
+                    title={isPendingDeletion ? 'Undo deletion' : 'Delete'}
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
                 )}
               </div>
             </div>
-          ))}
+          );
+          })}
         </div>
       )}
     </div>

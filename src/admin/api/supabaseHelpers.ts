@@ -200,6 +200,33 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
 
     if (error) throw error;
 
+    // Fetch first attachment for each order
+    const orderIds = (data || []).map(order => order.id);
+    let firstAttachmentsMap: Record<string, string> = {};
+
+    if (orderIds.length > 0) {
+      try {
+        const { data: attachments } = await supabase
+          .from('order_attachments')
+          .select('order_id, s3_key')
+          .in('order_id', orderIds)
+          .order('uploaded_at', { ascending: true });
+
+        if (attachments) {
+          const s3Endpoint = 's3.us-east-005.backblazeb2.com';
+          const bucketName = 'order-attachment-bucket';
+
+          attachments.forEach(att => {
+            if (!firstAttachmentsMap[att.order_id]) {
+              firstAttachmentsMap[att.order_id] = `https://${bucketName}.${s3Endpoint}/${att.s3_key}`;
+            }
+          });
+        }
+      } catch (attachmentError) {
+        console.error('Error fetching attachments:', attachmentError);
+      }
+    }
+
     return (data || []).map(order => ({
       id: order.id,
       order_number: order.order_number, 
@@ -215,6 +242,7 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
       product_title: order.product?.title,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
+      first_attachment_url: firstAttachmentsMap[order.id],
       apparel_type_id: order.apparel_type_id,
       apparel_type_name: order.apparel_type?.type_name,
       custom_width: order.custom_width,
@@ -1638,6 +1666,33 @@ export const getCustomerOrdersPaginated = async (params: PaginationParams & { cu
 
     if (error) throw error;
 
+    // Fetch first attachment for each order
+    const orderIds = (data || []).map(order => order.id);
+    let firstAttachmentsMap: Record<string, string> = {};
+
+    if (orderIds.length > 0) {
+      try {
+        const { data: attachments } = await supabase
+          .from('order_attachments')
+          .select('order_id, s3_key')
+          .in('order_id', orderIds)
+          .order('uploaded_at', { ascending: true });
+
+        if (attachments) {
+          const s3Endpoint = 's3.us-east-005.backblazeb2.com';
+          const bucketName = 'order-attachment-bucket';
+
+          attachments.forEach(att => {
+            if (!firstAttachmentsMap[att.order_id]) {
+              firstAttachmentsMap[att.order_id] = `https://${bucketName}.${s3Endpoint}/${att.s3_key}`;
+            }
+          });
+        }
+      } catch (attachmentError) {
+        console.error('Error fetching attachments:', attachmentError);
+      }
+    }
+
     const transformedData = (data || []).map(order => ({
       id: order.id,
       order_number: order.order_number,
@@ -1647,6 +1702,7 @@ export const getCustomerOrdersPaginated = async (params: PaginationParams & { cu
       customer_email: order.customer?.email || '',
       customer_phone: order.customer?.phone || '',
       customer_company_name: order.customer?.company_name || '',
+      first_attachment_url: firstAttachmentsMap[order.id],
       product_id: order.product_id,
       product_title: order.product?.title,
       custom_description: order.custom_description,

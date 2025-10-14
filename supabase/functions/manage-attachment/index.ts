@@ -31,8 +31,8 @@ function createS3Client(config: StorageConfig): S3Client {
   });
 }
 
-function generateS3Key(orderId: string, filename: string): string {
-  return `orders/${orderId}/${filename}`;
+function generateS3Key(orderNumber: string, filename: string): string {
+  return `orders/${orderNumber}/${filename}`;
 }
 
 function sanitizeFilename(filename: string): string {
@@ -255,10 +255,11 @@ Deno.serve(async (req: Request) => {
       const formData = await req.formData();
       const file = formData.get('file') as File;
       const orderId = formData.get('orderId') as string;
+      const orderNumber = formData.get('orderNumber') as string;
 
-      if (!file || !orderId) {
+      if (!file || !orderId || !orderNumber) {
         return new Response(
-          JSON.stringify({ error: 'Missing file or orderId' }),
+          JSON.stringify({ error: 'Missing file, orderId, or orderNumber' }),
           {
             status: 400,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -291,7 +292,7 @@ Deno.serve(async (req: Request) => {
 
       const s3Client = createS3Client(ORDER_ATTACHMENTS_CONFIG);
       const storedFilename = generateStoredFilename(file.name);
-      const s3Key = generateS3Key(orderId, storedFilename);
+      const s3Key = generateS3Key(orderNumber, storedFilename);
 
       const arrayBuffer = await file.arrayBuffer();
       const fileData = new Uint8Array(arrayBuffer);

@@ -36,8 +36,8 @@ export function createS3Client(config: StorageConfig): S3Client {
   });
 }
 
-export function generateS3Key(orderId: string, filename: string): string {
-  return `orders/${orderId}/${filename}`;
+export function generateS3Key(orderNumber: string, filename: string): string {
+  return `orders/${orderNumber}/${filename}`;
 }
 
 export function sanitizeFilename(filename: string): string {

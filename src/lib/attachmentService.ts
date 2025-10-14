@@ -40,6 +40,7 @@ export async function fetchOrderAttachments(orderId: string): Promise<OrderAttac
 
 export async function uploadAttachment(
   orderId: string,
+  orderNumber: string,
   file: File,
   onProgress?: (progress: number) => void
 ): Promise<OrderAttachment> {
@@ -56,6 +57,7 @@ export async function uploadAttachment(
   const formData = new FormData();
   formData.append('file', file);
   formData.append('orderId', orderId);
+  formData.append('orderNumber', orderNumber);
 
   const response = await fetch(EDGE_FUNCTION_URL, {
     method: 'POST',
