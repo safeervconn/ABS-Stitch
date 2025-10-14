@@ -15,7 +15,7 @@ const ORDER_ATTACHMENTS_CONFIG: StorageConfig = {
   endpoint: Deno.env.get('S3_ORDER_ENDPOINT') || 's3.us-east-005.backblazeb2.com',
   region: Deno.env.get('S3_ORDER_REGION') || 'us-east-005',
   bucketName: Deno.env.get('S3_ORDER_BUCKET') || 'order-attachment-bucket',
-  accessKeyId: Deno.env.get('S3_ORDER_ACCESS_KEY_ID') || '005t/0wUxrIcHAwZHXktyMJuKQhOI8',
+  accessKeyId: Deno.env.get('S3_ORDER_ACCESS_KEY_ID') || '00500472239d1730000000004',
   secretAccessKey: Deno.env.get('S3_ORDER_SECRET_KEY') || 'K005t/0wUxrIcHAwZHXktyMJuKQhOI8',
 };
 

@@ -14,7 +14,7 @@ const PRODUCT_IMAGES_CONFIG: StorageConfig = {
   endpoint: Deno.env.get('S3_PRODUCT_ENDPOINT') || 's3.us-east-005.backblazeb2.com',
   region: Deno.env.get('S3_PRODUCT_REGION') || 'us-east-005',
   bucketName: Deno.env.get('S3_PRODUCT_BUCKET') || 'product-image-bucket',
-  accessKeyId: Deno.env.get('S3_PRODUCT_ACCESS_KEY_ID') || '005sqPaIk3e391FOzOhKnixN1BEnoY',
+  accessKeyId: Deno.env.get('S3_PRODUCT_ACCESS_KEY_ID') || '00500472239d1730000000005',
   secretAccessKey: Deno.env.get('S3_PRODUCT_SECRET_KEY') || 'K005sqPaIk3e391FOzOhKnixN1BEnoY',
 };
 
