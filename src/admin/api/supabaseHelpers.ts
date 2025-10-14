@@ -632,6 +632,34 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
 
     if (error) throw error;
 
+    // Fetch first attachment for each order
+    const orderIds = (data || []).map(order => order.id);
+    let firstAttachmentsMap: Record<string, string> = {};
+
+    if (orderIds.length > 0) {
+      try {
+        const { data: attachments } = await supabase
+          .from('order_attachments')
+          .select('order_id, s3_key')
+          .in('order_id', orderIds)
+          .order('uploaded_at', { ascending: true });
+
+        if (attachments) {
+          // Build S3 URL for first attachment per order
+          const s3Endpoint = 's3.us-east-005.backblazeb2.com';
+          const bucketName = 'order-attachment-bucket';
+
+          attachments.forEach(att => {
+            if (!firstAttachmentsMap[att.order_id]) {
+              firstAttachmentsMap[att.order_id] = `https://${bucketName}.${s3Endpoint}/${att.s3_key}`;
+            }
+          });
+        }
+      } catch (attachmentError) {
+        console.error('Error fetching attachments:', attachmentError);
+      }
+    }
+
     let transformedData = (data || []).map(order => ({
       id: order.id,
       order_number: order.order_number,
@@ -645,12 +673,13 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       product_title: order.product?.title,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
+      first_attachment_url: firstAttachmentsMap[order.id],
       apparel_type_id: order.apparel_type_id,
       apparel_type_name: order.apparel_type?.type_name,
       custom_width: order.custom_width,
       custom_height: order.custom_height,
       total_amount: order.total_amount,
-     payment_status: order.payment_status,
+      payment_status: order.payment_status,
       status: order.status,
       assigned_sales_rep_id: order.assigned_sales_rep_id,
       assigned_sales_rep_name: order.sales_rep?.full_name,

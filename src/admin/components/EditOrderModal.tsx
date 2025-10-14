@@ -5,7 +5,7 @@ import { AdminOrder, AdminUser, OrderAttachment } from '../types';
 import { supabase, getCurrentUser, getUserProfile } from '../../lib/supabase';
 import { toast } from '../../utils/toast';
 import { AttachmentList } from '../../components/AttachmentList';
-import { fetchOrderAttachments } from '../../lib/attachmentService';
+import { fetchOrderAttachments, uploadAttachment } from '../../lib/attachmentService';
 
 interface EditOrderModalProps {
   isOpen: boolean;
@@ -33,9 +33,6 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     custom_height: 0,
   });
 
-  const [existingFileUrls, setExistingFileUrls] = useState<string[]>([]);
-  const [newFiles, setNewFiles] = useState<File[]>([]);
-  const [filesToDelete, setFilesToDelete] = useState<string[]>([]);
   const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
   const [designers, setDesigners] = useState<AdminUser[]>([]);
   const [apparelTypes, setApparelTypes] = useState<{id: string, type_name: string}[]>([]);
@@ -70,10 +67,6 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
         custom_height: order.custom_height || 0,
       });
 
-      // Initialize file URLs
-      setExistingFileUrls(order.file_urls || []);
-      setNewFiles([]);
-      setFilesToDelete([]);
       setError('');
 
       // Fetch assignment options
@@ -174,80 +167,14 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(e.target.files || []);
-    setNewFiles(prev => [...prev, ...selectedFiles]);
-  };
-
-  const removeNewFile = (index: number) => {
-    setNewFiles(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const removeExistingFile = (fileUrl: string) => {
-    setExistingFileUrls(prev => prev.filter(url => url !== fileUrl));
-    setFilesToDelete(prev => [...prev, fileUrl]);
-  };
-
-  const uploadNewFiles = async (): Promise<string[]> => {
-    const uploadedUrls: string[] = [];
-
-    for (const file of newFiles) {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `order-files/${fileName}`;
-
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('order-files')
-        .upload(filePath, file);
-
-      if (uploadError) {
-        console.error('Error uploading file:', uploadError);
-        throw new Error(`Failed to upload file: ${file.name}`);
-      }
-
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('order-files')
-        .getPublicUrl(filePath);
-
-      if (urlData?.publicUrl) {
-        uploadedUrls.push(urlData.publicUrl);
-      }
-    }
-
-    return uploadedUrls;
-  };
-
-  const deleteFiles = async (fileUrls: string[]) => {
-    for (const fileUrl of fileUrls) {
-      try {
-        // Extract file path from URL
-        const urlParts = fileUrl.split('/');
-        const fileName = urlParts[urlParts.length - 1];
-        const filePath = `order-files/${fileName}`;
-
-        const { error } = await supabase.storage
-          .from('order-files')
-          .remove([filePath]);
-
-        if (error) {
-          console.error('Error deleting file:', error);
-          // Don't throw here, just log the error
-        }
-      } catch (error) {
-        console.error('Error processing file deletion:', error);
-      }
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!order) return;
 
     // Validate edit permissions for completed/cancelled orders
-    if ((order.status === 'completed' || order.status === 'cancelled') && 
-        currentUser?.role !== 'admin' && currentUser?.role !== 'sales_rep') {
+    if ((order.status === 'completed' || order.status === 'cancelled') &&
+      currentUser?.role !== 'admin' && currentUser?.role !== 'sales_rep') {
       setError('Only administrators and sales representatives can edit completed or cancelled orders.');
       return;
     }
@@ -256,22 +183,8 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     setError('');
 
     try {
-      // Upload new files
-      const newFileUrls = await uploadNewFiles();
-
-      // Delete files marked for deletion
-      if (filesToDelete.length > 0) {
-        await deleteFiles(filesToDelete);
-      }
-
-      // Combine existing and new file URLs
-      const finalFileUrls = [...existingFileUrls, ...newFileUrls];
-
-      // Update order
-      await updateOrder(order.id, {
-        ...formData,
-        file_urls: finalFileUrls.length > 0 ? finalFileUrls : null,
-      });
+      // Update order (attachments are managed separately via AttachmentList component)
+      await updateOrder(order.id, formData);
 
       toast.success('Order updated successfully');
       onSuccess();
@@ -283,11 +196,6 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const getFileName = (fileUrl: string) => {
-    const urlParts = fileUrl.split('/');
-    return urlParts[urlParts.length - 1];
   };
 
   if (!isOpen || !order) return null;
@@ -552,100 +460,6 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                   </div>
                 )}
 
-                {/* File Attachments */}
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    File Attachments
-                  </label>
-                  
-                  {/* Existing Files */}
-                  {existingFileUrls.length > 0 && (
-                    <div className="mb-4">
-                      <h4 className="text-sm font-medium text-gray-600 mb-2">Current Files:</h4>
-                      <div className="space-y-2">
-                        {existingFileUrls.map((fileUrl, index) => (
-                          <div key={index} className="flex items-center justify-between bg-blue-50 p-3 rounded-lg">
-                            <div className="flex items-center space-x-2">
-                              <Paperclip className="h-4 w-4 text-blue-600" />
-                              <span className="text-sm text-gray-700 truncate">
-                                {getFileName(fileUrl)}
-                              </span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <button
-                                type="button"
-                               onClick={() => {
-                                 const link = document.createElement('a');
-                                 link.href = fileUrl;
-                                 link.download = getFileName(fileUrl);
-                                 document.body.appendChild(link);
-                                 link.click();
-                                 document.body.removeChild(link);
-                               }}
-                               className="text-blue-600 hover:text-blue-800 transition-colors"
-                               title="Download File"
-                              >
-                               <Download className="h-4 w-4" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => removeExistingFile(fileUrl)}
-                                className="text-red-600 hover:text-red-800 transition-colors"
-                                title="Remove File"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* New Files */}
-                  {newFiles.length > 0 && (
-                    <div className="mb-4">
-                      <h4 className="text-sm font-medium text-gray-600 mb-2">New Files to Upload:</h4>
-                      <div className="space-y-2">
-                        {newFiles.map((file, index) => (
-                          <div key={index} className="flex items-center justify-between bg-green-50 p-3 rounded-lg">
-                            <div className="flex items-center space-x-2">
-                              <Upload className="h-4 w-4 text-green-600" />
-                              <span className="text-sm text-gray-700 truncate">{file.name}</span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => removeNewFile(index)}
-                              className="text-red-600 hover:text-red-800 transition-colors"
-                              title="Remove File"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* File Upload */}
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
-                    <input
-                      type="file"
-                      onChange={handleFileChange}
-                      className="hidden"
-                      id="file-upload-edit"
-                      accept="image/*,.pdf,.doc,.docx,.zip"
-                      multiple
-                    />
-                    <label 
-                      htmlFor="file-upload-edit" 
-                      className="cursor-pointer flex items-center justify-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors"
-                    >
-                      <Upload className="h-5 w-5" />
-                      <span>Click to add more files</span>
-                    </label>
-                  </div>
-                </div>
 
                 {/* Order Comments - Only for admin, sales_rep, designer */}
                 {currentUser && ['admin', 'sales_rep', 'designer'].includes(currentUser.role) && (

@@ -60,6 +60,7 @@ export interface AdminOrder {
   custom_description?: string;
   file_urls?: string[];
   attachments?: OrderAttachment[];
+  first_attachment_url?: string;
   apparel_type_id?: string;
   apparel_type_name?: string;
   custom_width?: number;
@@ -171,6 +172,7 @@ export interface CustomerOrder {
   order_type: 'custom' | 'catalog';
   file_urls?: string[] | null;
   attachments?: OrderAttachment[];
+  first_attachment_url?: string;
   status: 'in_progress' | 'under_review' | 'completed' | 'cancelled';
   payment_status: 'paid' | 'unpaid';
   total_amount: number;

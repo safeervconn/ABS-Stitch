@@ -3,6 +3,7 @@ import { X, Send, Paperclip, Loader, Trash2, CheckCircle, Eye, Plus } from 'luci
 import { getCurrentUser, getUserProfile, getApparelTypes } from '../lib/supabase';
 import { useOrders } from '../contexts/OrderContext';
 import { toast } from '../utils/toast';
+import { uploadAttachment } from '../lib/attachmentService';
 
 interface PlaceOrderModalProps {
   isOpen: boolean;
@@ -83,7 +84,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     setIsSubmitting(true);
     try {
       // Prepare order data with proper field mapping
@@ -93,12 +94,36 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
         apparel_type_id: formData.apparelTypeId,
         custom_width: parseFloat(formData.customWidth) || null,
         custom_height: parseFloat(formData.customHeight) || null,
-        total_amount: 0, // Default amount for custom orders - confirmed
+        total_amount: 0,
       };
-      
-      const newOrder = await addOrder(orderData, formData.files);
+
+      // Create order first without files
+      const newOrder = await addOrder(orderData);
+
+      if (!newOrder) {
+        throw new Error('Failed to create order');
+      }
+
+      // Upload attachments if any using S3 attachment service
+      if (formData.files.length > 0) {
+        const uploadErrors: string[] = [];
+
+        for (let i = 0; i < formData.files.length; i++) {
+          const file = formData.files[i];
+          try {
+            await uploadAttachment(newOrder.id, file);
+          } catch (uploadError) {
+            console.error(`Error uploading file ${file.name}:`, uploadError);
+            uploadErrors.push(file.name);
+          }
+        }
+
+        if (uploadErrors.length > 0) {
+          toast.error(`Failed to upload some files: ${uploadErrors.join(', ')}`);
+        }
+      }
+
       setCreatedOrder(newOrder);
-      
       toast.success('Order placed successfully!');
       setShowSuccessMessage(true);
     } catch (error) {

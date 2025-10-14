@@ -66,35 +66,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         throw new Error('Failed to fetch customer information');
       }
 
-      let fileUrls: string[] = [];
-
-      // Upload files if provided
-      if (files && files.length > 0) {
-        for (const file of files) {
-          const fileExt = file.name.split('.').pop();
-          const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-          const filePath = `order-files/${fileName}`;
-
-          const { data: uploadData, error: uploadError } = await supabase.storage
-            .from('order-files')
-            .upload(filePath, file);
-
-          if (uploadError) {
-            console.error('Error uploading file:', uploadError);
-            throw new Error(`Failed to upload file: ${file.name}`);
-          }
-
-          // Get public URL
-          const { data: urlData } = supabase.storage
-            .from('order-files')
-            .getPublicUrl(filePath);
-
-          if (urlData?.publicUrl) {
-            fileUrls.push(urlData.publicUrl);
-          }
-        }
-      }
-
+      // Create order without files - files will be uploaded separately via attachmentService
       const { data: newOrderData, error } = await supabase
         .from('orders')
         .insert({
@@ -105,9 +77,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           apparel_type_id: orderData.apparel_type_id || null,
           custom_width: orderData.custom_width || null,
           custom_height: orderData.custom_height || null,
-          file_urls: fileUrls.length > 0 ? fileUrls : null,
+          file_urls: null,
           assigned_sales_rep_id: customerProfile.assigned_sales_rep_id,
-          total_amount: orderData.total_amount, // Uses provided amount (0 for custom orders)
+          total_amount: orderData.total_amount,
           payment_status: 'unpaid',
           status: 'new',
         })

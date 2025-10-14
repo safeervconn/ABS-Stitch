@@ -14,6 +14,7 @@ import { Search, Filter, Loader } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import AddToCartButton from '../components/AddToCartButton';
 import { getProducts, getApparelTypes } from '../lib/supabase';
+import { getImageSrc, getPlaceholderImage } from '../lib/placeholderImages';
 
 interface Product {
   id: string;
@@ -168,12 +169,11 @@ const Catalog: React.FC = () => {
                 {/* Product Image */}
                 <div className="relative">
                   <img
-                    src={product.image_url}
-                    alt={product.title}
+                    src={getImageSrc(product.image_url, 'product')}
+                    alt={product.title || 'Product image'}
                     className="w-full h-48 object-cover"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        'https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=400';
+                      (e.target as HTMLImageElement).src = getPlaceholderImage('product');
                     }}
                   />
                 </div>
@@ -204,7 +204,7 @@ const Catalog: React.FC = () => {
                       id: product.id,
                       title: product.title,
                       price: `$${product.price.toFixed(2)}`,
-                      image: product.image_url,
+                      image: getImageSrc(product.image_url, 'product'),
                       apparelType: product.apparel_type?.type_name || 'Uncategorized',
                     }}
                     className="w-full shadow-lg transform hover:scale-105 mt-auto"
