@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Loader, Paperclip, Trash2, Upload, Download, MessageSquare, Send } from 'lucide-react';
 import { updateOrder, getSalesReps, getDesigners, getOrderComments, addOrderComment, getApparelTypes } from '../api/supabaseHelpers';
-import { AdminOrder, AdminUser } from '../types';
+import { AdminOrder, AdminUser, OrderAttachment } from '../types';
 import { supabase, getCurrentUser, getUserProfile } from '../../lib/supabase';
 import { toast } from '../../utils/toast';
+import { AttachmentList } from '../../components/AttachmentList';
+import { fetchOrderAttachments } from '../../lib/attachmentService';
 
 interface EditOrderModalProps {
   isOpen: boolean;
@@ -45,6 +47,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   const [orderComments, setOrderComments] = useState<any[]>([]);
   const [newCommentContent, setNewCommentContent] = useState('');
   const [addingComment, setAddingComment] = useState(false);
+  const [attachments, setAttachments] = useState<OrderAttachment[]>([]);
 
   useEffect(() => {
     // Use prop currentUser if provided, otherwise fetch it
@@ -83,6 +86,9 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
       
       // Fetch order comments
       fetchOrderComments();
+
+      // Fetch attachments
+      fetchAttachments();
     }
   }, [isOpen, order, propCurrentUser]);
 
@@ -100,7 +106,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
 
   const fetchOrderComments = async () => {
     if (!order) return;
-    
+
     try {
       setLoadingComments(true);
       const comments = await getOrderComments(order.id);
@@ -109,6 +115,17 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
       console.error('Error fetching order comments:', error);
     } finally {
       setLoadingComments(false);
+    }
+  };
+
+  const fetchAttachments = async () => {
+    if (!order) return;
+
+    try {
+      const orderAttachments = await fetchOrderAttachments(order.id);
+      setAttachments(orderAttachments);
+    } catch (error) {
+      console.error('Error fetching attachments:', error);
     }
   };
 
@@ -700,6 +717,17 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                     </div>
                   </div>
                 )}
+
+                {/* Attachments Section */}
+                <div className="mb-6">
+                  <AttachmentList
+                    orderId={order.id}
+                    attachments={attachments}
+                    onAttachmentsChange={fetchAttachments}
+                    canUpload={!isFormDisabled}
+                    canDelete={currentUser?.role === 'admin'}
+                  />
+                </div>
               </>
             )}
 

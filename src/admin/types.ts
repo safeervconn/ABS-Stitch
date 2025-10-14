@@ -33,6 +33,19 @@ export interface AdminCustomer {
   updated_at: string;
 }
 
+export interface OrderAttachment {
+  id: string;
+  order_id: string;
+  original_filename: string;
+  stored_filename: string;
+  file_size: number;
+  mime_type: string;
+  s3_key: string;
+  uploaded_by: string;
+  uploaded_at: string;
+  created_at: string;
+}
+
 export interface AdminOrder {
   id: string;
   order_number: string;
@@ -46,6 +59,7 @@ export interface AdminOrder {
   product_title?: string;
   custom_description?: string;
   file_urls?: string[];
+  attachments?: OrderAttachment[];
   apparel_type_id?: string;
   apparel_type_name?: string;
   custom_width?: number;
@@ -156,6 +170,7 @@ export interface CustomerOrder {
   customerId: string;
   order_type: 'custom' | 'catalog';
   file_urls?: string[] | null;
+  attachments?: OrderAttachment[];
   status: 'in_progress' | 'under_review' | 'completed' | 'cancelled';
   payment_status: 'paid' | 'unpaid';
   total_amount: number;

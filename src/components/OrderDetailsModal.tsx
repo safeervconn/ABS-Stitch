@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { X, Calendar, User, Package, FileText, Paperclip, MessageSquare } from 'lucide-react';
 import { getCurrentUser, getUserProfile } from '../lib/supabase';
 import { Order } from '../contexts/OrderContext';
-import { OrderComment } from '../admin/types';
+import { OrderComment, OrderAttachment } from '../admin/types';
 import { getOrderComments } from '../admin/api/supabaseHelpers';
+import { AttachmentList } from './AttachmentList';
+import { fetchOrderAttachments } from '../lib/attachmentService';
 
 interface OrderDetailsModalProps {
   isOpen: boolean;
@@ -19,6 +21,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
   const [currentUser, setCurrentUser] = React.useState<any>(null);
   const [orderComments, setOrderComments] = React.useState<OrderComment[]>([]);
   const [loadingComments, setLoadingComments] = React.useState(false);
+  const [attachments, setAttachments] = React.useState<OrderAttachment[]>([]);
 
   React.useEffect(() => {
     const checkUser = async () => {
@@ -37,7 +40,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     
     const fetchComments = async () => {
       if (!order?.id) return;
-      
+
       try {
         setLoadingComments(true);
         const comments = await getOrderComments(order.id);
@@ -48,10 +51,22 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
         setLoadingComments(false);
       }
     };
-    
+
+    const fetchAttachmentsData = async () => {
+      if (!order?.id) return;
+
+      try {
+        const orderAttachments = await fetchOrderAttachments(order.id);
+        setAttachments(orderAttachments);
+      } catch (error) {
+        console.error('Error fetching attachments:', error);
+      }
+    };
+
     if (isOpen) {
       checkUser();
       fetchComments();
+      fetchAttachmentsData();
     }
   }, [isOpen]);
 
@@ -213,7 +228,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
                 {/* Order Comments - Only for admin, sales_rep, designer */}
                 {currentUser && ['admin', 'sales_rep', 'designer'].includes(currentUser.role) && (
-                  <div>
+                  <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Order Comments</h3>
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
                       {loadingComments ? (
@@ -247,6 +262,24 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     </div>
                   </div>
                 )}
+
+                {/* Attachments Section */}
+                <div>
+                  <AttachmentList
+                    orderId={order.id}
+                    attachments={attachments}
+                    onAttachmentsChange={async () => {
+                      try {
+                        const orderAttachments = await fetchOrderAttachments(order.id);
+                        setAttachments(orderAttachments);
+                      } catch (error) {
+                        console.error('Error refreshing attachments:', error);
+                      }
+                    }}
+                    canUpload={true}
+                    canDelete={false}
+                  />
+                </div>
 
               </div>
 
