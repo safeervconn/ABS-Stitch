@@ -9,13 +9,15 @@
  */
 
 import React, { useState } from 'react';
-import { Send, Paperclip } from 'lucide-react';
+import { Send, Paperclip, Loader2 } from 'lucide-react';
 import { getApparelTypes } from '../lib/supabase';
+import { toast } from '../utils/toast';
 
 const QuoteForm: React.FC = () => {
   // Form state management
   const [isQuoteRequest, setIsQuoteRequest] = useState(true);
   const [apparelTypes, setApparelTypes] = useState<{id: string, type_name: string}[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -59,12 +61,94 @@ const QuoteForm: React.FC = () => {
     setFormData(prev => ({ ...prev, file }));
   };
 
+  // Convert file to base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        resolve(base64.split(',')[1]);
+      };
+      reader.onerror = reject;
+    });
+  };
+
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real application, this would send data to a server
-    console.log('Form submitted:', formData);
-    alert(isQuoteRequest ? 'Quote request submitted!' : 'Message sent!');
+    setIsSubmitting(true);
+
+    try {
+      let fileAttachment = undefined;
+
+      if (formData.file) {
+        const base64Content = await fileToBase64(formData.file);
+        fileAttachment = {
+          name: formData.file.name,
+          content: base64Content,
+          mimeType: formData.file.type || 'application/octet-stream'
+        };
+      }
+
+      const selectedApparelType = apparelTypes.find(type => type.id === formData.apparelTypeId);
+
+      const emailData = {
+        formType: isQuoteRequest ? 'quote' : 'general',
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: `${formData.countryCode} ${formData.phoneNumber}`,
+        apparelType: selectedApparelType?.type_name,
+        customWidth: formData.customWidth,
+        customHeight: formData.customHeight,
+        designInstructions: formData.designInstructions,
+        message: formData.message,
+        fileAttachment
+      };
+
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-contact-email`;
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+        },
+        body: JSON.stringify(emailData)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to send email');
+      }
+
+      toast.success('Form submitted successfully');
+
+      setFormData({
+        fullName: '',
+        email: '',
+        countryCode: '+1',
+        phoneNumber: '',
+        customWidth: '',
+        customHeight: '',
+        apparelTypeId: '',
+        designInstructions: '',
+        message: '',
+        file: null
+      });
+
+      const fileInput = document.getElementById('file-upload') as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = '';
+      }
+
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Failed to submit form. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -284,10 +368,20 @@ const QuoteForm: React.FC = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full btn-success btn-large flex items-center justify-center space-x-2"
+          disabled={isSubmitting}
+          className="w-full btn-success btn-large flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Send className="h-5 w-5" />
-          <span>{isQuoteRequest ? 'Request Quote' : 'Send Message'}</span>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span>Sending...</span>
+            </>
+          ) : (
+            <>
+              <Send className="h-5 w-5" />
+              <span>{isQuoteRequest ? 'Request Quote' : 'Send Message'}</span>
+            </>
+          )}
         </button>
       </form>
     </div>
