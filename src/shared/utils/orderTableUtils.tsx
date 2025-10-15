@@ -3,28 +3,13 @@ import { Eye, CreditCard as Edit } from 'lucide-react';
 import { AdminOrder } from '../../admin/types';
 import { getStatusColor } from './statusUtils';
 import { DEFAULT_IMAGE_URL } from '../constants/orderConstants';
-import { getPlaceholderImage } from '../../lib/placeholderImages';
+import { OrderImagePreview } from '../../components/OrderImagePreview';
 
 export const createImageColumn = () => ({
   key: 'image',
   label: 'Image',
   render: (order: AdminOrder) => {
-    const firstAttachment = order.first_attachment_url;
-    const legacyImage = order.file_urls && order.file_urls.length > 0 ? order.file_urls[0] : null;
-    const imageUrl = firstAttachment || legacyImage;
-
-    return (
-      <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-        <img
-          src={imageUrl || getPlaceholderImage('thumbnail')}
-          alt={imageUrl ? 'Order attachment' : 'No image'}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = getPlaceholderImage('thumbnail');
-          }}
-        />
-      </div>
-    );
+    return <OrderImagePreview attachmentId={order.first_attachment_id} alt="Order attachment" />;
   },
 });
 

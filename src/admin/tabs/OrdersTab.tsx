@@ -7,6 +7,7 @@ import { updateOrder, getSalesReps, getDesigners } from '../api/supabaseHelpers'
 import { AdminOrder, AdminUser, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { getOrders } from '../api/supabaseHelpers';
+import { OrderImagePreview } from '../../components/OrderImagePreview';
 
 interface OrdersTabProps {
   onOrderClick: (order: AdminOrder) => void;
@@ -216,22 +217,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
       key: 'image',
       label: 'Image',
       render: (order: AdminOrder) => {
-        const firstAttachment = order.first_attachment_url;
-        const legacyImage = order.file_urls && order.file_urls.length > 0 ? order.file_urls[0] : null;
-        const imageUrl = firstAttachment || legacyImage;
-
-        return (
-          <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-            <img
-              src={imageUrl || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2YzZjRmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTAiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4='}
-              alt={imageUrl ? 'Order attachment' : 'No image'}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2YzZjRmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTAiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
-              }}
-            />
-          </div>
-        );
+        return <OrderImagePreview attachmentId={order.first_attachment_id} alt="Order attachment" />;
       },
     },
     { 

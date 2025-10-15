@@ -61,6 +61,7 @@ export interface AdminOrder {
   file_urls?: string[];
   attachments?: OrderAttachment[];
   first_attachment_url?: string;
+  first_attachment_id?: string;
   apparel_type_id?: string;
   apparel_type_name?: string;
   custom_width?: number;
