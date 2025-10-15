@@ -8,6 +8,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import CatalogPreview from './components/CatalogPreview';
 import Services from './components/Services';
+import Pricing from './components/Pricing';
 import Testimonials from './components/Testimonials';
 import QuoteForm from './components/QuoteForm';
 import ContactInfo from './components/ContactInfo';
@@ -37,8 +38,9 @@ const Homepage: React.FC = () => {
       <Hero />
       <CatalogPreview />
       <Services />
+      <Pricing />
       <Testimonials />
-      
+
       {/* Contact Section */}
       <section className="py-16 bg-gradient-to-b from-gray-50 to-white" id="contact">
         <div className="container mx-auto px-4">
