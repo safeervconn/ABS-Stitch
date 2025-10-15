@@ -140,6 +140,7 @@ export function AttachmentList({
         <div className="flex items-center space-x-2">
           {canDelete && deferDeletion && pendingDeletions.length > 0 && onConfirmDelete && (
             <button
+              type="button"
               onClick={handleConfirmDelete}
               disabled={deleting}
               className="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -180,6 +181,7 @@ export function AttachmentList({
               Selected Files ({selectedFiles.length})
             </h4>
             <button
+              type="button"
               onClick={handleUpload}
               disabled={uploading}
               className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -202,6 +204,7 @@ export function AttachmentList({
                 </div>
                 {!uploading && (
                   <button
+                    type="button"
                     onClick={() => removeSelectedFile(index)}
                     className="ml-2 text-red-600 hover:text-red-800"
                   >
@@ -249,6 +252,7 @@ export function AttachmentList({
               </div>
               <div className="flex items-center space-x-2 flex-shrink-0">
                 <button
+                  type="button"
                   onClick={() => handleDownload(attachment)}
                   className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded"
                   title="Download"
@@ -258,6 +262,7 @@ export function AttachmentList({
                 </button>
                 {canDelete && (
                   <button
+                    type="button"
                     onClick={() => handleDelete(attachment.id, attachment.original_filename)}
                     className={`p-2 hover:bg-red-50 rounded ${
                       isPendingDeletion ? 'text-orange-600 hover:text-orange-800' : 'text-red-600 hover:text-red-800'
