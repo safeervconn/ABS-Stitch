@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { formatFileSize, validateFileSize } from './storageConfig';
+import { formatFileSize, validateFileSize } from '../shared/utils/fileUtils';
 
 export interface OrderAttachment {
   id: string;
@@ -131,16 +131,4 @@ export async function downloadAttachment(attachmentId: string, filename: string)
   document.body.removeChild(link);
 }
 
-export function getFileIcon(mimeType: string): string {
-  if (mimeType.startsWith('image/')) return '🖼️';
-  if (mimeType.startsWith('video/')) return '🎥';
-  if (mimeType.startsWith('audio/')) return '🎵';
-  if (mimeType.includes('pdf')) return '📄';
-  if (mimeType.includes('word') || mimeType.includes('document')) return '📝';
-  if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return '📊';
-  if (mimeType.includes('powerpoint') || mimeType.includes('presentation')) return '📽️';
-  if (mimeType.includes('zip') || mimeType.includes('compressed')) return '📦';
-  return '📎';
-}
-
-export { formatFileSize };
+export { formatFileSize, getFileIcon } from '../shared/utils/fileUtils';

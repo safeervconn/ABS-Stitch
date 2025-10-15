@@ -1,3 +1,5 @@
+import { S3Client } from '@aws-sdk/client-s3';
+
 export interface StorageConfig {
   endpoint: string;
   region: string;
@@ -26,3 +28,15 @@ export const MAX_FILE_SIZE_MB = 20;
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 export const MAX_PRODUCT_IMAGE_SIZE_MB = 10;
 export const MAX_PRODUCT_IMAGE_SIZE_BYTES = MAX_PRODUCT_IMAGE_SIZE_MB * 1024 * 1024;
+
+export function createS3Client(config: StorageConfig): S3Client {
+  return new S3Client({
+    endpoint: `https://${config.endpoint}`,
+    region: config.region,
+    credentials: {
+      accessKeyId: config.accessKeyId,
+      secretAccessKey: config.secretAccessKey,
+    },
+    forcePathStyle: true,
+  });
+}
