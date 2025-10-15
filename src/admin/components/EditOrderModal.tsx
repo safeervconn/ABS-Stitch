@@ -168,6 +168,32 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     }));
   };
 
+  const handleConfirmDelete = async () => {
+    if (pendingDeletions.length === 0) return;
+
+    let deletedCount = 0;
+    let failedCount = 0;
+
+    for (const attachmentId of pendingDeletions) {
+      try {
+        await deleteAttachment(attachmentId);
+        deletedCount++;
+      } catch (error) {
+        console.error('Error deleting attachment:', error);
+        failedCount++;
+      }
+    }
+
+    if (deletedCount > 0) {
+      toast.success(`Successfully deleted ${deletedCount} attachment(s)`);
+      setPendingDeletions([]);
+      await fetchAttachments();
+    }
+    if (failedCount > 0) {
+      toast.error(`Failed to delete ${failedCount} attachment(s)`);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -177,6 +203,12 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     if ((order.status === 'completed' || order.status === 'cancelled') &&
       currentUser?.role !== 'admin' && currentUser?.role !== 'sales_rep') {
       setError('Only administrators and sales representatives can edit completed or cancelled orders.');
+      return;
+    }
+
+    // Validate designer assignment for in_progress orders
+    if (formData.status === 'in_progress' && !formData.assigned_designer_id) {
+      setError('Cannot set order to "In Progress" without assigning a designer. Please assign a designer first.');
       return;
     }
 
@@ -207,16 +239,36 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
         if (failedCount > 0) {
           toast.error(`Failed to delete ${failedCount} attachment(s).`);
         }
+        setPendingDeletions([]);
       } else {
         toast.success('Order updated successfully');
       }
 
       onSuccess();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating order:', error);
-      toast.error('Failed to update order');
-      setError('Failed to update order. Please try again.');
+
+      let errorMessage = 'Failed to update order. Please try again.';
+
+      if (error.message) {
+        if (error.message.includes('designer')) {
+          errorMessage = 'Cannot update order status without assigning a designer.';
+        } else if (error.message.includes('sales_rep')) {
+          errorMessage = 'Cannot complete order without assigning a sales representative.';
+        } else if (error.message.includes('apparel_type')) {
+          errorMessage = 'Please select a valid apparel type.';
+        } else if (error.message.includes('total_amount')) {
+          errorMessage = 'Total amount must be a valid positive number.';
+        } else if (error.message.includes('permission')) {
+          errorMessage = 'You do not have permission to perform this action.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setSubmitting(false);
     }
@@ -228,6 +280,8 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   const isCompletedOrCancelled = order.status === 'completed' || order.status === 'cancelled';
   const canEditCompletedOrder = currentUser?.role === 'admin' || currentUser?.role === 'sales_rep';
   const isFormDisabled = isCompletedOrCancelled && !canEditCompletedOrder;
+  const isAssignedSalesRep = currentUser?.role === 'sales_rep' && order.assigned_sales_rep_id === currentUser.id;
+  const canDeleteAttachment = currentUser?.role === 'admin' || isAssignedSalesRep;
 
   return (
     <>
@@ -564,10 +618,11 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                     attachments={attachments}
                     onAttachmentsChange={fetchAttachments}
                     canUpload={!isFormDisabled}
-                    canDelete={currentUser?.role === 'admin'}
+                    canDelete={canDeleteAttachment}
                     pendingDeletions={pendingDeletions}
                     onPendingDeletionsChange={setPendingDeletions}
                     deferDeletion={true}
+                    onConfirmDelete={handleConfirmDelete}
                   />
                 </div>
               </>

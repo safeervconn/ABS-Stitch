@@ -758,9 +758,28 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
     }
 
     // Validate edit permissions for completed/cancelled orders
-    if ((currentOrder.status === 'completed' || currentOrder.status === 'cancelled') && 
+    if ((currentOrder.status === 'completed' || currentOrder.status === 'cancelled') &&
         userProfile.role !== 'admin' && userProfile.role !== 'sales_rep') {
       throw new Error('Only administrators and sales representatives can edit completed or cancelled orders');
+    }
+
+    // Validate required fields based on status
+    if (orderData.status === 'in_progress' && !orderData.assigned_designer_id && !currentOrder.assigned_designer_id) {
+      throw new Error('Cannot set order to "In Progress" without assigning a designer');
+    }
+
+    if (orderData.status === 'completed') {
+      if (!orderData.assigned_sales_rep_id && userProfile.role !== 'admin') {
+        throw new Error('Cannot complete order without assigning a sales representative');
+      }
+      if (orderData.total_amount !== undefined && orderData.total_amount <= 0) {
+        throw new Error('Total amount must be greater than 0 for completed orders');
+      }
+    }
+
+    // Validate total_amount if provided
+    if (orderData.total_amount !== undefined && orderData.total_amount < 0) {
+      throw new Error('Total amount cannot be negative');
     }
 
     const { data, error } = await supabase
@@ -781,7 +800,18 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      if (error.message.includes('foreign key')) {
+        if (error.message.includes('designer')) {
+          throw new Error('Invalid designer assignment. Please select a valid designer.');
+        } else if (error.message.includes('sales_rep')) {
+          throw new Error('Invalid sales representative assignment. Please select a valid sales rep.');
+        } else if (error.message.includes('apparel_type')) {
+          throw new Error('Invalid apparel type selected. Please choose a valid apparel type.');
+        }
+      }
+      throw error;
+    }
 
     // Get the updated order with full details for notifications
     const updatedOrder = await getOrderById(id);

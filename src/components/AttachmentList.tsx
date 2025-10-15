@@ -21,6 +21,7 @@ interface AttachmentListProps {
   pendingDeletions?: string[];
   onPendingDeletionsChange?: (ids: string[]) => void;
   deferDeletion?: boolean;
+  onConfirmDelete?: () => Promise<void>;
 }
 
 export function AttachmentList({
@@ -33,8 +34,10 @@ export function AttachmentList({
   pendingDeletions = [],
   onPendingDeletionsChange,
   deferDeletion = false,
+  onConfirmDelete,
 }: AttachmentListProps) {
   const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
 
@@ -98,9 +101,6 @@ export function AttachmentList({
         onPendingDeletionsChange(pendingDeletions.filter(id => id !== attachmentId));
         toast.success('Removed from deletion queue');
       } else {
-        if (!confirm(`Mark ${filename} for deletion? It will be deleted when you update the order.`)) {
-          return;
-        }
         onPendingDeletionsChange([...pendingDeletions, attachmentId]);
         toast.success('Marked for deletion');
       }
@@ -120,23 +120,57 @@ export function AttachmentList({
     }
   };
 
+  const handleConfirmDelete = async () => {
+    if (!onConfirmDelete || pendingDeletions.length === 0) return;
+
+    setDeleting(true);
+    try {
+      await onConfirmDelete();
+    } catch (error) {
+      console.error('Delete confirmation error:', error);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">Attachments</h3>
-        {canUpload && (
-          <label className="cursor-pointer inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            <Upload className="h-4 w-4 mr-2" />
-            Add Files
-            <input
-              type="file"
-              multiple
-              onChange={handleFileSelect}
-              className="hidden"
-              disabled={uploading}
-            />
-          </label>
-        )}
+        <div className="flex items-center space-x-2">
+          {canDelete && deferDeletion && pendingDeletions.length > 0 && onConfirmDelete && (
+            <button
+              onClick={handleConfirmDelete}
+              disabled={deleting}
+              className="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {deleting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  <span>Deleting...</span>
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  <span>Confirm Delete ({pendingDeletions.length})</span>
+                </>
+              )}
+            </button>
+          )}
+          {canUpload && (
+            <label className="cursor-pointer inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              <Upload className="h-4 w-4 mr-2" />
+              Add Files
+              <input
+                type="file"
+                multiple
+                onChange={handleFileSelect}
+                className="hidden"
+                disabled={uploading}
+              />
+            </label>
+          )}
+        </div>
       </div>
 
       {selectedFiles.length > 0 && (
