@@ -55,15 +55,21 @@ export const OrderImagePreview: React.FC<OrderImagePreviewProps> = ({
     };
   }, [attachmentId]);
 
-  const placeholderUrl = getPlaceholderImage('thumbnail');
+  const placeholderUrl = getPlaceholderImage('order');
 
   return (
     <div className={`${className} rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center`}>
       {loading ? (
         <div className="animate-pulse bg-gray-200 w-full h-full"></div>
+      ) : !attachmentId || error || !imageUrl ? (
+        <img
+          src={placeholderUrl}
+          alt="No image available"
+          className="w-full h-full object-contain"
+        />
       ) : (
         <img
-          src={error || !imageUrl ? placeholderUrl : imageUrl}
+          src={imageUrl}
           alt={alt}
           className="w-full h-full object-cover"
           onError={(e) => {

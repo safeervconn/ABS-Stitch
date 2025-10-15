@@ -218,31 +218,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     try {
       // Update order
       await updateOrder(order.id, formData);
-
-      // Process pending deletions after successful order update
-      if (pendingDeletions.length > 0) {
-        let deletedCount = 0;
-        let failedCount = 0;
-        for (const attachmentId of pendingDeletions) {
-          try {
-            await deleteAttachment(attachmentId);
-            deletedCount++;
-          } catch (error) {
-            console.error('Error deleting attachment:', error);
-            failedCount++;
-          }
-        }
-
-        if (deletedCount > 0) {
-          toast.success(`Order updated successfully. Deleted ${deletedCount} attachment(s).`);
-        }
-        if (failedCount > 0) {
-          toast.error(`Failed to delete ${failedCount} attachment(s).`);
-        }
-        setPendingDeletions([]);
-      } else {
-        toast.success('Order updated successfully');
-      }
+      toast.success('Order updated successfully');
 
       onSuccess();
       onClose();

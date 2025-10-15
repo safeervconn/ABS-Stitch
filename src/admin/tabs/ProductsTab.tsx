@@ -9,6 +9,7 @@ import { AdminProduct, ApparelType, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { getProducts } from '../api/supabaseHelpers';
 import { toast } from '../../utils/toast';
+import { getPlaceholderImage } from '../../lib/placeholderImages';
 
 const ProductsTab: React.FC = () => {
   // Use the new paginated data hook
@@ -182,11 +183,11 @@ const ProductsTab: React.FC = () => {
       render: (product: AdminProduct) => (
         <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
           <img
-            src={product.image_url || 'https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=100'}
-            alt={product.title}
+            src={product.image_url || getPlaceholderImage('product')}
+            alt={product.title || 'Product image'}
             className="w-full h-full object-cover"
             onError={(e) => {
-              (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1194420/pexels-photo-1194420.jpeg?auto=compress&cs=tinysrgb&w=100';
+              (e.target as HTMLImageElement).src = getPlaceholderImage('product');
             }}
           />
         </div>

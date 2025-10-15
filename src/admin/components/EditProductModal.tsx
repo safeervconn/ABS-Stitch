@@ -348,14 +348,14 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                   </label>
                   
                   {/* Current Image Preview */}
-                  {hasImage() && (
-                    <div className="mb-4">
-                      <div className="relative inline-block">
-                        <img
-                          src={getCurrentImageUrl()}
-                          alt="Product preview"
-                          className="w-32 h-32 object-cover rounded-lg border border-gray-200"
-                        />
+                  <div className="mb-4">
+                    <div className="relative inline-block">
+                      <img
+                        src={hasImage() ? getCurrentImageUrl() : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2YzZjRmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZSBBdmFpbGFibGU8L3RleHQ+PC9zdmc+'}
+                        alt={hasImage() ? "Product preview" : "No image"}
+                        className="w-32 h-32 object-cover rounded-lg border border-gray-200"
+                      />
+                      {hasImage() && (
                         <button
                           type="button"
                           onClick={removeCurrentImage}
@@ -364,14 +364,14 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                         >
                           <Trash2 className="h-3 w-3" />
                         </button>
-                      </div>
-                      {newImageFile && (
-                        <p className="text-sm text-green-600 mt-2">
-                          New image selected: {newImageFile.name}
-                        </p>
                       )}
                     </div>
-                  )}
+                    {newImageFile && (
+                      <p className="text-sm text-green-600 mt-2">
+                        New image selected: {newImageFile.name}
+                      </p>
+                    )}
+                  </div>
 
                   {/* Image Upload */}
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
