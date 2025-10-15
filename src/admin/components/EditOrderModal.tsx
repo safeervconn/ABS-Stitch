@@ -208,16 +208,24 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
 
     // Validate designer assignment for in_progress orders
     if (formData.status === 'in_progress' && !formData.assigned_designer_id) {
-      setError('Cannot set order to "In Progress" without assigning a designer. Please assign a designer first.');
+      setError('Please assign a designer before setting order to "In Progress".');
       return;
     }
+
+    // Convert empty strings to null for UUID fields to prevent database errors
+    const sanitizedData = {
+      ...formData,
+      apparel_type_id: formData.apparel_type_id || null,
+      assigned_sales_rep_id: formData.assigned_sales_rep_id || null,
+      assigned_designer_id: formData.assigned_designer_id || null,
+    };
 
     setSubmitting(true);
     setError('');
 
     try {
       // Update order
-      await updateOrder(order.id, formData);
+      await updateOrder(order.id, sanitizedData);
       toast.success('Order updated successfully');
 
       onSuccess();
@@ -228,16 +236,33 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
       let errorMessage = 'Failed to update order. Please try again.';
 
       if (error.message) {
-        if (error.message.includes('designer')) {
-          errorMessage = 'Cannot update order status without assigning a designer.';
-        } else if (error.message.includes('sales_rep')) {
-          errorMessage = 'Cannot complete order without assigning a sales representative.';
-        } else if (error.message.includes('apparel_type')) {
-          errorMessage = 'Please select a valid apparel type.';
-        } else if (error.message.includes('total_amount')) {
-          errorMessage = 'Total amount must be a valid positive number.';
-        } else if (error.message.includes('permission')) {
-          errorMessage = 'You do not have permission to perform this action.';
+        const msg = error.message.toLowerCase();
+
+        // Handle UUID-related errors
+        if (msg.includes('invalid input syntax for type uuid') || msg.includes('uuid')) {
+          if (msg.includes('designer') || formData.assigned_designer_id === '') {
+            errorMessage = 'Please select a designer';
+          } else if (msg.includes('sales_rep') || msg.includes('sales rep') || formData.assigned_sales_rep_id === '') {
+            errorMessage = 'Please select a sales representative';
+          } else if (msg.includes('apparel') || formData.apparel_type_id === '') {
+            errorMessage = 'Please select an apparel type';
+          } else {
+            errorMessage = 'Please fill in all required fields correctly';
+          }
+        }
+        // Handle other validation errors
+        else if (msg.includes('designer')) {
+          errorMessage = 'Please assign a designer';
+        } else if (msg.includes('sales_rep') || msg.includes('sales rep')) {
+          errorMessage = 'Please assign a sales representative';
+        } else if (msg.includes('apparel_type') || msg.includes('apparel type')) {
+          errorMessage = 'Please select an apparel type';
+        } else if (msg.includes('total_amount') || msg.includes('total amount')) {
+          errorMessage = 'Total amount must be a valid positive number';
+        } else if (msg.includes('permission')) {
+          errorMessage = 'You do not have permission to perform this action';
+        } else if (msg.includes('foreign key')) {
+          errorMessage = 'Please ensure all selections are valid';
         } else {
           errorMessage = error.message;
         }

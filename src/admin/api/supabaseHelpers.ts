@@ -782,32 +782,56 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
       throw new Error('Total amount cannot be negative');
     }
 
+    // Build update object with proper null handling for UUID fields
+    const updateData: any = {
+      order_type: orderData.order_type,
+      custom_width: orderData.custom_width,
+      custom_height: orderData.custom_height,
+      total_amount: orderData.total_amount,
+      file_urls: orderData.file_urls,
+      status: orderData.status,
+      invoice_url: orderData.invoice_url,
+    };
+
+    // Only include UUID fields if they have valid values
+    if (orderData.apparel_type_id !== undefined) {
+      updateData.apparel_type_id = orderData.apparel_type_id || null;
+    }
+    if (orderData.assigned_sales_rep_id !== undefined) {
+      updateData.assigned_sales_rep_id = orderData.assigned_sales_rep_id || null;
+    }
+    if (orderData.assigned_designer_id !== undefined) {
+      updateData.assigned_designer_id = orderData.assigned_designer_id || null;
+    }
+
     const { data, error } = await supabase
       .from('orders')
-      .update({
-        order_type: orderData.order_type,
-        apparel_type_id: orderData.apparel_type_id,
-        custom_width: orderData.custom_width,
-        custom_height: orderData.custom_height,
-        total_amount: orderData.total_amount,
-        file_urls: orderData.file_urls,
-        assigned_sales_rep_id: orderData.assigned_sales_rep_id,
-        assigned_designer_id: orderData.assigned_designer_id,
-        status: orderData.status,
-        invoice_url: orderData.invoice_url,
-      })
+      .update(updateData)
       .eq('id', id)
       .select()
       .single();
 
     if (error) {
+      // Handle UUID validation errors
+      if (error.message.includes('invalid input syntax for type uuid')) {
+        if (error.message.includes('assigned_designer_id')) {
+          throw new Error('Please select a valid designer');
+        } else if (error.message.includes('assigned_sales_rep_id')) {
+          throw new Error('Please select a valid sales representative');
+        } else if (error.message.includes('apparel_type_id')) {
+          throw new Error('Please select a valid apparel type');
+        } else {
+          throw new Error('Please ensure all fields are filled in correctly');
+        }
+      }
+      // Handle foreign key constraint errors
       if (error.message.includes('foreign key')) {
         if (error.message.includes('designer')) {
-          throw new Error('Invalid designer assignment. Please select a valid designer.');
+          throw new Error('Please select a valid designer');
         } else if (error.message.includes('sales_rep')) {
-          throw new Error('Invalid sales representative assignment. Please select a valid sales rep.');
+          throw new Error('Please select a valid sales representative');
         } else if (error.message.includes('apparel_type')) {
-          throw new Error('Invalid apparel type selected. Please choose a valid apparel type.');
+          throw new Error('Please select a valid apparel type');
         }
       }
       throw error;
