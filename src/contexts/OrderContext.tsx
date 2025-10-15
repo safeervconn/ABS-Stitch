@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { getCurrentUser, getUserProfile, supabase } from '../lib/supabase';
-import { createNotification } from '../admin/api/supabaseHelpers';
 import { CustomerOrder } from '../admin/types';
 
 interface OrderContextType {
@@ -88,41 +87,19 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
       if (error) throw error;
 
-      // Create notifications for new order
       try {
-        const { getAllAdmins, createNotification } = await import('../admin/api/supabaseHelpers');
-        
-        // Get order number for notifications
+        const { notifyAboutNewOrder } = await import('../services/notificationService');
         const orderNumber = newOrderData.order_number || `ORD-${newOrderData.id.slice(0, 8)}`;
-        
-        // Notify the customer who placed the order
-        await createNotification(
+
+        await notifyAboutNewOrder(
           profile.id,
-          'order',
-          `Your ${orderData.order_type} order ${orderNumber} has been placed successfully!`
+          profile.full_name,
+          orderNumber,
+          orderData.order_type,
+          customerProfile.assigned_sales_rep_id
         );
-        
-        // Notify all admins
-        const admins = await getAllAdmins();
-        for (const admin of admins) {
-          await createNotification(
-            admin.id,
-            'order',
-            `New ${orderData.order_type} order ${orderNumber} has been placed by ${profile.full_name}`
-          );
-        }
-        
-        // Notify assigned sales rep if exists
-        if (customerProfile.assigned_sales_rep_id) {
-          await createNotification(
-            customerProfile.assigned_sales_rep_id,
-            'order',
-            `New ${orderData.order_type} order ${orderNumber} has been placed by your assigned customer ${profile.full_name}`
-          );
-        }
       } catch (notificationError) {
         console.error('Error creating order notifications:', notificationError);
-        // Don't throw here as the order was created successfully
       }
       await fetchOrders();
       

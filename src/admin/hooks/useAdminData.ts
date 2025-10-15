@@ -9,10 +9,8 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { 
-  getAdminStats, 
-  getRecentOrders, 
-} from '../api/supabaseHelpers';
+import { getAdminDashboardStats } from '../../services/dashboardStatsService';
+import { getRecentOrders } from '../api/supabaseHelpers';
 import { AdminStats, AdminOrder, PaginatedResponse, PaginationParams } from '../types';
 
 interface UseAdminDataOptions {
@@ -52,10 +50,10 @@ export const useAdminData = (options: UseAdminDataOptions = {}) => {
 
     try {
       const [statsData, ordersData] = await Promise.all([
-        getAdminStats(),
+        getAdminDashboardStats(),
         getRecentOrders(10),
       ]);
-      
+
       setStats(statsData);
       setRecentOrders(ordersData);
     } catch (err: any) {

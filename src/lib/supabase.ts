@@ -175,20 +175,11 @@ export const createCustomerProfile = async (customerData: {
   
   if (error) throw error;
   
-  // Notify all admins about new customer signup
   try {
-    const { getAllAdmins, createNotification } = await import('../admin/api/supabaseHelpers');
-    const admins = await getAllAdmins();
-    for (const admin of admins) {
-      await createNotification(
-        admin.id,
-        'user',
-        `New customer ${customerData.full_name} has signed up`
-      );
-    }
+    const { notifyAdminsAboutNewCustomer } = await import('../services/notificationService');
+    await notifyAdminsAboutNewCustomer(customerData.full_name);
   } catch (notificationError) {
     console.error('Error creating customer signup notifications:', notificationError);
-    // Don't throw here as the customer was created successfully
   }
   
   return data;
@@ -232,20 +223,11 @@ export const createEmployeeProfileSelfSignup = async (employeeData: {
   
   if (error) throw error;
   
-  // Notify all admins about new employee self-signup
   try {
-    const { getAllAdmins, createNotification } = await import('../admin/api/supabaseHelpers');
-    const admins = await getAllAdmins();
-    for (const admin of admins) {
-      await createNotification(
-        admin.id,
-        'user',
-        `New employee ${employeeData.full_name} has signed up (${employeeData.role.replace('_', ' ')}) - pending approval`
-      );
-    }
+    const { notifyAdminsAboutNewEmployee } = await import('../services/notificationService');
+    await notifyAdminsAboutNewEmployee(employeeData.full_name, employeeData.role);
   } catch (notificationError) {
     console.error('Error creating employee signup notifications:', notificationError);
-    // Don't throw here as the employee was created successfully
   }
   
   return data;

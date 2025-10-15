@@ -1,6 +1,7 @@
 import { supabase } from '../../lib/supabase';
 import { getCurrentUser as getSupabaseCurrentUser, getUserProfile as getSupabaseUserProfile } from '../../lib/supabase';
 import { AdminUser, AdminCustomer, AdminOrder, AdminProduct, Category, AdminStats, PaginatedResponse, PaginationParams, Invoice, OrderComment } from '../types';
+import { notifyAdminsAboutNewEmployee, notifyAdminsAboutNewCustomer, notifyAboutOrderStatusChange, notifyDesignerAboutAssignment, notifyCustomerAboutInvoice } from '../../services/notificationService';
 
 // Admin Stats Queries
 export const getAdminStats = async (): Promise<AdminStats> => {
@@ -357,16 +358,8 @@ export const createUser = async (userData: Partial<AdminUser>): Promise<AdminUse
       throw error;
     }
     
-    // Notify all admins about new employee creation
     try {
-      const admins = await getAllAdmins();
-      for (const admin of admins) {
-        await createNotification(
-          admin.id,
-          'user',
-          `Admin created new employee: ${userData.full_name} (${userData.role?.replace('_', ' ')})`
-        );
-      }
+      await notifyAdminsAboutNewEmployee(userData.full_name, userData.role || 'employee');
     } catch (notificationError) {
       console.error('Error creating employee creation notifications:', notificationError);
     }
@@ -447,16 +440,8 @@ export const createCustomer = async (customerData: Partial<AdminCustomer>): Prom
       throw error;
     }
     
-    // Notify all admins about new customer creation
     try {
-      const admins = await getAllAdmins();
-      for (const admin of admins) {
-        await createNotification(
-          admin.id,
-          'user',
-          `Admin created new customer: ${customerData.full_name}`
-        );
-      }
+      await notifyAdminsAboutNewCustomer(customerData.full_name);
     } catch (notificationError) {
       console.error('Error creating customer creation notifications:', notificationError);
     }
@@ -840,34 +825,20 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
     // Get the updated order with full details for notifications
     const updatedOrder = await getOrderById(id);
 
-    // Notification triggers based on changes
     try {
-      // If order status changed to under_review
-      if (orderData.status === 'under_review' && currentOrder.status !== 'under_review') {
-        if (updatedOrder.assigned_sales_rep_id) {
-          await createNotification(
-            updatedOrder.assigned_sales_rep_id, 
-            'order', 
-            `Order ${updatedOrder.order_number} is now under review. Please check it.`
-          );
-        }
-      }
-
-      // If designer assignment changed
-      if (orderData.assigned_designer_id && orderData.assigned_designer_id !== currentOrder.assigned_designer_id) {
-        await createNotification(
-          orderData.assigned_designer_id, 
-          'order', 
-          `Order ${updatedOrder.order_number} has been assigned to you.`
+      if (orderData.status && orderData.status !== currentOrder.status) {
+        await notifyAboutOrderStatusChange(
+          currentOrder.customer_id,
+          updatedOrder.order_number,
+          orderData.status,
+          updatedOrder.assigned_sales_rep_id
         );
       }
 
-      // If order status changed to completed
-      if (orderData.status === 'completed' && currentOrder.status !== 'completed') {
-        await createNotification(
-          currentOrder.customer_id, 
-          'order', 
-          `Your order ${updatedOrder.order_number} has been completed!`
+      if (orderData.assigned_designer_id && orderData.assigned_designer_id !== currentOrder.assigned_designer_id) {
+        await notifyDesignerAboutAssignment(
+          orderData.assigned_designer_id,
+          updatedOrder.order_number
         );
       }
     } catch (notificationError) {
@@ -1227,18 +1198,12 @@ export const createInvoice = async (invoiceData: Partial<Invoice>): Promise<Invo
 
     if (error) throw error;
 
-    // Notify customer about new invoice creation
     try {
       if (invoiceData.customer_id) {
-        await createNotification(
-          invoiceData.customer_id,
-          'order',
-          `A new invoice "${invoiceData.invoice_title}" has been generated for you. Please check your invoices section.`
-        );
+        await notifyCustomerAboutInvoice(invoiceData.customer_id, invoiceData.invoice_title);
       }
     } catch (notificationError) {
       console.error('Error creating invoice notification:', notificationError);
-      // Don't throw here as the invoice was created successfully
     }
 
     return data;

@@ -1,9 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  getAdminStats,
-  getSalesRepDashboardStats,
-  getDesignerDashboardStats
-} from '../../admin/api/supabaseHelpers';
+import { getDashboardStats } from '../../services/dashboardStatsService';
 
 interface DashboardStats {
   totalOrdersThisMonth: number;
@@ -29,25 +25,7 @@ export const useDashboardStats = (role: DashboardRole, userId?: string) => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-
-        let data: DashboardStats;
-
-        switch (role) {
-          case 'admin':
-            data = await getAdminStats();
-            break;
-          case 'sales_rep':
-            if (!userId) throw new Error('User ID required for sales rep stats');
-            data = await getSalesRepDashboardStats(userId);
-            break;
-          case 'designer':
-            if (!userId) throw new Error('User ID required for designer stats');
-            data = await getDesignerDashboardStats(userId);
-            break;
-          default:
-            throw new Error('Invalid role');
-        }
-
+        const data = await getDashboardStats(role, userId);
         setStats(data);
       } catch (err) {
         console.error('Error fetching dashboard stats:', err);
@@ -62,24 +40,7 @@ export const useDashboardStats = (role: DashboardRole, userId?: string) => {
 
   const refetch = async () => {
     try {
-      let data: DashboardStats;
-
-      switch (role) {
-        case 'admin':
-          data = await getAdminStats();
-          break;
-        case 'sales_rep':
-          if (!userId) throw new Error('User ID required for sales rep stats');
-          data = await getSalesRepDashboardStats(userId);
-          break;
-        case 'designer':
-          if (!userId) throw new Error('User ID required for designer stats');
-          data = await getDesignerDashboardStats(userId);
-          break;
-        default:
-          throw new Error('Invalid role');
-      }
-
+      const data = await getDashboardStats(role, userId);
       setStats(data);
     } catch (err) {
       console.error('Error refetching dashboard stats:', err);

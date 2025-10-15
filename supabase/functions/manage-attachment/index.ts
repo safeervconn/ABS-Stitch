@@ -1,102 +1,15 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from 'npm:@supabase/supabase-js@2';
-import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from 'npm:@aws-sdk/client-s3@3';
-import { getSignedUrl } from 'npm:@aws-sdk/s3-request-presigner@3';
-
-interface StorageConfig {
-  endpoint: string;
-  region: string;
-  bucketName: string;
-  accessKeyId: string;
-  secretAccessKey: string;
-}
-
-const ORDER_ATTACHMENTS_CONFIG: StorageConfig = {
-  endpoint: Deno.env.get('S3_ORDER_ENDPOINT') || 's3.us-east-005.backblazeb2.com',
-  region: Deno.env.get('S3_ORDER_REGION') || 'us-east-005',
-  bucketName: Deno.env.get('S3_ORDER_BUCKET') || 'order-attachment-bucket',
-  accessKeyId: Deno.env.get('S3_ORDER_ACCESS_KEY_ID') || '00500472239d1730000000004',
-  secretAccessKey: Deno.env.get('S3_ORDER_SECRET_KEY') || 'K005t/0wUxrIcHAwZHXktyMJuKQhOI8',
-};
-
-function createS3Client(config: StorageConfig): S3Client {
-  return new S3Client({
-    endpoint: `https://${config.endpoint}`,
-    region: config.region,
-    credentials: {
-      accessKeyId: config.accessKeyId,
-      secretAccessKey: config.secretAccessKey,
-    },
-    forcePathStyle: true,
-  });
-}
-
-function generateS3Key(orderNumber: string, filename: string): string {
-  return `orders/${orderNumber}/${filename}`;
-}
-
-function sanitizeFilename(filename: string): string {
-  return filename.replace(/[^a-zA-Z0-9._-]/g, '_');
-}
-
-function getFileExtension(filename: string): string {
-  const lastDot = filename.lastIndexOf('.');
-  return lastDot > 0 ? filename.substring(lastDot) : '';
-}
-
-function generateStoredFilename(originalFilename: string): string {
-  const uuid = crypto.randomUUID();
-  const extension = getFileExtension(originalFilename);
-  const sanitized = sanitizeFilename(originalFilename.replace(extension, ''));
-  return `${uuid}-${sanitized}${extension}`;
-}
-
-async function uploadToS3(
-  client: S3Client,
-  config: StorageConfig,
-  key: string,
-  file: Uint8Array,
-  contentType: string
-): Promise<void> {
-  const command = new PutObjectCommand({
-    Bucket: config.bucketName,
-    Key: key,
-    Body: file,
-    ContentType: contentType,
-  });
-  await client.send(command);
-}
-
-async function getSignedDownloadUrl(
-  client: S3Client,
-  config: StorageConfig,
-  key: string,
-  expiresIn: number = 3600
-): Promise<string> {
-  const command = new GetObjectCommand({
-    Bucket: config.bucketName,
-    Key: key,
-  });
-  return await getSignedUrl(client, command, { expiresIn });
-}
-
-async function deleteFromS3(
-  client: S3Client,
-  config: StorageConfig,
-  key: string
-): Promise<void> {
-  const command = new DeleteObjectCommand({
-    Bucket: config.bucketName,
-    Key: key,
-  });
-  await client.send(command);
-}
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+import { handleCorsPreFlight, errorResponse, jsonResponse } from '../_shared/corsHeaders.ts';
+import { authenticateRequest } from '../_shared/authHelpers.ts';
+import {
+  getStorageConfig,
+  createS3Client,
+  uploadToS3,
+  getSignedDownloadUrl,
+  deleteFromS3,
+  generateStoredFilename,
+  generateS3Key
+} from '../_shared/s3Helpers.ts';
 
 interface AttachmentPermissions {
   canView: boolean;
@@ -219,37 +132,19 @@ async function validateAttachmentAccess(
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      status: 200,
-      headers: corsHeaders,
-    });
+    return handleCorsPreFlight();
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
-    );
+    const { supabaseClient, user, error: authError } = await authenticateRequest(req);
 
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-
-    if (authError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
+    if (authError) {
+      return errorResponse(authError, 401);
     }
 
     const url = new URL(req.url);
-    const pathParts = url.pathname.split('/').filter(Boolean);
+    const storageConfig = getStorageConfig('orders');
+    const s3Client = createS3Client(storageConfig);
 
     if (req.method === 'POST') {
       const formData = await req.formData();
@@ -258,48 +153,29 @@ Deno.serve(async (req: Request) => {
       const orderNumber = formData.get('orderNumber') as string;
 
       if (!file || !orderId || !orderNumber) {
-        return new Response(
-          JSON.stringify({ error: 'Missing file, orderId, or orderNumber' }),
-          {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
+        return errorResponse('Missing file, orderId, or orderNumber', 400);
       }
 
       const MAX_FILE_SIZE = 20 * 1024 * 1024;
       if (file.size > MAX_FILE_SIZE) {
-        return new Response(
-          JSON.stringify({ error: 'File size exceeds 20MB limit' }),
-          {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
+        return errorResponse('File size exceeds 20MB limit', 400);
       }
 
       const permissions = await validateAttachmentAccess(supabaseClient, user.id, orderId);
 
       if (!permissions.canUpload) {
-        return new Response(
-          JSON.stringify({ error: 'Permission denied' }),
-          {
-            status: 403,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
+        return errorResponse('Permission denied', 403);
       }
 
-      const s3Client = createS3Client(ORDER_ATTACHMENTS_CONFIG);
       const storedFilename = generateStoredFilename(file.name);
-      const s3Key = generateS3Key(orderNumber, storedFilename);
+      const s3Key = generateS3Key('orders', orderNumber, storedFilename);
 
       const arrayBuffer = await file.arrayBuffer();
       const fileData = new Uint8Array(arrayBuffer);
 
       await uploadToS3(
         s3Client,
-        ORDER_ATTACHMENTS_CONFIG,
+        storageConfig,
         s3Key,
         fileData,
         file.type
@@ -320,30 +196,18 @@ Deno.serve(async (req: Request) => {
         .single();
 
       if (dbError) {
-        await deleteFromS3(s3Client, ORDER_ATTACHMENTS_CONFIG, s3Key);
+        await deleteFromS3(s3Client, storageConfig, s3Key);
         throw dbError;
       }
 
-      return new Response(
-        JSON.stringify({ success: true, attachment }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
+      return jsonResponse({ success: true, attachment });
     }
 
     if (req.method === 'GET') {
       const attachmentId = url.searchParams.get('attachmentId');
 
       if (!attachmentId) {
-        return new Response(
-          JSON.stringify({ error: 'Missing attachmentId' }),
-          {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
+        return errorResponse('Missing attachmentId', 400);
       }
 
       const { data: attachment, error: fetchError } = await supabaseClient
@@ -353,13 +217,7 @@ Deno.serve(async (req: Request) => {
         .maybeSingle();
 
       if (fetchError || !attachment) {
-        return new Response(
-          JSON.stringify({ error: 'Attachment not found' }),
-          {
-            status: 404,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
+        return errorResponse('Attachment not found', 404);
       }
 
       const permissions = await validateAttachmentAccess(
@@ -369,43 +227,24 @@ Deno.serve(async (req: Request) => {
       );
 
       if (!permissions.canView) {
-        return new Response(
-          JSON.stringify({ error: 'Permission denied' }),
-          {
-            status: 403,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
+        return errorResponse('Permission denied', 403);
       }
 
-      const s3Client = createS3Client(ORDER_ATTACHMENTS_CONFIG);
       const downloadUrl = await getSignedDownloadUrl(
         s3Client,
-        ORDER_ATTACHMENTS_CONFIG,
+        storageConfig,
         attachment.s3_key,
         3600
       );
 
-      return new Response(
-        JSON.stringify({ downloadUrl, attachment }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
+      return jsonResponse({ downloadUrl, attachment });
     }
 
     if (req.method === 'DELETE') {
       const attachmentId = url.searchParams.get('attachmentId');
 
       if (!attachmentId) {
-        return new Response(
-          JSON.stringify({ error: 'Missing attachmentId' }),
-          {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
+        return errorResponse('Missing attachmentId', 400);
       }
 
       const { data: attachment, error: fetchError } = await supabaseClient
@@ -415,13 +254,7 @@ Deno.serve(async (req: Request) => {
         .maybeSingle();
 
       if (fetchError || !attachment) {
-        return new Response(
-          JSON.stringify({ error: 'Attachment not found' }),
-          {
-            status: 404,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
+        return errorResponse('Attachment not found', 404);
       }
 
       const permissions = await validateAttachmentAccess(
@@ -431,17 +264,10 @@ Deno.serve(async (req: Request) => {
       );
 
       if (!permissions.canDelete) {
-        return new Response(
-          JSON.stringify({ error: 'Only admins can delete attachments' }),
-          {
-            status: 403,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
+        return errorResponse('Only admins can delete attachments', 403);
       }
 
-      const s3Client = createS3Client(ORDER_ATTACHMENTS_CONFIG);
-      await deleteFromS3(s3Client, ORDER_ATTACHMENTS_CONFIG, attachment.s3_key);
+      await deleteFromS3(s3Client, storageConfig, attachment.s3_key);
 
       const { error: deleteError } = await supabaseClient
         .from('order_attachments')
@@ -452,31 +278,13 @@ Deno.serve(async (req: Request) => {
         throw deleteError;
       }
 
-      return new Response(
-        JSON.stringify({ success: true }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
+      return jsonResponse({ success: true });
     }
 
-    return new Response(
-      JSON.stringify({ error: 'Method not allowed' }),
-      {
-        status: 405,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    return errorResponse('Method not allowed', 405);
 
   } catch (error) {
     console.error('Error in manage-attachment function:', error);
-    return new Response(
-      JSON.stringify({ error: error.message || 'Internal server error' }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    return errorResponse(error.message || 'Internal server error', 500);
   }
 });

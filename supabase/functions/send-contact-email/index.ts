@@ -1,10 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+import { handleCorsPreFlight, errorResponse, jsonResponse } from '../_shared/corsHeaders.ts';
 
 interface EmailRequest {
   formType: 'quote' | 'general';
@@ -218,49 +213,25 @@ async function sendEmail(emailData: EmailRequest): Promise<void> {
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      status: 200,
-      headers: corsHeaders,
-    });
+    return handleCorsPreFlight();
   }
 
   try {
     if (req.method !== "POST") {
-      throw new Error("Method not allowed");
+      return errorResponse("Method not allowed", 405);
     }
 
     const emailData: EmailRequest = await req.json();
-    
+
     if (!emailData.fullName || !emailData.email || !emailData.phone) {
-      throw new Error("Missing required fields");
+      return errorResponse("Missing required fields", 400);
     }
 
     await sendEmail(emailData);
 
-    return new Response(
-      JSON.stringify({ success: true, message: "Email sent successfully" }),
-      {
-        status: 200,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    return jsonResponse({ success: true, message: "Email sent successfully" });
   } catch (error) {
     console.error('Error:', error);
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error.message || "Failed to send email" 
-      }),
-      {
-        status: 500,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    return errorResponse(error.message || "Failed to send email", 500);
   }
 });
