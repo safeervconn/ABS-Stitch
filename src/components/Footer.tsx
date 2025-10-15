@@ -105,11 +105,7 @@ const Footer: React.FC = () => {
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
               © 2025 ABS STITCH. All rights reserved.
             </p>
-            <div className="flex space-x-6 text-sm">
-              <a href="#" className="hover:text-blue-400 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-blue-400 transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-blue-400 transition-colors">Refund Policy</a>
-            </div>
+            
           </div>
         </div>
       </div>
