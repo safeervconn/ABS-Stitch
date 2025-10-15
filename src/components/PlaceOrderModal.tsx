@@ -107,11 +107,12 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
       // Upload attachments if any using S3 attachment service
       if (formData.files.length > 0) {
         const uploadErrors: string[] = [];
+        const orderNumber = newOrder.order_number || `ORD-${newOrder.id.slice(0, 8)}`;
 
         for (let i = 0; i < formData.files.length; i++) {
           const file = formData.files[i];
           try {
-            await uploadAttachment(newOrder.id, file);
+            await uploadAttachment(newOrder.id, orderNumber, file);
           } catch (uploadError) {
             console.error(`Error uploading file ${file.name}:`, uploadError);
             uploadErrors.push(file.name);
