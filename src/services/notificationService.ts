@@ -46,20 +46,37 @@ export async function createNotification(
 export async function createBatchNotifications(
   notifications: Array<{ userId: string; type: NotificationType; message: string }>
 ): Promise<void> {
-  try {
-    const { error } = await supabase
-      .from('notifications')
-      .insert(
-        notifications.map(n => ({
-          user_id: n.userId,
-          type: n.type,
-          message: n.message,
-        }))
-      );
+  if (notifications.length === 0) return;
 
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error creating batch notifications:', error);
+  if (notifications.every(n => n.type === notifications[0].type && n.message === notifications[0].message)) {
+    try {
+      const userIds = notifications.map(n => n.userId);
+      const { error } = await supabase.rpc('create_notification_batch', {
+        user_ids: userIds,
+        notification_type: notifications[0].type,
+        notification_message: notifications[0].message
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error creating batch notifications via RPC:', error);
+    }
+  } else {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .insert(
+          notifications.map(n => ({
+            user_id: n.userId,
+            type: n.type,
+            message: n.message,
+          }))
+        );
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error creating batch notifications:', error);
+    }
   }
 }
 

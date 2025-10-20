@@ -3,68 +3,20 @@ import { getCurrentUser as getSupabaseCurrentUser, getUserProfile as getSupabase
 import { AdminUser, AdminCustomer, AdminOrder, AdminProduct, Category, AdminStats, PaginatedResponse, PaginationParams, Invoice, OrderComment } from '../types';
 import { notifyAdminsAboutNewEmployee, notifyAdminsAboutNewCustomer, notifyAboutOrderStatusChange, notifyDesignerAboutAssignment, notifyCustomerAboutInvoice } from '../../services/notificationService';
 
-// Admin Stats Queries
 export const getAdminStats = async (): Promise<AdminStats> => {
-  const startOfMonth = new Date();
-  startOfMonth.setDate(1);
-  startOfMonth.setHours(0, 0, 0, 0);
-
   try {
-    // Total orders this month
-    const { count: totalOrdersThisMonth } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .gte('created_at', startOfMonth.toISOString());
+    const { data, error } = await supabase.rpc('calculate_dashboard_stats');
 
-    // New customers this month
-    const { count: newCustomersThisMonth } = await supabase
-      .from('customers')
-      .select('*', { count: 'exact', head: true })
-      .gte('created_at', startOfMonth.toISOString());
+    if (error) throw error;
 
-    // Total revenue this month (assuming orders have a price field or we calculate from products)
-    const { data: revenueData } = await supabase
-      .from('orders')
-      .select(`
-        total_amount
-      `)
-      .gte('created_at', startOfMonth.toISOString());
-
-    const totalRevenueThisMonth = revenueData?.reduce((sum, order) => {
-      return sum + (order.total_amount || 0);
-    }, 0) || 0;
-
-    // In-progress orders
-    const { count: inProgressOrders } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'in_progress');
-
-    // Active products
-    const { count: activeProducts } = await supabase
-      .from('products')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'active');
-
-    // New orders count
-    const { count: newOrdersCount } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'new');
-
-    // Under review orders count
-    const { count: underReviewOrdersCount } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'under_review');
-    return {
-      totalOrdersThisMonth: totalOrdersThisMonth || 0,
-      newCustomersThisMonth: newCustomersThisMonth || 0,
-      totalRevenueThisMonth,
-      inProgressOrders: inProgressOrders || 0,
-      activeProducts: activeProducts || 0,
-      newOrdersCount: newOrdersCount || 0,
-      underReviewOrdersCount: underReviewOrdersCount || 0,
+    return data || {
+      totalOrdersThisMonth: 0,
+      newCustomersThisMonth: 0,
+      totalRevenueThisMonth: 0,
+      inProgressOrders: 0,
+      activeProducts: 0,
+      newOrdersCount: 0,
+      underReviewOrdersCount: 0,
     };
   } catch (error) {
     console.error('Error fetching admin stats:', error);
@@ -80,64 +32,19 @@ export const getAdminStats = async (): Promise<AdminStats> => {
   }
 };
 
-// Sales Rep Dashboard Stats
 export const getSalesRepDashboardStats = async (salesRepId: string) => {
-  const startOfMonth = new Date();
-  startOfMonth.setDate(1);
-  startOfMonth.setHours(0, 0, 0, 0);
-
   try {
-    // Get customers assigned to this sales rep
-    const { data: assignedCustomers, error: customersError } = await supabase
-      .from('customers')
-      .select('id')
-      .eq('assigned_sales_rep_id', salesRepId);
+    const { data, error } = await supabase.rpc('calculate_sales_rep_stats', {
+      rep_id: salesRepId
+    });
 
-    if (customersError) throw customersError;
+    if (error) throw error;
 
-    const customerIds = assignedCustomers?.map(c => c.id) || [];
-
-    if (customerIds.length === 0) {
-      return {
-        totalOrdersThisMonth: 0,
-        newOrdersCount: 0,
-        inProgressOrdersCount: 0,
-        underReviewOrdersCount: 0,
-      };
-    }
-
-    // Total orders this month for assigned customers
-    const { count: totalOrdersThisMonth } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .in('customer_id', customerIds)
-      .gte('created_at', startOfMonth.toISOString());
-
-    // New orders count for assigned customers
-    const { count: newOrdersCount } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .in('customer_id', customerIds)
-      .eq('status', 'new');
-
-    // In progress orders count for assigned customers
-    const { count: inProgressOrdersCount } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .in('customer_id', customerIds)
-      .eq('status', 'in_progress');
-
-    // Under review orders count for assigned customers
-    const { count: underReviewOrdersCount } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .in('customer_id', customerIds)
-      .eq('status', 'under_review');
-    return {
-      totalOrdersThisMonth: totalOrdersThisMonth || 0,
-      newOrdersCount: newOrdersCount || 0,
-      inProgressOrdersCount: inProgressOrdersCount || 0,
-      underReviewOrdersCount: underReviewOrdersCount || 0,
+    return data || {
+      totalOrdersThisMonth: 0,
+      newOrdersCount: 0,
+      inProgressOrdersCount: 0,
+      underReviewOrdersCount: 0,
     };
   } catch (error) {
     console.error('Error fetching sales rep stats:', error);
@@ -150,30 +57,17 @@ export const getSalesRepDashboardStats = async (salesRepId: string) => {
   }
 };
 
-// Designer Dashboard Stats
 export const getDesignerDashboardStats = async (designerId: string) => {
-  const startOfMonth = new Date();
-  startOfMonth.setDate(1);
-  startOfMonth.setHours(0, 0, 0, 0);
-
   try {
-    // Total orders this month assigned to this designer
-    const { count: totalOrdersThisMonth } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .eq('assigned_designer_id', designerId)
-      .gte('created_at', startOfMonth.toISOString());
+    const { data, error } = await supabase.rpc('calculate_designer_stats', {
+      designer_id: designerId
+    });
 
-    // In progress orders count for this designer
-    const { count: inProgressOrdersCount } = await supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .eq('assigned_designer_id', designerId)
-      .eq('status', 'in_progress');
+    if (error) throw error;
 
-    return {
-      totalOrdersThisMonth: totalOrdersThisMonth || 0,
-      inProgressOrdersCount: inProgressOrdersCount || 0,
+    return data || {
+      totalOrdersThisMonth: 0,
+      inProgressOrdersCount: 0,
     };
   } catch (error) {
     console.error('Error fetching designer stats:', error);
