@@ -1308,41 +1308,19 @@ export const getCustomersForInvoice = async (): Promise<{ id: string; full_name:
   }
 };
 
-// Utility function to delete files from Supabase storage
 export const deleteFileFromStorage = async (fileUrl: string, bucket: string): Promise<void> => {
   try {
     if (!fileUrl) return;
 
-    if (bucket === 'product-images') {
-      const urlParts = fileUrl.split('/');
-      const s3Key = `product-images/${urlParts[urlParts.length - 1]}`;
+    const urlParts = fileUrl.split('/');
+    const fileName = urlParts[urlParts.length - 1];
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+    const { error } = await supabase.storage
+      .from(bucket)
+      .remove([fileName]);
 
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-product-image?s3Key=${encodeURIComponent(s3Key)}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        console.error('Error deleting file from S3');
-      }
-    } else {
-      const urlParts = fileUrl.split('/');
-      const fileName = urlParts[urlParts.length - 1];
-      const filePath = `${fileName}`;
-
-      const { error } = await supabase.storage
-        .from(bucket)
-        .remove([filePath]);
-
-      if (error) {
-        console.error('Error deleting file from storage:', error);
-      }
+    if (error) {
+      console.error('Error deleting file from storage:', error);
     }
   } catch (error) {
     console.error('Error processing file deletion:', error);

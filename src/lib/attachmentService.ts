@@ -21,7 +21,18 @@ export interface UploadProgress {
   error?: string;
 }
 
-const EDGE_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-attachment`;
+const STORAGE_BUCKET = 'order-attachments';
+
+function generateStoredFilename(originalFilename: string): string {
+  const timestamp = Date.now();
+  const randomStr = Math.random().toString(36).substring(2, 8);
+  const ext = originalFilename.substring(originalFilename.lastIndexOf('.'));
+  return `${timestamp}-${randomStr}${ext}`;
+}
+
+function generateStoragePath(orderNumber: string, storedFilename: string): string {
+  return `order-${orderNumber}/${storedFilename}`;
+}
 
 export async function fetchOrderAttachments(orderId: string): Promise<OrderAttachment[]> {
   const { data, error } = await supabase
@@ -49,73 +60,101 @@ export async function uploadAttachment(
     throw new Error(validation.error);
   }
 
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
     throw new Error('Not authenticated');
   }
 
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('orderId', orderId);
-  formData.append('orderNumber', orderNumber);
+  const storedFilename = generateStoredFilename(file.name);
+  const storagePath = generateStoragePath(orderNumber, storedFilename);
 
-  const response = await fetch(EDGE_FUNCTION_URL, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${session.access_token}`,
-    },
-    body: formData,
-  });
+  const { error: uploadError } = await supabase.storage
+    .from(STORAGE_BUCKET)
+    .upload(storagePath, file, {
+      contentType: file.type,
+      cacheControl: '3600',
+      upsert: false,
+    });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Upload failed');
+  if (uploadError) {
+    console.error('Storage upload error:', uploadError);
+    throw new Error('Failed to upload file');
   }
 
-  const result = await response.json();
-  return result.attachment;
+  const { data: attachment, error: dbError } = await supabase
+    .from('order_attachments')
+    .insert({
+      order_id: orderId,
+      original_filename: file.name,
+      stored_filename: storedFilename,
+      file_size: file.size,
+      mime_type: file.type,
+      storage_path: storagePath,
+      uploaded_by: user.id,
+    })
+    .select()
+    .single();
+
+  if (dbError) {
+    await supabase.storage.from(STORAGE_BUCKET).remove([storagePath]);
+    console.error('Database insert error:', dbError);
+    throw new Error('Failed to save attachment record');
+  }
+
+  return attachment;
 }
 
 export async function getAttachmentDownloadUrl(attachmentId: string): Promise<string> {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
-    throw new Error('Not authenticated');
+  const { data: attachment, error: fetchError } = await supabase
+    .from('order_attachments')
+    .select('storage_path')
+    .eq('id', attachmentId)
+    .maybeSingle();
+
+  if (fetchError || !attachment) {
+    throw new Error('Attachment not found');
   }
 
-  const response = await fetch(`${EDGE_FUNCTION_URL}?attachmentId=${attachmentId}`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${session.access_token}`,
-      'Content-Type': 'application/json',
-    },
-  });
+  const { data, error } = await supabase.storage
+    .from(STORAGE_BUCKET)
+    .createSignedUrl(attachment.storage_path, 3600);
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to get download URL');
+  if (error || !data) {
+    console.error('Error creating signed URL:', error);
+    throw new Error('Failed to get download URL');
   }
 
-  const result = await response.json();
-  return result.downloadUrl;
+  return data.signedUrl;
 }
 
 export async function deleteAttachment(attachmentId: string): Promise<void> {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
-    throw new Error('Not authenticated');
+  const { data: attachment, error: fetchError } = await supabase
+    .from('order_attachments')
+    .select('storage_path')
+    .eq('id', attachmentId)
+    .maybeSingle();
+
+  if (fetchError || !attachment) {
+    throw new Error('Attachment not found');
   }
 
-  const response = await fetch(`${EDGE_FUNCTION_URL}?attachmentId=${attachmentId}`, {
-    method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${session.access_token}`,
-      'Content-Type': 'application/json',
-    },
-  });
+  const { error: storageError } = await supabase.storage
+    .from(STORAGE_BUCKET)
+    .remove([attachment.storage_path]);
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to delete attachment');
+  if (storageError) {
+    console.error('Storage delete error:', storageError);
+    throw new Error('Failed to delete file from storage');
+  }
+
+  const { error: dbError } = await supabase
+    .from('order_attachments')
+    .delete()
+    .eq('id', attachmentId);
+
+  if (dbError) {
+    console.error('Database delete error:', dbError);
+    throw new Error('Failed to delete attachment record');
   }
 }
 

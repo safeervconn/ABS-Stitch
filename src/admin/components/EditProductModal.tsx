@@ -114,29 +114,28 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
   const uploadImage = async (): Promise<string | null> => {
     if (!newImageFile) return null;
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      throw new Error('Not authenticated');
+    const timestamp = Date.now();
+    const randomStr = Math.random().toString(36).substring(2, 8);
+    const ext = newImageFile.name.substring(newImageFile.name.lastIndexOf('.'));
+    const fileName = `${timestamp}-${randomStr}${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('product-images')
+      .upload(fileName, newImageFile, {
+        contentType: newImageFile.type,
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (uploadError) {
+      throw new Error('Failed to upload image');
     }
 
-    const formData = new FormData();
-    formData.append('file', newImageFile);
+    const { data } = supabase.storage
+      .from('product-images')
+      .getPublicUrl(fileName);
 
-    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-product-image`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${session.access_token}`,
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Upload failed');
-    }
-
-    const result = await response.json();
-    return result.publicUrl;
+    return data.publicUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

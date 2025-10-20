@@ -7,8 +7,7 @@ interface SignedUrlCache {
 
 const urlCache = new Map<string, SignedUrlCache>();
 const CACHE_BUFFER_MS = 5 * 60 * 1000;
-
-const EDGE_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-attachment`;
+const STORAGE_BUCKET = 'order-attachments';
 
 export async function getSignedImageUrl(attachmentId: string): Promise<string | null> {
   const cached = urlCache.get(attachmentId);
@@ -17,27 +16,27 @@ export async function getSignedImageUrl(attachmentId: string): Promise<string | 
   }
 
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      console.warn('No active session for image URL generation');
+    const { data: attachment, error: fetchError } = await supabase
+      .from('order_attachments')
+      .select('storage_path')
+      .eq('id', attachmentId)
+      .maybeSingle();
+
+    if (fetchError || !attachment) {
+      console.error('Failed to fetch attachment:', fetchError);
       return null;
     }
 
-    const response = await fetch(`${EDGE_FUNCTION_URL}?attachmentId=${attachmentId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${session.access_token}`,
-        'Content-Type': 'application/json',
-      },
-    });
+    const { data, error } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .createSignedUrl(attachment.storage_path, 3600);
 
-    if (!response.ok) {
-      console.error('Failed to get signed URL:', response.status);
+    if (error || !data) {
+      console.error('Failed to create signed URL:', error);
       return null;
     }
 
-    const result = await response.json();
-    const signedUrl = result.downloadUrl;
+    const signedUrl = data.signedUrl;
 
     if (signedUrl) {
       urlCache.set(attachmentId, {
@@ -72,41 +71,40 @@ export async function getBulkSignedImageUrls(attachmentIds: string[]): Promise<R
   }
 
   try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      console.warn('No active session for bulk image URL generation');
+    const { data: attachments, error: fetchError } = await supabase
+      .from('order_attachments')
+      .select('id, storage_path')
+      .in('id', uncachedIds);
+
+    if (fetchError || !attachments) {
+      console.error('Failed to fetch attachments:', fetchError);
       return results;
     }
 
-    const urlPromises = uncachedIds.map(async (id) => {
+    const urlPromises = attachments.map(async (attachment) => {
       try {
-        const response = await fetch(`${EDGE_FUNCTION_URL}?attachmentId=${id}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+        const { data, error } = await supabase.storage
+          .from(STORAGE_BUCKET)
+          .createSignedUrl(attachment.storage_path, 3600);
 
-        if (!response.ok) {
-          return { id, url: null };
+        if (error || !data) {
+          return { id: attachment.id, url: null };
         }
 
-        const result = await response.json();
-        const signedUrl = result.downloadUrl;
+        const signedUrl = data.signedUrl;
 
         if (signedUrl) {
-          urlCache.set(id, {
+          urlCache.set(attachment.id, {
             url: signedUrl,
             expiresAt: Date.now() + 55 * 60 * 1000,
           });
-          return { id, url: signedUrl };
+          return { id: attachment.id, url: signedUrl };
         }
 
-        return { id, url: null };
+        return { id: attachment.id, url: null };
       } catch (error) {
-        console.error(`Error fetching signed URL for attachment ${id}:`, error);
-        return { id, url: null };
+        console.error(`Error creating signed URL for attachment ${attachment.id}:`, error);
+        return { id: attachment.id, url: null };
       }
     });
 
