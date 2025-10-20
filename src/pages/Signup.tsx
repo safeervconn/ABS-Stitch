@@ -88,47 +88,65 @@ const Signup: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsLoading(true);
     setError('');
 
     try {
-      // Create auth user (all signups are customers)
-      const { user } = await signUp(formData.email, formData.password);
+      const { user, session } = await signUp(formData.email, formData.password);
 
-      if (user) {
-        // Wait a moment for the auth session to be established
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        try {
-          // Create customer profile (all new signups are customers)
-          const customerData = {
-            id: user.id,
-            email: formData.email,
-            full_name: formData.full_name,
-            phone: formData.phone,
-            status: 'active'
-          };
-          
-          // Add company_name if provided
-          if (formData.company_name?.trim()) {
-            customerData.company_name = formData.company_name.trim();
-          }
-          
-          await createCustomerProfile(customerData);
-        } catch (profileError) {
-          console.error('Error creating user profile:', profileError);
-          setError('Account created but profile setup failed. Please contact support or try logging in.');
-          return;
+      if (!user) {
+        throw new Error('User creation failed');
+      }
+
+      if (!session) {
+        setError('Account created! Please check your email to verify your account before logging in.');
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const customerData: any = {
+          id: user.id,
+          email: formData.email,
+          full_name: formData.full_name
+        };
+
+        if (formData.phone?.trim()) {
+          customerData.phone = formData.phone.trim();
         }
-        
+
+        if (formData.company_name?.trim()) {
+          customerData.company_name = formData.company_name.trim();
+        }
+
+        await createCustomerProfile(customerData);
         setSuccess(true);
+      } catch (profileError: any) {
+        console.error('Error creating customer profile:', profileError);
+
+        if (profileError.message?.includes('duplicate key') || profileError.code === '23505') {
+          setError('An account with this email already exists. Please try logging in.');
+        } else if (profileError.message?.includes('No active session')) {
+          setError('Session creation failed. Please try again.');
+        } else if (profileError.code === 'PGRST301' || profileError.message?.includes('JWT')) {
+          setError('Authentication error. Please try again.');
+        } else {
+          setError(profileError.message || 'Profile setup failed. Please try logging in or contact support.');
+        }
+
+        await supabase.auth.signOut();
       }
     } catch (err: any) {
       console.error('Signup error:', err);
-      setError(err.message || 'Registration failed. Please try again.');
+
+      if (err.message?.includes('already registered')) {
+        setError('This email is already registered. Please try logging in.');
+      } else {
+        setError(err.message || 'Registration failed. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }

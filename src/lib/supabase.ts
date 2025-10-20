@@ -164,24 +164,47 @@ export const createCustomerProfile = async (customerData: {
   email: string;
   full_name: string;
   phone?: string;
-  status: string;
+  status?: string;
   company_name?: string;
 }) => {
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error('No active session. Please try logging in.');
+  }
+
+  const dataToInsert: any = {
+    id: customerData.id,
+    email: customerData.email,
+    full_name: customerData.full_name,
+  };
+
+  if (customerData.phone) {
+    dataToInsert.phone = customerData.phone;
+  }
+
+  if (customerData.company_name) {
+    dataToInsert.company_name = customerData.company_name;
+  }
+
   const { data, error } = await supabase
     .from('customers')
-    .insert([customerData])
+    .insert([dataToInsert])
     .select()
     .single();
-  
-  if (error) throw error;
-  
+
+  if (error) {
+    console.error('Customer profile creation error:', error);
+    throw error;
+  }
+
   try {
     const { notifyAdminsAboutNewCustomer } = await import('../services/notificationService');
     await notifyAdminsAboutNewCustomer(customerData.full_name);
   } catch (notificationError) {
     console.error('Error creating customer signup notifications:', notificationError);
   }
-  
+
   return data;
 };
 
