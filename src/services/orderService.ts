@@ -25,7 +25,6 @@ export interface OrderTransformData {
   custom_description?: string;
   custom_width?: number;
   custom_height?: number;
-  file_urls?: string[] | null;
   status: string;
   assigned_sales_rep_id?: string;
   sales_rep?: {
@@ -55,7 +54,6 @@ export function transformOrderData(order: OrderTransformData, firstAttachmentId?
     product_id: order.product_id,
     product_title: order.product?.title,
     custom_description: order.custom_description,
-    file_urls: order.file_urls,
     first_attachment_id: firstAttachmentId,
     apparel_type_id: order.apparel_type_id,
     apparel_type_name: order.apparel_type?.type_name,

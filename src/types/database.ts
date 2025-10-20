@@ -36,8 +36,6 @@ export interface Database {
           customer_id: string;
           product_id: string | null;
           custom_description: string | null;
-          file_url: string | null;
-          file_urls: string[] | null;
           status: 'new' | 'in_progress' | 'under_review' | 'completed' | 'cancelled';
           assigned_sales_rep_id: string | null;
           assigned_designer_id: string | null;

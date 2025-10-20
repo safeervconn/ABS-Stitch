@@ -341,34 +341,36 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                   </div>
                 )}
 
-                {/* Customer Info (Read-only) */}
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Customer Information</h3>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-500">Customer Name</p>
-                      <p className="font-medium text-gray-900">{order.customer_name}</p>
+                {/* Customer Info (Read-only) - Hide from designers */}
+                {currentUser && currentUser.role !== 'designer' && (
+                  <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Customer Information</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-500">Customer Name</p>
+                        <p className="font-medium text-gray-900">{order.customer_name}</p>
+                      </div>
+                      {currentUser.role === 'admin' && (
+                        <div>
+                          <p className="text-sm text-gray-500">Email</p>
+                          <p className="font-medium text-gray-900">{order.customer_email}</p>
+                        </div>
+                      )}
+                      {currentUser.role === 'admin' && order.customer_phone && (
+                        <div>
+                          <p className="text-sm text-gray-500">Phone</p>
+                          <p className="font-medium text-gray-900">{order.customer_phone}</p>
+                        </div>
+                      )}
+                      {order.customer_company_name && (
+                        <div>
+                          <p className="text-sm text-gray-500">Company</p>
+                          <p className="font-medium text-gray-900">{order.customer_company_name}</p>
+                        </div>
+                      )}
                     </div>
-                    {currentUser?.role === 'admin' && (
-                      <div>
-                        <p className="text-sm text-gray-500">Email</p>
-                        <p className="font-medium text-gray-900">{order.customer_email}</p>
-                      </div>
-                    )}
-                    {currentUser?.role === 'admin' && order.customer_phone && (
-                      <div>
-                        <p className="text-sm text-gray-500">Phone</p>
-                        <p className="font-medium text-gray-900">{order.customer_phone}</p>
-                      </div>
-                    )}
-                    {order.customer_company_name && (
-                      <div>
-                        <p className="text-sm text-gray-500">Company</p>
-                        <p className="font-medium text-gray-900">{order.customer_company_name}</p>
-                      </div>
-                    )}
                   </div>
-                </div>
+                )}
 
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   {/* Order Type */}

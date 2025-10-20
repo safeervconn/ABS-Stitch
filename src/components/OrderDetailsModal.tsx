@@ -182,28 +182,6 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   </div>
                 )}
 
-                {/* Attached Files */}
-                {order.file_urls && order.file_urls.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Attached Files</h3>
-                    <div className="bg-white border border-gray-200 rounded-lg p-4">
-                      <div className="space-y-2">
-                        {order.file_urls.map((fileUrl, index) => (
-                          <div key={index} className="flex items-center space-x-3">
-                            <Paperclip className="h-4 w-4 text-gray-500" />
-                            <a
-                              href={fileUrl}
-                             download={`attachment-${index + 1}`}
-                             className="text-blue-600 hover:text-blue-800 underline"
-                            >
-                              Attachment {index + 1}
-                            </a>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
 
                 {/* Order Specifications */}
                 <div>
@@ -321,37 +299,38 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   </div>
                 )}
 
-                {/* Contact Information */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Customer Info</h3>
-                  <div className="space-y-2">
-                    <p className="text-sm">
-                      <span className="text-gray-500">Name:</span><br />
-                      <span className="text-gray-800">{order.customer_name}</span>
-                    </p>
-                    {order.customer_company_name && (
+                {/* Contact Information - Only show to admin, sales_rep, and customer */}
+                {currentUser && ['admin', 'sales_rep', 'customer'].includes(currentUser.role) && (
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Customer Info</h3>
+                    <div className="space-y-2">
                       <p className="text-sm">
-                        <span className="text-gray-500">Company:</span><br />
-                        <span className="text-gray-800">{order.customer_company_name}</span>
+                        <span className="text-gray-500">Name:</span><br />
+                        <span className="text-gray-800">{order.customer_name}</span>
                       </p>
-                    )}
-                    {/* Only show email and phone to admin users */}
-                    {currentUser?.role === 'admin' && (
-                      <>
+                      {order.customer_company_name && (
                         <p className="text-sm">
-                          <span className="text-gray-500">Email:</span><br />
-                          <span className="text-gray-800">{order.customer_email}</span>
+                          <span className="text-gray-500">Company:</span><br />
+                          <span className="text-gray-800">{order.customer_company_name}</span>
                         </p>
-                        {order.customer_phone && (
+                      )}
+                      {currentUser.role === 'admin' && (
+                        <>
                           <p className="text-sm">
-                            <span className="text-gray-500">Phone:</span><br />
-                            <span className="text-gray-800">{order.customer_phone}</span>
+                            <span className="text-gray-500">Email:</span><br />
+                            <span className="text-gray-800">{order.customer_email}</span>
                           </p>
-                        )}
-                      </>
-                    )}
+                          {order.customer_phone && (
+                            <p className="text-sm">
+                              <span className="text-gray-500">Phone:</span><br />
+                              <span className="text-gray-800">{order.customer_phone}</span>
+                            </p>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>

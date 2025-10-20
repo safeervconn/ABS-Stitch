@@ -85,23 +85,36 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!formData.designInstructions.trim()) {
+      toast.error('Please provide design instructions');
+      return;
+    }
+
+    if (formData.customWidth && parseFloat(formData.customWidth) <= 0) {
+      toast.error('Width must be greater than 0');
+      return;
+    }
+
+    if (formData.customHeight && parseFloat(formData.customHeight) <= 0) {
+      toast.error('Height must be greater than 0');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      // Prepare order data with proper field mapping
       const orderData = {
-        order_type: 'custom',
+        order_type: 'custom' as const,
         custom_description: formData.designInstructions,
-        apparel_type_id: formData.apparelTypeId,
-        custom_width: parseFloat(formData.customWidth) || null,
-        custom_height: parseFloat(formData.customHeight) || null,
+        apparel_type_id: formData.apparelTypeId || undefined,
+        custom_width: formData.customWidth ? parseFloat(formData.customWidth) : undefined,
+        custom_height: formData.customHeight ? parseFloat(formData.customHeight) : undefined,
         total_amount: 0,
       };
 
-      // Create order first without files
       const newOrder = await addOrder(orderData);
 
       if (!newOrder) {
-        throw new Error('Failed to create order');
+        throw new Error('Order creation failed. Please try again.');
       }
 
       // Upload attachments if any using S3 attachment service
@@ -127,9 +140,24 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
       setCreatedOrder(newOrder);
       toast.success('Order placed successfully!');
       setShowSuccessMessage(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error placing order:', error);
-      toast.error('Failed to place order. Please try again.');
+
+      let errorMessage = 'Failed to place order. Please try again.';
+
+      if (error?.message) {
+        if (error.message.includes('customer')) {
+          errorMessage = 'Unable to verify your account. Please ensure you are logged in.';
+        } else if (error.message.includes('sales_rep')) {
+          errorMessage = 'No sales representative assigned. Please contact support.';
+        } else if (error.message.includes('permission')) {
+          errorMessage = 'You do not have permission to place orders.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

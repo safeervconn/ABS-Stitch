@@ -58,7 +58,6 @@ export interface AdminOrder {
   product_id?: string;
   product_title?: string;
   custom_description?: string;
-  file_urls?: string[];
   attachments?: OrderAttachment[];
   first_attachment_url?: string;
   first_attachment_id?: string;
@@ -171,7 +170,6 @@ export interface CustomerOrder {
   customer_company_name: string;
   customerId: string;
   order_type: 'custom' | 'catalog';
-  file_urls?: string[] | null;
   attachments?: OrderAttachment[];
   first_attachment_url?: string;
   status: 'in_progress' | 'under_review' | 'completed' | 'cancelled';
