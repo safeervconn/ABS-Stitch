@@ -181,9 +181,12 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
                                   <Package className="h-4 w-4 text-blue-600" />
                                 </div>
                                 <div>
-                                  <p className="font-medium text-gray-900">{order.order_number}</p>
+                                  <div>
+                                    <span className="font-medium text-gray-900">{order.order_number}</span>
+                                    <span className="text-sm text-gray-500 ml-2">({order.order_name || 'No Order Name'})</span>
+                                  </div>
                                   <p className="text-sm text-gray-500">
-                                    {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • 
+                                    {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} •
                                     {new Date(order.created_at).toLocaleDateString()}
                                   </p>
                                   {order.apparel_type_name && (
@@ -191,7 +194,7 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
                                 {order.apparel_type_name} • {order.custom_width}"×{order.custom_height}"
                               </p>
                             )}
-                                  
+
                                 </div>
                               </div>
                               <div className="flex items-center space-x-3">

@@ -17,6 +17,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
     email: '',
     countryCode: '+1',
     phoneNumber: '',
+    orderName: '',
     customWidth: '',
     customHeight: '',
     apparelTypeId: '',
@@ -85,6 +86,11 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!formData.orderName.trim()) {
+      toast.error('Please provide an order name');
+      return;
+    }
+
     if (!formData.designInstructions.trim()) {
       toast.error('Please provide design instructions');
       return;
@@ -104,6 +110,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
     try {
       const orderData = {
         order_type: 'custom' as const,
+        order_name: formData.orderName,
         custom_description: formData.designInstructions,
         apparel_type_id: formData.apparelTypeId || undefined,
         custom_width: formData.customWidth ? parseFloat(formData.customWidth) : undefined,
@@ -172,6 +179,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
       email: '',
       countryCode: '+1',
       phoneNumber: '',
+      orderName: '',
       customWidth: '',
       customHeight: '',
       apparelTypeId: '',
@@ -246,6 +254,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
                         email: currentUser?.email || '',
                         countryCode: '+1',
                         phoneNumber: '',
+                        orderName: '',
                         customWidth: '',
                         customHeight: '',
                        apparelTypeId: '',
@@ -364,6 +373,23 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
                   </div>
                 </>
               )}
+
+              {/* Order Name Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Order Name *
+                </label>
+                <input
+                  type="text"
+                  name="orderName"
+                  required
+                  maxLength={32}
+                  value={formData.orderName}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter a name for this order (max 32 characters)"
+                />
+              </div>
 
               {/* Order-Specific Fields */}
               <div className="grid md:grid-cols-3 gap-4">

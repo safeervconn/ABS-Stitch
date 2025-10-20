@@ -328,7 +328,10 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
                         />
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
-                            <span className="font-medium text-gray-900">{order.order_number}</span>
+                            <div>
+                              <span className="font-medium text-gray-900">{order.order_number}</span>
+                              <span className="text-sm text-gray-500 ml-2">({order.order_name || 'No Order Name'})</span>
+                            </div>
                             <span className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '0'}</span>
                           </div>
                           <div className="flex items-center space-x-2 mt-1">
@@ -345,7 +348,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
                               {order.apparel_type_name} • {order.custom_width}"×{order.custom_height}"
                             </p>
                           )}
-                         
+
                         </div>
                       </label>
                     ))}

@@ -105,6 +105,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
             <div>
               <h2 className="text-2xl font-bold text-gray-800">Order Details</h2>
               <p className="text-gray-600">{order.order_number}</p>
+              <p className="text-sm text-gray-500 mt-1">{order.order_name || 'No Order Name'}</p>
             </div>
             <button
               onClick={onClose}

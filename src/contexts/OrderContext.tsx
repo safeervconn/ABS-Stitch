@@ -6,6 +6,7 @@ interface OrderContextType {
   orders: CustomerOrder[];
   addOrder: (orderData: {
     order_type: 'custom' | 'catalog';
+    order_name: string;
     product_id?: string;
     custom_description: string;
     total_amount: number;
@@ -39,6 +40,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   // Add new order
   const addOrder = async (orderData: {
     order_type: 'custom' | 'catalog';
+    order_name: string;
     product_id?: string;
     custom_description: string;
     total_amount: number;
@@ -71,6 +73,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         .insert({
           customer_id: profile.id,
           order_type: orderData.order_type,
+          order_name: orderData.order_name,
           product_id: orderData.product_id || null,
           custom_description: orderData.custom_description,
           apparel_type_id: orderData.apparel_type_id || null,
@@ -153,6 +156,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     const transformedOrders: CustomerOrder[] = (data || []).map(order => ({
       id: order.id,
       order_number: order.order_number || `ORD-${order.id.slice(0, 8)}`,
+      order_name: order.order_name || 'No Order Name',
       customer_name: order.customer?.full_name || "Unknown",
       customer_email: order.customer?.email || "",
       customer_phone: order.customer?.phone || "",

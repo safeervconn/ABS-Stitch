@@ -44,6 +44,7 @@ export interface Database {
           updated_at: string;
           order_type: 'catalog' | 'custom';
           order_number: string;
+          order_name: string;
           total_amount: number;
           payment_status: 'paid' | 'unpaid' | 'cancelled';
           custom_width: number | null;

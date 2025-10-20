@@ -24,6 +24,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
 }) => {
   const [formData, setFormData] = useState({
     order_type: '',
+    order_name: '',
     status: '',
     apparel_type_id: '',
     assigned_sales_rep_id: '',
@@ -59,6 +60,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
       // Initialize form data
       setFormData({
         order_type: order.order_type || 'custom',
+        order_name: order.order_name || '',
         status: order.status,
         apparel_type_id: order.apparel_type_id || '',
         assigned_sales_rep_id: order.assigned_sales_rep_id || '',
@@ -298,6 +300,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
             <div>
               <h2 className="text-xl font-semibold text-gray-900">Edit Order</h2>
               <p className="text-gray-600">{order.order_number}</p>
+              <p className="text-sm text-gray-500 mt-1">{order.order_name || 'No Order Name'}</p>
             </div>
             <button
               onClick={onClose}
@@ -373,6 +376,26 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                 )}
 
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  {/* Order Name */}
+                  {(currentUser?.role === 'admin' || currentUser?.role === 'sales_rep') && (
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Order Name *
+                      </label>
+                      <input
+                        type="text"
+                        name="order_name"
+                        value={formData.order_name}
+                        onChange={handleInputChange}
+                        maxLength={32}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        disabled={isFormDisabled}
+                        placeholder="Enter order name (max 32 characters)"
+                        required
+                      />
+                    </div>
+                  )}
+
                   {/* Order Type */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">

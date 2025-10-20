@@ -8,7 +8,7 @@ export async function getOrdersFromView(params: PaginationParams): Promise<Pagin
       .select('*', { count: 'exact' });
 
     if (params.search) {
-      query = query.or(`order_number.ilike.%${params.search}%,custom_description.ilike.%${params.search}%,customer_name.ilike.%${params.search}%,customer_email.ilike.%${params.search}%`);
+      query = query.or(`order_number.ilike.%${params.search}%,order_name.ilike.%${params.search}%,custom_description.ilike.%${params.search}%,customer_name.ilike.%${params.search}%,customer_email.ilike.%${params.search}%`);
     }
 
     if (params.status) {
@@ -60,6 +60,7 @@ export async function getOrdersFromView(params: PaginationParams): Promise<Pagin
     const transformedData = (data || []).map(order => ({
       id: order.id,
       order_number: order.order_number,
+      order_name: order.order_name,
       order_type: order.order_type,
       total_amount: order.total_amount,
       payment_status: order.payment_status,
@@ -202,7 +203,7 @@ export async function getCustomerOrdersFromView(
       .eq('customer_id', customerId);
 
     if (params.search) {
-      query = query.or(`order_number.ilike.%${params.search}%,custom_description.ilike.%${params.search}%`);
+      query = query.or(`order_number.ilike.%${params.search}%,order_name.ilike.%${params.search}%,custom_description.ilike.%${params.search}%`);
     }
 
     if (params.status) {
@@ -235,6 +236,7 @@ export async function getCustomerOrdersFromView(
     const transformedData = (data || []).map(order => ({
       id: order.id,
       order_number: order.order_number,
+      order_name: order.order_name,
       order_type: order.order_type,
       total_amount: order.total_amount,
       payment_status: order.payment_status,

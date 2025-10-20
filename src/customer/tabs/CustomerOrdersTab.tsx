@@ -180,11 +180,17 @@ const CustomerOrdersTab: React.FC = () => {
         return <OrderImagePreview attachmentId={order.first_attachment_id} alt="Order attachment" />;
       },
     },
-    { 
-      key: 'order_number', 
-      label: 'Order Number', 
+    {
+      key: 'order_number',
+      label: 'Order Number',
       sortable: true,
       render: (order: AdminOrder) => order.order_number || `ORD-${order.id.slice(0, 8)}`
+    },
+    {
+      key: 'order_name',
+      label: 'Order Name',
+      sortable: true,
+      render: (order: AdminOrder) => order.order_name || 'No Order Name'
     },
     {
       key: 'order_type',

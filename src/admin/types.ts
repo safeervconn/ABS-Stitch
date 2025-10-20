@@ -49,6 +49,7 @@ export interface OrderAttachment {
 export interface AdminOrder {
   id: string;
   order_number: string;
+  order_name: string;
   order_type?: 'custom' | 'catalog';
   customer_id: string;
   customer_name: string;
@@ -164,6 +165,7 @@ export interface PaginatedResponse<T> {
 export interface CustomerOrder {
   id: string;
   order_number: string;
+  order_name: string;
   customer_name: string;
   customer_email: string;
   customer_phone: string;
