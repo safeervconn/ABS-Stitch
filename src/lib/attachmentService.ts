@@ -8,7 +8,7 @@ export interface OrderAttachment {
   stored_filename: string;
   file_size: number;
   mime_type: string;
-  s3_key: string;
+  storage_path: string;
   uploaded_by: string;
   uploaded_at: string;
   created_at: string;

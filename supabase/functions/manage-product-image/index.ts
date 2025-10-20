@@ -2,12 +2,13 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { handleCorsPreFlight, errorResponse, jsonResponse } from '../_shared/corsHeaders.ts';
 import { authenticateRequest, requireAdmin } from '../_shared/authHelpers.ts';
 import {
-  getStorageConfig,
-  createS3Client,
-  uploadToS3,
-  deleteFromS3,
-  generateStoredFilename
-} from '../_shared/s3Helpers.ts';
+  STORAGE_BUCKETS,
+  uploadToSupabaseStorage,
+  deleteFromSupabaseStorage,
+  generateStoredFilename,
+  generateStoragePath,
+  getPublicUrl
+} from '../_shared/storageHelpers.ts';
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -26,9 +27,6 @@ Deno.serve(async (req: Request) => {
       return errorResponse(adminError, 403);
     }
 
-    const storageConfig = getStorageConfig('products');
-    const s3Client = createS3Client(storageConfig);
-
     if (req.method === 'POST') {
       const formData = await req.formData();
       const file = formData.get('file') as File;
@@ -43,33 +41,33 @@ Deno.serve(async (req: Request) => {
       }
 
       const storedFilename = generateStoredFilename(file.name);
-      const s3Key = `product-images/${storedFilename}`;
+      const storagePath = generateStoragePath('product', null, storedFilename);
 
       const arrayBuffer = await file.arrayBuffer();
       const fileData = new Uint8Array(arrayBuffer);
 
-      await uploadToS3(
-        s3Client,
-        storageConfig,
-        s3Key,
+      await uploadToSupabaseStorage(
+        supabaseClient,
+        STORAGE_BUCKETS.PRODUCT_IMAGES,
+        storagePath,
         fileData,
         file.type
       );
 
-      const publicUrl = `https://${storageConfig.bucketName}.${storageConfig.endpoint}/${s3Key}`;
+      const publicUrl = getPublicUrl(STORAGE_BUCKETS.PRODUCT_IMAGES, storagePath);
 
-      return jsonResponse({ success: true, publicUrl, s3Key });
+      return jsonResponse({ success: true, publicUrl, storagePath });
     }
 
     if (req.method === 'DELETE') {
       const url = new URL(req.url);
-      const s3Key = url.searchParams.get('s3Key');
+      const storagePath = url.searchParams.get('storagePath');
 
-      if (!s3Key) {
-        return errorResponse('Missing s3Key', 400);
+      if (!storagePath) {
+        return errorResponse('Missing storagePath', 400);
       }
 
-      await deleteFromS3(s3Client, storageConfig, s3Key);
+      await deleteFromSupabaseStorage(supabaseClient, STORAGE_BUCKETS.PRODUCT_IMAGES, storagePath);
 
       return jsonResponse({ success: true });
     }

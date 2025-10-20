@@ -2,14 +2,13 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { handleCorsPreFlight, errorResponse, jsonResponse } from '../_shared/corsHeaders.ts';
 import { authenticateRequest } from '../_shared/authHelpers.ts';
 import {
-  getStorageConfig,
-  createS3Client,
-  uploadToS3,
+  STORAGE_BUCKETS,
+  uploadToSupabaseStorage,
   getSignedDownloadUrl,
-  deleteFromS3,
+  deleteFromSupabaseStorage,
   generateStoredFilename,
-  generateS3Key
-} from '../_shared/s3Helpers.ts';
+  generateStoragePath
+} from '../_shared/storageHelpers.ts';
 
 interface AttachmentPermissions {
   canView: boolean;
@@ -143,8 +142,6 @@ Deno.serve(async (req: Request) => {
     }
 
     const url = new URL(req.url);
-    const storageConfig = getStorageConfig('orders');
-    const s3Client = createS3Client(storageConfig);
 
     if (req.method === 'POST') {
       const formData = await req.formData();
@@ -168,15 +165,15 @@ Deno.serve(async (req: Request) => {
       }
 
       const storedFilename = generateStoredFilename(file.name);
-      const s3Key = generateS3Key('orders', orderNumber, storedFilename);
+      const storagePath = generateStoragePath('order', orderNumber, storedFilename);
 
       const arrayBuffer = await file.arrayBuffer();
       const fileData = new Uint8Array(arrayBuffer);
 
-      await uploadToS3(
-        s3Client,
-        storageConfig,
-        s3Key,
+      await uploadToSupabaseStorage(
+        supabaseClient,
+        STORAGE_BUCKETS.ORDER_ATTACHMENTS,
+        storagePath,
         fileData,
         file.type
       );
@@ -189,14 +186,14 @@ Deno.serve(async (req: Request) => {
           stored_filename: storedFilename,
           file_size: file.size,
           mime_type: file.type,
-          s3_key: s3Key,
+          storage_path: storagePath,
           uploaded_by: user.id,
         })
         .select()
         .single();
 
       if (dbError) {
-        await deleteFromS3(s3Client, storageConfig, s3Key);
+        await deleteFromSupabaseStorage(supabaseClient, STORAGE_BUCKETS.ORDER_ATTACHMENTS, storagePath);
         throw dbError;
       }
 
@@ -231,9 +228,9 @@ Deno.serve(async (req: Request) => {
       }
 
       const downloadUrl = await getSignedDownloadUrl(
-        s3Client,
-        storageConfig,
-        attachment.s3_key,
+        supabaseClient,
+        STORAGE_BUCKETS.ORDER_ATTACHMENTS,
+        attachment.storage_path,
         3600
       );
 
@@ -267,7 +264,11 @@ Deno.serve(async (req: Request) => {
         return errorResponse('Only admins can delete attachments', 403);
       }
 
-      await deleteFromS3(s3Client, storageConfig, attachment.s3_key);
+      await deleteFromSupabaseStorage(
+        supabaseClient,
+        STORAGE_BUCKETS.ORDER_ATTACHMENTS,
+        attachment.storage_path
+      );
 
       const { error: deleteError } = await supabaseClient
         .from('order_attachments')

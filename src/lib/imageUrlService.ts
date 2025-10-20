@@ -134,7 +134,7 @@ export function getOrderImagePreviewUrl(order: { first_attachment_url?: string; 
     return null;
   }
 
-  if (order.first_attachment_url?.startsWith('http') && order.first_attachment_url.includes('X-Amz-Signature')) {
+  if (order.first_attachment_url?.startsWith('http')) {
     return order.first_attachment_url;
   }
 
