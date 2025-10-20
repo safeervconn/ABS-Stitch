@@ -20,6 +20,13 @@ export const createOrderNumberColumn = () => ({
   render: (order: AdminOrder) => order.order_number || `ORD-${order.id.slice(0, 8)}`,
 });
 
+export const createOrderNameColumn = () => ({
+  key: 'order_name',
+  label: 'Order Name',
+  sortable: true,
+  render: (order: AdminOrder) => order.order_name || 'No Order Name',
+});
+
 export const createCustomerNameColumn = () => ({
   key: 'customer_name',
   label: 'Customer Name',

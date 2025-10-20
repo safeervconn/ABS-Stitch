@@ -122,9 +122,10 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
     return (data || []).map(order => ({
       id: order.id,
       order_number: order.order_number,
+      order_name: order.order_name,
       order_type: order.order_type,
       total_amount: order.total_amount,
-     payment_status: order.payment_status,
+      payment_status: order.payment_status,
       customer_id: order.customer_id,
       customer_name: order.customer?.full_name || 'Unknown',
       customer_email: order.customer?.email || '',
@@ -563,6 +564,7 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
     let transformedData = (data || []).map(order => ({
       id: order.id,
       order_number: order.order_number,
+      order_name: order.order_name,
       order_type: order.order_type,
       customer_id: order.customer_id,
       customer_name: order.customer?.full_name || 'Unknown',
@@ -664,6 +666,7 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
     // Build update object with proper null handling for UUID fields
     const updateData: any = {
       order_type: orderData.order_type,
+      order_name: orderData.order_name,
       custom_width: orderData.custom_width,
       custom_height: orderData.custom_height,
       total_amount: orderData.total_amount,
@@ -767,6 +770,7 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
     return {
       id: data.id,
       order_number: data.order_number,
+      order_name: data.order_name,
       order_type: data.order_type,
       customer_id: data.customer_id,
       customer_name: data.customer?.full_name || 'Unknown',
@@ -782,7 +786,7 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
       custom_width: data.custom_width,
       custom_height: data.custom_height,
       total_amount: data.total_amount,
-     payment_status: data.payment_status,
+      payment_status: data.payment_status,
       status: data.status,
       assigned_sales_rep_id: data.assigned_sales_rep_id,
       assigned_sales_rep_name: data.sales_rep?.full_name,
@@ -1577,6 +1581,7 @@ export const getCustomerOrdersPaginated = async (params: PaginationParams & { cu
     const transformedData = (data || []).map(order => ({
       id: order.id,
       order_number: order.order_number,
+      order_name: order.order_name,
       order_type: order.order_type,
       customer_id: order.customer_id,
       customer_name: order.customer?.full_name || 'Unknown',

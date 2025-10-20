@@ -16,6 +16,7 @@ import { ORDER_STATUS_OPTIONS, DEFAULT_PAGINATION_PARAMS } from '../shared/const
 import {
   createImageColumn,
   createOrderNumberColumn,
+  createOrderNameColumn,
   createStatusColumn,
   createDateColumn,
   createActionsColumn,
@@ -167,6 +168,7 @@ const DesignerDashboard: React.FC = () => {
   const columns = [
     createImageColumn(),
     createOrderNumberColumn(),
+    createOrderNameColumn(),
     createStatusColumn(),
     createDateColumn(),
     createActionsColumn(handleEditOrder, handleViewOrder),
