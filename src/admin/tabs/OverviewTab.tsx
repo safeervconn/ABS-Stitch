@@ -114,42 +114,44 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
   }
   return (
     <div className="space-y-8">
-      {/* Manual Refresh Button */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Dashboard Overview</h2>
-        <button
-          onClick={() => refreshData(true)}
-          disabled={loading}
-          className="btn-primary"
-        >
-          {loading ? 'Refreshing...' : 'Refresh Data'}
-        </button>
-      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Manual Refresh Button */}
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900">Dashboard Overview</h2>
+          <button
+            onClick={() => refreshData(true)}
+            disabled={loading}
+            className="btn-primary"
+          >
+            {loading ? 'Refreshing...' : 'Refresh Data'}
+          </button>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        {statCards.map((stat, index) => {
-          const IconComponent = stat.icon;
-          const colorClasses = getColorClasses(stat.color);
-          return (
-            <div 
-              key={stat.title}
-              className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className={`${colorClasses.bg} p-3 rounded-lg`}>
-                  <IconComponent className={`h-6 w-6 ${colorClasses.text}`} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          {statCards.map((stat, index) => {
+            const IconComponent = stat.icon;
+            const colorClasses = getColorClasses(stat.color);
+            return (
+              <div
+                key={stat.title}
+                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`${colorClasses.bg} p-3 rounded-lg`}>
+                    <IconComponent className={`h-6 w-6 ${colorClasses.text}`} />
+                  </div>
                 </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
+                <p className="text-gray-600 text-sm">{stat.title}</p>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
-              <p className="text-gray-600 text-sm">{stat.title}</p>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
       {/* Recent Orders */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 w-full">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 mx-auto" style={{ maxWidth: 'calc(100vw - 2rem)' }}>
         <div className="p-6 border-b border-gray-100">
           <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
           <p className="text-sm text-gray-600 mt-1">Last 10 orders across all customers</p>

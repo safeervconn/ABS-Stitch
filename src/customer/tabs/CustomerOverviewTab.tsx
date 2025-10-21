@@ -103,39 +103,40 @@ const CustomerOverviewTab: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Welcome Section */}
-      <div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome back!
-        </h2>
-        <p className="text-gray-600">Here's an overview of your orders and account.</p>
-      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome back!
+          </h2>
+          <p className="text-gray-600">Here's an overview of your orders and account.</p>
+        </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => {
-          const IconComponent = stat.icon;
-          const colorClasses = getColorClasses(stat.color);
-          return (
-            <div 
-              key={stat.title} 
-              className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className={`${colorClasses.bg} p-3 rounded-lg`}>
-                  <IconComponent className={`h-6 w-6 ${colorClasses.text}`} />
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {stats.map((stat, index) => {
+            const IconComponent = stat.icon;
+            const colorClasses = getColorClasses(stat.color);
+            return (
+              <div
+                key={stat.title}
+                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`${colorClasses.bg} p-3 rounded-lg`}>
+                    <IconComponent className={`h-6 w-6 ${colorClasses.text}`} />
+                  </div>
                 </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
+                <p className="text-gray-600 text-sm">{stat.title}</p>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
-              <p className="text-gray-600 text-sm">{stat.title}</p>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
 
-      {/* Recent Orders */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+        {/* Recent Orders */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 mt-8">
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center justify-between">
             <div>
@@ -187,6 +188,7 @@ const CustomerOverviewTab: React.FC = () => {
               <p className="text-gray-500">No orders yet</p>
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>

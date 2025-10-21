@@ -252,55 +252,59 @@ const EmployeesTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Employee Management</h2>
-          <p className="text-gray-600 mt-1">Manage employees and share signup URL with new team members</p>
-        </div>
-        <button
-          onClick={handleCopySignupUrl}
-          className="btn-primary btn-large px-6 flex items-center space-x-2"
-        >
-          <Copy className="h-5 w-5" />
-          <span>Copy Signup URL</span>
-        </button>
-      </div>
-
-      {/* Info Card */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-start space-x-3">
-          <div className="bg-blue-100 p-2 rounded-lg">
-            <Copy className="h-5 w-5 text-blue-600" />
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
           <div>
-            <h3 className="text-sm font-semibold text-blue-900 mb-1">Employee Signup Process</h3>
-            <p className="text-sm text-blue-800 leading-relaxed">
-              Share the signup URL with new employees. They can create their accounts, which will be disabled by default. 
-              You can then activate their accounts using the status toggle in the table below.
-            </p>
+            <h2 className="text-2xl font-bold text-gray-900">Employee Management</h2>
+            <p className="text-gray-600 mt-1">Manage employees and share signup URL with new team members</p>
+          </div>
+          <button
+            onClick={handleCopySignupUrl}
+            className="btn-primary btn-large px-6 flex items-center space-x-2"
+          >
+            <Copy className="h-5 w-5" />
+            <span>Copy Signup URL</span>
+          </button>
+        </div>
+
+        {/* Info Card */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start space-x-3">
+            <div className="bg-blue-100 p-2 rounded-lg">
+              <Copy className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-blue-900 mb-1">Employee Signup Process</h3>
+              <p className="text-sm text-blue-800 leading-relaxed">
+                Share the signup URL with new employees. They can create their accounts, which will be disabled by default.
+                You can then activate their accounts using the status toggle in the table below.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-      {/* Enhanced Filter Bar */}
-      <FilterBar
-        searchValue={params.search || ''}
-        onSearchChange={handleSearch}
-        searchPlaceholder="Search employees by name or email..."
-        filters={filterConfigs}
-        filterValues={filterValues}
-        onFilterChange={handleFilterChange}
-        onClearFilters={handleClearFilters}
-        resultCount={employees.total}
-        loading={loading}
-      />
-
-      {/* Error Display */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-          <p className="text-red-700">{error}</p>
+        {/* Enhanced Filter Bar */}
+        <div className="mt-6">
+          <FilterBar
+            searchValue={params.search || ''}
+            onSearchChange={handleSearch}
+            searchPlaceholder="Search employees by name or email..."
+            filters={filterConfigs}
+            filterValues={filterValues}
+            onFilterChange={handleFilterChange}
+            onClearFilters={handleClearFilters}
+            resultCount={employees.total}
+            loading={loading}
+          />
         </div>
-      )}
+
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
+      </div>
 
       {/* Employees Table */}
       <DataTable
@@ -311,16 +315,17 @@ const EmployeesTab: React.FC = () => {
         loading={loading}
       />
 
-      {/* Employee Edit Modal */}
-      <CrudModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleModalSubmit}
-        title="Edit Employee"
-        fields={employeeFields}
-        initialData={selectedEmployee}
-      />
-
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Employee Edit Modal */}
+        <CrudModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleModalSubmit}
+          title="Edit Employee"
+          fields={employeeFields}
+          initialData={selectedEmployee}
+        />
+      </div>
     </div>
   );
 };

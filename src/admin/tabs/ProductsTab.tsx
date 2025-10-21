@@ -251,40 +251,42 @@ const ProductsTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Product Management</h2>
-          <p className="text-gray-600 mt-1">Manage your product catalog</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Product Management</h2>
+            <p className="text-gray-600 mt-1">Manage your product catalog</p>
+          </div>
+          <button
+            onClick={handleCreateProduct}
+            className="btn-primary flex items-center space-x-2"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Add Product</span>
+          </button>
         </div>
-        <button
-          onClick={handleCreateProduct}
-          className="btn-primary flex items-center space-x-2"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add Product</span>
-        </button>
+
+        {/* Enhanced Filter Bar */}
+        <FilterBar
+          searchValue={params.search || ''}
+          onSearchChange={handleSearch}
+          searchPlaceholder="Search products by title or description..."
+          filters={filterConfigs}
+          filterValues={filterValues}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+          resultCount={products.total}
+          loading={loading}
+        />
+
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
       </div>
-
-      {/* Enhanced Filter Bar */}
-      <FilterBar
-        searchValue={params.search || ''}
-        onSearchChange={handleSearch}
-        searchPlaceholder="Search products by title or description..."
-        filters={filterConfigs}
-        filterValues={filterValues}
-        onFilterChange={handleFilterChange}
-        onClearFilters={handleClearFilters}
-        resultCount={products.total}
-        loading={loading}
-      />
-
-      {/* Error Display */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-          <p className="text-red-700">{error}</p>
-        </div>
-      )}
 
       {/* Products Table */}
       <DataTable
@@ -295,32 +297,34 @@ const ProductsTab: React.FC = () => {
         loading={loading}
       />
 
-      {/* Product Modal */}
-      <EditProductModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        product={selectedProduct}
-        mode={modalMode}
-        onSuccess={() => {
-          setIsModalOpen(false);
-          refetch();
-        }}
-      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Product Modal */}
+        <EditProductModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          product={selectedProduct}
+          mode={modalMode}
+          onSuccess={() => {
+            setIsModalOpen(false);
+            refetch();
+          }}
+        />
 
-      {/* Delete Confirmation Modal */}
-      <ConfirmationModal
-        isOpen={isConfirmationOpen}
-        onClose={() => {
-          setIsConfirmationOpen(false);
-          setProductToDelete(null);
-        }}
-        onConfirm={handleConfirmDelete}
-        title="Delete Product"
-        message={`Are you sure you want to delete "${productToDelete?.title}"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
-        type="danger"
-      />
+        {/* Delete Confirmation Modal */}
+        <ConfirmationModal
+          isOpen={isConfirmationOpen}
+          onClose={() => {
+            setIsConfirmationOpen(false);
+            setProductToDelete(null);
+          }}
+          onConfirm={handleConfirmDelete}
+          title="Delete Product"
+          message={`Are you sure you want to delete "${productToDelete?.title}"? This action cannot be undone.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+        />
+      </div>
     </div>
   );
 };

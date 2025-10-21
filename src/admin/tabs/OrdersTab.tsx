@@ -313,33 +313,35 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Order Management</h2>
-          <p className="text-gray-600 mt-1">Manage customer orders and assignments</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Order Management</h2>
+            <p className="text-gray-600 mt-1">Manage customer orders and assignments</p>
+          </div>
         </div>
+
+        {/* Enhanced Filter Bar */}
+        <FilterBar
+          searchValue={params.search || ''}
+          onSearchChange={handleSearch}
+          searchPlaceholder="Search orders by order number..."
+          filters={filterConfigs}
+          filterValues={filterValues}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+          resultCount={orders.total}
+          loading={loading}
+        />
+
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
       </div>
-
-      {/* Enhanced Filter Bar */}
-      <FilterBar
-        searchValue={params.search || ''}
-        onSearchChange={handleSearch}
-        searchPlaceholder="Search orders by order number..."
-        filters={filterConfigs}
-        filterValues={filterValues}
-        onFilterChange={handleFilterChange}
-        onClearFilters={handleClearFilters}
-        resultCount={orders.total}
-        loading={loading}
-      />
-
-      {/* Error Display */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-          <p className="text-red-700">{error}</p>
-        </div>
-      )}
 
       {/* Orders Table */}
       <DataTable
@@ -350,8 +352,9 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
         loading={loading}
       />
 
-      {/* Order Edit Modal */}
-      <EditOrderModal
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Order Edit Modal */}
+        <EditOrderModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         order={selectedOrder}
@@ -359,7 +362,8 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
           setIsModalOpen(false);
           refetch();
         }}
-      />
+        />
+      </div>
     </div>
   );
 };

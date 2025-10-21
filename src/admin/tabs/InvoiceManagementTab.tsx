@@ -221,40 +221,42 @@ const InvoiceManagementTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Invoice Management</h2>
-          <p className="text-gray-600 mt-1">Generate and manage customer invoices</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Invoice Management</h2>
+            <p className="text-gray-600 mt-1">Generate and manage customer invoices</p>
+          </div>
+          <button
+            onClick={() => setIsGenerateModalOpen(true)}
+            className="btn-success btn-large px-6 flex items-center space-x-2"
+          >
+            <Plus className="h-5 w-5" />
+            <span>Generate Invoice</span>
+          </button>
         </div>
-        <button
-          onClick={() => setIsGenerateModalOpen(true)}
-          className="btn-success btn-large px-6 flex items-center space-x-2"
-        >
-          <Plus className="h-5 w-5" />
-          <span>Generate Invoice</span>
-        </button>
+
+        {/* Filter Bar */}
+        <FilterBar
+          searchValue={params.search || ''}
+          onSearchChange={handleSearch}
+          searchPlaceholder="Search invoices by title, customer name, or email..."
+          filters={filterConfigs}
+          filterValues={filterValues}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+          resultCount={invoices.total}
+          loading={loading}
+        />
+
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
       </div>
-
-      {/* Filter Bar */}
-      <FilterBar
-        searchValue={params.search || ''}
-        onSearchChange={handleSearch}
-        searchPlaceholder="Search invoices by title, customer name, or email..."
-        filters={filterConfigs}
-        filterValues={filterValues}
-        onFilterChange={handleFilterChange}
-        onClearFilters={handleClearFilters}
-        resultCount={invoices.total}
-        loading={loading}
-      />
-
-      {/* Error Display */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-          <p className="text-red-700">{error}</p>
-        </div>
-      )}
 
       {/* Invoices Table */}
       <DataTable
@@ -265,33 +267,35 @@ const InvoiceManagementTab: React.FC = () => {
         loading={loading}
       />
 
-      {/* Generate Invoice Modal */}
-      <GenerateInvoiceModal
-        isOpen={isGenerateModalOpen}
-        onClose={() => setIsGenerateModalOpen(false)}
-        onSuccess={() => {
-          setIsGenerateModalOpen(false);
-          refetch();
-        }}
-      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Generate Invoice Modal */}
+        <GenerateInvoiceModal
+          isOpen={isGenerateModalOpen}
+          onClose={() => setIsGenerateModalOpen(false)}
+          onSuccess={() => {
+            setIsGenerateModalOpen(false);
+            refetch();
+          }}
+        />
 
-      {/* Invoice Details Modal */}
-      <InvoiceDetailsModal
-        isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
-        invoiceId={selectedInvoiceId}
-      />
+        {/* Invoice Details Modal */}
+        <InvoiceDetailsModal
+          isOpen={isDetailsModalOpen}
+          onClose={() => setIsDetailsModalOpen(false)}
+          invoiceId={selectedInvoiceId}
+        />
 
-      {/* Edit Invoice Modal */}
-      <EditInvoiceModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        invoiceId={selectedInvoiceId}
-        onSuccess={() => {
-          setIsEditModalOpen(false);
-          refetch();
-        }}
-      />
+        {/* Edit Invoice Modal */}
+        <EditInvoiceModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          invoiceId={selectedInvoiceId}
+          onSuccess={() => {
+            setIsEditModalOpen(false);
+            refetch();
+          }}
+        />
+      </div>
     </div>
   );
 };

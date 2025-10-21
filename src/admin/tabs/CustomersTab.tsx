@@ -282,33 +282,35 @@ const CustomersTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Customer Management</h2>
-          <p className="text-gray-600 mt-1">Manage customer accounts and relationships</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Customer Management</h2>
+            <p className="text-gray-600 mt-1">Manage customer accounts and relationships</p>
+          </div>
         </div>
+
+        {/* Enhanced Filter Bar */}
+        <FilterBar
+          searchValue={params.search || ''}
+          onSearchChange={handleSearch}
+          searchPlaceholder="Search customers by name or email..."
+          filters={filterConfigs}
+          filterValues={filterValues}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+          resultCount={customers.total}
+          loading={loading}
+        />
+
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
       </div>
-
-      {/* Enhanced Filter Bar */}
-      <FilterBar
-        searchValue={params.search || ''}
-        onSearchChange={handleSearch}
-        searchPlaceholder="Search customers by name or email..."
-        filters={filterConfigs}
-        filterValues={filterValues}
-        onFilterChange={handleFilterChange}
-        onClearFilters={handleClearFilters}
-        resultCount={customers.total}
-        loading={loading}
-      />
-
-      {/* Error Display */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-          <p className="text-red-700">{error}</p>
-        </div>
-      )}
 
       {/* Customers Table */}
       <DataTable
@@ -319,30 +321,32 @@ const CustomersTab: React.FC = () => {
         loading={loading}
       />
 
-      {/* Customer Modal */}
-      <CrudModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleModalSubmit}
-        title="Edit Customer"
-        fields={customerFields}
-        initialData={selectedCustomer}
-      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Customer Modal */}
+        <CrudModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleModalSubmit}
+          title="Edit Customer"
+          fields={customerFields}
+          initialData={selectedCustomer}
+        />
 
-      {/* Delete Confirmation Modal */}
-      <ConfirmationModal
-        isOpen={isConfirmationOpen}
-        onClose={() => {
-          setIsConfirmationOpen(false);
-          setCustomerToDelete(null);
-        }}
-        onConfirm={handleConfirmDelete}
-        title="Delete Customer"
-        message={`Are you sure you want to delete "${customerToDelete?.full_name}"? This action cannot be undone and will also delete their authentication account.`}
-        confirmText="Delete"
-        cancelText="Cancel"
-        type="danger"
-      />
+        {/* Delete Confirmation Modal */}
+        <ConfirmationModal
+          isOpen={isConfirmationOpen}
+          onClose={() => {
+            setIsConfirmationOpen(false);
+            setCustomerToDelete(null);
+          }}
+          onConfirm={handleConfirmDelete}
+          title="Delete Customer"
+          message={`Are you sure you want to delete "${customerToDelete?.full_name}"? This action cannot be undone and will also delete their authentication account.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+        />
+      </div>
     </div>
   );
 };

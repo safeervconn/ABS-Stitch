@@ -210,7 +210,6 @@ const CustomerOrdersTab: React.FC = () => {
         </span>
       ),
     },
-  ,
     {
       key: 'total_amount',
       label: 'Total',
@@ -266,40 +265,42 @@ const CustomerOrdersTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">My Orders</h2>
-          <p className="text-gray-600 mt-1">Track and manage your orders</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">My Orders</h2>
+            <p className="text-gray-600 mt-1">Track and manage your orders</p>
+          </div>
+          <button
+            onClick={() => setIsPlaceOrderOpen(true)}
+            className="btn-success btn-large px-6 flex items-center space-x-2"
+          >
+            <Plus className="h-5 w-5" />
+            <span>Place New Order</span>
+          </button>
         </div>
-        <button
-          onClick={() => setIsPlaceOrderOpen(true)}
-          className="btn-success btn-large px-6 flex items-center space-x-2"
-        >
-          <Plus className="h-5 w-5" />
-          <span>Place New Order</span>
-        </button>
+
+        {/* Filter Bar */}
+        <FilterBar
+          searchValue={params.search || ''}
+          onSearchChange={handleSearch}
+          searchPlaceholder="Search orders by order number or description..."
+          filters={filterConfigs}
+          filterValues={filterValues}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+          resultCount={orders.total}
+          loading={loading}
+        />
+
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
       </div>
-
-      {/* Filter Bar */}
-      <FilterBar
-        searchValue={params.search || ''}
-        onSearchChange={handleSearch}
-        searchPlaceholder="Search orders by order number or description..."
-        filters={filterConfigs}
-        filterValues={filterValues}
-        onFilterChange={handleFilterChange}
-        onClearFilters={handleClearFilters}
-        resultCount={orders.total}
-        loading={loading}
-      />
-
-      {/* Error Display */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-          <p className="text-red-700">{error}</p>
-        </div>
-      )}
 
       {/* Orders Table */}
       <DataTable
@@ -310,40 +311,42 @@ const CustomerOrdersTab: React.FC = () => {
         loading={loading}
       />
 
-      {/* Empty State for No Orders */}
-      {!loading && !error && orders.total === 0 && !params.search && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12">
-          <div className="text-center">
-            <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 mb-4">No orders yet</p>
-            <button
-              onClick={() => setIsPlaceOrderOpen(true)}
-              className="btn-primary px-6"
-            >
-              Place Your First Order
-            </button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Empty State for No Orders */}
+        {!loading && !error && orders.total === 0 && !params.search && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 mt-6">
+            <div className="text-center">
+              <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500 mb-4">No orders yet</p>
+              <button
+                onClick={() => setIsPlaceOrderOpen(true)}
+                className="btn-primary px-6"
+              >
+                Place Your First Order
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Order Details Modal */}
-      <OrderDetailsModal
-        isOpen={isOrderDetailsOpen}
-        onClose={() => setIsOrderDetailsOpen(false)}
-        order={selectedOrder}
-      />
+        {/* Order Details Modal */}
+        <OrderDetailsModal
+          isOpen={isOrderDetailsOpen}
+          onClose={() => setIsOrderDetailsOpen(false)}
+          order={selectedOrder}
+        />
 
-      {/* Place Order Modal */}
-      <PlaceOrderModal
-        isOpen={isPlaceOrderOpen}
-        onClose={() => {
-          setIsPlaceOrderOpen(false);
-          // Refresh orders after placing a new order
-          if (customerId) {
-            refetch();
-          }
-        }}
-      />
+        {/* Place Order Modal */}
+        <PlaceOrderModal
+          isOpen={isPlaceOrderOpen}
+          onClose={() => {
+            setIsPlaceOrderOpen(false);
+            // Refresh orders after placing a new order
+            if (customerId) {
+              refetch();
+            }
+          }}
+        />
+      </div>
     </div>
   );
 };
