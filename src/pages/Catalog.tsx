@@ -13,33 +13,33 @@ import React, { useState, useEffect } from 'react';
 import { Search, Filter, Loader } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import AddToCartButton from '../components/AddToCartButton';
-import { getProducts, getApparelTypes } from '../lib/supabase';
+import { getProducts, getCategories } from '../lib/supabase';
 import { getImageSrc, getPlaceholderImage } from '../lib/placeholderImages';
 
 interface Product {
   id: string;
   title: string;
   description: string;
-  apparel_type: { type_name: string } | null;
+  category: { category_name: string } | null;
   price: number;
   image_url: string;
   created_at: string;
 }
 
-interface ApparelType {
+interface Category {
   id: string;
-  type_name: string;
+  category_name: string;
 }
 
 const Catalog: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [apparelTypes, setApparelTypes] = useState<ApparelType[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
   // State for filters and search
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedApparelType, setSelectedApparelType] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
 
   // Fetch products and apparel types
@@ -48,17 +48,17 @@ const Catalog: React.FC = () => {
       try {
         setLoading(true);
 
-        const [productsData, apparelTypesData] = await Promise.all([
+        const [productsData, categoriesData] = await Promise.all([
           getProducts({
-            apparelType: selectedApparelType,
+            category: selectedCategory,
             search: searchTerm,
             sortBy: sortBy,
           }),
-          getApparelTypes(),
+          getCategories(),
         ]);
 
         setProducts(productsData || []);
-        setApparelTypes(apparelTypesData || []);
+        setCategories(categoriesData || []);
       } catch (err: any) {
         setError(err.message || 'Failed to load products');
         console.error('Error fetching catalog data:', err);
@@ -68,10 +68,10 @@ const Catalog: React.FC = () => {
     };
 
     fetchData();
-  }, [selectedApparelType, searchTerm, sortBy]);
+  }, [selectedCategory, searchTerm, sortBy]);
 
   const handleSearch = (term: string) => setSearchTerm(term);
-  const handleApparelTypeChange = (type: string) => setSelectedApparelType(type);
+  const handleCategoryChange = (category: string) => setSelectedCategory(category);
   const handleSortChange = (sort: string) => setSortBy(sort);
 
   return (
@@ -107,16 +107,16 @@ const Catalog: React.FC = () => {
               />
             </div>
 
-            {/* Apparel Type Filter */}
+            {/* Category Filter */}
 <select
-  value={selectedApparelType}
-  onChange={(e) => handleApparelTypeChange(e.target.value)}
+  value={selectedCategory}
+  onChange={(e) => handleCategoryChange(e.target.value)}
   className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white/50 backdrop-blur-sm"
 >
   <option value="All">All Types</option>
-  {apparelTypes.map((type) => (
-    <option key={type.id} value={type.id}>
-      {type.type_name}
+  {categories.map((category) => (
+    <option key={category.id} value={category.id}>
+      {category.category_name}
     </option>
   ))}
 </select>
@@ -192,7 +192,7 @@ const Catalog: React.FC = () => {
                   </div>
 
                   <p className="text-blue-500 text-sm mb-2 font-medium">
-                    {product.apparel_type?.type_name}
+                    {product.category?.category_name}
                   </p>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed flex-grow">
                     {product.description}
@@ -205,7 +205,7 @@ const Catalog: React.FC = () => {
                       title: product.title,
                       price: `$${product.price.toFixed(2)}`,
                       image: getImageSrc(product.image_url, 'product'),
-                      apparelType: product.apparel_type?.type_name || 'Uncategorized',
+                      apparelType: product.category?.category_name || 'Uncategorized',
                     }}
                     className="w-full shadow-lg transform hover:scale-105 mt-auto"
                   />

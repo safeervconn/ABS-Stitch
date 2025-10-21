@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Send, Paperclip, Loader, Trash2, CheckCircle, Eye, Plus } from 'lucide-react';
-import { getCurrentUser, getUserProfile, getApparelTypes } from '../lib/supabase';
+import { getCurrentUser, getUserProfile, getCategories } from '../lib/supabase';
 import { useOrders } from '../contexts/OrderContext';
 import { toast } from '../utils/toast';
 import { uploadAttachment } from '../lib/attachmentService';
@@ -11,7 +11,7 @@ interface PlaceOrderModalProps {
 }
 
 const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) => {
-  const [apparelTypes, setApparelTypes] = useState<{id: string, type_name: string}[]>([]);
+  const [categories, setCategories] = useState<{id: string, category_name: string}[]>([]);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -20,7 +20,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
     orderName: '',
     customWidth: '',
     customHeight: '',
-    apparelTypeId: '',
+    categoryId: '',
     designInstructions: '',
     files: [] as File[]
   });
@@ -47,9 +47,9 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
           }
         }
         
-        // Fetch apparel types
-        const apparelTypesData = await getApparelTypes();
-        setApparelTypes(apparelTypesData);
+        // Fetch categories
+        const categoriesData = await getCategories();
+        setCategories(categoriesData);
       } catch (error) {
         console.error('Error checking user:', error);
       }
@@ -112,7 +112,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
         order_type: 'custom' as const,
         order_name: formData.orderName,
         custom_description: formData.designInstructions,
-        apparel_type_id: formData.apparelTypeId || undefined,
+        category_id: formData.categoryId || undefined,
         custom_width: formData.customWidth ? parseFloat(formData.customWidth) : undefined,
         custom_height: formData.customHeight ? parseFloat(formData.customHeight) : undefined,
         total_amount: 0,
@@ -182,7 +182,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
       orderName: '',
       customWidth: '',
       customHeight: '',
-      apparelTypeId: '',
+      categoryId: '',
       designInstructions: '',
       files: []
     });
@@ -257,7 +257,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
                         orderName: '',
                         customWidth: '',
                         customHeight: '',
-                       apparelTypeId: '',
+                       categoryId: '',
                         designInstructions: '',
                         files: []
                       });
@@ -395,17 +395,17 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Apparel Type
+                    Category
                   </label>
                   <select
-                    name="apparelTypeId"
-                    value={formData.apparelTypeId}
+                    name="categoryId"
+                    value={formData.categoryId}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Select Type</option>
-                    {apparelTypes.map(type => (
-                      <option key={type.id} value={type.id}>{type.type_name}</option>
+                    {categories.map(category => (
+                      <option key={category.id} value={category.id}>{category.category_name}</option>
                     ))}
                   </select>
                 </div>
@@ -454,7 +454,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
                   rows={4}
                   value={formData.designInstructions}
                   onChange={handleInputChange}
-                  placeholder="Please describe your design ideas, colors, style preferences, and any specific requirements..."
+                  placeholder="Tell us more... fabric, placement, color, description etc."
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>

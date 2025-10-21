@@ -42,6 +42,13 @@ export interface Category {
   created_at: string;
 }
 
+export interface Category {
+  id: string;
+  category_name: string;
+  description?: string;
+  created_at: string;
+}
+
 export interface ApparelType {
   id: string;
   type_name: string;
@@ -53,7 +60,7 @@ export interface Product {
   id: string;
   title: string;
   description?: string;
-  apparel_type_id?: string;
+  category_id?: string;
   image_url?: string;
   price: number;
   status: 'active' | 'inactive';
@@ -295,7 +302,7 @@ export const getDashboardRoute = (role: string): string | null => {
 
 // Product database functions
 export const getProducts = async (filters?: {
-  apparelType?: string;
+  category?: string;
   search?: string;
   sortBy?: string;
   limit?: number;
@@ -305,13 +312,12 @@ export const getProducts = async (filters?: {
     .from('products')
     .select(`
       *,
-      apparel_type:apparel_types(type_name)
+      category:categories(category_name)
     `)
     .eq('status', 'active');
 
-  // ✅ Fix: Filter by apparel_type_id instead of type_name
-  if (filters?.apparelType && filters.apparelType !== 'All') {
-    query = query.eq('apparel_type_id', filters.apparelType);
+  if (filters?.category && filters.category !== 'All') {
+    query = query.eq('category_id', filters.category);
   }
 
   if (filters?.search) {
@@ -351,18 +357,22 @@ export const getProducts = async (filters?: {
 };
 
 
-export const getApparelTypes = async () => {
+export const getCategories = async () => {
   const { data, error } = await supabase
-    .from('apparel_types')
-    .select('id, type_name')
-    .order('type_name');
-  
+    .from('categories')
+    .select('id, category_name')
+    .order('category_name');
+
   if (error) {
-    console.error('Error fetching apparel types:', error);
+    console.error('Error fetching categories:', error);
     return [];
   }
-  
+
   return data || [];
+};
+
+export const getApparelTypes = async () => {
+  return getCategories();
 };
 
 export const getProductById = async (id: string) => {
@@ -370,12 +380,12 @@ export const getProductById = async (id: string) => {
     .from('products')
     .select(`
       *,
-      apparel_type:apparel_types(type_name)
+      category:categories(category_name)
     `)
     .eq('id', id)
     .eq('status', 'active')
     .single();
-  
+
   if (error) {
     console.error('Error fetching product:', error);
     throw error;

@@ -62,8 +62,8 @@ export interface AdminOrder {
   attachments?: OrderAttachment[];
   first_attachment_url?: string;
   first_attachment_id?: string;
-  apparel_type_id?: string;
-  apparel_type_name?: string;
+  category_id?: string;
+  category_name?: string;
   custom_width?: number;
   custom_height?: number;
   total_amount: number;
@@ -98,14 +98,21 @@ export interface ApparelType {
   created_at: string;
 }
 
+export interface Category {
+  id: string;
+  category_name: string;
+  description?: string;
+  created_at: string;
+}
+
 export interface Invoice {
   id: string;
   customer_id: string;
   customer_name?: string;
   customer_email?: string;
   customer_company_name?: string;
-  apparel_type_id?: string;
-  apparel_type_name?: string;
+  category_id?: string;
+  category_name?: string;
   month_year: string;
   payment_link?: string;
   order_ids: string[];
@@ -135,7 +142,7 @@ export interface PaginationParams {
   // Filter-specific params
   role?: string;
   status?: string | string[];
-  apparelTypeId?: string;
+  categoryId?: string;
   salesRepId?: string;
   assignedDesignerId?: string;
   customerSearch?: string;
@@ -180,8 +187,8 @@ export interface CustomerOrder {
   created_at: string;
   updated_at: string;
   custom_description?: string;
-  apparel_type_id?: string;
-  apparel_type_name?: string;
+  category_id?: string;
+  category_name?: string;
   custom_width?: number;
   custom_height?: number;
   assigned_sales_rep_name?: string;

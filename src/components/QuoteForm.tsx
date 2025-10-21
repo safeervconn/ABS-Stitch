@@ -10,13 +10,13 @@
 
 import React, { useState } from 'react';
 import { Send, Paperclip, Loader2 } from 'lucide-react';
-import { getApparelTypes } from '../lib/supabase';
+import { getCategories } from '../lib/supabase';
 import { toast } from '../utils/toast';
 
 const QuoteForm: React.FC = () => {
   // Form state management
   const [isQuoteRequest, setIsQuoteRequest] = useState(true);
-  const [apparelTypes, setApparelTypes] = useState<{id: string, type_name: string}[]>([]);
+  const [categories, setCategories] = useState<{id: string, category_name: string}[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -25,22 +25,22 @@ const QuoteForm: React.FC = () => {
     phoneNumber: '',
     customWidth: '',
     customHeight: '',
-    apparelTypeId: '',
+    categoryId: '',
     designInstructions: '',
     message: '',
     file: null as File | null
   });
 
   React.useEffect(() => {
-    const fetchApparelTypes = async () => {
+    const fetchCategories = async () => {
       try {
-        const data = await getApparelTypes();
-        setApparelTypes(data);
+        const data = await getCategories();
+        setCategories(data);
       } catch (error) {
-        console.error('Error fetching apparel types:', error);
+        console.error('Error fetching categories:', error);
       }
     };
-    fetchApparelTypes();
+    fetchCategories();
   }, []);
   // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -91,14 +91,14 @@ const QuoteForm: React.FC = () => {
         };
       }
 
-      const selectedApparelType = apparelTypes.find(type => type.id === formData.apparelTypeId);
+      const selectedCategory = categories.find(cat => cat.id === formData.categoryId);
 
       const emailData = {
         formType: isQuoteRequest ? 'quote' : 'general',
         fullName: formData.fullName,
         email: formData.email,
         phone: `${formData.countryCode} ${formData.phoneNumber}`,
-        apparelType: selectedApparelType?.type_name,
+        apparelType: selectedCategory?.category_name,
         customWidth: formData.customWidth,
         customHeight: formData.customHeight,
         designInstructions: formData.designInstructions,
@@ -132,7 +132,7 @@ const QuoteForm: React.FC = () => {
         phoneNumber: '',
         customWidth: '',
         customHeight: '',
-        apparelTypeId: '',
+        categoryId: '',
         designInstructions: '',
         message: '',
         file: null
@@ -256,17 +256,17 @@ const QuoteForm: React.FC = () => {
             <div className="grid md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Apparel Type
+                  Category
                 </label>
                 <select
-                  name="apparelTypeId"
-                  value={formData.apparelTypeId}
+                  name="categoryId"
+                  value={formData.categoryId}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Select Type</option>
-                  {apparelTypes.map(type => (
-                    <option key={type.id} value={type.id}>{type.type_name}</option>
+                  {categories.map(category => (
+                    <option key={category.id} value={category.id}>{category.category_name}</option>
                   ))}
                 </select>
               </div>
@@ -315,7 +315,7 @@ const QuoteForm: React.FC = () => {
                 rows={4}
                 value={formData.designInstructions}
                 onChange={handleInputChange}
-                placeholder="Please describe your design ideas, colors, style preferences, and any specific requirements..."
+                placeholder="Tell us more... fabric, placement, color, description etc."
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>

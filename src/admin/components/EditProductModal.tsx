@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Loader, Upload, Trash2, Eye, Package } from 'lucide-react';
-import { createProduct, updateProduct, getApparelTypes, deleteFileFromStorage } from '../api/supabaseHelpers';
-import { AdminProduct, ApparelType } from '../types';
+import { createProduct, updateProduct, getCategories, deleteFileFromStorage } from '../api/supabaseHelpers';
+import { AdminProduct, Category } from '../types';
 import { supabase } from '../../lib/supabase';
 import { toast } from '../../utils/toast';
 
@@ -23,7 +23,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    apparel_type_id: '',
+    category_id: '',
     price: 0,
     status: 'active' as 'active' | 'inactive',
   });
@@ -31,7 +31,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
   const [existingImageUrl, setExistingImageUrl] = useState<string>('');
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [imageToDelete, setImageToDelete] = useState<string>('');
-  const [apparelTypes, setApparelTypes] = useState<ApparelType[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -53,7 +53,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         setFormData({
           title: '',
           description: '',
-          apparel_type_id: '',
+          category_id: '',
           price: 0,
           status: 'active',
         });
@@ -63,18 +63,18 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
       setNewImageFile(null);
       setImageToDelete('');
       setError('');
-      fetchApparelTypes();
+      fetchCategories();
     }
   }, [isOpen, mode, product]);
 
-  const fetchApparelTypes = async () => {
+  const fetchCategories = async () => {
     try {
       setLoading(true);
-      const apparelTypesData = await getApparelTypes();
-      setApparelTypes(apparelTypesData);
+      const categoriesData = await getCategories();
+      setCategories(categoriesData);
     } catch (error) {
-      console.error('Error fetching apparel types:', error);
-      setError('Failed to load apparel types');
+      console.error('Error fetching categories:', error);
+      setError('Failed to load categories');
     } finally {
       setLoading(false);
     }
@@ -272,18 +272,18 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                   {/* Category */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Apparel Type *
+                      Category *
                     </label>
                     <select
-                      name="apparel_type_id"
-                      value={formData.apparel_type_id}
+                      name="category_id"
+                      value={formData.category_id}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     >
                       <option value="">No Type</option>
-                      {apparelTypes.map(type => (
-                        <option key={type.id} value={type.id}>
-                          {type.type_name}
+                      {categories.map(category => (
+                        <option key={category.id} value={category.id}>
+                          {category.category_name}
                         </option>
                       ))}
                     </select>

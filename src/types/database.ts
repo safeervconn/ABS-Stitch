@@ -49,7 +49,7 @@ export interface Database {
           payment_status: 'paid' | 'unpaid' | 'cancelled';
           custom_width: number | null;
           custom_height: number | null;
-          apparel_type_id: string | null;
+          category_id: string | null;
         };
         Insert: Omit<Database['public']['Tables']['orders']['Row'], 'id' | 'created_at' | 'updated_at' | 'order_number'>;
         Update: Partial<Database['public']['Tables']['orders']['Insert']>;
@@ -59,7 +59,7 @@ export interface Database {
           id: string;
           title: string;
           description: string | null;
-          apparel_type_id: string | null;
+          category_id: string | null;
           image_url: string | null;
           price: number;
           status: 'active' | 'inactive';
@@ -69,15 +69,15 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['products']['Row'], 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Database['public']['Tables']['products']['Insert']>;
       };
-      apparel_types: {
+      categories: {
         Row: {
           id: string;
-          type_name: string;
+          category_name: string;
           description: string | null;
           created_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['apparel_types']['Row'], 'id' | 'created_at'>;
-        Update: Partial<Database['public']['Tables']['apparel_types']['Insert']>;
+        Insert: Omit<Database['public']['Tables']['categories']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['categories']['Insert']>;
       };
       invoices: {
         Row: {
@@ -143,7 +143,7 @@ export interface Database {
           customer_phone: string | null;
           customer_company_name: string | null;
           product_title: string | null;
-          apparel_type_name: string | null;
+          category_name: string | null;
           sales_rep_name: string | null;
           designer_name: string | null;
           first_attachment_id: string | null;
