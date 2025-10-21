@@ -2,7 +2,7 @@
  * Catalog Page Component
  * 
  * Features:
- * - Database-driven product catalog
+ * - Database-driven stockdesign catalog
  * - Filter and search functionality
  * - Consistent design with sign-in page
  * - Responsive grid layout
@@ -16,7 +16,7 @@ import AddToCartButton from '../components/AddToCartButton';
 import { getstockdesigns, getCategories } from '../lib/supabase';
 import { getImageSrc, getPlaceholderImage } from '../lib/placeholderImages';
 
-interface Product {
+interface stockdesign {
   id: string;
   title: string;
   description: string;
@@ -32,7 +32,7 @@ interface Category {
 }
 
 const Catalog: React.FC = () => {
-  const [stockdesigns, setstockdesigns] = useState<Product[]>([]);
+  const [stockdesigns, setstockdesigns] = useState<stockdesign[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -161,51 +161,51 @@ const Catalog: React.FC = () => {
         {/* Stock Designs Grid */}
         {!loading && !error && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {stockdesigns.map((product) => (
+            {stockdesigns.map((stockdesign) => (
               <div
-                key={product.id}
+                key={stockdesign.id}
                 className="glass rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 group transform hover:scale-105 flex flex-col"
               >
-                {/* Product Image */}
+                {/* Stock Design Image */}
                 <div className="relative">
                   <img
-                    src={getImageSrc(product.image_url, 'product')}
-                    alt={product.title || 'Product image'}
+                    src={getImageSrc(stockdesign.image_url, 'Stock Design')}
+                    alt={stockdesign.title || 'Stock Design image'}
                     className="w-full h-48 object-cover"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = getPlaceholderImage('product');
+                      (e.target as HTMLImageElement).src = getPlaceholderImage('Stock Design');
                     }}
                   />
                 </div>
 
-                {/* Product Info */}
+                {/* Stock Design Info */}
                 <div className="p-6 flex flex-col flex-grow">
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors text-lg">
-                      {product.title}
+                      {stockdesign.title}
                     </h3>
                     <div className="text-right">
                       <span className="text-blue-600 font-bold text-xl">
-                        ${product.price.toFixed(2)}
+                        ${stockdesign.price.toFixed(2)}
                       </span>
                     </div>
                   </div>
 
                   <p className="text-blue-500 text-sm mb-2 font-medium">
-                    {product.category?.category_name}
+                    {stockdesign.category?.category_name}
                   </p>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed flex-grow">
-                    {product.description}
+                    {stockdesign.description}
                   </p>
 
                   {/* Add to Cart */}
                   <AddToCartButton
                     item={{
-                      id: product.id,
-                      title: product.title,
-                      price: `$${product.price.toFixed(2)}`,
-                      image: getImageSrc(product.image_url, 'product'),
-                      apparelType: product.category?.category_name || 'Uncategorized',
+                      id: stockdesign.id,
+                      title: stockdesign.title,
+                      price: `$${stockdesign.price.toFixed(2)}`,
+                      image: getImageSrc(stockdesign.image_url, 'Stock Design'),
+                      apparelType: stockdesign.category?.category_name || 'Uncategorized',
                     }}
                     className="w-full shadow-lg transform hover:scale-105 mt-auto"
                   />
