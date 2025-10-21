@@ -99,10 +99,10 @@ function DataTable<T extends Record<string, any>>({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full mx-auto" style={{ maxWidth: 'calc(100vw - 5rem)' }}>
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full">
       {/* Header with Download Button */}
-      <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <div className="text-sm text-gray-600">
+      <div className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div className="text-xs sm:text-sm text-gray-600">
           {data.total > 0 && (
             <span>
               Showing {(data.page - 1) * data.limit + 1} to {Math.min(data.page * data.limit, data.total)} of {data.total} results
@@ -112,7 +112,7 @@ function DataTable<T extends Record<string, any>>({
         <button
           onClick={handleDownloadCSV}
           disabled={data.total === 0 || loading}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm w-full sm:w-auto justify-center"
           title="Download filtered data as CSV"
         >
           <Download className="h-4 w-4" />
@@ -128,7 +128,7 @@ function DataTable<T extends Record<string, any>>({
               {columns.map((column) => (
                 <th
                   key={String(column.key)}
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
                   {column.sortable ? (
                     <button
@@ -148,16 +148,16 @@ function DataTable<T extends Record<string, any>>({
           <tbody className="bg-white divide-y divide-gray-200">
             {loading ? (
               <tr>
-                <td colSpan={columns.length} className="px-6 py-12 text-center">
+                <td colSpan={columns.length} className="px-3 sm:px-6 py-8 sm:py-12 text-center">
                   <div className="flex items-center justify-center">
                     <div className="loading-spinner-small mr-3"></div>
-                    <span className="text-gray-500">Loading...</span>
+                    <span className="text-xs sm:text-sm text-gray-500">Loading...</span>
                   </div>
                 </td>
               </tr>
             ) : data.data.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-6 py-12 text-center text-gray-500">
+                <td colSpan={columns.length} className="px-3 sm:px-6 py-8 sm:py-12 text-center text-xs sm:text-sm text-gray-500">
                   No data found
                 </td>
               </tr>
@@ -167,7 +167,7 @@ function DataTable<T extends Record<string, any>>({
                   {columns.map((column) => (
                     <td
                       key={String(column.key)}
-                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                      className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900"
                     >
                       {renderCellValue(item, column)}
                     </td>
@@ -181,7 +181,7 @@ function DataTable<T extends Record<string, any>>({
 
       {/* Pagination */}
       {data.totalPages > 1 && (
-        <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        <div className="bg-white px-3 sm:px-4 lg:px-6 py-3 flex items-center justify-between border-t border-gray-200">
           <div className="flex-1 flex justify-between sm:hidden">
             <button
               onClick={() => handlePageChange(data.page - 1)}
@@ -200,7 +200,7 @@ function DataTable<T extends Record<string, any>>({
           </div>
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div className="flex items-center space-x-4">
-              <p className="text-sm text-gray-700">
+              <p className="text-xs sm:text-sm text-gray-700">
                 Showing <span className="font-medium">{(data.page - 1) * data.limit + 1}</span> to{' '}
                 <span className="font-medium">
                   {Math.min(data.page * data.limit, data.total)}
@@ -210,7 +210,7 @@ function DataTable<T extends Record<string, any>>({
               <select
                 value={data.limit}
                 onChange={(e) => handleLimitChange(Number(e.target.value))}
-                className="border border-gray-300 rounded-md px-3 py-1 text-sm"
+                className="border border-gray-300 rounded-md px-2 sm:px-3 py-1 text-xs sm:text-sm"
               >
                 <option value={10}>10 per page</option>
                 <option value={25}>25 per page</option>

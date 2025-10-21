@@ -359,26 +359,26 @@ const SalesRepDashboard: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <div className="bg-green-100 p-2 rounded-lg">
-                <TrendingUp className="h-6 w-6 text-green-600" />
+                <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">Sales Dashboard</h1>
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Sales Dashboard</h1>
               <button
                 onClick={() => navigate('/')}
-                className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                className="hidden sm:flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                 title="Go to Homepage"
               >
                 <Home className="h-5 w-5" />
                 <span className="text-sm font-medium">Home</span>
               </button>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <NotificationDropdown />
-              <div className="flex items-center space-x-3">
-                <div className="text-right">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="hidden md:block text-right">
                   <p className="text-sm font-semibold text-gray-900">{user?.full_name || 'Sales Rep'}</p>
                   <p className="text-xs text-gray-500 capitalize">{user?.role || 'sales_rep'}</p>
                 </div>
@@ -403,46 +403,46 @@ const SalesRepDashboard: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
+      <main className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
             Good morning, {user?.full_name?.split(' ')[0] || 'Sales Rep'}!
           </h2>
-          <p className="text-gray-600">Here's your sales performance and customer activity.</p>
+          <p className="text-sm sm:text-base text-gray-600">Here's your sales performance and customer activity.</p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {stats.map((stat, index) => {
             const IconComponent = stat.icon;
             const colorClasses = getColorClasses(stat.color);
             return (
               <div 
                 key={stat.title} 
-                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100"
+                className="bg-white rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`${colorClasses.bg} p-3 rounded-lg`}>
-                    <IconComponent className={`h-6 w-6 ${colorClasses.text}`} />
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div className={`${colorClasses.bg} p-2 sm:p-3 rounded-lg`}>
+                    <IconComponent className={`h-5 w-5 sm:h-6 sm:w-6 ${colorClasses.text}`} />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
-                <p className="text-gray-600 text-sm">{stat.title}</p>
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
+                <p className="text-gray-600 text-xs sm:text-sm">{stat.title}</p>
               </div>
             );
           })}
         </div>
 
         {/* Orders Management Section */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Header */}
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">Customer Orders</h3>
-              <p className="text-gray-600 mt-1">Manage orders from your assigned customers</p>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Customer Orders</h3>
+              <p className="text-sm sm:text-base text-gray-600 mt-1">Manage orders from your assigned customers</p>
             </div>
           </div>
 
@@ -461,8 +461,8 @@ const SalesRepDashboard: React.FC = () => {
 
           {/* Error Display */}
           {ordersError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-              <p className="text-red-700">{ordersError}</p>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+              <p className="text-sm sm:text-base text-red-700">{ordersError}</p>
             </div>
           )}
 

@@ -49,26 +49,26 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <div className={`p-2 rounded-lg ${headerIconColor}`}>
-                <HeaderIcon className="h-6 w-6" />
+                <HeaderIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{title}</h1>
               <button
                 onClick={() => navigate('/')}
-                className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                className="hidden sm:flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                 title="Go to Homepage"
               >
                 <Home className="h-5 w-5" />
                 <span className="text-sm font-medium">Home</span>
               </button>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <NotificationDropdown />
-              <div className="flex items-center space-x-3">
-                <div className="text-right">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="hidden md:block text-right">
                   <p className="text-sm font-semibold text-gray-900">{user?.full_name || 'User'}</p>
                   <p className="text-xs text-gray-500 capitalize">{user?.role?.replace('_', ' ') || 'user'}</p>
                 </div>
@@ -94,9 +94,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
       {/* Navigation Tabs */}
       {tabs && tabs.length > 0 && onTabChange && (
-        <nav className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex space-x-8">
+        <nav className="bg-white border-b border-gray-200 overflow-x-auto">
+          <div className="w-full px-4 sm:px-6 lg:px-8">
+            <div className="flex space-x-4 sm:space-x-6 lg:space-x-8 min-w-max sm:min-w-0">
               {tabs.map((tab) => {
                 const IconComponent = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -105,13 +105,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   <button
                     key={tab.id}
                     onClick={() => onTabChange(tab.id)}
-                    className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                    className={`flex items-center space-x-2 py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors whitespace-nowrap ${
                       isActive
                         ? 'border-blue-500 text-blue-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
                   >
-                    <IconComponent className="h-5 w-5" />
+                    <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" />
                     <span>{tab.label}</span>
                   </button>
                 );
@@ -122,7 +122,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       )}
 
       {/* Main Content */}
-      <main className="w-full py-8">
+      <main className="w-full py-4 sm:py-6 lg:py-8">
         {children}
       </main>
     </div>

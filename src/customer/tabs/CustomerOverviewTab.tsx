@@ -102,68 +102,68 @@ const CustomerOverviewTab: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="space-y-6 sm:space-y-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
             Welcome back!
           </h2>
-          <p className="text-gray-600">Here's an overview of your orders and account.</p>
+          <p className="text-sm sm:text-base text-gray-600">Here's an overview of your orders and account.</p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {stats.map((stat, index) => {
             const IconComponent = stat.icon;
             const colorClasses = getColorClasses(stat.color);
             return (
               <div
                 key={stat.title}
-                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100"
+                className="bg-white rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`${colorClasses.bg} p-3 rounded-lg`}>
-                    <IconComponent className={`h-6 w-6 ${colorClasses.text}`} />
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div className={`${colorClasses.bg} p-2 sm:p-3 rounded-lg`}>
+                    <IconComponent className={`h-5 w-5 sm:h-6 sm:w-6 ${colorClasses.text}`} />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
-                <p className="text-gray-600 text-sm">{stat.title}</p>
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
+                <p className="text-gray-600 text-xs sm:text-sm">{stat.title}</p>
               </div>
             );
           })}
         </div>
 
         {/* Recent Orders */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 mt-8">
-        <div className="p-6 border-b border-gray-100">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 mt-6 sm:mt-8">
+        <div className="p-4 sm:p-6 border-b border-gray-100">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
-              <p className="text-sm text-gray-600 mt-1">Your last 10 orders</p>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Recent Orders</h3>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Your last 10 orders</p>
             </div>
             <button
               onClick={() => window.location.href = '/customer/dashboard?tab=orders'}
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              className="text-blue-600 hover:text-blue-800 text-xs sm:text-sm font-medium"
             >
               View All Orders
             </button>
           </div>
         </div>
-        
-        <div className="p-6">
+
+        <div className="p-4 sm:p-6">
           {orders.length > 0 ? (
             <div className="space-y-4">
               {orders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="flex items-center space-x-4">
+                <div key={order.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-3 sm:gap-0">
+                  <div className="flex items-center space-x-3 sm:space-x-4 w-full sm:w-auto">
                     <div className="bg-blue-100 p-2 rounded-lg">
-                      <ShoppingBag className="h-5 w-5 text-blue-600" />
+                      <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{order.order_number || `ORD-${order.id.slice(0, 8)}`}</p>
-                      <p className="text-sm text-gray-500">{order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • {new Date(order.created_at).toLocaleDateString()}</p>
+                    <div className="flex-1">
+                      <p className="text-sm sm:text-base font-medium text-gray-900">{order.order_number || `ORD-${order.id.slice(0, 8)}`}</p>
+                      <p className="text-xs sm:text-sm text-gray-500">{order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • {new Date(order.created_at).toLocaleDateString()}</p>
                       {order.apparel_type?.type_name && (
                         <p className="text-xs text-gray-500 mt-1">
                           {order.apparel_type.type_name} • {order.custom_width}"×{order.custom_height}"
@@ -171,9 +171,9 @@ const CustomerOverviewTab: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="text-right">
-                      <p className="font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '0.00'}</p>
+                  <div className="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end">
+                    <div className="text-left sm:text-right">
+                      <p className="text-sm sm:text-base font-semibold text-gray-900">${order.total_amount?.toFixed(2) || '0.00'}</p>
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
                         {order.status.replace('_', ' ')}
                       </span>
@@ -183,9 +183,9 @@ const CustomerOverviewTab: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8">
-              <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">No orders yet</p>
+            <div className="text-center py-6 sm:py-8">
+              <Package className="h-10 w-10 sm:h-12 sm:w-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-sm sm:text-base text-gray-500">No orders yet</p>
             </div>
           )}
         </div>

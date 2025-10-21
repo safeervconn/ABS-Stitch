@@ -181,14 +181,15 @@ const DesignerDashboard: React.FC = () => {
       headerIconColor="bg-purple-100 text-purple-600"
       user={user}
     >
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Good morning, {user?.full_name?.split(' ')[0] || 'Designer'}!
-        </h2>
-        <p className="text-gray-600">Here are your assigned orders and design projects.</p>
-      </div>
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            Good morning, {user?.full_name?.split(' ')[0] || 'Designer'}!
+          </h2>
+          <p className="text-sm sm:text-base text-gray-600">Here are your assigned orders and design projects.</p>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {statCards.map((stat, index) => (
           <StatCard
             key={stat.title}
@@ -199,15 +200,15 @@ const DesignerDashboard: React.FC = () => {
             delay={index * 100}
           />
         ))}
-      </div>
-
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h3 className="text-2xl font-bold text-gray-900">My Assigned Orders</h3>
-            <p className="text-gray-600 mt-1">Manage your design projects and orders</p>
-          </div>
         </div>
+
+        <div className="space-y-4 sm:space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+            <div>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900">My Assigned Orders</h3>
+              <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your design projects and orders</p>
+            </div>
+          </div>
 
         <FilterBar
           searchValue={params.search || ''}
@@ -221,19 +222,20 @@ const DesignerDashboard: React.FC = () => {
           loading={ordersLoading}
         />
 
-        {ordersError && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-700">{ordersError}</p>
-          </div>
-        )}
+          {ordersError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+              <p className="text-sm sm:text-base text-red-700">{ordersError}</p>
+            </div>
+          )}
 
-        <DataTable
-          data={orders}
-          columns={columns}
-          onParamsChange={handleParamsChange}
-          currentParams={params}
-          loading={ordersLoading}
-        />
+          <DataTable
+            data={orders}
+            columns={columns}
+            onParamsChange={handleParamsChange}
+            currentParams={params}
+            loading={ordersLoading}
+          />
+        </div>
       </div>
 
       <OrderDetailsModal
