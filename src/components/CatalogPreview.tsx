@@ -11,31 +11,31 @@
 import React from 'react';
 import { Loader } from 'lucide-react';
 import AddToCartButton from './AddToCartButton';
-import { getProducts } from '../lib/supabase';
+import { getstockdesigns } from '../lib/supabase';
 import { getImageSrc, getPlaceholderImage } from '../lib/placeholderImages';
 
 const CatalogPreview: React.FC = () => {
-  const [products, setProducts] = React.useState<any[]>([]);
+  const [stockdesigns, setstockdesigns] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchstockdesigns = async () => {
       try {
-        const data = await getProducts({ 
+        const data = await getstockdesigns({ 
           limit: 6,
           sortBy: 'newest'
         });
-        setProducts(data || []);
+        setstockdesigns(data || []);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching Stock Designs:', error);
         // Set fallback data if database fails
-        setProducts([]);
+        setstockdesigns([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    fetchstockdesigns();
   }, []);
 
   return (
@@ -62,8 +62,8 @@ const CatalogPreview: React.FC = () => {
           </div>
         )}
 
-        {/* No Products State */}
-        {!loading && products.length === 0 && (
+        {/* No stockdesigns State */}
+        {!loading && stockdesigns.length === 0 && (
           <div className="text-center py-16">
             <div className="bg-white rounded-xl shadow-lg p-8 max-w-md mx-auto">
               <div className="text-gray-300 mb-4">
@@ -77,10 +77,10 @@ const CatalogPreview: React.FC = () => {
             </div>
           </div>
         )}
-        {/* Products Grid */}
-        {!loading && products.length > 0 && (
+        {/* stockdesigns Grid */}
+        {!loading && stockdesigns.length > 0 && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {products.map((product) => (
+            {stockdesigns.map((product) => (
               <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                 
                 {/* Product Image */}
@@ -127,7 +127,7 @@ const CatalogPreview: React.FC = () => {
         )}
 
         {/* View All Button */}
-        {!loading && products.length > 0 && (
+        {!loading && stockdesigns.length > 0 && (
           <div className="text-center">
             <button 
               onClick={() => window.location.href = '/catalog'}
