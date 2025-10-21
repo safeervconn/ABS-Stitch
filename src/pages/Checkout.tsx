@@ -16,7 +16,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useCart } from '../contexts/CartContext';
 import { useOrders } from '../contexts/OrderContext';
-import { getCurrentUser, getUserProfile, getApparelTypes } from '../lib/supabase';
+import { getCurrentUser, getUserProfile, getCategories } from '../lib/supabase';
 import { toast } from '../utils/toast';
 
 const Checkout: React.FC = () => {
@@ -28,7 +28,7 @@ const Checkout: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-  const [apparelTypes, setApparelTypes] = useState<{id: string, type_name: string}[]>([]);
+  const [categories, setCategories] = useState<{id: string, category_name: string}[]>([]);
 
   useEffect(() => {
     const checkUserAndCart = async () => {
@@ -52,9 +52,9 @@ const Checkout: React.FC = () => {
           setCurrentUser(profile);
         }
 
-        // Fetch apparel types
-        const apparelTypesData = await getApparelTypes();
-        setApparelTypes(apparelTypesData);
+        // Fetch categories
+        const categoriesData = await getCategories();
+        setCategories(categoriesData);
       } catch (error) {
         console.error('Error checking user:', error);
         navigate('/login');
@@ -76,8 +76,8 @@ const Checkout: React.FC = () => {
 
     // Validate that all items have required fields
     for (const item of items) {
-      if (!item.selectedApparelTypeId) {
-        setError(`Please select an apparel type for ${item.title}`);
+      if (!item.selectedCategoryId) {
+        setError(`Please select a category for ${item.title}`);
         return;
       }
       if (!item.customWidth || item.customWidth <= 0) {
@@ -103,7 +103,7 @@ const Checkout: React.FC = () => {
           order_type: 'catalog',
           product_id: item.id,
           custom_description: `${item.title}`,
-          apparel_type_id: item.selectedApparelTypeId,
+          category_id: item.selectedCategoryId,
           custom_width: item.customWidth,
           custom_height: item.customHeight,
           total_amount: itemTotal,
@@ -228,17 +228,17 @@ const Checkout: React.FC = () => {
                               {/* Apparel Type Dropdown */}
                               <div>
                                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                                  Apparel Type *
+                                  Category *
                                 </label>
                                 <select
-                                  value={item.selectedApparelTypeId || ''}
-                                  onChange={(e) => updateCartItem(item.id, { selectedApparelTypeId: e.target.value })}
+                                  value={item.selectedCategoryId || ''}
+                                  onChange={(e) => updateCartItem(item.id, { selectedCategoryId: e.target.value })}
                                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                   required
                                 >
-                                  <option value="">Select Type</option>
-                                  {apparelTypes.map(type => (
-                                    <option key={type.id} value={type.id}>{type.type_name}</option>
+                                  <option value="">Select Category</option>
+                                  {categories.map(category => (
+                                    <option key={category.id} value={category.id}>{category.category_name}</option>
                                   ))}
                                 </select>
                               </div>

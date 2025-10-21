@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Loader, Paperclip, Trash2, Upload, Download, MessageSquare, Send } from 'lucide-react';
-import { updateOrder, getSalesReps, getDesigners, getOrderComments, addOrderComment, getApparelTypes } from '../api/supabaseHelpers';
+import { updateOrder, getSalesReps, getDesigners, getOrderComments, addOrderComment, getCategories } from '../api/supabaseHelpers';
 import { AdminOrder, AdminUser, OrderAttachment } from '../types';
 import { supabase, getCurrentUser, getUserProfile } from '../../lib/supabase';
 import { toast } from '../../utils/toast';
@@ -26,7 +26,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     order_type: '',
     order_name: '',
     status: '',
-    apparel_type_id: '',
+    category_id: '',
     assigned_sales_rep_id: '',
     assigned_designer_id: '',
     total_amount: 0,
@@ -36,7 +36,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
 
   const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
   const [designers, setDesigners] = useState<AdminUser[]>([]);
-  const [apparelTypes, setApparelTypes] = useState<{id: string, type_name: string}[]>([]);
+  const [categories, setCategories] = useState<{id: string, category_name: string}[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(propCurrentUser || null);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -62,7 +62,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
         order_type: order.order_type || 'custom',
         order_name: order.order_name || '',
         status: order.status,
-        apparel_type_id: order.apparel_type_id || '',
+        category_id: order.category_id || '',
         assigned_sales_rep_id: order.assigned_sales_rep_id || '',
         assigned_designer_id: order.assigned_designer_id || '',
         total_amount: order.total_amount || 0,
@@ -146,14 +146,14 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   const fetchAssignmentOptions = async () => {
     try {
       setLoading(true);
-      const [salesRepsData, designersData, apparelTypesData] = await Promise.all([
+      const [salesRepsData, designersData, categoriesData] = await Promise.all([
         getSalesReps(),
         getDesigners(),
-        getApparelTypes(),
+        getCategories(),
       ]);
       setSalesReps(salesRepsData);
       setDesigners(designersData);
-      setApparelTypes(apparelTypesData);
+      setCategories(categoriesData);
     } catch (error) {
       console.error('Error fetching assignment options:', error);
       setError('Failed to load assignment options');
@@ -217,7 +217,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     // Convert empty strings to null for UUID fields to prevent database errors
     const sanitizedData = {
       ...formData,
-      apparel_type_id: formData.apparel_type_id || null,
+      category_id: formData.category_id || null,
       assigned_sales_rep_id: formData.assigned_sales_rep_id || null,
       assigned_designer_id: formData.assigned_designer_id || null,
     };
@@ -246,7 +246,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
             errorMessage = 'Please select a designer';
           } else if (msg.includes('sales_rep') || msg.includes('sales rep') || formData.assigned_sales_rep_id === '') {
             errorMessage = 'Please select a sales representative';
-          } else if (msg.includes('apparel') || formData.apparel_type_id === '') {
+          } else if (msg.includes('category') || formData.category_id === '') {
             errorMessage = 'Please select an apparel type';
           } else {
             errorMessage = 'Please fill in all required fields correctly';
@@ -257,7 +257,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
           errorMessage = 'Please assign a designer';
         } else if (msg.includes('sales_rep') || msg.includes('sales rep')) {
           errorMessage = 'Please assign a sales representative';
-        } else if (msg.includes('apparel_type') || msg.includes('apparel type')) {
+        } else if (msg.includes('category_id') || msg.includes('category')) {
           errorMessage = 'Please select an apparel type';
         } else if (msg.includes('total_amount') || msg.includes('total amount')) {
           errorMessage = 'Total amount must be a valid positive number';
@@ -437,18 +437,18 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                   {/* Apparel Type */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Apparel Type
+                      Category
                     </label>
                     <select
-                      name="apparel_type_id"
-                      value={formData.apparel_type_id}
+                      name="category_id"
+                      value={formData.category_id}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
                       disabled={isDesigner || isFormDisabled}
                     >
-                      <option value="">Select Type</option>
-                      {apparelTypes.map(type => (
-                        <option key={type.id} value={type.id}>{type.type_name}</option>
+                      <option value="">Select Category</option>
+                      {categories.map(category => (
+                        <option key={category.id} value={category.id}>{category.category_name}</option>
                       ))}
                     </select>
                   </div>

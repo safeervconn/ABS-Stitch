@@ -4,8 +4,8 @@ import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
 import EditProductModal from '../components/EditProductModal';
 import ConfirmationModal from '../components/ConfirmationModal';
-import { createProduct, updateProduct, deleteProduct, getApparelTypes } from '../api/supabaseHelpers';
-import { AdminProduct, ApparelType, PaginationParams } from '../types';
+import { createProduct, updateProduct, deleteProduct, getCategories } from '../api/supabaseHelpers';
+import { AdminProduct, Category, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { getProducts } from '../api/supabaseHelpers';
 import { toast } from '../../utils/toast';
@@ -27,7 +27,7 @@ const ProductsTab: React.FC = () => {
 
   // Filter state
   const [filterValues, setFilterValues] = useState<Record<string, string>>({
-    apparelType: '',
+    category: '',
     status: '',
     priceMin: '',
     priceMax: '',
@@ -51,28 +51,28 @@ const ProductsTab: React.FC = () => {
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<AdminProduct | null>(null);
   
-  // Apparel types for dropdown
-  const [apparelTypes, setApparelTypes] = useState<ApparelType[]>([]);
+  // Categories for dropdown
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    const fetchApparelTypes = async () => {
+    const fetchCategories = async () => {
       try {
-        const apparelTypesData = await getApparelTypes();
-        setApparelTypes(apparelTypesData);
+        const categoriesData = await getCategories();
+        setCategories(categoriesData);
       } catch (error) {
-        console.error('Error fetching apparel types:', error);
+        console.error('Error fetching categories:', error);
       }
     };
-    
-    fetchApparelTypes();
+
+    fetchCategories();
   }, []);
 
   // Filter configurations
   const filterConfigs: FilterConfig[] = [
     {
-      key: 'apparelType',
-      label: 'Apparel Type',
-      options: apparelTypes.map(type => ({ value: type.id, label: type.type_name })),
+      key: 'category',
+      label: 'Category',
+      options: categories.map(cat => ({ value: cat.id, label: cat.category_name })),
     },
     {
       key: 'status',
@@ -110,8 +110,8 @@ const ProductsTab: React.FC = () => {
     // Apply filters to search params
     const newParams: Partial<PaginationParams> = { page: 1 };
     
-    if (key === 'apparelType' && value) {
-      newParams.apparelTypeId = value;
+    if (key === 'category' && value) {
+      newParams.categoryId = value;
     } else if (key === 'status' && value) {
       newParams.status = value;
     } else if (key === 'priceMin' && value) {
@@ -125,14 +125,14 @@ const ProductsTab: React.FC = () => {
 
   const handleClearFilters = () => {
     setFilterValues({
-      apparelType: '',
+      category: '',
       status: '',
       priceMin: '',
       priceMax: '',
     });
     const resetParams: PaginationParams = {
       ...initialParams,
-      apparelTypeId: undefined,
+      categoryId: undefined,
       status: undefined,
       priceMin: undefined,
       priceMax: undefined,
@@ -196,9 +196,9 @@ const ProductsTab: React.FC = () => {
     },
     { key: 'title', label: 'Product Title', sortable: true },
     {
-      key: 'apparel_type_name',
-      label: 'Apparel Type',
-      render: (product: AdminProduct) => product.apparel_type_name || 'No Type',
+      key: 'category_name',
+      label: 'Category',
+      render: (product: AdminProduct) => product.category_name || 'No Category',
     },
     {
       key: 'price',
@@ -252,7 +252,7 @@ const ProductsTab: React.FC = () => {
 
   const csvColumns: CSVColumn<AdminProduct>[] = [
     { key: 'title', label: 'Product Title' },
-    { key: 'apparel_type_name', label: 'Apparel Type' },
+    { key: 'category_name', label: 'Category' },
     {
       key: 'price',
       label: 'Price',

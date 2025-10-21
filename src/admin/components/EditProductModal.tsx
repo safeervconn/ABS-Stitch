@@ -43,7 +43,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         setFormData({
           title: product.title,
           description: product.description || '',
-          apparel_type_id: product.apparel_type_id || '',
+          category_id: product.category_id || '',
           price: product.price,
           status: product.status,
         });

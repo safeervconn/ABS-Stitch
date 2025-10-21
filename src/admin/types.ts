@@ -91,13 +91,6 @@ export interface AdminProduct {
   updated_at: string;
 }
 
-export interface ApparelType {
-  id: string;
-  type_name: string;
-  description?: string;
-  created_at: string;
-}
-
 export interface Category {
   id: string;
   category_name: string;

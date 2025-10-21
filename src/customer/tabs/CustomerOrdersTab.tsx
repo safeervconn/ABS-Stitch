@@ -203,11 +203,11 @@ const CustomerOrdersTab: React.FC = () => {
       ),
     },
     {
-      key: 'apparel_type_name',
-      label: 'Apparel Type',
+      key: 'category_name',
+      label: 'Category',
       render: (order: AdminOrder) => (
         <span className="text-sm text-gray-600">
-          {order.apparel_type_name || '-'}
+          {order.category_name || '-'}
         </span>
       ),
     },
@@ -272,7 +272,7 @@ const CustomerOrdersTab: React.FC = () => {
       label: 'Type',
       format: (order) => order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'
     },
-    { key: 'apparel_type_name', label: 'Apparel Type' },
+    { key: 'category_name', label: 'Category' },
     {
       key: 'total_amount',
       label: 'Total Amount',

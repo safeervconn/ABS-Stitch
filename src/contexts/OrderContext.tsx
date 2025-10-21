@@ -10,7 +10,7 @@ interface OrderContextType {
     product_id?: string;
     custom_description: string;
     total_amount: number;
-    apparel_type_id?: string;
+    category_id?: string;
     custom_width?: number;
     custom_height?: number;
   }, files?: File[]) => Promise<any>;
@@ -44,7 +44,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     product_id?: string;
     custom_description: string;
     total_amount: number;
-    apparel_type_id?: string;
+    category_id?: string;
     custom_width?: number;
     custom_height?: number;
   }, files?: File[]) => {
@@ -76,7 +76,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           order_name: orderData.order_name,
           product_id: orderData.product_id || null,
           custom_description: orderData.custom_description,
-          apparel_type_id: orderData.apparel_type_id || null,
+          category_id: orderData.category_id || null,
           custom_width: orderData.custom_width || null,
           custom_height: orderData.custom_height || null,
           assigned_sales_rep_id: customerProfile.assigned_sales_rep_id,
@@ -126,7 +126,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     const selectParts = [
       "*",
       "customer:customers(id, full_name, email, phone, company_name)",
-      "apparel_type:apparel_types(type_name)"
+      "category:categories(category_name)"
     ];
 
     if (profile.role !== "customer") {
@@ -169,8 +169,8 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       created_at: order.created_at,
       updated_at: order.updated_at,
       custom_description: order.custom_description,
-      apparel_type_id: order.apparel_type_id,
-      apparel_type_name: order.apparel_type?.type_name,
+      category_id: order.category_id,
+      category_name: order.category?.category_name,
       custom_width: order.custom_width,
       custom_height: order.custom_height,
       assigned_sales_rep_id: order.assigned_sales_rep_id,

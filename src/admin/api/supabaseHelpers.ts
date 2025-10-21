@@ -809,7 +809,7 @@ export const getProducts = async (params: PaginationParams): Promise<PaginatedRe
       .from('products')
       .select(`
         *,
-        apparel_type:apparel_types(type_name)
+        category:categories(category_name)
       `, { count: 'exact' });
 
     // Apply search filter
@@ -817,8 +817,8 @@ export const getProducts = async (params: PaginationParams): Promise<PaginatedRe
       query = query.or(`title.ilike.%${params.search}%,description.ilike.%${params.search}%`);
     }
 
-    // Apply apparel type filter
-    if (params.apparelTypeId) {
+    // Apply category filter
+    if (params.categoryId) {
       query = query.eq('category_id', params.categoryId);
     }
 
@@ -937,9 +937,6 @@ export const getCategories = async (): Promise<Category[]> => {
   }
 };
 
-export const getApparelTypes = async (): Promise<ApparelType[]> => {
-  return getCategories() as any;
-};
 
 export const createCategory = async (categoryData: Partial<Category>): Promise<Category> => {
   try {
@@ -957,9 +954,6 @@ export const createCategory = async (categoryData: Partial<Category>): Promise<C
   }
 };
 
-export const createApparelType = async (apparelTypeData: Partial<ApparelType>): Promise<ApparelType> => {
-  return createCategory(apparelTypeData as any) as any;
-};
 
 // Sales Reps and Designers
 export const getSalesReps = async (): Promise<AdminUser[]> => {
@@ -1217,7 +1211,7 @@ export const getOrdersByIds = async (orderIds: string[]): Promise<AdminOrder[]> 
         *,
         customer:customers!inner(full_name, email, phone, company_name),
         product:products(title),
-        apparel_type:apparel_types(type_name)
+        category:categories(category_name)
       `)
       .in('id', orderIds)
       .order('created_at', { ascending: false });
@@ -1265,7 +1259,7 @@ export const getAllCustomerOrders = async (customerId: string): Promise<AdminOrd
         *,
         customer:customers!inner(full_name, email, phone, company_name),
         product:products(title),
-        apparel_type:apparel_types(type_name)
+        category:categories(category_name)
       `)
       .eq('customer_id', customerId)
       .order('created_at', { ascending: false });
@@ -1351,7 +1345,7 @@ export const getUnpaidOrdersForCustomer = async (
         *,
         customer:customers!inner(full_name, email, phone, company_name),
         product:products(title),
-        apparel_type:apparel_types(type_name)
+        category:categories(category_name)
       `)
       .eq('customer_id', customerId)
       .eq('payment_status', 'unpaid');

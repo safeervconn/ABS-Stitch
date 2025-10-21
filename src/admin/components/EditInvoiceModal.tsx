@@ -335,9 +335,9 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                                 {order.status.replace('_', ' ')}
                               </span>
                             </div>
-                            {order.apparel_type_name && (
+                            {order.category_name && (
                               <p className="text-xs text-gray-500 mt-1">
-                                {order.apparel_type_name} • {order.custom_width}"×{order.custom_height}"
+                                {order.category_name} • {order.custom_width}"×{order.custom_height}"
                               </p>
                             )}
                             {order.custom_description && (

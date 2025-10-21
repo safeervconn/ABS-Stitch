@@ -7,7 +7,7 @@ export interface CartItem {
   image: string;
   apparelType: string;
   quantity: number;
-  selectedApparelTypeId?: string;
+  selectedCategoryId?: string;
   customWidth?: number;
   customHeight?: number;
 }
@@ -48,10 +48,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         return prevItems;
       } else {
         // If new item, add with quantity 1
-        return [...prevItems, { 
-          ...newItem, 
+        return [...prevItems, {
+          ...newItem,
           quantity: 1,
-          selectedApparelTypeId: undefined,
+          selectedCategoryId: undefined,
           customWidth: undefined,
           customHeight: undefined
         }];

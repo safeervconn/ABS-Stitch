@@ -225,7 +225,7 @@ const Catalog: React.FC = () => {
               <button
                 onClick={() => {
                   setSearchTerm('');
-                  setSelectedApparelType('All');
+                  setSelectedCategory('All');
                   setSortBy('newest');
                 }}
                 className="btn-primary btn-large px-6"

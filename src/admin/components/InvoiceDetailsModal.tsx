@@ -189,9 +189,9 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
                                     {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} •
                                     {new Date(order.created_at).toLocaleDateString()}
                                   </p>
-                                  {order.apparel_type_name && (
+                                  {order.category_name && (
                               <p className="text-xs text-gray-500 mt-1">
-                                {order.apparel_type_name} • {order.custom_width}"×{order.custom_height}"
+                                {order.category_name} • {order.custom_width}"×{order.custom_height}"
                               </p>
                             )}
 

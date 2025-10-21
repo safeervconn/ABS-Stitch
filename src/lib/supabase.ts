@@ -37,21 +37,7 @@ export interface Customer {
 
 export interface Category {
   id: string;
-  name: string;
-  description?: string;
-  created_at: string;
-}
-
-export interface Category {
-  id: string;
   category_name: string;
-  description?: string;
-  created_at: string;
-}
-
-export interface ApparelType {
-  id: string;
-  type_name: string;
   description?: string;
   created_at: string;
 }
@@ -371,9 +357,6 @@ export const getCategories = async () => {
   return data || [];
 };
 
-export const getApparelTypes = async () => {
-  return getCategories();
-};
 
 export const getProductById = async (id: string) => {
   const { data, error } = await supabase

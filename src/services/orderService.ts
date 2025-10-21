@@ -18,9 +18,9 @@ export interface OrderTransformData {
   product?: {
     title: string;
   };
-  apparel_type_id?: string;
-  apparel_type?: {
-    type_name: string;
+  category_id?: string;
+  category?: {
+    category_name: string;
   };
   custom_description?: string;
   custom_width?: number;
@@ -55,8 +55,8 @@ export function transformOrderData(order: OrderTransformData, firstAttachmentId?
     product_title: order.product?.title,
     custom_description: order.custom_description,
     first_attachment_id: firstAttachmentId,
-    apparel_type_id: order.apparel_type_id,
-    apparel_type_name: order.apparel_type?.type_name,
+    category_id: order.category_id,
+    category_name: order.category?.category_name,
     custom_width: order.custom_width,
     custom_height: order.custom_height,
     status: order.status,
@@ -102,7 +102,7 @@ export const ORDER_SELECT_FIELDS = `
   *,
   customer:customers!inner(full_name, email, phone, company_name),
   product:products(title),
-  apparel_type:apparel_types(type_name),
+  category:categories(category_name),
   sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
   designer:employees!orders_assigned_designer_id_fkey(full_name)
 `;
@@ -111,7 +111,7 @@ export const ORDER_SELECT_FIELDS_CUSTOMER = `
   *,
   customer:customers!inner(full_name, email, phone, company_name),
   product:products(title),
-  apparel_type:apparel_types(type_name)
+  category:categories(category_name)
 `;
 
 export async function enrichOrdersWithAttachments(

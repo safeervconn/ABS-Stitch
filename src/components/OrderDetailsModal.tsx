@@ -189,10 +189,10 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">Specifications</h3>
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {order.apparel_type_name && (
+                      {order.category_name && (
                         <div>
-                          <p className="text-sm text-gray-500">Apparel Type</p>
-                          <p className="font-medium text-gray-800 capitalize">{order.apparel_type_name}</p>
+                          <p className="text-sm text-gray-500">Category</p>
+                          <p className="font-medium text-gray-800 capitalize">{order.category_name}</p>
                         </div>
                       )}
                       {order.custom_width && order.custom_height && (
