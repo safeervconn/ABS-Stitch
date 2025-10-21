@@ -156,9 +156,9 @@ export function subscribeToCustomers(
 
 export function subscribeTostockdesigns(
   callbacks: {
-    onInsert?: (product: any) => void;
-    onUpdate?: (product: any) => void;
-    onDelete?: (product: any) => void;
+    onInsert?: (stockdesign: any) => void;
+    onUpdate?: (stockdesign: any) => void;
+    onDelete?: (stockdesign: any) => void;
   }
 ): RealtimeChannel {
   return realtimeManager.subscribe('stockdesigns-all', {
