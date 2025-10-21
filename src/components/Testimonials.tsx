@@ -52,7 +52,7 @@ const Testimonials: React.FC = () => {
       company: "E-commerce Store",
       image: "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=150",
       rating: 5,
-      text: "Amazing artwork for our product line. Sales increased 40% after using their designs!"
+      text: "Amazing artwork for our Stock Design line. Sales increased 40% after using their designs!"
     },
     {
       id: 6,
