@@ -44,7 +44,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeTab, onTabCha
     { id: 'employees', label: 'Employees', icon: Users },
     { id: 'customers', label: 'Customers', icon: Users },
     { id: 'orders', label: 'Orders', icon: ShoppingBag },
-    { id: 'products', label: 'Products', icon: Package },
+    { id: 'stockdesigns', label: 'Products', icon: Package },
     { id: 'invoices', label: 'Invoices', icon: FileText },
   ];
 
