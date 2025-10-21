@@ -42,7 +42,7 @@ export interface Category {
   created_at: string;
 }
 
-export interface Product {
+export interface stockdesign {
   id: string;
   title: string;
   description?: string;
@@ -57,7 +57,7 @@ export interface Product {
 export interface Order {
   id: string;
   customer_id: string;
-  product_id?: string;
+  stockdesign_id?: string;
   custom_description?: string;
   file_url?: string;
   status: 'in_progress' | 'under_review' | 'completed' | 'cancelled';
@@ -88,7 +88,7 @@ export interface OrderLog {
 export interface Notification {
   id: number;
   user_id: string;
-  type: 'order' | 'user' | 'product' | 'system';
+  type: 'order' | 'user' | 'stockdesign' | 'system';
   message: string;
   read: boolean;
   created_at: string;
@@ -286,8 +286,8 @@ export const getDashboardRoute = (role: string): string | null => {
   }
 };
 
-// Product database functions
-export const getProducts = async (filters?: {
+// stockdesign database functions
+export const getstockdesigns = async (filters?: {
   category?: string;
   search?: string;
   sortBy?: string;
@@ -295,7 +295,7 @@ export const getProducts = async (filters?: {
   offset?: number;
 }) => {
   let query = supabase
-    .from('products')
+    .from('stockdesigns')
     .select(`
       *,
       category:categories(category_name)
@@ -336,7 +336,7 @@ export const getProducts = async (filters?: {
   const { data, error } = await query;
 
   if (error) {
-    console.error('Error fetching products:', error);
+    console.error('Error fetching Stock Designs:', error);
     return [];
   }
   return data;
@@ -358,9 +358,9 @@ export const getCategories = async () => {
 };
 
 
-export const getProductById = async (id: string) => {
+export const getstockdesignById = async (id: string) => {
   const { data, error } = await supabase
-    .from('products')
+    .from('stockdesigns')
     .select(`
       *,
       category:categories(category_name)
@@ -370,7 +370,7 @@ export const getProductById = async (id: string) => {
     .single();
 
   if (error) {
-    console.error('Error fetching product:', error);
+    console.error('Error fetching Stock Design:', error);
     throw error;
   }
   return data;
