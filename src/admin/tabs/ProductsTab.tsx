@@ -2,20 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Plus, CreditCard as Edit, Trash2, Eye, Package } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
-import EditProductModal from '../components/EditProductModal';
+import EditstockdesignModal from '../components/EditstockdesignModal';
 import ConfirmationModal from '../components/ConfirmationModal';
-import { createProduct, updateProduct, deleteProduct, getCategories } from '../api/supabaseHelpers';
-import { AdminProduct, Category, PaginationParams } from '../types';
+import { createstockdesign, updatestockdesign, deletestockdesign, getCategories } from '../api/supabaseHelpers';
+import { Adminstockdesign, Category, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
-import { getProducts } from '../api/supabaseHelpers';
+import { getstockdesigns } from '../api/supabaseHelpers';
 import { toast } from '../../utils/toast';
 import { getPlaceholderImage } from '../../lib/placeholderImages';
 import { CSVColumn } from '../../shared/utils/csvExport';
 
-const ProductsTab: React.FC = () => {
+const stockdesignsTab: React.FC = () => {
   // Use the new paginated data hook
-  const { data: products, params, loading, error, updateParams, refetch } = usePaginatedData(
-    getProducts,
+  const { data: stockdesigns, params, loading, error, updateParams, refetch } = usePaginatedData(
+    getstockdesigns,
     {
       page: 1,
       limit: 25,
@@ -45,11 +45,11 @@ const ProductsTab: React.FC = () => {
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
-  const [selectedProduct, setSelectedProduct] = useState<AdminProduct | null>(null);
+  const [selectedstockdesign, setSelectedstockdesign] = useState<Adminstockdesign | null>(null);
   
   // Confirmation modal states
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
-  const [productToDelete, setProductToDelete] = useState<AdminProduct | null>(null);
+  const [stockdesignToDelete, setstockdesignToDelete] = useState<Adminstockdesign | null>(null);
   
   // Categories for dropdown
   const [categories, setCategories] = useState<Category[]>([]);
@@ -140,40 +140,40 @@ const ProductsTab: React.FC = () => {
     updateParams(resetParams);
   };
 
-  const handleCreateProduct = () => {
+  const handleCreatestockdesign = () => {
     setModalMode('create');
-    setSelectedProduct(null);
+    setSelectedstockdesign(null);
     setIsModalOpen(true);
   };
 
-  const handleEditProduct = (product: AdminProduct) => {
+  const handleEditstockdesign = (stockdesign: Adminstockdesign) => {
     setModalMode('edit');
-    setSelectedProduct(product);
+    setSelectedstockdesign(stockdesign);
     setIsModalOpen(true);
   };
 
-  const handleDeleteProduct = (product: AdminProduct) => {
-    setProductToDelete(product);
+  const handleDeletestockdesign = (stockdesign: Adminstockdesign) => {
+    setstockdesignToDelete(stockdesign);
     setIsConfirmationOpen(true);
   };
 
   const handleConfirmDelete = async () => {
-    if (!productToDelete) return;
+    if (!stockdesignToDelete) return;
     
     try {
-      await deleteProduct(productToDelete.id);
+      await deletestockdesign(stockdesignToDelete.id);
       await refetch();
-      toast.success(`Product ${productToDelete.title} deleted successfully`);
+      toast.success(`Stock Design ${stockdesignToDelete.title} deleted successfully`);
       setIsConfirmationOpen(false);
-      setProductToDelete(null);
+      setstockdesignToDelete(null);
     } catch (error) {
-      console.error('Error deleting product:', error);
-      toast.error('Failed to delete product. Please try again.');
+      console.error('Error deleting Stock Design:', error);
+      toast.error('Failed to delete Stock Design. Please try again.');
     }
   };
 
   const handleModalSubmit = async (formData: any) => {
-    // This function is no longer needed as EditProductModal handles its own submission
+    // This function is no longer needed as EditstockdesignModal handles its own submission
     await refetch();
   };
 
@@ -181,42 +181,42 @@ const ProductsTab: React.FC = () => {
     {
       key: 'image',
       label: 'Image',
-      render: (product: AdminProduct) => (
+      render: (stockdesign: Adminstockdesign) => (
         <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
           <img
-            src={product.image_url || getPlaceholderImage('product')}
-            alt={product.title || 'Product image'}
+            src={stockdesign.image_url || getPlaceholderImage('Stock Design')}
+            alt={stockdesign.title || 'Stock Design image'}
             className="w-full h-full object-cover"
             onError={(e) => {
-              (e.target as HTMLImageElement).src = getPlaceholderImage('product');
+              (e.target as HTMLImageElement).src = getPlaceholderImage('Stock Design');
             }}
           />
         </div>
       ),
     },
-    { key: 'title', label: 'Product Title', sortable: true },
+    { key: 'title', label: 'Stock Design Title', sortable: true },
     {
       key: 'category_name',
       label: 'Category',
-      render: (product: AdminProduct) => product.category_name || 'No Category',
+      render: (stockdesign: Adminstockdesign) => stockdesign.category_name || 'No Category',
     },
     {
       key: 'price',
       label: 'Price',
       sortable: true,
-      render: (product: AdminProduct) => `$${product.price.toFixed(2)}`,
+      render: (stockdesign: Adminstockdesign) => `$${stockdesign.price.toFixed(2)}`,
     },
     {
       key: 'status',
       label: 'Status',
       sortable: true,
-      render: (product: AdminProduct) => (
+      render: (stockdesign: Adminstockdesign) => (
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          product.status === 'active' 
+          stockdesign.status === 'active' 
             ? 'bg-green-100 text-green-800' 
             : 'bg-red-100 text-red-800'
         }`}>
-          {product.status}
+          {stockdesign.status}
         </span>
       ),
     },
@@ -224,24 +224,24 @@ const ProductsTab: React.FC = () => {
       key: 'created_at',
       label: 'Created At',
       sortable: true,
-      render: (product: AdminProduct) => new Date(product.created_at).toLocaleDateString(),
+      render: (stockdesign: Adminstockdesign) => new Date(stockdesign.created_at).toLocaleDateString(),
     },
     {
       key: 'actions',
       label: 'Actions',
-      render: (product: AdminProduct) => (
+      render: (stockdesign: Adminstockdesign) => (
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => handleEditProduct(product)}
+            onClick={() => handleEditstockdesign(stockdesign)}
             className="text-blue-600 hover:text-blue-900 transition-colors"
-            title="Edit Product"
+            title="Edit Stock Design"
           >
             <Edit className="h-4 w-4" />
           </button>
           <button
-            onClick={() => handleDeleteProduct(product)}
+            onClick={() => handleDeletestockdesign(stockdesign)}
             className="text-red-600 hover:text-red-900 transition-colors"
-            title="Delete Product"
+            title="Delete Stock Design"
           >
             <Trash2 className="h-4 w-4" />
           </button>
@@ -250,19 +250,19 @@ const ProductsTab: React.FC = () => {
     },
   ];
 
-  const csvColumns: CSVColumn<AdminProduct>[] = [
-    { key: 'title', label: 'Product Title' },
+  const csvColumns: CSVColumn<Adminstockdesign>[] = [
+    { key: 'title', label: 'Stock Design Title' },
     { key: 'category_name', label: 'Category' },
     {
       key: 'price',
       label: 'Price',
-      format: (product) => product.price.toFixed(2)
+      format: (stockdesign) => stockdesign.price.toFixed(2)
     },
     { key: 'status', label: 'Status' },
     {
       key: 'created_at',
       label: 'Created Date',
-      format: (product) => new Date(product.created_at).toLocaleDateString()
+      format: (stockdesign) => new Date(stockdesign.created_at).toLocaleDateString()
     },
   ];
 
@@ -272,15 +272,15 @@ const ProductsTab: React.FC = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Product Management</h2>
-            <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your product catalog</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Stock Design Management</h2>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your Stock Design Catalog</p>
           </div>
           <button
-            onClick={handleCreateProduct}
+            onClick={handleCreatestockdesign}
             className="btn-primary flex items-center space-x-2"
           >
             <Plus className="h-4 w-4" />
-            <span>Add Product</span>
+            <span>Add Stock Design</span>
           </button>
         </div>
 
@@ -288,12 +288,12 @@ const ProductsTab: React.FC = () => {
         <FilterBar
           searchValue={params.search || ''}
           onSearchChange={handleSearch}
-          searchPlaceholder="Search products by title or description..."
+          searchPlaceholder="Search Stock Designs by title or description..."
           filters={filterConfigs}
           filterValues={filterValues}
           onFilterChange={handleFilterChange}
           onClearFilters={handleClearFilters}
-          resultCount={products.total}
+          resultCount={stockdesigns.total}
           loading={loading}
         />
 
@@ -304,23 +304,23 @@ const ProductsTab: React.FC = () => {
           </div>
         )}
 
-        {/* Products Table */}
+        {/* Stock Design Table */}
         <DataTable
-        data={products}
+        data={stockdesigns}
         columns={columns}
         onParamsChange={handleParamsChange}
         currentParams={params}
         loading={loading}
-        csvFilename="products_filtered"
+        csvFilename="stockdesigns_filtered"
         csvColumns={csvColumns}
       />
 
 
-        {/* Product Modal */}
-        <EditProductModal
+        {/* Stock Design Modal */}
+        <EditstockdesignModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          product={selectedProduct}
+          stockdesign={selectedstockdesign}
           mode={modalMode}
           onSuccess={() => {
             setIsModalOpen(false);
@@ -333,11 +333,11 @@ const ProductsTab: React.FC = () => {
           isOpen={isConfirmationOpen}
           onClose={() => {
             setIsConfirmationOpen(false);
-            setProductToDelete(null);
+            setstockdesignToDelete(null);
           }}
           onConfirm={handleConfirmDelete}
-          title="Delete Product"
-          message={`Are you sure you want to delete "${productToDelete?.title}"? This action cannot be undone.`}
+          title="Delete Stock Design"
+          message={`Are you sure you want to delete "${stockdesignToDelete?.title}"? This action cannot be undone.`}
           confirmText="Delete"
           cancelText="Cancel"
           type="danger"
@@ -347,4 +347,4 @@ const ProductsTab: React.FC = () => {
   );
 };
 
-export default ProductsTab;
+export default stockdesignsTab;
