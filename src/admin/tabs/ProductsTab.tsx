@@ -2,20 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Plus, CreditCard as Edit, Trash2, Eye, Package } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
-import EditstockdesignModal from '../components/EditstockdesignModal';
+import EditStockDesignModal from '../components/EditStockDesignModal';
 import ConfirmationModal from '../components/ConfirmationModal';
-import { createstockdesign, updatestockdesign, deletestockdesign, getCategories } from '../api/supabaseHelpers';
-import { Adminstockdesign, Category, PaginationParams } from '../types';
+import { createStockDesign, updateStockDesign, deleteStockDesign, getCategories } from '../api/supabaseHelpers';
+import { AdminStockDesign, Category, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
-import { getstockdesigns } from '../api/supabaseHelpers';
+import { getStockDesigns } from '../api/supabaseHelpers';
 import { toast } from '../../utils/toast';
 import { getPlaceholderImage } from '../../lib/placeholderImages';
 import { CSVColumn } from '../../shared/utils/csvExport';
 
-const stockdesignsTab: React.FC = () => {
+const StockDesignsTab: React.FC = () => {
   // Use the new paginated data hook
-  const { data: stockdesigns, params, loading, error, updateParams, refetch } = usePaginatedData(
-    getstockdesigns,
+  const { data: stockDesigns, params, loading, error, updateParams, refetch } = usePaginatedData(
+    getStockDesigns,
     {
       page: 1,
       limit: 25,
@@ -45,11 +45,11 @@ const stockdesignsTab: React.FC = () => {
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
-  const [selectedstockdesign, setSelectedstockdesign] = useState<Adminstockdesign | null>(null);
-  
+  const [selectedStockDesign, setSelectedStockDesign] = useState<AdminStockDesign | null>(null);
+
   // Confirmation modal states
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
-  const [stockdesignToDelete, setstockdesignToDelete] = useState<Adminstockdesign | null>(null);
+  const [stockDesignToDelete, setStockDesignToDelete] = useState<AdminStockDesign | null>(null);
   
   // Categories for dropdown
   const [categories, setCategories] = useState<Category[]>([]);
@@ -140,32 +140,32 @@ const stockdesignsTab: React.FC = () => {
     updateParams(resetParams);
   };
 
-  const handleCreatestockdesign = () => {
+  const handleCreateStockDesign = () => {
     setModalMode('create');
-    setSelectedstockdesign(null);
+    setSelectedStockDesign(null);
     setIsModalOpen(true);
   };
 
-  const handleEditstockdesign = (stockdesign: Adminstockdesign) => {
+  const handleEditStockDesign = (stockDesign: AdminStockDesign) => {
     setModalMode('edit');
-    setSelectedstockdesign(stockdesign);
+    setSelectedStockDesign(stockDesign);
     setIsModalOpen(true);
   };
 
-  const handleDeletestockdesign = (stockdesign: Adminstockdesign) => {
-    setstockdesignToDelete(stockdesign);
+  const handleDeleteStockDesign = (stockDesign: AdminStockDesign) => {
+    setStockDesignToDelete(stockDesign);
     setIsConfirmationOpen(true);
   };
 
   const handleConfirmDelete = async () => {
-    if (!stockdesignToDelete) return;
-    
+    if (!stockDesignToDelete) return;
+
     try {
-      await deletestockdesign(stockdesignToDelete.id);
+      await deleteStockDesign(stockDesignToDelete.id);
       await refetch();
-      toast.success(`Stock Design ${stockdesignToDelete.title} deleted successfully`);
+      toast.success(`Stock Design ${stockDesignToDelete.title} deleted successfully`);
       setIsConfirmationOpen(false);
-      setstockdesignToDelete(null);
+      setStockDesignToDelete(null);
     } catch (error) {
       console.error('Error deleting Stock Design:', error);
       toast.error('Failed to delete Stock Design. Please try again.');
@@ -173,7 +173,7 @@ const stockdesignsTab: React.FC = () => {
   };
 
   const handleModalSubmit = async (formData: any) => {
-    // This function is no longer needed as EditstockdesignModal handles its own submission
+    // This function is no longer needed as EditStockDesignModal handles its own submission
     await refetch();
   };
 
@@ -181,14 +181,14 @@ const stockdesignsTab: React.FC = () => {
     {
       key: 'image',
       label: 'Image',
-      render: (stockdesign: Adminstockdesign) => (
+      render: (stockDesign: AdminStockDesign) => (
         <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
           <img
-            src={stockdesign.image_url || getPlaceholderImage('Stock Design')}
-            alt={stockdesign.title || 'Stock Design image'}
+            src={stockDesign.image_url || getPlaceholderImage('stock_design')}
+            alt={stockDesign.title || 'Stock Design image'}
             className="w-full h-full object-cover"
             onError={(e) => {
-              (e.target as HTMLImageElement).src = getPlaceholderImage('Stock Design');
+              (e.target as HTMLImageElement).src = getPlaceholderImage('stock_design');
             }}
           />
         </div>
@@ -198,25 +198,25 @@ const stockdesignsTab: React.FC = () => {
     {
       key: 'category_name',
       label: 'Category',
-      render: (stockdesign: Adminstockdesign) => stockdesign.category_name || 'No Category',
+      render: (stockDesign: AdminStockDesign) => stockDesign.category_name || 'No Category',
     },
     {
       key: 'price',
       label: 'Price',
       sortable: true,
-      render: (stockdesign: Adminstockdesign) => `$${stockdesign.price.toFixed(2)}`,
+      render: (stockDesign: AdminStockDesign) => `$${stockDesign.price.toFixed(2)}`,
     },
     {
       key: 'status',
       label: 'Status',
       sortable: true,
-      render: (stockdesign: Adminstockdesign) => (
+      render: (stockDesign: AdminStockDesign) => (
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          stockdesign.status === 'active' 
-            ? 'bg-green-100 text-green-800' 
+          stockDesign.status === 'active'
+            ? 'bg-green-100 text-green-800'
             : 'bg-red-100 text-red-800'
         }`}>
-          {stockdesign.status}
+          {stockDesign.status}
         </span>
       ),
     },
@@ -224,22 +224,22 @@ const stockdesignsTab: React.FC = () => {
       key: 'created_at',
       label: 'Created At',
       sortable: true,
-      render: (stockdesign: Adminstockdesign) => new Date(stockdesign.created_at).toLocaleDateString(),
+      render: (stockDesign: AdminStockDesign) => new Date(stockDesign.created_at).toLocaleDateString(),
     },
     {
       key: 'actions',
       label: 'Actions',
-      render: (stockdesign: Adminstockdesign) => (
+      render: (stockDesign: AdminStockDesign) => (
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => handleEditstockdesign(stockdesign)}
+            onClick={() => handleEditStockDesign(stockDesign)}
             className="text-blue-600 hover:text-blue-900 transition-colors"
             title="Edit Stock Design"
           >
             <Edit className="h-4 w-4" />
           </button>
           <button
-            onClick={() => handleDeletestockdesign(stockdesign)}
+            onClick={() => handleDeleteStockDesign(stockDesign)}
             className="text-red-600 hover:text-red-900 transition-colors"
             title="Delete Stock Design"
           >
@@ -250,19 +250,19 @@ const stockdesignsTab: React.FC = () => {
     },
   ];
 
-  const csvColumns: CSVColumn<Adminstockdesign>[] = [
+  const csvColumns: CSVColumn<AdminStockDesign>[] = [
     { key: 'title', label: 'Stock Design Title' },
     { key: 'category_name', label: 'Category' },
     {
       key: 'price',
       label: 'Price',
-      format: (stockdesign) => stockdesign.price.toFixed(2)
+      format: (stockDesign) => stockDesign.price.toFixed(2)
     },
     { key: 'status', label: 'Status' },
     {
       key: 'created_at',
       label: 'Created Date',
-      format: (stockdesign) => new Date(stockdesign.created_at).toLocaleDateString()
+      format: (stockDesign) => new Date(stockDesign.created_at).toLocaleDateString()
     },
   ];
 
@@ -276,7 +276,7 @@ const stockdesignsTab: React.FC = () => {
             <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your Stock Design Catalog</p>
           </div>
           <button
-            onClick={handleCreatestockdesign}
+            onClick={handleCreateStockDesign}
             className="btn-primary flex items-center space-x-2"
           >
             <Plus className="h-4 w-4" />
@@ -293,7 +293,7 @@ const stockdesignsTab: React.FC = () => {
           filterValues={filterValues}
           onFilterChange={handleFilterChange}
           onClearFilters={handleClearFilters}
-          resultCount={stockdesigns.total}
+          resultCount={stockDesigns.total}
           loading={loading}
         />
 
@@ -306,21 +306,21 @@ const stockdesignsTab: React.FC = () => {
 
         {/* Stock Design Table */}
         <DataTable
-        data={stockdesigns}
+        data={stockDesigns}
         columns={columns}
         onParamsChange={handleParamsChange}
         currentParams={params}
         loading={loading}
-        csvFilename="stockdesigns_filtered"
+        csvFilename="stock_designs_filtered"
         csvColumns={csvColumns}
       />
 
 
         {/* Stock Design Modal */}
-        <EditstockdesignModal
+        <EditStockDesignModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          stockdesign={selectedstockdesign}
+          stockDesign={selectedStockDesign}
           mode={modalMode}
           onSuccess={() => {
             setIsModalOpen(false);
@@ -333,11 +333,11 @@ const stockdesignsTab: React.FC = () => {
           isOpen={isConfirmationOpen}
           onClose={() => {
             setIsConfirmationOpen(false);
-            setstockdesignToDelete(null);
+            setStockDesignToDelete(null);
           }}
           onConfirm={handleConfirmDelete}
           title="Delete Stock Design"
-          message={`Are you sure you want to delete "${stockdesignToDelete?.title}"? This action cannot be undone.`}
+          message={`Are you sure you want to delete "${stockDesignToDelete?.title}"? This action cannot be undone.`}
           confirmText="Delete"
           cancelText="Cancel"
           type="danger"
@@ -347,4 +347,4 @@ const stockdesignsTab: React.FC = () => {
   );
 };
 
-export default stockdesignsTab;
+export default StockDesignsTab;

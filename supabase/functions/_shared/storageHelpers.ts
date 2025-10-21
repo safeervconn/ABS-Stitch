@@ -2,7 +2,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2';
 
 export const STORAGE_BUCKETS = {
   ORDER_ATTACHMENTS: 'order-attachments',
-  PRODUCT_IMAGES: 'product-images',
+  STOCK_DESIGN_IMAGES: 'stock-design-images',
 } as const;
 
 export function sanitizeFilename(filename: string): string {
@@ -21,11 +21,11 @@ export function generateStoredFilename(originalFilename: string): string {
   return `${uuid}-${sanitized}${extension}`;
 }
 
-export function generateStoragePath(type: 'order' | 'product', orderNumber: string | null, filename: string): string {
+export function generateStoragePath(type: 'order' | 'stock_design', orderNumber: string | null, filename: string): string {
   if (type === 'order' && orderNumber) {
     return `orders/${orderNumber}/${filename}`;
   }
-  return `product-images/${filename}`;
+  return `stock-design-images/${filename}`;
 }
 
 export async function uploadToSupabaseStorage(

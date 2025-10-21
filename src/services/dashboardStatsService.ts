@@ -5,7 +5,7 @@ export interface DashboardStats {
   newCustomersThisMonth?: number;
   totalRevenueThisMonth?: number;
   inProgressOrders?: number;
-  activestockdesigns?: number;
+  activeStockDesigns?: number;
   newOrdersCount?: number;
   underReviewOrdersCount?: number;
   inProgressOrdersCount?: number;
@@ -22,7 +22,7 @@ export async function getAdminDashboardStats(): Promise<DashboardStats> {
       newCustomersThisMonth: 0,
       totalRevenueThisMonth: 0,
       inProgressOrders: 0,
-      activestockdesigns: 0,
+      activeStockDesigns: 0,
       newOrdersCount: 0,
       underReviewOrdersCount: 0,
     };
@@ -33,7 +33,7 @@ export async function getAdminDashboardStats(): Promise<DashboardStats> {
       newCustomersThisMonth: 0,
       totalRevenueThisMonth: 0,
       inProgressOrders: 0,
-      activestockdesigns: 0,
+      activeStockDesigns: 0,
       newOrdersCount: 0,
       underReviewOrdersCount: 0,
     };

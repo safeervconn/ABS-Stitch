@@ -80,43 +80,43 @@ const CatalogPreview: React.FC = () => {
         {/* Stock Designs Grid */}
         {!loading && stockDesigns.length > 0 && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {stockDesigns.map((product) => (
-              <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                
-                {/* Product Image */}
+            {stockDesigns.map((stockDesign) => (
+              <div key={stockDesign.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+
+                {/* Stock Design Image */}
                 <div className="relative group">
                   <img
-                    src={getImageSrc(product.image_url, 'product')}
-                    alt={product.title || 'Product image'}
+                    src={getImageSrc(stockDesign.image_url, 'stock_design')}
+                    alt={stockDesign.title || 'Stock Design image'}
                     className="w-full h-48 object-cover"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = getPlaceholderImage('product');
+                      (e.target as HTMLImageElement).src = getPlaceholderImage('stock_design');
                     }}
                   />
                 </div>
 
-               {/* Product Info - Flex layout to push button to bottom */}
+               {/* Stock Design Info - Flex layout to push button to bottom */}
                 <div className="p-6 flex flex-col flex-grow">
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors text-lg">
-                      {product.title}
+                      {stockDesign.title}
                     </h3>
                     <div className="text-right">
-                      <span className="text-blue-600 font-bold text-xl">${product.price.toFixed(2)}</span>
+                      <span className="text-blue-600 font-bold text-xl">${stockDesign.price.toFixed(2)}</span>
                     </div>
                   </div>
-                  
-                  <p className="text-blue-500 text-sm mb-2 font-medium">{product.category?.category_name}</p>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed flex-grow">{product.description}</p>
-                  
+
+                  <p className="text-blue-500 text-sm mb-2 font-medium">{stockDesign.category?.category_name}</p>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed flex-grow">{stockDesign.description}</p>
+
                   {/* Add to Cart Button */}
                   <AddToCartButton
                     item={{
-                      id: product.id,
-                      title: product.title,
-                      price: `$${product.price.toFixed(2)}`,
-                      image: getImageSrc(product.image_url, 'product'),
-                      apparelType: product.category?.category_name || 'Uncategorized'
+                      id: stockDesign.id,
+                      title: stockDesign.title,
+                      price: `$${stockDesign.price.toFixed(2)}`,
+                      image: getImageSrc(stockDesign.image_url, 'stock_design'),
+                      apparelType: stockDesign.category?.category_name || 'Uncategorized'
                     }}
                     className="w-full shadow-lg transform hover:scale-105 mt-auto"
                   />

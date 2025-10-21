@@ -41,20 +41,20 @@ Deno.serve(async (req: Request) => {
       }
 
       const storedFilename = generateStoredFilename(file.name);
-      const storagePath = generateStoragePath('product', null, storedFilename);
+      const storagePath = generateStoragePath('stock_design', null, storedFilename);
 
       const arrayBuffer = await file.arrayBuffer();
       const fileData = new Uint8Array(arrayBuffer);
 
       await uploadToSupabaseStorage(
         supabaseClient,
-        STORAGE_BUCKETS.PRODUCT_IMAGES,
+        STORAGE_BUCKETS.STOCK_DESIGN_IMAGES,
         storagePath,
         fileData,
         file.type
       );
 
-      const publicUrl = getPublicUrl(STORAGE_BUCKETS.PRODUCT_IMAGES, storagePath);
+      const publicUrl = getPublicUrl(STORAGE_BUCKETS.STOCK_DESIGN_IMAGES, storagePath);
 
       return jsonResponse({ success: true, publicUrl, storagePath });
     }
@@ -67,7 +67,7 @@ Deno.serve(async (req: Request) => {
         return errorResponse('Missing storagePath', 400);
       }
 
-      await deleteFromSupabaseStorage(supabaseClient, STORAGE_BUCKETS.PRODUCT_IMAGES, storagePath);
+      await deleteFromSupabaseStorage(supabaseClient, STORAGE_BUCKETS.STOCK_DESIGN_IMAGES, storagePath);
 
       return jsonResponse({ success: true });
     }
@@ -75,7 +75,7 @@ Deno.serve(async (req: Request) => {
     return errorResponse('Method not allowed', 405);
 
   } catch (error) {
-    console.error('Error in manage-product-image function:', error);
+    console.error('Error in manage-stock-design-image function:', error);
     return errorResponse(error.message || 'Internal server error', 500);
   }
 });

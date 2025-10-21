@@ -993,7 +993,7 @@ export const getDesigners = async (): Promise<AdminUser[]> => {
 // Utility Functions
 export const createNotification = async (
   userId: string,
-  type: 'order' | 'user' | 'stockdesign' | 'system',
+  type: 'order' | 'user' | 'stock_design' | 'system',
   message: string
 ): Promise<void> => {
   try {

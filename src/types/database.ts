@@ -99,7 +99,7 @@ export interface Database {
         Row: {
           id: number;
           user_id: string;
-          type: 'order' | 'user' | 'product' | 'system';
+          type: 'order' | 'user' | 'stock_design' | 'system';
           message: string;
           read: boolean;
           created_at: string;
@@ -142,7 +142,7 @@ export interface Database {
           customer_email: string;
           customer_phone: string | null;
           customer_company_name: string | null;
-          product_title: string | null;
+          stock_design_title: string | null;
           category_name: string | null;
           sales_rep_name: string | null;
           designer_name: string | null;
@@ -166,7 +166,7 @@ export interface Database {
           newCustomersThisMonth: number;
           totalRevenueThisMonth: number;
           inProgressOrders: number;
-          activeProducts: number;
+          activeStockDesigns: number;
           newOrdersCount: number;
           underReviewOrdersCount: number;
         };

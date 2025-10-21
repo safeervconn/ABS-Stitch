@@ -169,11 +169,11 @@ const Catalog: React.FC = () => {
                 {/* Stock Design Image */}
                 <div className="relative">
                   <img
-                    src={getImageSrc(stockDesign.image_url, 'Stock Design')}
+                    src={getImageSrc(stockDesign.image_url, 'stock_design')}
                     alt={stockDesign.title || 'Stock Design image'}
                     className="w-full h-48 object-cover"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = getPlaceholderImage('Stock Design');
+                      (e.target as HTMLImageElement).src = getPlaceholderImage('stock_design');
                     }}
                   />
                 </div>
@@ -204,7 +204,7 @@ const Catalog: React.FC = () => {
                       id: stockDesign.id,
                       title: stockDesign.title,
                       price: `$${stockDesign.price.toFixed(2)}`,
-                      image: getImageSrc(stockDesign.image_url, 'Stock Design'),
+                      image: getImageSrc(stockDesign.image_url, 'stock_design'),
                       apparelType: stockDesign.category?.category_name || 'Uncategorized',
                     }}
                     className="w-full shadow-lg transform hover:scale-105 mt-auto"
