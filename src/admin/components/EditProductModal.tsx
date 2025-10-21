@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Loader, Upload, Trash2, Eye, Package } from 'lucide-react';
-import { createProduct, updateProduct, getCategories, deleteFileFromStorage } from '../api/supabaseHelpers';
-import { AdminProduct, Category } from '../types';
+import { createstockdesign, updatestockdesign, getCategories, deleteFileFromStorage } from '../api/supabaseHelpers';
+import { Adminstockdesign, Category } from '../types';
 import { supabase } from '../../lib/supabase';
 import { toast } from '../../utils/toast';
 
-interface EditProductModalProps {
+interface EditstockdesignModalProps {
   isOpen: boolean;
   onClose: () => void;
-  product: AdminProduct | null;
+  stockdesign: Adminstockdesign | null;
   onSuccess: () => void;
   mode: 'create' | 'edit';
 }
 
-const EditProductModal: React.FC<EditProductModalProps> = ({
+const EditstockdesignModal: React.FC<EditstockdesignModalProps> = ({
   isOpen,
   onClose,
-  product,
+  stockdesign,
   onSuccess,
   mode,
 }) => {
@@ -38,16 +38,16 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      if (mode === 'edit' && product) {
+      if (mode === 'edit' && stockdesign) {
         // Initialize form data for editing
         setFormData({
-          title: product.title,
-          description: product.description || '',
-          category_id: product.category_id || '',
-          price: product.price,
-          status: product.status,
+          title: stockdesign.title,
+          description: stockdesign.description || '',
+          category_id: stockdesign.category_id || '',
+          price: stockdesign.price,
+          status: stockdesign.status,
         });
-        setExistingImageUrl(product.image_url || '');
+        setExistingImageUrl(stockdesign.image_url || '');
       } else {
         // Initialize form data for creation
         setFormData({
@@ -65,7 +65,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
       setError('');
       fetchCategories();
     }
-  }, [isOpen, mode, product]);
+  }, [isOpen, mode, stockdesign]);
 
   const fetchCategories = async () => {
     try {
@@ -120,7 +120,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     const fileName = `${timestamp}-${randomStr}${ext}`;
 
     const { error: uploadError } = await supabase.storage
-      .from('product-images')
+      .from('stockdesign-images')
       .upload(fileName, newImageFile, {
         contentType: newImageFile.type,
         cacheControl: '3600',
@@ -132,7 +132,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     }
 
     const { data } = supabase.storage
-      .from('product-images')
+      .from('stockdesign-images')
       .getPublicUrl(fileName);
 
     return data.publicUrl;
@@ -142,7 +142,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     e.preventDefault();
     
     if (!formData.title.trim()) {
-      setError('Product title is required');
+      setError('stockdesign title is required');
       return;
     }
 
@@ -167,29 +167,29 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 
       // Delete old image if marked for deletion
       if (imageToDelete) {
-        await deleteFileFromStorage(imageToDelete, 'product-images');
+        await deleteFileFromStorage(imageToDelete, 'stockdesign-images');
       }
 
-      // Create or update product
-      const productData = {
+      // Create or update stockdesign
+      const stockdesignData = {
         ...formData,
         image_url: finalImageUrl || null,
       };
 
       if (mode === 'create') {
-        await createProduct(productData);
-        toast.success('Product created successfully');
-      } else if (product) {
-        await updateProduct(product.id, productData);
-        toast.success('Product updated successfully');
+        await createstockdesign(stockdesignData);
+        toast.success('stockdesign created successfully');
+      } else if (stockdesign) {
+        await updatestockdesign(stockdesign.id, stockdesignData);
+        toast.success('stockdesign updated successfully');
       }
 
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error saving product:', error);
-      toast.error(`Failed to ${mode === 'create' ? 'create' : 'update'} product`);
-      setError('Failed to save product. Please try again.');
+      console.error('Error saving stockdesign:', error);
+      toast.error(`Failed to ${mode === 'create' ? 'create' : 'update'} stockdesign`);
+      setError('Failed to save stockdesign. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -221,10 +221,10 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <div>
               <h2 className="text-xl font-semibold text-gray-900">
-                {mode === 'create' ? 'Add New Product' : 'Edit Product'}
+                {mode === 'create' ? 'Add New stockdesign' : 'Edit stockdesign'}
               </h2>
-              {mode === 'edit' && product && (
-                <p className="text-gray-600">{product.title}</p>
+              {mode === 'edit' && stockdesign && (
+                <p className="text-gray-600">{stockdesign.title}</p>
               )}
             </div>
             <button
@@ -248,15 +248,15 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="loading-spinner mr-2"></div>
-                <span className="text-gray-600">Loading product data...</span>
+                <span className="text-gray-600">Loading stockdesign data...</span>
               </div>
             ) : (
               <>
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
-                  {/* Product Title */}
+                  {/* stockdesign Title */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Product Title *
+                      stockdesign Title *
                     </label>
                     <input
                       type="text"
@@ -264,7 +264,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                       value={formData.title}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      placeholder="Enter product title"
+                      placeholder="Enter stockdesign title"
                       required
                     />
                   </div>
@@ -336,14 +336,14 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                     onChange={handleInputChange}
                     rows={4}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    placeholder="Enter product description"
+                    placeholder="Enter stockdesign description"
                   />
                 </div>
 
                 {/* Image Upload Section */}
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Product Image
+                    stockdesign Image
                   </label>
                   
                   {/* Current Image Preview */}
@@ -351,7 +351,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                     <div className="relative inline-block">
                       <img
                         src={hasImage() ? getCurrentImageUrl() : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2YzZjRmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZSBBdmFpbGFibGU8L3RleHQ+PC9zdmc+'}
-                        alt={hasImage() ? "Product preview" : "No image"}
+                        alt={hasImage() ? "stockdesign preview" : "No image"}
                         className="w-32 h-32 object-cover rounded-lg border border-gray-200"
                       />
                       {hasImage() && (
@@ -387,7 +387,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                     >
                       <Upload className="h-5 w-5" />
                       <span>
-                        {hasImage() ? 'Replace image' : 'Click to upload product image'}
+                        {hasImage() ? 'Replace image' : 'Click to upload stockdesign image'}
                       </span>
                     </label>
                   </div>
@@ -418,7 +418,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                 ) : (
                   <>
                     <Save className="h-4 w-4" />
-                    <span>{mode === 'create' ? 'Create Product' : 'Update Product'}</span>
+                    <span>{mode === 'create' ? 'Create stockdesign' : 'Update stockdesign'}</span>
                   </>
                 )}
               </button>
@@ -430,4 +430,4 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
   );
 };
 
-export default EditProductModal;
+export default EditstockdesignModal;
