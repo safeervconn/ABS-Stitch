@@ -9,6 +9,7 @@ import { AdminCustomer, AdminUser, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { getCustomers } from '../api/supabaseHelpers';
 import { toast } from '../../utils/toast';
+import { CSVColumn } from '../../shared/utils/csvExport';
 
 const CustomersTab: React.FC = () => {
   // Use the new paginated data hook
@@ -280,6 +281,20 @@ const CustomersTab: React.FC = () => {
     },
   ];
 
+  const csvColumns: CSVColumn<AdminCustomer>[] = [
+    { key: 'full_name', label: 'Name' },
+    { key: 'email', label: 'Email' },
+    { key: 'phone', label: 'Phone' },
+    { key: 'company_name', label: 'Company' },
+    { key: 'assigned_sales_rep_name', label: 'Sales Rep' },
+    { key: 'status', label: 'Status' },
+    {
+      key: 'created_at',
+      label: 'Created Date',
+      format: (customer) => new Date(customer.created_at).toLocaleDateString()
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -319,6 +334,8 @@ const CustomersTab: React.FC = () => {
         onParamsChange={handleParamsChange}
         currentParams={params}
         loading={loading}
+        csvFilename="customers_filtered"
+        csvColumns={csvColumns}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

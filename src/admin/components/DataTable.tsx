@@ -1,6 +1,7 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Download } from 'lucide-react';
 import { PaginatedResponse, PaginationParams } from '../types';
+import { generateCSV, downloadCSV, formatDateForFilename, CSVColumn } from '../../shared/utils/csvExport';
 
 interface Column<T> {
   key: keyof T | string;
@@ -15,6 +16,8 @@ interface DataTableProps<T> {
   onParamsChange: (params: Partial<PaginationParams>) => void;
   currentParams: PaginationParams;
   loading?: boolean;
+  csvFilename?: string;
+  csvColumns?: CSVColumn<T>[];
 }
 
 function DataTable<T extends Record<string, any>>({
@@ -23,6 +26,8 @@ function DataTable<T extends Record<string, any>>({
   onParamsChange,
   currentParams,
   loading = false,
+  csvFilename = 'export',
+  csvColumns,
 }: DataTableProps<T>) {
   const handleSort = (columnKey: string) => {
     const newSortOrder = 
@@ -61,17 +66,60 @@ function DataTable<T extends Record<string, any>>({
     if (column.render) {
       return column.render(item);
     }
-    
+
     const value = item[column.key as keyof T];
     if (value === null || value === undefined) {
       return '-';
     }
-    
+
     return String(value);
+  };
+
+  const handleDownloadCSV = () => {
+    const columnsForCSV: CSVColumn<T>[] = csvColumns || columns
+      .filter(col => col.key !== 'actions' && col.key !== 'image')
+      .map(col => ({
+        key: col.key,
+        label: col.label,
+        format: (item: T) => {
+          const value = item[col.key as keyof T];
+          if (value === null || value === undefined) {
+            return '';
+          }
+          if (typeof value === 'object' && value !== null) {
+            return JSON.stringify(value);
+          }
+          return String(value);
+        }
+      }));
+
+    const csvContent = generateCSV(data.data, columnsForCSV);
+    const filename = `${csvFilename}_${formatDateForFilename()}.csv`;
+    downloadCSV(csvContent, filename);
   };
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full mx-auto" style={{ maxWidth: 'calc(100vw - 5rem)' }}>
+      {/* Header with Download Button */}
+      <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <div className="text-sm text-gray-600">
+          {data.total > 0 && (
+            <span>
+              Showing {(data.page - 1) * data.limit + 1} to {Math.min(data.page * data.limit, data.total)} of {data.total} results
+            </span>
+          )}
+        </div>
+        <button
+          onClick={handleDownloadCSV}
+          disabled={data.total === 0 || loading}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Download filtered data as CSV"
+        >
+          <Download className="h-4 w-4" />
+          <span>Download CSV</span>
+        </button>
+      </div>
+
       {/* Table */}
       <div className="overflow-x-auto w-full">
         <table className="w-full divide-y divide-gray-200">

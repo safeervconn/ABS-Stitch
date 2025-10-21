@@ -9,6 +9,7 @@ import { getCustomerOrdersPaginated } from '../../admin/api/supabaseHelpers';
 import { AdminOrder, PaginationParams } from '../../admin/types';
 import { usePaginatedData } from '../../admin/hooks/useAdminData';
 import { OrderImagePreview } from '../../components/OrderImagePreview';
+import { CSVColumn } from '../../shared/utils/csvExport';
 
 const CustomerOrdersTab: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
@@ -263,6 +264,37 @@ const CustomerOrdersTab: React.FC = () => {
     },
   ];
 
+  const csvColumns: CSVColumn<AdminOrder>[] = [
+    { key: 'order_number', label: 'Order Number' },
+    { key: 'order_name', label: 'Order Name' },
+    {
+      key: 'order_type',
+      label: 'Type',
+      format: (order) => order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'
+    },
+    { key: 'apparel_type_name', label: 'Apparel Type' },
+    {
+      key: 'total_amount',
+      label: 'Total Amount',
+      format: (order) => (order.total_amount || 0).toFixed(2)
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      format: (order) => order.status.replace('_', ' ')
+    },
+    {
+      key: 'payment_status',
+      label: 'Payment Status',
+      format: (order) => order.payment_status.replace('_', ' ')
+    },
+    {
+      key: 'created_at',
+      label: 'Created Date',
+      format: (order) => new Date(order.created_at).toLocaleDateString()
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -309,6 +341,8 @@ const CustomerOrdersTab: React.FC = () => {
         onParamsChange={handleParamsChange}
         currentParams={params}
         loading={loading}
+        csvFilename="my_orders_filtered"
+        csvColumns={csvColumns}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

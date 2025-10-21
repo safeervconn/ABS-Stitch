@@ -8,6 +8,7 @@ import { AdminOrder, AdminUser, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { getOrders } from '../api/supabaseHelpers';
 import { OrderImagePreview } from '../../components/OrderImagePreview';
+import { CSVColumn } from '../../shared/utils/csvExport';
 
 interface OrdersTabProps {
   onOrderClick: (order: AdminOrder) => void;
@@ -311,6 +312,34 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
     },
   ];
 
+  const csvColumns: CSVColumn<AdminOrder>[] = [
+    { key: 'order_number', label: 'Order Number' },
+    { key: 'order_name', label: 'Order Name' },
+    { key: 'customer_name', label: 'Customer' },
+    {
+      key: 'total_amount',
+      label: 'Total Amount',
+      format: (order) => (order.total_amount || 0).toFixed(2)
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      format: (order) => order.status.replace('_', ' ')
+    },
+    {
+      key: 'payment_status',
+      label: 'Payment Status',
+      format: (order) => order.payment_status.replace('_', ' ')
+    },
+    { key: 'assigned_sales_rep_name', label: 'Sales Rep' },
+    { key: 'assigned_designer_name', label: 'Designer' },
+    {
+      key: 'created_at',
+      label: 'Created Date',
+      format: (order) => new Date(order.created_at).toLocaleDateString()
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -350,6 +379,8 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
         onParamsChange={handleParamsChange}
         currentParams={params}
         loading={loading}
+        csvFilename="orders_filtered"
+        csvColumns={csvColumns}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

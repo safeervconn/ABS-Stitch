@@ -8,6 +8,7 @@ import { AdminUser, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { getUsers } from '../api/supabaseHelpers';
 import { toast } from '../../utils/toast';
+import { CSVColumn } from '../../shared/utils/csvExport';
 
 const EmployeesTab: React.FC = () => {
   // Use the new paginated data hook
@@ -250,6 +251,23 @@ const EmployeesTab: React.FC = () => {
     },
   ];
 
+  const csvColumns: CSVColumn<AdminUser>[] = [
+    { key: 'full_name', label: 'Name' },
+    { key: 'email', label: 'Email' },
+    { key: 'phone', label: 'Phone' },
+    {
+      key: 'role',
+      label: 'Role',
+      format: (employee) => employee.role.replace('_', ' ')
+    },
+    { key: 'status', label: 'Status' },
+    {
+      key: 'created_at',
+      label: 'Created Date',
+      format: (employee) => new Date(employee.created_at).toLocaleDateString()
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -313,6 +331,8 @@ const EmployeesTab: React.FC = () => {
         onParamsChange={handleParamsChange}
         currentParams={params}
         loading={loading}
+        csvFilename="employees_filtered"
+        csvColumns={csvColumns}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

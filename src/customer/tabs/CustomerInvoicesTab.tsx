@@ -7,6 +7,7 @@ import FilterBar, { FilterConfig } from '../../admin/components/FilterBar';
 import { getInvoices } from '../../admin/api/supabaseHelpers';
 import { Invoice, PaginationParams } from '../../admin/types';
 import { usePaginatedData } from '../../admin/hooks/useAdminData';
+import { CSVColumn } from '../../shared/utils/csvExport';
 
 const CustomerInvoicesTab: React.FC = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -223,6 +224,31 @@ const CustomerInvoicesTab: React.FC = () => {
     },
   ];
 
+  const csvColumns: CSVColumn<Invoice>[] = [
+    { key: 'invoice_title', label: 'Invoice Title' },
+    { key: 'month_year', label: 'Period' },
+    {
+      key: 'order_ids',
+      label: 'Number of Orders',
+      format: (invoice) => invoice.order_ids.length.toString()
+    },
+    {
+      key: 'total_amount',
+      label: 'Total Amount',
+      format: (invoice) => invoice.total_amount.toFixed(2)
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      format: (invoice) => invoice.status.replace('_', ' ')
+    },
+    {
+      key: 'created_at',
+      label: 'Created Date',
+      format: (invoice) => new Date(invoice.created_at).toLocaleDateString()
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -260,6 +286,8 @@ const CustomerInvoicesTab: React.FC = () => {
         onParamsChange={handleParamsChange}
         currentParams={params}
         loading={loading}
+        csvFilename="my_invoices_filtered"
+        csvColumns={csvColumns}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

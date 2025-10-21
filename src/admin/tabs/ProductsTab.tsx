@@ -10,6 +10,7 @@ import { usePaginatedData } from '../hooks/useAdminData';
 import { getProducts } from '../api/supabaseHelpers';
 import { toast } from '../../utils/toast';
 import { getPlaceholderImage } from '../../lib/placeholderImages';
+import { CSVColumn } from '../../shared/utils/csvExport';
 
 const ProductsTab: React.FC = () => {
   // Use the new paginated data hook
@@ -249,6 +250,22 @@ const ProductsTab: React.FC = () => {
     },
   ];
 
+  const csvColumns: CSVColumn<AdminProduct>[] = [
+    { key: 'title', label: 'Product Title' },
+    { key: 'apparel_type_name', label: 'Apparel Type' },
+    {
+      key: 'price',
+      label: 'Price',
+      format: (product) => product.price.toFixed(2)
+    },
+    { key: 'status', label: 'Status' },
+    {
+      key: 'created_at',
+      label: 'Created Date',
+      format: (product) => new Date(product.created_at).toLocaleDateString()
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -295,6 +312,8 @@ const ProductsTab: React.FC = () => {
         onParamsChange={handleParamsChange}
         currentParams={params}
         loading={loading}
+        csvFilename="products_filtered"
+        csvColumns={csvColumns}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
