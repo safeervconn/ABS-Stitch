@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase';
 
-export type NotificationType = 'order' | 'user' | 'product' | 'system';
+export type NotificationType = 'order' | 'user' | 'stockdesign' | 'system';
 
 export interface NotificationTemplate {
   type: NotificationType;
