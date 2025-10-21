@@ -4,7 +4,7 @@ export interface AdminStats {
   newCustomersThisMonth: number;
   totalRevenueThisMonth: number;
   inProgressOrders: number;
-  activeProducts: number;
+  activestockdesigns: number;
   newOrdersCount: number;
   underReviewOrdersCount: number;
 }
@@ -56,8 +56,8 @@ export interface AdminOrder {
   customer_email: string;
   customer_phone: string;
   customer_company_name: string;
-  product_id?: string;
-  product_title?: string;
+  stockdesign_id?: string;
+  stockdesign_title?: string;
   custom_description?: string;
   attachments?: OrderAttachment[];
   first_attachment_url?: string;
@@ -78,7 +78,7 @@ export interface AdminOrder {
   updated_at: string;
 }
 
-export interface AdminProduct {
+export interface Adminstockdesign {
   id: string;
   title: string;
   description?: string;
