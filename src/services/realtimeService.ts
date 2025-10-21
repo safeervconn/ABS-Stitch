@@ -1,7 +1,7 @@
 import { supabase } from '../lib/supabase';
 import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
-export type TableName = 'orders' | 'notifications' | 'customers' | 'employees' | 'products' | 'invoices' | 'order_comments';
+export type TableName = 'orders' | 'notifications' | 'customers' | 'employees' | 'stockdesigns' | 'invoices' | 'order_comments';
 export type ChangeType = 'INSERT' | 'UPDATE' | 'DELETE';
 
 export interface RealtimeSubscriptionOptions {
@@ -154,15 +154,15 @@ export function subscribeToCustomers(
   });
 }
 
-export function subscribeToProducts(
+export function subscribeTostockdesigns(
   callbacks: {
     onInsert?: (product: any) => void;
     onUpdate?: (product: any) => void;
     onDelete?: (product: any) => void;
   }
 ): RealtimeChannel {
-  return realtimeManager.subscribe('products-all', {
-    table: 'products',
+  return realtimeManager.subscribe('stockdesigns-all', {
+    table: 'stockdesigns',
     onInsert: (payload) => callbacks.onInsert?.(payload.new),
     onUpdate: (payload) => callbacks.onUpdate?.(payload.new),
     onDelete: (payload) => callbacks.onDelete?.(payload.old),
@@ -185,8 +185,8 @@ export function unsubscribeFromCustomers(): void {
   realtimeManager.unsubscribe('customers-all');
 }
 
-export function unsubscribeFromProducts(): void {
-  realtimeManager.unsubscribe('products-all');
+export function unsubscribeFromstockdesigns(): void {
+  realtimeManager.unsubscribe('stockdesigns-all');
 }
 
 export function unsubscribeAll(): void {
