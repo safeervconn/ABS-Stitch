@@ -296,13 +296,13 @@ const CustomersTab: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Customer Management</h2>
-            <p className="text-gray-600 mt-1">Manage customer accounts and relationships</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Customer Management</h2>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">Manage customer accounts and relationships</p>
           </div>
         </div>
 
@@ -321,14 +321,13 @@ const CustomersTab: React.FC = () => {
 
         {/* Error Display */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6">
-            <p className="text-red-700">{error}</p>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 mt-4 sm:mt-6">
+            <p className="text-sm sm:text-base text-red-700">{error}</p>
           </div>
         )}
-      </div>
 
-      {/* Customers Table */}
-      <DataTable
+        {/* Customers Table */}
+        <DataTable
         data={customers}
         columns={columns}
         onParamsChange={handleParamsChange}
@@ -338,7 +337,6 @@ const CustomersTab: React.FC = () => {
         csvColumns={csvColumns}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Customer Modal */}
         <CrudModal
           isOpen={isModalOpen}

@@ -102,7 +102,7 @@ const CustomerOverviewTab: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-4 sm:space-y-6">
       <div className="w-full px-4 sm:px-6 lg:px-8">
         {/* Welcome Section */}
         <div className="mb-6 sm:mb-8">

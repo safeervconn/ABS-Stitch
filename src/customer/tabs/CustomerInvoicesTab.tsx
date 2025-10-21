@@ -250,12 +250,14 @@ const CustomerInvoicesTab: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">My Invoices</h2>
-          <p className="text-gray-600 mt-1">View and manage your invoices</p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">My Invoices</h2>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">View and manage your invoices</p>
+          </div>
         </div>
 
         {/* Filter Bar */}
@@ -273,14 +275,13 @@ const CustomerInvoicesTab: React.FC = () => {
 
         {/* Error Display */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6">
-            <p className="text-red-700">{error}</p>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 mt-4 sm:mt-6">
+            <p className="text-sm sm:text-base text-red-700">{error}</p>
           </div>
         )}
-      </div>
 
-      {/* Invoices Table */}
-      <DataTable
+        {/* Invoices Table */}
+        <DataTable
         data={invoices}
         columns={columns}
         onParamsChange={handleParamsChange}
@@ -290,7 +291,7 @@ const CustomerInvoicesTab: React.FC = () => {
         csvColumns={csvColumns}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
         {/* Empty State for No Invoices */}
         {!loading && !error && invoices.total === 0 && !params.search && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 mt-6">
