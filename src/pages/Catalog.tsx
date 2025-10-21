@@ -13,7 +13,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Filter, Loader } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import AddToCartButton from '../components/AddToCartButton';
-import { getProducts, getCategories } from '../lib/supabase';
+import { getstockdesigns, getCategories } from '../lib/supabase';
 import { getImageSrc, getPlaceholderImage } from '../lib/placeholderImages';
 
 interface Product {
@@ -32,7 +32,7 @@ interface Category {
 }
 
 const Catalog: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [stockdesigns, setstockdesigns] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -42,14 +42,14 @@ const Catalog: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
 
-  // Fetch products and apparel types
+  // Fetch stockdesigns and apparel types
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        const [productsData, categoriesData] = await Promise.all([
-          getProducts({
+        const [stockdesignsData, categoriesData] = await Promise.all([
+          getstockdesigns({
             category: selectedCategory,
             search: searchTerm,
             sortBy: sortBy,
@@ -57,10 +57,10 @@ const Catalog: React.FC = () => {
           getCategories(),
         ]);
 
-        setProducts(productsData || []);
+        setstockdesigns(stockdesignsData || []);
         setCategories(categoriesData || []);
       } catch (err: any) {
-        setError(err.message || 'Failed to load products');
+        setError(err.message || 'Failed to load Stock Designs');
         console.error('Error fetching catalog data:', err);
       } finally {
         setLoading(false);
@@ -136,7 +136,7 @@ const Catalog: React.FC = () => {
             {/* Results Count */}
             <div className="flex items-center text-gray-600">
               <Filter className="h-5 w-5 mr-2" />
-              <span>{products.length} results</span>
+              <span>{stockdesigns.length} results</span>
             </div>
           </div>
         </div>
@@ -153,15 +153,15 @@ const Catalog: React.FC = () => {
           <div className="flex items-center justify-center py-16">
             <div className="text-center">
               <div className="loading-spinner mx-auto mb-4"></div>
-              <p className="text-gray-600 font-medium">Loading products...</p>
+              <p className="text-gray-600 font-medium">Loading Stock Designs...</p>
             </div>
           </div>
         )}
 
-        {/* Products Grid */}
+        {/* Stock Designs Grid */}
         {!loading && !error && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => (
+            {stockdesigns.map((product) => (
               <div
                 key={product.id}
                 className="glass rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 group transform hover:scale-105 flex flex-col"
@@ -216,11 +216,11 @@ const Catalog: React.FC = () => {
         )}
 
         {/* Empty State */}
-        {!loading && !error && products.length === 0 && (
+        {!loading && !error && stockdesigns.length === 0 && (
           <div className="text-center py-16">
             <div className="glass rounded-2xl shadow-2xl p-12 max-w-md mx-auto">
               <Filter className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-800 mb-2">No products found</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">No Stock Designs found</h3>
               <p className="text-gray-600 mb-6">Try adjusting your search or filter criteria</p>
               <button
                 onClick={() => {
