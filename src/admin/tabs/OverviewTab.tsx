@@ -151,7 +151,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
       </div>
 
       {/* Recent Orders */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 mx-auto" style={{ maxWidth: 'calc(100vw - 2rem)' }}>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 mx-auto" style={{ maxWidth: 'calc(100vw - 5rem)' }}>
         <div className="p-6 border-b border-gray-100">
           <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
           <p className="text-sm text-gray-600 mt-1">Last 10 orders across all customers</p>
