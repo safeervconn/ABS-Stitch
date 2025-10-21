@@ -11,7 +11,7 @@ import {
 interface Notification {
   id: number;
   user_id: string;
-  type: 'order' | 'user' | 'product' | 'system';
+  type: 'order' | 'user' | 'stockdesign' | 'system';
   message: string;
   read: boolean;
   created_at: string;
@@ -117,7 +117,7 @@ const NotificationDropdown: React.FC = () => {
     switch (type) {
       case 'order': return '📦';
       case 'user': return '👤';
-      case 'product': return '🛍️';
+      case 'stockdesign': return '🛍️';
       case 'system': return '⚙️';
       default: return '📢';
     }
