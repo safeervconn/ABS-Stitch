@@ -71,7 +71,7 @@ function DataTable<T extends Record<string, any>>({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full mx-auto" style={{ maxWidth: 'calc(100vw - 2rem)' }}>
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full mx-auto" style={{ maxWidth: 'calc(100vw - 5rem)' }}>
       {/* Table */}
       <div className="overflow-x-auto w-full">
         <table className="w-full divide-y divide-gray-200">
