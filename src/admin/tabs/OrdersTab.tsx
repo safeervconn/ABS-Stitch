@@ -313,7 +313,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ onOrderClick }) => {
 
   return (
     <div className="space-y-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
