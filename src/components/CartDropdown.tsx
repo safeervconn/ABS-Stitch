@@ -73,14 +73,14 @@ const CartDropdown: React.FC = () => {
                 <div className="p-4 space-y-4">
                   {items.map((item) => (
                     <div key={item.id} className="flex items-center space-x-3">
-                      {/* Product Image */}
+                      {/* Stock Design Image */}
                       <img
                         src={item.image}
                         alt={item.title}
                         className="w-12 h-12 object-cover rounded"
                       />
                       
-                      {/* Product Info */}
+                      {/* Stock Design Info */}
                       <div className="flex-1 min-w-0">
                         <h4 className="text-sm font-medium text-gray-800 truncate">
                           {item.title}
