@@ -101,7 +101,7 @@ const Checkout: React.FC = () => {
 
         const orderData = {
           order_type: 'catalog',
-          stockdesign_id: item.id,
+          stock_design_id: item.id,
           custom_description: `${item.title}`,
           category_id: item.selectedCategoryId,
           custom_width: item.customWidth,

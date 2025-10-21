@@ -4,12 +4,12 @@ import {
   subscribeToNotifications,
   subscribeToOrderComments,
   subscribeToCustomers,
-  subscribeToProducts,
+  subscribeToStockDesigns,
   unsubscribeFromOrders,
   unsubscribeFromNotifications,
   unsubscribeFromOrderComments,
   unsubscribeFromCustomers,
-  unsubscribeFromProducts,
+  unsubscribeFromStockDesigns,
 } from '../../services/realtimeService';
 
 interface UseOrdersRealtimeOptions {
@@ -137,33 +137,33 @@ export function useCustomersRealtime(options: UseCustomersRealtimeOptions) {
   }, [enabled, onCustomerInsert, onCustomerUpdate, onCustomerDelete]);
 }
 
-interface UseProductsRealtimeOptions {
-  onProductInsert?: (product: any) => void;
-  onProductUpdate?: (product: any) => void;
-  onProductDelete?: (product: any) => void;
+interface UseStockDesignsRealtimeOptions {
+  onStockDesignInsert?: (stockDesign: any) => void;
+  onStockDesignUpdate?: (stockDesign: any) => void;
+  onStockDesignDelete?: (stockDesign: any) => void;
   enabled?: boolean;
 }
 
-export function useProductsRealtime(options: UseProductsRealtimeOptions) {
-  const { onProductInsert, onProductUpdate, onProductDelete, enabled = true } = options;
+export function useStockDesignsRealtime(options: UseStockDesignsRealtimeOptions) {
+  const { onStockDesignInsert, onStockDesignUpdate, onStockDesignDelete, enabled = true } = options;
   const subscriptionRef = useRef<boolean>(false);
 
   useEffect(() => {
     if (!enabled || subscriptionRef.current) return;
 
-    subscribeToProducts({
-      onInsert: onProductInsert,
-      onUpdate: onProductUpdate,
-      onDelete: onProductDelete,
+    subscribeToStockDesigns({
+      onInsert: onStockDesignInsert,
+      onUpdate: onStockDesignUpdate,
+      onDelete: onStockDesignDelete,
     });
 
     subscriptionRef.current = true;
 
     return () => {
       if (subscriptionRef.current) {
-        unsubscribeFromProducts();
+        unsubscribeFromStockDesigns();
         subscriptionRef.current = false;
       }
     };
-  }, [enabled, onProductInsert, onProductUpdate, onProductDelete]);
+  }, [enabled, onStockDesignInsert, onStockDesignUpdate, onStockDesignDelete]);
 }

@@ -13,10 +13,10 @@ import React, { useState, useEffect } from 'react';
 import { Search, Filter, Loader } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import AddToCartButton from '../components/AddToCartButton';
-import { getstockdesigns, getCategories } from '../lib/supabase';
+import { getStockDesigns, getCategories } from '../lib/supabase';
 import { getImageSrc, getPlaceholderImage } from '../lib/placeholderImages';
 
-interface stockdesign {
+interface StockDesign {
   id: string;
   title: string;
   description: string;
@@ -32,7 +32,7 @@ interface Category {
 }
 
 const Catalog: React.FC = () => {
-  const [stockdesigns, setstockdesigns] = useState<stockdesign[]>([]);
+  const [stockDesigns, setStockDesigns] = useState<StockDesign[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -42,14 +42,14 @@ const Catalog: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
 
-  // Fetch stockdesigns and apparel types
+  // Fetch stock designs and categories
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        const [stockdesignsData, categoriesData] = await Promise.all([
-          getstockdesigns({
+        const [stockDesignsData, categoriesData] = await Promise.all([
+          getStockDesigns({
             category: selectedCategory,
             search: searchTerm,
             sortBy: sortBy,
@@ -57,7 +57,7 @@ const Catalog: React.FC = () => {
           getCategories(),
         ]);
 
-        setstockdesigns(stockdesignsData || []);
+        setStockDesigns(stockDesignsData || []);
         setCategories(categoriesData || []);
       } catch (err: any) {
         setError(err.message || 'Failed to load Stock Designs');
@@ -136,7 +136,7 @@ const Catalog: React.FC = () => {
             {/* Results Count */}
             <div className="flex items-center text-gray-600">
               <Filter className="h-5 w-5 mr-2" />
-              <span>{stockdesigns.length} results</span>
+              <span>{stockDesigns.length} results</span>
             </div>
           </div>
         </div>
@@ -161,16 +161,16 @@ const Catalog: React.FC = () => {
         {/* Stock Designs Grid */}
         {!loading && !error && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {stockdesigns.map((stockdesign) => (
+            {stockDesigns.map((stockDesign) => (
               <div
-                key={stockdesign.id}
+                key={stockDesign.id}
                 className="glass rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 group transform hover:scale-105 flex flex-col"
               >
                 {/* Stock Design Image */}
                 <div className="relative">
                   <img
-                    src={getImageSrc(stockdesign.image_url, 'Stock Design')}
-                    alt={stockdesign.title || 'Stock Design image'}
+                    src={getImageSrc(stockDesign.image_url, 'Stock Design')}
+                    alt={stockDesign.title || 'Stock Design image'}
                     className="w-full h-48 object-cover"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = getPlaceholderImage('Stock Design');
@@ -182,30 +182,30 @@ const Catalog: React.FC = () => {
                 <div className="p-6 flex flex-col flex-grow">
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors text-lg">
-                      {stockdesign.title}
+                      {stockDesign.title}
                     </h3>
                     <div className="text-right">
                       <span className="text-blue-600 font-bold text-xl">
-                        ${stockdesign.price.toFixed(2)}
+                        ${stockDesign.price.toFixed(2)}
                       </span>
                     </div>
                   </div>
 
                   <p className="text-blue-500 text-sm mb-2 font-medium">
-                    {stockdesign.category?.category_name}
+                    {stockDesign.category?.category_name}
                   </p>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed flex-grow">
-                    {stockdesign.description}
+                    {stockDesign.description}
                   </p>
 
                   {/* Add to Cart */}
                   <AddToCartButton
                     item={{
-                      id: stockdesign.id,
-                      title: stockdesign.title,
-                      price: `$${stockdesign.price.toFixed(2)}`,
-                      image: getImageSrc(stockdesign.image_url, 'Stock Design'),
-                      apparelType: stockdesign.category?.category_name || 'Uncategorized',
+                      id: stockDesign.id,
+                      title: stockDesign.title,
+                      price: `$${stockDesign.price.toFixed(2)}`,
+                      image: getImageSrc(stockDesign.image_url, 'Stock Design'),
+                      apparelType: stockDesign.category?.category_name || 'Uncategorized',
                     }}
                     className="w-full shadow-lg transform hover:scale-105 mt-auto"
                   />
@@ -216,7 +216,7 @@ const Catalog: React.FC = () => {
         )}
 
         {/* Empty State */}
-        {!loading && !error && stockdesigns.length === 0 && (
+        {!loading && !error && stockDesigns.length === 0 && (
           <div className="text-center py-16">
             <div className="glass rounded-2xl shadow-2xl p-12 max-w-md mx-auto">
               <Filter className="h-16 w-16 text-gray-300 mx-auto mb-4" />

@@ -1,6 +1,6 @@
 import { supabase } from '../../lib/supabase';
 import { getCurrentUser as getSupabaseCurrentUser, getUserProfile as getSupabaseUserProfile } from '../../lib/supabase';
-import { AdminUser, AdminCustomer, AdminOrder, Adminstockdesign, Category, AdminStats, PaginatedResponse, PaginationParams, Invoice, OrderComment } from '../types';
+import { AdminUser, AdminCustomer, AdminOrder, AdminStockDesign, Category, AdminStats, PaginatedResponse, PaginationParams, Invoice, OrderComment } from '../types';
 import { notifyAdminsAboutNewEmployee, notifyAdminsAboutNewCustomer, notifyAboutOrderStatusChange, notifyDesignerAboutAssignment, notifyCustomerAboutInvoice } from '../../services/notificationService';
 
 export const getAdminStats = async (): Promise<AdminStats> => {
@@ -14,7 +14,7 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       newCustomersThisMonth: 0,
       totalRevenueThisMonth: 0,
       inProgressOrders: 0,
-      activestockdesigns: 0,
+      activeStockDesigns: 0,
       newOrdersCount: 0,
       underReviewOrdersCount: 0,
     };
@@ -25,7 +25,7 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       newCustomersThisMonth: 0,
       totalRevenueThisMonth: 0,
       inProgressOrders: 0,
-      activestockdesigns: 0,
+      activeStockDesigns: 0,
       newOrdersCount: 0,
       underReviewOrdersCount: 0,
     };
@@ -85,7 +85,7 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
       .select(`
         *,
         customer:customers!inner(full_name, email, phone, company_name),
-        stockdesign:stockdesigns(title),
+        stock_design:stock_designs(title),
         category:categories(category_name),
         sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
         designer:employees!orders_assigned_designer_id_fkey(full_name)
@@ -131,8 +131,8 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
       customer_email: order.customer?.email || '',
       customer_phone: order.customer?.phone || '',
       customer_company_name: order.customer?.company_name || '',
-      stockdesign_id: order.stockdesign_id,
-      stockdesign_title: order.stockdesign?.title,
+      stock_design_id: order.stock_design_id,
+      stock_design_title: order.stock_design?.title,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
       first_attachment_id: firstAttachmentsMap[order.id],
@@ -465,7 +465,7 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       .select(`
         *,
         customer:customers!inner(full_name, email, phone, company_name),
-        stockdesign:stockdesigns(title),
+        stock_design:stock_designs(title),
         category:categories(category_name),
         sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
         designer:employees!orders_assigned_designer_id_fkey(full_name)
@@ -571,8 +571,8 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       customer_email: order.customer?.email || '',
       customer_phone: order.customer?.phone || '',
       customer_company_name: order.customer?.company_name || '',
-      stockdesign_id: order.stockdesign_id,
-      stockdesign_title: order.stockdesign?.title,
+      stock_design_id: order.stock_design_id,
+      stock_design_title: order.stock_design?.title,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
       first_attachment_id: firstAttachmentsMap[order.id],
@@ -757,7 +757,7 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
       .select(`
         *,
         customer:customers!inner(full_name, email, phone, company_name),
-        stockdesign:stockdesigns(title),
+        stock_design:stock_designs(title),
         category:categories(category_name),
         sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
         designer:employees!orders_assigned_designer_id_fkey(full_name)
@@ -777,8 +777,8 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
       customer_email: data.customer?.email || '',
       customer_phone: data.customer?.phone || '',
       customer_company_name: data.customer?.company_name || '',
-      stockdesign_id: data.stockdesign_id,
-      stockdesign_title: data.stockdesign?.title,
+      stock_design_id: data.stock_design_id,
+      stock_design_title: data.stock_design?.title,
       custom_description: data.custom_description,
       file_urls: data.file_urls,
       category_id: data.category_id,
@@ -802,11 +802,11 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
   }
 };
 
-// stockdesigns CRUD Operations
-export const getstockdesigns = async (params: PaginationParams): Promise<PaginatedResponse<Adminstockdesign>> => {
+// Stock Designs CRUD Operations
+export const getStockDesigns = async (params: PaginationParams): Promise<PaginatedResponse<AdminStockDesign>> => {
   try {
     let query = supabase
-      .from('stockdesigns')
+      .from('stock_designs')
       .select(`
         *,
         category:categories(category_name)
@@ -853,9 +853,9 @@ export const getstockdesigns = async (params: PaginationParams): Promise<Paginat
 
     if (error) throw error;
 
-    const transformedData = (data || []).map(stockdesign => ({
-      ...stockdesign,
-      category_name: stockdesign.category?.category_name,
+    const transformedData = (data || []).map(stockDesign => ({
+      ...stockDesign,
+      category_name: stockDesign.category?.category_name,
     }));
 
     return {
@@ -866,18 +866,18 @@ export const getstockdesigns = async (params: PaginationParams): Promise<Paginat
       totalPages: Math.ceil((count || 0) / params.limit),
     };
   } catch (error) {
-    console.error('Error fetching stockdesigns:', error);
+    console.error('Error fetching stock designs:', error);
     throw error;
   }
 };
 
-export const createstockdesign = async (stockdesignData: Partial<Adminstockdesign>): Promise<Adminstockdesign> => {
+export const createStockDesign = async (stockDesignData: Partial<AdminStockDesign>): Promise<AdminStockDesign> => {
   try {
     const { data, error } = await supabase
-      .from('stockdesigns')
+      .from('stock_designs')
       .insert([{
-        ...stockdesignData,
-        status: stockdesignData.status || 'active',
+        ...stockDesignData,
+        status: stockDesignData.status || 'active',
       }])
       .select()
       .single();
@@ -885,16 +885,16 @@ export const createstockdesign = async (stockdesignData: Partial<Adminstockdesig
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Error creating stockdesign:', error);
+    console.error('Error creating stock design:', error);
     throw error;
   }
 };
 
-export const updatestockdesign = async (id: string, stockdesignData: Partial<Adminstockdesign>): Promise<Adminstockdesign> => {
+export const updateStockDesign = async (id: string, stockDesignData: Partial<AdminStockDesign>): Promise<AdminStockDesign> => {
   try {
     const { data, error } = await supabase
-      .from('stockdesigns')
-      .update(stockdesignData)
+      .from('stock_designs')
+      .update(stockDesignData)
       .eq('id', id)
       .select()
       .single();
@@ -902,21 +902,21 @@ export const updatestockdesign = async (id: string, stockdesignData: Partial<Adm
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Error updating stockdesign:', error);
+    console.error('Error updating stock design:', error);
     throw error;
   }
 };
 
-export const deletestockdesign = async (id: string): Promise<void> => {
+export const deleteStockDesign = async (id: string): Promise<void> => {
   try {
     const { error } = await supabase
-      .from('stockdesigns')
+      .from('stock_designs')
       .delete()
       .eq('id', id);
 
     if (error) throw error;
   } catch (error) {
-    console.error('Error deleting stockdesign:', error);
+    console.error('Error deleting stock design:', error);
     throw error;
   }
 };
@@ -1210,7 +1210,7 @@ export const getOrdersByIds = async (orderIds: string[]): Promise<AdminOrder[]> 
       .select(`
         *,
         customer:customers!inner(full_name, email, phone, company_name),
-        stockdesign:stockdesigns(title),
+        stock_design:stock_designs(title),
         category:categories(category_name)
       `)
       .in('id', orderIds)
@@ -1227,8 +1227,8 @@ export const getOrdersByIds = async (orderIds: string[]): Promise<AdminOrder[]> 
       customer_email: order.customer?.email || '',
       customer_phone: order.customer?.phone || '',
       customer_company_name: order.customer?.company_name || '',
-      stockdesign_id: order.stockdesign_id,
-      stockdesign_title: order.stockdesign?.title,
+      stock_design_id: order.stock_design_id,
+      stock_design_title: order.stock_design?.title,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
       category_id: order.category_id,
@@ -1258,7 +1258,7 @@ export const getAllCustomerOrders = async (customerId: string): Promise<AdminOrd
       .select(`
         *,
         customer:customers!inner(full_name, email, phone, company_name),
-        stockdesign:stockdesigns(title),
+        stock_design:stock_designs(title),
         category:categories(category_name)
       `)
       .eq('customer_id', customerId)
@@ -1275,8 +1275,8 @@ export const getAllCustomerOrders = async (customerId: string): Promise<AdminOrd
       customer_email: order.customer?.email || '',
       customer_phone: order.customer?.phone || '',
       customer_company_name: order.customer?.company_name || '',
-      stockdesign_id: order.stockdesign_id,
-      stockdesign_title: order.stockdesign?.title,
+      stock_design_id: order.stock_design_id,
+      stock_design_title: order.stock_design?.title,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
       category_id: order.category_id,
@@ -1344,7 +1344,7 @@ export const getUnpaidOrdersForCustomer = async (
       .select(`
         *,
         customer:customers!inner(full_name, email, phone, company_name),
-        stockdesign:stockdesigns(title),
+        stock_design:stock_designs(title),
         category:categories(category_name)
       `)
       .eq('customer_id', customerId)
@@ -1372,8 +1372,8 @@ export const getUnpaidOrdersForCustomer = async (
       customer_email: order.customer?.email || '',
       customer_phone: order.customer?.phone || '',
       customer_company_name: order.customer?.company_name || '',
-      stockdesign_id: order.stockdesign_id,
-      stockdesign_title: order.stockdesign?.title,
+      stock_design_id: order.stock_design_id,
+      stock_design_title: order.stock_design?.title,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
       category_id: order.category_id,
@@ -1513,7 +1513,7 @@ export const getCustomerOrdersPaginated = async (params: PaginationParams & { cu
       .select(`
         *,
         customer:customers!inner(full_name, email, phone, company_name),
-        stockdesign:stockdesigns(title),
+        stock_design:stock_designs(title),
         category:categories(category_name),
         sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
         designer:employees!orders_assigned_designer_id_fkey(full_name)
@@ -1591,8 +1591,8 @@ export const getCustomerOrdersPaginated = async (params: PaginationParams & { cu
       customer_phone: order.customer?.phone || '',
       customer_company_name: order.customer?.company_name || '',
       first_attachment_id: firstAttachmentsMap[order.id],
-      stockdesign_id: order.stockdesign_id,
-      stockdesign_title: order.stockdesign?.title,
+      stock_design_id: order.stock_design_id,
+      stock_design_title: order.stock_design?.title,
       custom_description: order.custom_description,
       file_urls: order.file_urls,
       category_id: order.category_id,

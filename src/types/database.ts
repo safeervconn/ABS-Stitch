@@ -34,7 +34,7 @@ export interface Database {
         Row: {
           id: string;
           customer_id: string;
-          product_id: string | null;
+          stock_design_id: string | null;
           custom_description: string | null;
           status: 'new' | 'in_progress' | 'under_review' | 'completed' | 'cancelled';
           assigned_sales_rep_id: string | null;
@@ -54,7 +54,7 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['orders']['Row'], 'id' | 'created_at' | 'updated_at' | 'order_number'>;
         Update: Partial<Database['public']['Tables']['orders']['Insert']>;
       };
-      products: {
+      stock_designs: {
         Row: {
           id: string;
           title: string;
@@ -66,8 +66,8 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['products']['Row'], 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Database['public']['Tables']['products']['Insert']>;
+        Insert: Omit<Database['public']['Tables']['stock_designs']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Database['public']['Tables']['stock_designs']['Insert']>;
       };
       categories: {
         Row: {

@@ -42,7 +42,7 @@ export interface Category {
   created_at: string;
 }
 
-export interface stockdesign {
+export interface StockDesign {
   id: string;
   title: string;
   description?: string;
@@ -57,7 +57,7 @@ export interface stockdesign {
 export interface Order {
   id: string;
   customer_id: string;
-  stockdesign_id?: string;
+  stock_design_id?: string;
   custom_description?: string;
   file_url?: string;
   status: 'in_progress' | 'under_review' | 'completed' | 'cancelled';
@@ -88,7 +88,7 @@ export interface OrderLog {
 export interface Notification {
   id: number;
   user_id: string;
-  type: 'order' | 'user' | 'stockdesign' | 'system';
+  type: 'order' | 'user' | 'product' | 'system';
   message: string;
   read: boolean;
   created_at: string;
@@ -286,8 +286,8 @@ export const getDashboardRoute = (role: string): string | null => {
   }
 };
 
-// stockdesign database functions
-export const getstockdesigns = async (filters?: {
+// Stock Design database functions
+export const getStockDesigns = async (filters?: {
   category?: string;
   search?: string;
   sortBy?: string;
@@ -295,7 +295,7 @@ export const getstockdesigns = async (filters?: {
   offset?: number;
 }) => {
   let query = supabase
-    .from('stockdesigns')
+    .from('stock_designs')
     .select(`
       *,
       category:categories(category_name)
@@ -358,9 +358,9 @@ export const getCategories = async () => {
 };
 
 
-export const getstockdesignById = async (id: string) => {
+export const getStockDesignById = async (id: string) => {
   const { data, error } = await supabase
-    .from('stockdesigns')
+    .from('stock_designs')
     .select(`
       *,
       category:categories(category_name)
