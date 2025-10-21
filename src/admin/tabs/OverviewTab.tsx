@@ -56,8 +56,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ onOrderClick }) => {
       color: 'orange',
     },
     {
-      title: 'Active Products',
-      value: stats.activeProducts.toString(),
+      title: 'Active Stock Designs',
+      value: stats.activestockdesigns.toString(),
       icon: Package,
       color: 'indigo',
     },
