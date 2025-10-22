@@ -14,8 +14,8 @@ export interface OrderTransformData {
     phone?: string;
     company_name?: string;
   };
-  stockdesign_id?: string;
-  stockdesign?: {
+  stock_design_id?: string;
+  stock_design?: {
     title: string;
   };
   category_id?: string;
@@ -51,8 +51,8 @@ export function transformOrderData(order: OrderTransformData, firstAttachmentId?
     customer_email: order.customer?.email || '',
     customer_phone: order.customer?.phone || '',
     customer_company_name: order.customer?.company_name || '',
-    stockdesign_id: order.stockdesign_id,
-    stockdesign_title: order.stockdesign?.title,
+    stock_design_id: order.stock_design_id,
+    stock_design_title: order.stock_design?.title,
     custom_description: order.custom_description,
     first_attachment_id: firstAttachmentId,
     category_id: order.category_id,
@@ -101,7 +101,7 @@ export async function fetchFirstAttachmentsForOrders(
 export const ORDER_SELECT_FIELDS = `
   *,
   customer:customers!inner(full_name, email, phone, company_name),
-  stockdesign:stockdesigns(title),
+  stock_design:stock_designs(title),
   category:categories(category_name),
   sales_rep:employees!orders_assigned_sales_rep_id_fkey(full_name),
   designer:employees!orders_assigned_designer_id_fkey(full_name)
@@ -110,7 +110,7 @@ export const ORDER_SELECT_FIELDS = `
 export const ORDER_SELECT_FIELDS_CUSTOMER = `
   *,
   customer:customers!inner(full_name, email, phone, company_name),
-  stockdesign:stockdesigns(title),
+  stock_design:stock_designs(title),
   category:categories(category_name)
 `;
 

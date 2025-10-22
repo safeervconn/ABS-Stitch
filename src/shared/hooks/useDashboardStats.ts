@@ -6,7 +6,7 @@ interface DashboardStats {
   newCustomersThisMonth?: number;
   totalRevenueThisMonth?: number;
   inProgressOrders?: number;
-  activeProducts?: number;
+  activeStockDesigns?: number;
   newOrdersCount?: number;
   underReviewOrdersCount?: number;
   inProgressOrdersCount?: number;

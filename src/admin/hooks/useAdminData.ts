@@ -27,7 +27,7 @@ export const useAdminData = (options: UseAdminDataOptions = {}) => {
     newCustomersThisMonth: 0,
     totalRevenueThisMonth: 0,
     inProgressOrders: 0,
-    activestockdesigns: 0,
+    activeStockDesigns: 0,
     newOrdersCount: 0,
     underReviewOrdersCount: 0,
   });
