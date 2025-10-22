@@ -295,7 +295,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
                 {currentUser && ['admin', 'sales_rep', 'designer'].includes(currentUser.role) && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Order Comments</h3>
+                    <MessageSquare className="h-4 w-4 inline mr-1" /><h3 className="text-lg font-semibold text-gray-800 mb-3">Order Comments</h3>
                     <div className="bg-white border border-gray-200 rounded-lg p-4 max-h-96 overflow-y-auto">
                       {loadingComments ? (
                         <div className="flex items-center justify-center py-4">
