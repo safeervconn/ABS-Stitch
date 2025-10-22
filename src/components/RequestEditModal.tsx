@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { X, Upload, FileIcon } from 'lucide-react';
-import { editRequestService } from '../services/editRequestService';
 import { notifyDesignerAboutEditRequest } from '../services/notificationService';
 import { supabase } from '../lib/supabase';
 import { toast } from '../utils/toast';
@@ -54,28 +53,57 @@ export function RequestEditModal({
     setIsSubmitting(true);
 
     try {
-      const uploadedAttachmentIds: string[] = [];
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
 
       for (const file of selectedFiles) {
         try {
-          const attachment = await uploadAttachment(orderId, orderNumber, file);
-          uploadedAttachmentIds.push(attachment.id);
+          await uploadAttachment(orderId, orderNumber, file);
         } catch (uploadError) {
           console.error('Error uploading file:', file.name, uploadError);
           toast.error(`Failed to upload ${file.name}`);
         }
       }
 
-      await editRequestService.createEditRequest({
-        order_id: orderId,
-        description: description.trim()
-      });
+      const { error: commentError } = await supabase
+        .from('edit_comments')
+        .insert({
+          order_id: orderId,
+          author_id: user.id,
+          content: description.trim()
+        });
 
-      const { data: order } = await supabase
+      if (commentError) {
+        console.error('Error creating edit comment:', commentError);
+        throw commentError;
+      }
+
+      const { data: order, error: orderFetchError } = await supabase
         .from('orders')
-        .select('assigned_designer_id, order_number, order_name')
+        .select('edits, assigned_designer_id, order_number, order_name')
         .eq('id', orderId)
         .maybeSingle();
+
+      if (orderFetchError) {
+        throw orderFetchError;
+      }
+
+      const currentEdits = order?.edits || 0;
+      const { error: updateError } = await supabase
+        .from('orders')
+        .update({
+          status: 'new',
+          edits: currentEdits + 1
+        })
+        .eq('id', orderId);
+
+      if (updateError) {
+        console.error('Error updating order status and edits:', updateError);
+        throw updateError;
+      }
 
       if (order?.assigned_designer_id) {
         await notifyDesignerAboutEditRequest(

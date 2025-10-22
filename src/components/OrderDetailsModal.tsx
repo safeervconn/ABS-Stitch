@@ -8,7 +8,6 @@ import { AttachmentList } from './AttachmentList';
 import { fetchOrderAttachments } from '../lib/attachmentService';
 import { RequestEditModal } from './RequestEditModal';
 import { editCommentsService } from '../services/editCommentsService';
-import { editRequestService } from '../services/editRequestService';
 
 interface OrderDetailsModalProps {
   isOpen: boolean;
@@ -32,7 +31,6 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
   const [loadingEditComments, setLoadingEditComments] = React.useState(false);
   const [newEditComment, setNewEditComment] = React.useState('');
   const [submittingEditComment, setSubmittingEditComment] = React.useState(false);
-  const [editRequests, setEditRequests] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     const checkUser = async () => {
@@ -79,17 +77,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
       try {
         setLoadingEditComments(true);
-        const requests = await editRequestService.getEditRequestsByOrder(order.id);
-        setEditRequests(requests);
-
-        if (requests.length > 0) {
-          const allComments: any[] = [];
-          for (const request of requests) {
-            const comments = await editCommentsService.getEditCommentsByRequest(request.id);
-            allComments.push(...comments);
-          }
-          setEditComments(allComments);
-        }
+        const comments = await editCommentsService.getEditCommentsByOrder(order.id);
+        setEditComments(comments);
       } catch (error) {
         console.error('Error fetching edit comments:', error);
       } finally {
@@ -108,17 +97,16 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
   const handleSubmitEditComment = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!newEditComment.trim() || !editRequests.length) return;
+    if (!newEditComment.trim() || !order?.id) return;
 
     setSubmittingEditComment(true);
     try {
-      const latestRequest = editRequests[0];
       await editCommentsService.createEditComment({
-        edit_request_id: latestRequest.id,
+        order_id: order.id,
         content: newEditComment.trim()
       });
 
-      const updatedComments = await editCommentsService.getEditCommentsByRequest(latestRequest.id);
+      const updatedComments = await editCommentsService.getEditCommentsByOrder(order.id);
       setEditComments(updatedComments);
       setNewEditComment('');
     } catch (error) {
@@ -134,13 +122,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     }
 
     if (order?.id) {
-      editRequestService.getEditRequestsByOrder(order.id).then(requests => {
-        setEditRequests(requests);
-        if (requests.length > 0) {
-          editCommentsService.getEditCommentsByRequest(requests[0].id).then(comments => {
-            setEditComments(comments);
-          });
-        }
+      editCommentsService.getEditCommentsByOrder(order.id).then(comments => {
+        setEditComments(comments);
       });
 
       fetchOrderAttachments(order.id).then(orderAttachments => {

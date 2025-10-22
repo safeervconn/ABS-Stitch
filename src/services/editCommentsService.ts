@@ -2,7 +2,7 @@ import { supabase } from '../lib/supabase';
 import { EditComment } from '../admin/types';
 
 export interface CreateEditCommentData {
-  edit_request_id: string;
+  order_id: string;
   content: string;
 }
 
@@ -12,12 +12,12 @@ export const editCommentsService = {
       .from('edit_comments')
       .select(`
         id,
-        edit_request_id,
+        order_id,
         author_id,
         content,
         created_at
       `)
-      .eq('edit_request_id', orderId)
+      .eq('order_id', orderId)
       .order('created_at', { ascending: true });
 
     if (error) {
@@ -131,7 +131,7 @@ export const editCommentsService = {
     const { error } = await supabase
       .from('edit_comments')
       .insert({
-        edit_request_id: data.edit_request_id,
+        order_id: data.order_id,
         author_id: user.id,
         content: data.content
       });
