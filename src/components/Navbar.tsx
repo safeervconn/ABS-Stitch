@@ -99,8 +99,8 @@ const Navbar: React.FC = () => {
     if (!currentUser || currentUser.role !== 'customer') return false;
     
     const currentPath = window.location.pathname;
-    const relevantPages = ['/', '/catalog', '/checkout'];
-    return relevantPages.includes(currentPath) || currentPath.startsWith('/catalog');
+    const relevantPages = ['/', '/stock-designs', '/checkout'];
+    return relevantPages.includes(currentPath) || currentPath.startsWith('/stock-designs');
   };
 
   return (
