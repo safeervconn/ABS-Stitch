@@ -6,7 +6,7 @@ import { OrderProvider } from './contexts/OrderContext';
 // Components
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import CatalogPreview from './components/CatalogPreview';
+import StockDesignsPreview from "./components/StockDesignsPreview";
 import Services from './components/Services';
 import Pricing from './components/Pricing';
 import Testimonials from './components/Testimonials';
@@ -16,7 +16,7 @@ import Footer from './components/Footer';
 import PlaceOrderModal from './components/PlaceOrderModal';
 
 // Pages
-import Catalog from './pages/Catalog';
+import StockDesigns from "./pages/StockDesigns";
 import About from './pages/About';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -36,7 +36,7 @@ const Homepage: React.FC = () => {
     <>
       <Navbar />
       <Hero />
-      <CatalogPreview />
+      <StockDesignsPreview />
       <Services />
       <Pricing />
       <Testimonials />
