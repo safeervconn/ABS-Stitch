@@ -84,6 +84,7 @@ export async function getOrdersFromView(params: PaginationParams): Promise<Pagin
       assigned_designer_id: order.assigned_designer_id,
       assigned_designer_name: order.designer_name,
       invoice_url: order.invoice_url,
+      edits: order.edits || 0,
       created_at: order.created_at,
       updated_at: order.updated_at,
     }));
@@ -137,6 +138,7 @@ export async function getRecentOrdersFromView(limit: number = 10): Promise<Admin
       assigned_designer_id: order.assigned_designer_id,
       assigned_designer_name: order.designer_name,
       invoice_url: order.invoice_url,
+      edits: order.edits || 0,
       created_at: order.created_at,
       updated_at: order.updated_at,
     }));
@@ -183,6 +185,7 @@ export async function getOrderByIdFromView(id: string): Promise<AdminOrder | nul
       assigned_designer_id: data.assigned_designer_id,
       assigned_designer_name: data.designer_name,
       invoice_url: data.invoice_url,
+      edits: data.edits || 0,
       created_at: data.created_at,
       updated_at: data.updated_at,
     };
@@ -260,6 +263,7 @@ export async function getCustomerOrdersFromView(
       assigned_designer_id: order.assigned_designer_id,
       assigned_designer_name: order.designer_name,
       invoice_url: order.invoice_url,
+      edits: order.edits || 0,
       created_at: order.created_at,
       updated_at: order.updated_at,
     }));
