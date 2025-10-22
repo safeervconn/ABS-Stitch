@@ -50,7 +50,7 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li><a href="/" className="hover:text-blue-400 transition-colors">Home</a></li>
-              <li><a href="/catalog" className="hover:text-blue-400 transition-colors">Catalog</a></li>
+              <li><a href="/stock-designs" className="hover:text-blue-400 transition-colors">Stock Designs</a></li>
               <li><a href="/about" className="hover:text-blue-400 transition-colors">About Us</a></li>
               <li><a href="/#services" className="hover:text-blue-400 transition-colors">Services</a></li>
               <li><a href="/#pricing" className="hover:text-blue-400 transition-colors">Pricing</a></li>
