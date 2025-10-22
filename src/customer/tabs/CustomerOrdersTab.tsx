@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Plus, Eye, Package } from 'lucide-react';
+import { ShoppingBag, Plus, Eye, Package, Edit3 } from 'lucide-react';
 import { getCurrentUser } from '../../lib/supabase';
 import OrderDetailsModal from '../../components/OrderDetailsModal';
 import PlaceOrderModal from '../../components/PlaceOrderModal';
+import { RequestEditModal } from '../../components/RequestEditModal';
 import DataTable from '../../admin/components/DataTable';
 import FilterBar, { FilterConfig } from '../../admin/components/FilterBar';
 import { getCustomerOrdersPaginated } from '../../admin/api/supabaseHelpers';
@@ -15,6 +16,8 @@ const CustomerOrdersTab: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
   const [isPlaceOrderOpen, setIsPlaceOrderOpen] = useState(false);
+  const [isRequestEditOpen, setIsRequestEditOpen] = useState(false);
+  const [orderToEdit, setOrderToEdit] = useState<AdminOrder | null>(null);
   const [customerId, setCustomerId] = useState<string | null>(null);
   
   // Filter states
@@ -154,6 +157,11 @@ const CustomerOrdersTab: React.FC = () => {
     setIsOrderDetailsOpen(true);
   };
 
+  const handleRequestEdit = (order: AdminOrder) => {
+    setOrderToEdit(order);
+    setIsRequestEditOpen(true);
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'new': return 'bg-blue-100 text-blue-800';
@@ -259,6 +267,15 @@ const CustomerOrdersTab: React.FC = () => {
           >
             <Eye className="h-4 w-4" />
           </button>
+          {(order.status === 'in_progress' || order.status === 'under_review') && (
+            <button
+              onClick={() => handleRequestEdit(order)}
+              className="text-orange-600 hover:text-orange-900 transition-colors"
+              title="Request Edit"
+            >
+              <Edit3 className="h-4 w-4" />
+            </button>
+          )}
         </div>
       ),
     },
@@ -379,6 +396,21 @@ const CustomerOrdersTab: React.FC = () => {
             }
           }}
         />
+
+        {/* Request Edit Modal */}
+        {orderToEdit && (
+          <RequestEditModal
+            orderId={orderToEdit.id}
+            orderName={orderToEdit.order_name || `Order ${orderToEdit.order_number}`}
+            onClose={() => {
+              setIsRequestEditOpen(false);
+              setOrderToEdit(null);
+            }}
+            onSuccess={() => {
+              refetch();
+            }}
+          />
+        )}
       </div>
     </div>
   );

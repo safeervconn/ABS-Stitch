@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Palette, Clock, Briefcase } from 'lucide-react';
+import { Palette, Clock, Briefcase, Edit3 } from 'lucide-react';
 import { useAuth } from '../shared/hooks/useAuth';
 import { useDashboardStats } from '../shared/hooks/useDashboardStats';
 import DashboardLayout from '../shared/components/DashboardLayout';
@@ -7,12 +7,15 @@ import LoadingSpinner from '../shared/components/LoadingSpinner';
 import StatCard from '../shared/components/StatCard';
 import OrderDetailsModal from '../components/OrderDetailsModal';
 import EditOrderModal from '../admin/components/EditOrderModal';
+import { EditRequestCard } from '../components/EditRequestCard';
 import FilterBar, { FilterConfig } from '../admin/components/FilterBar';
 import DataTable from '../admin/components/DataTable';
 import { usePaginatedData } from '../admin/hooks/useAdminData';
 import { getOrders } from '../admin/api/supabaseHelpers';
 import { AdminOrder, PaginationParams } from '../admin/types';
 import { ORDER_STATUS_OPTIONS, DEFAULT_PAGINATION_PARAMS } from '../shared/constants/orderConstants';
+import { editRequestService, EditRequest } from '../services/editRequestService';
+import { supabase } from '../lib/supabase';
 import {
   createImageColumn,
   createOrderNumberColumn,
@@ -40,6 +43,8 @@ const DesignerDashboard: React.FC = () => {
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [orderToEdit, setOrderToEdit] = useState<AdminOrder | null>(null);
+  const [editRequests, setEditRequests] = useState<(EditRequest & { order?: AdminOrder })[]>([]);
+  const [loadingEditRequests, setLoadingEditRequests] = useState(false);
 
   const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({
     status: ['in_progress'],
@@ -62,13 +67,48 @@ const DesignerDashboard: React.FC = () => {
     }
   }, [user?.id, params.assignedDesignerId, updateParams]);
 
+  const fetchEditRequests = async () => {
+    setLoadingEditRequests(true);
+    try {
+      const requests = await editRequestService.getAllPendingEditRequests();
+
+      const requestsWithOrders = await Promise.all(
+        requests.map(async (request) => {
+          const { data: order } = await supabase
+            .from('orders')
+            .select('id, order_number, order_name, assigned_designer_id')
+            .eq('id', request.order_id)
+            .maybeSingle();
+
+          if (order && order.assigned_designer_id === user?.id) {
+            return { ...request, order };
+          }
+          return null;
+        })
+      );
+
+      setEditRequests(requestsWithOrders.filter(Boolean) as any[]);
+    } catch (error) {
+      console.error('Error fetching edit requests:', error);
+    } finally {
+      setLoadingEditRequests(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchEditRequests();
+    }
+  }, [user?.id]);
+
   if (authLoading) {
     return <LoadingSpinner message="Loading dashboard..." />;
   }
 
   const statCards = [
     { title: 'Total Orders this Month', value: stats.totalOrdersThisMonth, icon: Briefcase, color: 'blue' },
-    { title: 'In-Progress Orders', value: stats.inProgressOrdersCount || 0, icon: Clock, color: 'purple' }
+    { title: 'In-Progress Orders', value: stats.inProgressOrdersCount || 0, icon: Clock, color: 'purple' },
+    { title: 'Pending Edit Requests', value: editRequests.length, icon: Edit3, color: 'orange' }
   ];
 
   const filterConfigs: FilterConfig[] = [
@@ -189,7 +229,7 @@ const DesignerDashboard: React.FC = () => {
           <p className="text-sm sm:text-base text-gray-600">Here are your assigned orders and design projects.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {statCards.map((stat, index) => (
           <StatCard
             key={stat.title}
@@ -201,6 +241,26 @@ const DesignerDashboard: React.FC = () => {
           />
         ))}
         </div>
+
+        {editRequests.length > 0 && (
+          <div className="mb-6 sm:mb-8">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Pending Edit Requests</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {editRequests.map((request) => (
+                <EditRequestCard
+                  key={request.id}
+                  request={request}
+                  orderName={request.order?.order_name}
+                  orderNumber={request.order?.order_number}
+                  onUpdate={() => {
+                    fetchEditRequests();
+                    refetch();
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="space-y-4 sm:space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">

@@ -216,3 +216,40 @@ export async function notifyCustomerAboutInvoice(
     console.error('Error notifying customer about invoice:', error);
   }
 }
+
+export async function notifyDesignerAboutEditRequest(
+  designerId: string,
+  orderNumber: string,
+  orderName: string
+): Promise<void> {
+  try {
+    await createNotification(
+      designerId,
+      'order',
+      `New edit request received for order ${orderName || orderNumber}. Please review.`
+    );
+  } catch (error) {
+    console.error('Error notifying designer about edit request:', error);
+  }
+}
+
+export async function notifyCustomerAboutEditRequestResponse(
+  customerId: string,
+  orderNumber: string,
+  orderName: string,
+  status: 'approved' | 'rejected'
+): Promise<void> {
+  try {
+    const message = status === 'approved'
+      ? `Your edit request for order ${orderName || orderNumber} has been approved.`
+      : `Your edit request for order ${orderName || orderNumber} has been reviewed. Please check the designer's response.`;
+
+    await createNotification(
+      customerId,
+      'order',
+      message
+    );
+  } catch (error) {
+    console.error('Error notifying customer about edit request response:', error);
+  }
+}
