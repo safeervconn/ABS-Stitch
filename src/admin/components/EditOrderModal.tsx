@@ -6,6 +6,7 @@ import { supabase, getCurrentUser, getUserProfile } from '../../lib/supabase';
 import { toast } from '../../utils/toast';
 import { AttachmentList } from '../../components/AttachmentList';
 import { fetchOrderAttachments, uploadAttachment, deleteAttachment } from '../../lib/attachmentService';
+import { editCommentsService } from '../../services/editCommentsService';
 
 interface EditOrderModalProps {
   isOpen: boolean;
@@ -47,6 +48,10 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
   const [addingComment, setAddingComment] = useState(false);
   const [attachments, setAttachments] = useState<OrderAttachment[]>([]);
   const [pendingDeletions, setPendingDeletions] = useState<string[]>([]);
+  const [editComments, setEditComments] = useState<any[]>([]);
+  const [loadingEditComments, setLoadingEditComments] = useState(false);
+  const [newEditComment, setNewEditComment] = useState('');
+  const [submittingEditComment, setSubmittingEditComment] = useState(false);
 
   useEffect(() => {
     // Use prop currentUser if provided, otherwise fetch it
@@ -85,6 +90,9 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
 
       // Fetch attachments
       fetchAttachments();
+
+      // Fetch edit comments
+      fetchEditComments();
     }
   }, [isOpen, order, propCurrentUser]);
 
@@ -125,21 +133,59 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     }
   };
 
+  const fetchEditComments = async () => {
+    if (!order) return;
+
+    try {
+      setLoadingEditComments(true);
+      const comments = await editCommentsService.getEditCommentsByOrder(order.id);
+      setEditComments(comments);
+    } catch (error) {
+      console.error('Error fetching edit comments:', error);
+    } finally {
+      setLoadingEditComments(false);
+    }
+  };
+
   const handleAddComment = async () => {
     if (!order || !newCommentContent.trim() || !currentUser) return;
-    
+
     try {
       setAddingComment(true);
       await addOrderComment(order.id, currentUser.id, newCommentContent.trim());
       toast.success('Comment added successfully');
       setNewCommentContent('');
-      await fetchOrderComments(); // Refresh comments
+      await fetchOrderComments();
     } catch (error) {
       console.error('Error adding comment:', error);
       toast.error('Failed to add comment');
       setError('Failed to add comment. Please try again.');
     } finally {
       setAddingComment(false);
+    }
+  };
+
+  const handleSubmitEditComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!newEditComment.trim() || !order?.id) return;
+
+    setSubmittingEditComment(true);
+    try {
+      await editCommentsService.createEditComment({
+        order_id: order.id,
+        content: newEditComment.trim()
+      });
+
+      toast.success('Reply posted successfully');
+      const updatedComments = await editCommentsService.getEditCommentsByOrder(order.id);
+      setEditComments(updatedComments);
+      setNewEditComment('');
+    } catch (error) {
+      console.error('Error submitting edit comment:', error);
+      toast.error('Failed to post reply');
+    } finally {
+      setSubmittingEditComment(false);
     }
   };
 
@@ -312,14 +358,25 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
           
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">Edit Order</h2>
-              <p className="text-gray-600">{order.order_number}</p>
-              <p className="text-sm text-gray-500 mt-1">{order.order_name || 'No Order Name'}</p>
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">Edit Order</h2>
+                  <p className="text-gray-600">{order.order_number}</p>
+                  <p className="text-sm text-gray-500 mt-1">{order.order_name || 'No Order Name'}</p>
+                </div>
+                {order.edits && order.edits > 0 && (
+                  <div className="bg-blue-50 px-3 py-1 rounded-full">
+                    <p className="text-sm font-medium text-blue-700">
+                      Requested Edits: {order.edits}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-gray-400 hover:text-gray-600 transition-colors ml-4"
               disabled={submitting}
             >
               <X className="h-6 w-6" />
@@ -587,7 +644,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       <MessageSquare className="h-4 w-4 inline mr-1" />
                       Order Comments
                     </label>
-                    
+
                     {/* Existing Comments */}
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 max-h-48 overflow-y-auto">
                       {loadingComments ? (
@@ -619,7 +676,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Add New Comment */}
                     <div className="space-y-3">
                       <textarea
@@ -647,6 +704,62 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                           </>
                         )}
                       </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Edit Comments Section */}
+                {editComments.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Edit Comments</h3>
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      {loadingEditComments ? (
+                        <div className="flex items-center justify-center py-4">
+                          <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                          <span className="text-gray-600 text-sm">Loading edit comments...</span>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="max-h-96 overflow-y-auto space-y-4">
+                            {editComments.map((comment) => (
+                              <div key={comment.id} className="bg-blue-50 rounded-lg p-3 border border-blue-100">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center space-x-2">
+                                    <MessageSquare className="h-4 w-4 text-blue-600" />
+                                    <span className="font-medium text-gray-800 text-sm">{comment.author_name}</span>
+                                  </div>
+                                  <span className="text-xs text-gray-500">
+                                    {new Date(comment.created_at).toLocaleDateString()} {new Date(comment.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
+                                </div>
+                                <p className="text-gray-700 text-sm leading-relaxed">{comment.content}</p>
+                              </div>
+                            ))}
+                          </div>
+
+                          {currentUser && ['admin', 'sales_rep', 'designer'].includes(currentUser.role) && (
+                            <form onSubmit={handleSubmitEditComment} className="mt-4 pt-4 border-t border-gray-200">
+                              <textarea
+                                value={newEditComment}
+                                onChange={(e) => setNewEditComment(e.target.value)}
+                                placeholder="Add a reply to this edit request..."
+                                rows={3}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+                                disabled={submittingEditComment}
+                              />
+                              <div className="flex justify-end mt-2">
+                                <button
+                                  type="submit"
+                                  disabled={submittingEditComment || !newEditComment.trim()}
+                                  className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  {submittingEditComment ? 'Posting...' : 'Post Reply'}
+                                </button>
+                              </div>
+                            </form>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
