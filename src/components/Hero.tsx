@@ -86,10 +86,10 @@ const Hero: React.FC = () => {
               </button>
             ) : null}
             <button 
-              onClick={() => window.location.href = '/catalog'}
+              onClick={() => window.location.href = '/stock-designs'}
               className="btn-purple btn-large px-8"
             >
-              Browse Catalog
+              Browse Stock Designs
             </button>
           </div>
 
