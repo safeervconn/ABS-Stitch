@@ -401,7 +401,9 @@ const CustomerOrdersTab: React.FC = () => {
         {orderToEdit && (
           <RequestEditModal
             orderId={orderToEdit.id}
+            orderNumber={orderToEdit.order_number || `ORD-${orderToEdit.id.slice(0, 8)}`}
             orderName={orderToEdit.order_name || `Order ${orderToEdit.order_number}`}
+            orderStatus={orderToEdit.status}
             onClose={() => {
               setIsRequestEditOpen(false);
               setOrderToEdit(null);
