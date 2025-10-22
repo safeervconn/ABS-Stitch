@@ -424,7 +424,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       disabled={isDesigner || isFormDisabled}
                     >
                       <option value="custom">Custom</option>
-                      <option value="catalog">Catalog</option>
+                      <option value="stock_design">Stock Design</option>
                     </select>
                   </div>
 
