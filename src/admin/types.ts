@@ -50,7 +50,7 @@ export interface AdminOrder {
   id: string;
   order_number: string;
   order_name: string;
-  order_type?: 'custom' | 'catalog';
+  order_type?: 'custom' | 'stock_design';
   customer_id: string;
   customer_name: string;
   customer_email: string;
