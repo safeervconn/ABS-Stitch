@@ -140,7 +140,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                       <div>
                         <p className="text-sm text-gray-500">Order Type</p>
                         <p className="font-medium text-gray-800 capitalize">
-                          {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'}
+                          {order.order_type === 'custom' ? 'Custom Design' : 'Stock Design'}
                         </p>
                       </div>
                     </div>
