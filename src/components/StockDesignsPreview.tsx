@@ -133,7 +133,7 @@ const StockDesignsPreview: React.FC = () => {
               onClick={() => window.location.href = '/stock-designs'}
               className="btn-purple btn-large px-8"
             >
-              View All Designs
+              View All Stock Designs
             </button>
           </div>
         )}
@@ -145,4 +145,4 @@ const StockDesignsPreview: React.FC = () => {
   );
 };
 
-export default CatalogPreview;
+export default StockDesignsPreview;
