@@ -267,7 +267,7 @@ const CustomerOrdersTab: React.FC = () => {
           >
             <Eye className="h-4 w-4" />
           </button>
-          {(order.status === 'in_progress' || order.status === 'under_review') && (
+          {(order.status === 'completed') && (
             <button
               onClick={() => handleRequestEdit(order)}
               className="text-orange-600 hover:text-orange-900 transition-colors"
