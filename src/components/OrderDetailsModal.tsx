@@ -1,27 +1,38 @@
 import React, { useState } from 'react';
-import { X, Calendar, User, Package, FileText, Paperclip, MessageSquare } from 'lucide-react';
+import { X, Calendar, User, Package, FileText, Paperclip, MessageSquare, Edit } from 'lucide-react';
 import { getCurrentUser, getUserProfile } from '../lib/supabase';
 import { Order } from '../contexts/OrderContext';
 import { OrderComment, OrderAttachment } from '../admin/types';
 import { getOrderComments } from '../admin/api/supabaseHelpers';
 import { AttachmentList } from './AttachmentList';
 import { fetchOrderAttachments } from '../lib/attachmentService';
+import { RequestEditModal } from './RequestEditModal';
+import { editCommentsService } from '../services/editCommentsService';
+import { editRequestService } from '../services/editRequestService';
 
 interface OrderDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   order: Order | null;
+  onOrderUpdate?: () => void;
 }
 
-const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  order
+const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
+  isOpen,
+  onClose,
+  order,
+  onOrderUpdate
 }) => {
   const [currentUser, setCurrentUser] = React.useState<any>(null);
   const [orderComments, setOrderComments] = React.useState<OrderComment[]>([]);
   const [loadingComments, setLoadingComments] = React.useState(false);
   const [attachments, setAttachments] = React.useState<OrderAttachment[]>([]);
+  const [showRequestEditModal, setShowRequestEditModal] = React.useState(false);
+  const [editComments, setEditComments] = React.useState<any[]>([]);
+  const [loadingEditComments, setLoadingEditComments] = React.useState(false);
+  const [newEditComment, setNewEditComment] = React.useState('');
+  const [submittingEditComment, setSubmittingEditComment] = React.useState(false);
+  const [editRequests, setEditRequests] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     const checkUser = async () => {
@@ -37,7 +48,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
         console.error('Error checking user:', error);
       }
     };
-    
+
     const fetchComments = async () => {
       if (!order?.id) return;
 
@@ -63,19 +74,87 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       }
     };
 
+    const fetchEditData = async () => {
+      if (!order?.id) return;
+
+      try {
+        setLoadingEditComments(true);
+        const requests = await editRequestService.getEditRequestsByOrder(order.id);
+        setEditRequests(requests);
+
+        if (requests.length > 0) {
+          const allComments: any[] = [];
+          for (const request of requests) {
+            const comments = await editCommentsService.getEditCommentsByRequest(request.id);
+            allComments.push(...comments);
+          }
+          setEditComments(allComments);
+        }
+      } catch (error) {
+        console.error('Error fetching edit comments:', error);
+      } finally {
+        setLoadingEditComments(false);
+      }
+    };
+
     if (isOpen) {
       checkUser();
       fetchComments();
       fetchAttachmentsData();
+      fetchEditData();
     }
-  }, [isOpen]);
+  }, [isOpen, order?.id]);
+
+  const handleSubmitEditComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!newEditComment.trim() || !editRequests.length) return;
+
+    setSubmittingEditComment(true);
+    try {
+      const latestRequest = editRequests[0];
+      await editCommentsService.createEditComment({
+        edit_request_id: latestRequest.id,
+        content: newEditComment.trim()
+      });
+
+      const updatedComments = await editCommentsService.getEditCommentsByRequest(latestRequest.id);
+      setEditComments(updatedComments);
+      setNewEditComment('');
+    } catch (error) {
+      console.error('Error submitting edit comment:', error);
+    } finally {
+      setSubmittingEditComment(false);
+    }
+  };
+
+  const handleRequestEditSuccess = () => {
+    if (onOrderUpdate) {
+      onOrderUpdate();
+    }
+
+    if (order?.id) {
+      editRequestService.getEditRequestsByOrder(order.id).then(requests => {
+        setEditRequests(requests);
+        if (requests.length > 0) {
+          editCommentsService.getEditCommentsByRequest(requests[0].id).then(comments => {
+            setEditComments(comments);
+          });
+        }
+      });
+
+      fetchOrderAttachments(order.id).then(orderAttachments => {
+        setAttachments(orderAttachments);
+      });
+    }
+  };
 
   if (!isOpen || !order) return null;
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'new': return 'bg-blue-100 text-blue-800';
-      case 'in_progress': return 'bg-purple-100 text-purple-800';
+      case 'in_progress': return 'bg-yellow-100 text-yellow-800';
       case 'under_review': return 'bg-orange-100 text-orange-800';
       case 'completed': return 'bg-green-100 text-green-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
@@ -91,42 +170,50 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     }
   };
 
+  const isCustomer = currentUser?.role === 'customer';
+  const canRequestEdit = isCustomer && order.status === 'completed';
+
   return (
     <>
-      {/* Backdrop */}
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={onClose} />
-      
-      {/* Modal */}
+
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-          
-          {/* Header */}
+
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800">Order Details</h2>
-              <p className="text-gray-600">{order.order_number}</p>
-              <p className="text-sm text-gray-500 mt-1">{order.order_name || 'No Order Name'}</p>
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">Order Details</h2>
+                  <p className="text-gray-600">{order.order_number}</p>
+                  <p className="text-sm text-gray-500 mt-1">{order.order_name || 'No Order Name'}</p>
+                </div>
+                {order.edits && order.edits > 0 && (
+                  <div className="bg-blue-50 px-3 py-1 rounded-full">
+                    <p className="text-sm font-medium text-blue-700">
+                      Requested Edits: {order.edits}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-gray-400 hover:text-gray-600 transition-colors ml-4"
             >
               <X className="h-6 w-6" />
             </button>
           </div>
 
-          {/* Content */}
           <div className="p-6">
             <div className="grid lg:grid-cols-3 gap-8">
-              
-              {/* Order Information */}
+
               <div className="lg:col-span-2 space-y-6">
-                
-                {/* Order Summary */}
+
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">Order Summary</h3>
                   <div className="grid md:grid-cols-2 gap-4">
-                    
+
                     <div className="flex items-center space-x-3">
                       <Calendar className="h-5 w-5 text-green-600" />
                       <div>
@@ -134,7 +221,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         <p className="font-medium text-gray-800">{new Date(order.created_at).toLocaleDateString()}</p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center space-x-3">
                       <Package className="h-5 w-5 text-blue-600" />
                       <div>
@@ -144,7 +231,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center space-x-3">
                       <FileText className="h-5 w-5 text-orange-600" />
                       <div>
@@ -154,26 +241,46 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         </span>
                       </div>
                     </div>
-                    
-                    {/* Only show payment status for admin or customer users */}
-{['admin', 'customer'].includes(currentUser?.role) && (
-  <div className="flex items-center space-x-3">
-    <FileText className="h-5 w-5 text-indigo-600" />
-    <div>
-      <p className="text-sm text-gray-500">Payment Status</p>
-      <span
-        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status || 'unpaid')}`}
-      >
-        {(order.payment_status || 'unpaid').replace('_', ' ')}
-      </span>
-    </div>
-  </div>
-)}
+
+                    {['admin', 'customer'].includes(currentUser?.role) && (
+                      <div className="flex items-center space-x-3">
+                        <FileText className="h-5 w-5 text-blue-600" />
+                        <div>
+                          <p className="text-sm text-gray-500">Payment Status</p>
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPaymentStatusColor(order.payment_status || 'unpaid')}`}
+                          >
+                            {(order.payment_status || 'unpaid').replace('_', ' ')}
+                          </span>
+                        </div>
+                      </div>
+                    )}
 
                   </div>
                 </div>
 
-                {/* Design Requirements */}
+                {canRequestEdit && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className="text-sm font-semibold text-blue-900 mb-1">
+                          Need changes to this order?
+                        </h4>
+                        <p className="text-xs text-blue-700">
+                          Submit an edit request to revise this completed order
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setShowRequestEditModal(true)}
+                        className="ml-4 flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        <Edit className="h-4 w-4" />
+                        Request Edit
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 {order.custom_description && (
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Design Requirements</h3>
@@ -183,8 +290,6 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   </div>
                 )}
 
-
-                {/* Order Specifications */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">Specifications</h3>
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
@@ -205,7 +310,6 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   </div>
                 </div>
 
-                {/* Order Comments - Only for admin, sales_rep, designer */}
                 {currentUser && ['admin', 'sales_rep', 'designer'].includes(currentUser.role) && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Order Comments</h3>
@@ -242,7 +346,59 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   </div>
                 )}
 
-                {/* Attachments Section */}
+                {editComments.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Edit Comments</h3>
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      {loadingEditComments ? (
+                        <div className="flex items-center justify-center py-4">
+                          <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                          <span className="text-gray-600 text-sm">Loading edit comments...</span>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {editComments.map((comment) => (
+                            <div key={comment.id} className="bg-blue-50 rounded-lg p-3 border border-blue-100">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center space-x-2">
+                                  <MessageSquare className="h-4 w-4 text-blue-600" />
+                                  <span className="font-medium text-gray-800 text-sm">{comment.author_name}</span>
+                                </div>
+                                <span className="text-xs text-gray-500">
+                                  {new Date(comment.created_at).toLocaleDateString()} {new Date(comment.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                              <p className="text-gray-700 text-sm leading-relaxed">{comment.content}</p>
+                            </div>
+                          ))}
+
+                          {currentUser && ['admin', 'sales_rep', 'designer'].includes(currentUser.role) && (
+                            <form onSubmit={handleSubmitEditComment} className="mt-4 pt-4 border-t border-gray-200">
+                              <textarea
+                                value={newEditComment}
+                                onChange={(e) => setNewEditComment(e.target.value)}
+                                placeholder="Add a reply to this edit request..."
+                                rows={3}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+                                disabled={submittingEditComment}
+                              />
+                              <div className="flex justify-end mt-2">
+                                <button
+                                  type="submit"
+                                  disabled={submittingEditComment || !newEditComment.trim()}
+                                  className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  {submittingEditComment ? 'Posting...' : 'Post Reply'}
+                                </button>
+                              </div>
+                            </form>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <div>
                   <AttachmentList
                     orderId={order.id}
@@ -263,16 +419,13 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
               </div>
 
-              {/* Sidebar */}
               <div className="space-y-6">
-                
-                {/* Order Total */}
+
                 <div className="bg-blue-50 rounded-lg p-4">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">Order Total</h3>
                   <div className="text-2xl font-bold text-blue-600">${order.total_amount?.toFixed(2) || '0.00'}</div>
                 </div>
 
-                {/* Assignment Info */}
                 {currentUser?.role === 'admin' && (order.assigned_sales_rep_name || order.assigned_designer_name) && (
                   <div className="bg-gray-50 rounded-lg p-4">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Assignment</h3>
@@ -289,7 +442,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                           <p className="font-medium text-gray-800">{order.assigned_designer_name}</p>
                         </div>
                       )}
-                      {(!order.assigned_sales_rep_name || order.assigned_sales_rep_name === 'Unassigned') && 
+                      {(!order.assigned_sales_rep_name || order.assigned_sales_rep_name === 'Unassigned') &&
                        (!order.assigned_designer_name || order.assigned_designer_name === 'Unassigned') && (
                         <div>
                           <p className="text-sm text-gray-500">Assignment Status</p>
@@ -300,7 +453,6 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   </div>
                 )}
 
-                {/* Contact Information - Only show to admin, sales_rep, and customer */}
                 {currentUser && ['admin', 'sales_rep', 'customer'].includes(currentUser.role) && (
                   <div className="bg-gray-50 rounded-lg p-4">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Customer Info</h3>
@@ -337,6 +489,17 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
           </div>
         </div>
       </div>
+
+      {showRequestEditModal && (
+        <RequestEditModal
+          orderId={order.id}
+          orderNumber={order.order_number}
+          orderName={order.order_name}
+          orderStatus={order.status}
+          onClose={() => setShowRequestEditModal(false)}
+          onSuccess={handleRequestEditSuccess}
+        />
+      )}
     </>
   );
 };

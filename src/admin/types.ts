@@ -74,8 +74,18 @@ export interface AdminOrder {
   assigned_designer_id?: string;
   assigned_designer_name?: string;
   invoice_url?: string;
+  edits?: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface EditComment {
+  id: number;
+  edit_request_id: string;
+  author_id: string;
+  author_name?: string;
+  content: string;
+  created_at: string;
 }
 
 export interface AdminStockDesign {
@@ -188,6 +198,7 @@ export interface CustomerOrder {
   assigned_designer_name?: string;
   assigned_sales_rep_id?: string;
   assigned_designer_id?: string;
+  edits?: number;
 }
 
 // Order type for order context

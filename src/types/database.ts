@@ -50,6 +50,7 @@ export interface Database {
           custom_width: number;
           custom_height: number;
           category_id: string;
+          edits: number;
         };
         Insert: Omit<Database['public']['Tables']['orders']['Row'], 'id' | 'created_at' | 'updated_at' | 'order_number'>;
         Update: Partial<Database['public']['Tables']['orders']['Insert']>;
@@ -117,6 +118,33 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['order_comments']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['order_comments']['Insert']>;
+      };
+      edit_comments: {
+        Row: {
+          id: number;
+          edit_request_id: string;
+          author_id: string;
+          content: string;
+          created_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['edit_comments']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['edit_comments']['Insert']>;
+      };
+      edit_requests: {
+        Row: {
+          id: string;
+          order_id: string;
+          customer_id: string;
+          description: string;
+          status: 'pending' | 'approved' | 'rejected' | 'completed';
+          designer_notes: string | null;
+          created_at: string;
+          updated_at: string;
+          resolved_at: string | null;
+          resolved_by: string | null;
+        };
+        Insert: Omit<Database['public']['Tables']['edit_requests']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Database['public']['Tables']['edit_requests']['Insert']>;
       };
       order_attachments: {
         Row: {
