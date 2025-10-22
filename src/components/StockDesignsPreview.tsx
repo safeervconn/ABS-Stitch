@@ -130,7 +130,7 @@ const StockDesignsPreview: React.FC = () => {
         {!loading && stockDesigns.length > 0 && (
           <div className="text-center">
             <button 
-              onClick={() => window.location.href = '/catalog'}
+              onClick={() => window.location.href = '/stock-designs'}
               className="btn-purple btn-large px-8"
             >
               View All Designs
