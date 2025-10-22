@@ -270,7 +270,7 @@ const CustomerOrdersTab: React.FC = () => {
     {
       key: 'order_type',
       label: 'Type',
-      format: (order) => order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'
+      format: (order) => order.order_type === 'custom' ? 'Custom Design' : 'Stock Design'
     },
     { key: 'category_name', label: 'Category' },
     {
