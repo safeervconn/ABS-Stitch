@@ -357,27 +357,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                             ))}
                           </div>
 
-                          {currentUser && ['admin', 'sales_rep', 'designer'].includes(currentUser.role) && (
-                            <form onSubmit={handleSubmitEditComment} className="mt-4 pt-4 border-t border-gray-200">
-                              <textarea
-                                value={newEditComment}
-                                onChange={(e) => setNewEditComment(e.target.value)}
-                                placeholder="Add a reply to this edit request..."
-                                rows={3}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
-                                disabled={submittingEditComment}
-                              />
-                              <div className="flex justify-end mt-2">
-                                <button
-                                  type="submit"
-                                  disabled={submittingEditComment || !newEditComment.trim()}
-                                  className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                  {submittingEditComment ? 'Posting...' : 'Post Reply'}
-                                </button>
-                              </div>
-                            </form>
-                          )}
+                          
                         </div>
                       )}
                     </div>
