@@ -114,28 +114,38 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
   const uploadImage = async (): Promise<string | null> => {
     if (!newImageFile) return null;
 
-    const timestamp = Date.now();
-    const randomStr = Math.random().toString(36).substring(2, 8);
-    const ext = newImageFile.name.substring(newImageFile.name.lastIndexOf('.'));
-    const fileName = `${timestamp}-${randomStr}${ext}`;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
 
-    const { error: uploadError } = await supabase.storage
-      .from('stock-design-images')
-      .upload(fileName, newImageFile, {
-        contentType: newImageFile.type,
-        cacheControl: '3600',
-        upsert: false,
-      });
+      if (!session) {
+        throw new Error('Authentication required');
+      }
 
-    if (uploadError) {
+      const formData = new FormData();
+      formData.append('file', newImageFile);
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-stock-design-image`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to upload image');
+      }
+
+      const result = await response.json();
+      return result.publicUrl;
+    } catch (error) {
+      console.error('Upload error:', error);
       throw new Error('Failed to upload image');
     }
-
-    const { data } = supabase.storage
-      .from('stock-design-images')
-      .getPublicUrl(fileName);
-
-    return data.publicUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -167,7 +177,34 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
 
       // Delete old image if marked for deletion
       if (imageToDelete) {
-        await deleteFileFromStorage(imageToDelete, 'stock-design-images');
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+
+          if (session) {
+            // Extract storage path from the URL
+            const urlParts = imageToDelete.split('/stock-design-images/');
+            const storagePath = urlParts.length > 1 ? urlParts[1] : null;
+
+            if (storagePath) {
+              const response = await fetch(
+                `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-stock-design-image?storagePath=${encodeURIComponent(storagePath)}`,
+                {
+                  method: 'DELETE',
+                  headers: {
+                    'Authorization': `Bearer ${session.access_token}`,
+                  },
+                }
+              );
+
+              if (!response.ok) {
+                console.warn('Failed to delete old image:', await response.text());
+              }
+            }
+          }
+        } catch (error) {
+          console.warn('Error deleting old image:', error);
+          // Don't throw - allow the update to proceed even if deletion fails
+        }
       }
 
       // Create or update stock design
