@@ -5,7 +5,7 @@ import { CustomerOrder } from '../admin/types';
 interface OrderContextType {
   orders: CustomerOrder[];
   addOrder: (orderData: {
-    order_type: 'custom' | 'catalog';
+    order_type: 'custom' | 'stock_design';
     order_name: string;
     stock_design_id?: string;
     custom_description: string;
