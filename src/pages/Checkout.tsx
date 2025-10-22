@@ -4,7 +4,7 @@
  * Features:
  * - Display cart items for review
  * - Customer information form (pre-filled for logged-in users)
- * - Create separate catalog orders for each cart item
+ * - Create separate Stock Designs orders for each cart item
  * - Authentication enforcement
  * - Order confirmation and success handling
  */
@@ -165,7 +165,7 @@ const Checkout: React.FC = () => {
           className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors mb-8"
         >
           <ArrowLeft className="h-5 w-5" />
-          <span>Back to Catalog</span>
+          <span>Back to Stock Designs</span>
         </button>
 
                 {/* Checkout Form */}
