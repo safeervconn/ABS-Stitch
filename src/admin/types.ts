@@ -171,7 +171,7 @@ export interface CustomerOrder {
   customer_phone: string;
   customer_company_name: string;
   customerId: string;
-  order_type: 'custom' | 'catalog';
+  order_type: 'custom' | 'stock_design';
   attachments?: OrderAttachment[];
   first_attachment_url?: string;
   status: 'in_progress' | 'under_review' | 'completed' | 'cancelled';
