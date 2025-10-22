@@ -163,7 +163,7 @@ const CustomerOverviewTab: React.FC = () => {
                     </div>
                     <div className="flex-1">
                       <p className="text-sm sm:text-base font-medium text-gray-900">{order.order_number || `ORD-${order.id.slice(0, 8)}`}</p>
-                      <p className="text-xs sm:text-sm text-gray-500">{order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} • {new Date(order.created_at).toLocaleDateString()}</p>
+                      <p className="text-xs sm:text-sm text-gray-500">{order.order_type === 'custom' ? 'Custom Design' : 'Stock Design'} • {new Date(order.created_at).toLocaleDateString()}</p>
                       {order.category?.category_name && (
                         <p className="text-xs text-gray-500 mt-1">
                           {order.category.category_name} • {order.custom_width}"×{order.custom_height}"
