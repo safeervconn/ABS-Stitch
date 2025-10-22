@@ -121,7 +121,7 @@ const Navbar: React.FC = () => {
           {/* Navigation Links - Center (Hidden on mobile) */}
           <div className="hidden md:flex space-x-8">
             <a href="/" className="text-gray-600 hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:bg-clip-text transition-all font-bold">Home</a>
-            <a href="/catalog" className="text-gray-600 hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:bg-clip-text transition-all font-bold">Catalog</a>
+            <a href="/stock-designs" className="text-gray-600 hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:bg-clip-text transition-all font-bold">Stock Designs</a>
             <a href="/#services" onClick={handleSectionNavigation} className="text-gray-600 hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:bg-clip-text transition-all font-bold">Services</a>
             <a href="/#pricing" onClick={handleSectionNavigation} className="text-gray-600 hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:bg-clip-text transition-all font-bold">Pricing</a>
             <a href="/about" className="text-gray-600 hover:text-transparent hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:bg-clip-text transition-all font-bold">About</a>
@@ -231,7 +231,7 @@ const Navbar: React.FC = () => {
           <div className="md:hidden border-t border-gray-100">
             <div className="px-2 pt-2 pb-3 space-y-1">
               <a href="/" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Home</a>
-              <a href="/catalog" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Catalog</a>
+              <a href="/stock-designs" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Stock Designs</a>
               <a href="/#services" onClick={handleSectionNavigation} className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Services</a>
               <a href="/#pricing" onClick={handleSectionNavigation} className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">Pricing</a>
               <a href="/about" className="block px-3 py-2 text-gray-600 hover:text-blue-600 font-bold">About</a>
