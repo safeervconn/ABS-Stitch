@@ -4,7 +4,7 @@
  * Features:
  * - Shows sample pre-made artwork
  * - Grid layout responsive to screen size
- * - "View All" button for future catalog page
+ * - "View All" button for future Stock Design page
  * - Placeholder images for artwork samples
  */
 
