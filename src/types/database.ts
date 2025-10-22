@@ -42,7 +42,7 @@ export interface Database {
           invoice_url: string | null;
           created_at: string;
           updated_at: string;
-          order_type: 'catalog' | 'custom';
+          order_type: 'stock_design' | 'custom';
           order_number: string;
           order_name: string;
           total_amount: number;
