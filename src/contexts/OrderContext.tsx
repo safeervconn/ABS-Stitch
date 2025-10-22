@@ -177,6 +177,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       assigned_designer_id: order.assigned_designer_id,
       assigned_sales_rep_name: order.sales_rep?.full_name,
       assigned_designer_name: order.designer?.full_name,
+      edits: order.edits || 0,
     }));
 
     setOrders(transformedOrders);
