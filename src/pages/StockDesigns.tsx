@@ -83,7 +83,7 @@ const StockDesigns: React.FC = () => {
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-8 relative z-10 shadow-2xl">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
-            Embroidery Design Catalog
+            Embroidery Stock Designs
           </h1>
           <p className="text-lg text-blue-100">
             Browse our complete collection of professional embroidery designs
