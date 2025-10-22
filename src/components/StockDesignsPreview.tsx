@@ -1,5 +1,5 @@
 /**
- * Catalog Preview Component
+ * Stock Designs Preview Component
  * 
  * Features:
  * - Shows sample pre-made artwork
