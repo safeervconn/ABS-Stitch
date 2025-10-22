@@ -1,8 +1,8 @@
 /**
- * StockDesigns Page Component
+ * Stock Designs Page Component
  * 
  * Features:
- * - Database-driven StockDesigns
+ * - Database-driven Stock Designs
  * - Filter and search functionality
  * - Consistent design with sign-in page
  * - Responsive grid layout
