@@ -14,7 +14,7 @@ import AddToCartButton from './AddToCartButton';
 import { getStockDesigns } from '../lib/supabase';
 import { getImageSrc, getPlaceholderImage } from '../lib/placeholderImages';
 
-const CatalogPreview: React.FC = () => {
+const StockDesignsPreview: React.FC = () => {
   const [stockDesigns, setStockDesigns] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
 
