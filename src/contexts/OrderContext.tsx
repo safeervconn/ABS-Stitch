@@ -39,7 +39,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
   // Add new order
   const addOrder = async (orderData: {
-    order_type: 'custom' | 'catalog';
+    order_type: 'custom' | 'stock_design';
     order_name: string;
     stock_design_id?: string;
     custom_description: string;
