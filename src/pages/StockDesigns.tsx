@@ -31,7 +31,7 @@ interface Category {
   category_name: string;
 }
 
-const Catalog: React.FC = () => {
+const StockDesigns: React.FC = () => {
   const [stockDesigns, setStockDesigns] = useState<StockDesign[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
