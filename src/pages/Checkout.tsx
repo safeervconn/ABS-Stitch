@@ -100,7 +100,7 @@ const Checkout: React.FC = () => {
         const itemTotal = itemPrice; // Always quantity 1
 
         const orderData = {
-          order_type: 'stock_design' as 'catalog',
+          order_type: 'catalog' as 'catalog',
           order_name: item.title,
           stock_design_id: item.id,
           custom_description: `${item.title}`,
@@ -133,7 +133,7 @@ const Checkout: React.FC = () => {
   
 
   const handleBackToCart = () => {
-    navigate('/catalog');
+    navigate('/stock-designs');
   };
 
   if (loading) {
