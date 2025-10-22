@@ -273,7 +273,7 @@ const StockDesignsTab: React.FC = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
           <div>
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Stock Design Management</h2>
-            <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your Stock Design Catalog</p>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your Stock Design</p>
           </div>
           <button
             onClick={handleCreateStockDesign}
