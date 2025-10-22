@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Upload, FileIcon } from 'lucide-react';
-import { notifyDesignerAboutEditRequest } from '../services/notificationService';
+import { notifyAboutEditRequest } from '../services/notificationService';
 import { supabase } from '../lib/supabase';
 import { toast } from '../utils/toast';
 import { uploadAttachment } from '../lib/attachmentService';
@@ -83,7 +83,7 @@ export function RequestEditModal({
 
       const { data: order, error: orderFetchError } = await supabase
         .from('orders')
-        .select('edits, assigned_designer_id, order_number, order_name')
+        .select('edits, assigned_sales_rep_id, order_number, order_name')
         .eq('id', orderId)
         .maybeSingle();
 
@@ -105,13 +105,11 @@ export function RequestEditModal({
         throw updateError;
       }
 
-      if (order?.assigned_designer_id) {
-        await notifyDesignerAboutEditRequest(
-          order.assigned_designer_id,
-          order.order_number || orderId.slice(0, 8),
-          order.order_name || orderName
-        );
-      }
+      await notifyAboutEditRequest(
+        order?.order_number || orderId.slice(0, 8),
+        order?.order_name || orderName,
+        order?.assigned_sales_rep_id
+      );
 
       toast.success('Edit request submitted successfully');
       onSuccess();

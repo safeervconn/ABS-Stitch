@@ -383,6 +383,15 @@ const CustomerOrdersTab: React.FC = () => {
           isOpen={isOrderDetailsOpen}
           onClose={() => setIsOrderDetailsOpen(false)}
           order={selectedOrder}
+          onOrderUpdate={async () => {
+            await refetch();
+            if (selectedOrder) {
+              const updatedOrder = orders.data.find((o: AdminOrder) => o.id === selectedOrder.id);
+              if (updatedOrder) {
+                setSelectedOrder(updatedOrder);
+              }
+            }
+          }}
         />
 
         {/* Place Order Modal */}

@@ -296,7 +296,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 {currentUser && ['admin', 'sales_rep', 'designer'].includes(currentUser.role) && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Order Comments</h3>
-                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <div className="bg-white border border-gray-200 rounded-lg p-4 max-h-96 overflow-y-auto">
                       {loadingComments ? (
                         <div className="flex items-center justify-center py-4">
                           <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
@@ -340,20 +340,22 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         </div>
                       ) : (
                         <div className="space-y-4">
-                          {editComments.map((comment) => (
-                            <div key={comment.id} className="bg-blue-50 rounded-lg p-3 border border-blue-100">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center space-x-2">
-                                  <MessageSquare className="h-4 w-4 text-blue-600" />
-                                  <span className="font-medium text-gray-800 text-sm">{comment.author_name}</span>
+                          <div className="max-h-96 overflow-y-auto space-y-4">
+                            {editComments.map((comment) => (
+                              <div key={comment.id} className="bg-blue-50 rounded-lg p-3 border border-blue-100">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center space-x-2">
+                                    <MessageSquare className="h-4 w-4 text-blue-600" />
+                                    <span className="font-medium text-gray-800 text-sm">{comment.author_name}</span>
+                                  </div>
+                                  <span className="text-xs text-gray-500">
+                                    {new Date(comment.created_at).toLocaleDateString()} {new Date(comment.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
                                 </div>
-                                <span className="text-xs text-gray-500">
-                                  {new Date(comment.created_at).toLocaleDateString()} {new Date(comment.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </span>
+                                <p className="text-gray-700 text-sm leading-relaxed">{comment.content}</p>
                               </div>
-                              <p className="text-gray-700 text-sm leading-relaxed">{comment.content}</p>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
 
                           {currentUser && ['admin', 'sales_rep', 'designer'].includes(currentUser.role) && (
                             <form onSubmit={handleSubmitEditComment} className="mt-4 pt-4 border-t border-gray-200">

@@ -233,6 +233,39 @@ export async function notifyDesignerAboutEditRequest(
   }
 }
 
+export async function notifyAboutEditRequest(
+  orderNumber: string,
+  orderName: string,
+  salesRepId?: string
+): Promise<void> {
+  try {
+    const notifications: Array<{ userId: string; type: NotificationType; message: string }> = [];
+
+    const admins = await getAllAdmins();
+    admins.forEach(admin => {
+      notifications.push({
+        userId: admin.id,
+        type: 'order',
+        message: `New edit request received for order ${orderName || orderNumber}. Please review.`,
+      });
+    });
+
+    if (salesRepId) {
+      notifications.push({
+        userId: salesRepId,
+        type: 'order',
+        message: `Your customer has requested an edit for order ${orderName || orderNumber}. Please review.`,
+      });
+    }
+
+    if (notifications.length > 0) {
+      await createBatchNotifications(notifications);
+    }
+  } catch (error) {
+    console.error('Error notifying about edit request:', error);
+  }
+}
+
 export async function notifyCustomerAboutEditRequestResponse(
   customerId: string,
   orderNumber: string,
