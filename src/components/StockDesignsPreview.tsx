@@ -45,10 +45,10 @@ const StockDesignsPreview: React.FC = () => {
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-4">
-            Ready-Made Embroidery Designs
+            Ready-Made Stock Designs
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Browse our collection of professionally designed embroidery patterns, ready for immediate stitching.
+            Browse our collection of professionally designed patterns, ready for immediate stitching.
           </p>
         </div>
 
