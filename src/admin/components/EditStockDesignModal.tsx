@@ -180,7 +180,7 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
         try {
           const { data: { session } } = await supabase.auth.getSession();
 
-          if (session) {
+          if (session && imageToDelete.includes('/stock-design-images/')) {
             // Extract storage path from the URL
             const urlParts = imageToDelete.split('/stock-design-images/');
             const storagePath = urlParts.length > 1 ? urlParts[1] : null;
