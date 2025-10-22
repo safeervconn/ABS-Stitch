@@ -130,7 +130,7 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['edit_comments']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['edit_comments']['Insert']>;
       };
-      edit_requests: {
+      edit_comments: {
         Row: {
           id: string;
           order_id: string;
