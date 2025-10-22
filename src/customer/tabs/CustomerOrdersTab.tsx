@@ -198,7 +198,7 @@ const CustomerOrdersTab: React.FC = () => {
       label: 'Type',
       render: (order: AdminOrder) => (
         <span className="text-sm text-gray-600 capitalize">
-          {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'}
+          {order.order_type === 'custom' ? 'Custom Design' : 'Stock Design'}
         </span>
       ),
     },
