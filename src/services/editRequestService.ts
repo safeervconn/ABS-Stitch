@@ -52,7 +52,7 @@ export const editRequestService = {
     }
 
     const { data: editRequest, error: insertError } = await supabase
-      .from('edit_requests')
+      .from('edit_comments')
       .insert({
         order_id: data.order_id,
         customer_id: user.id,
@@ -95,7 +95,7 @@ export const editRequestService = {
 
   async getEditRequestsByOrder(orderId: string): Promise<EditRequest[]> {
     const { data, error } = await supabase
-      .from('edit_requests')
+      .from('edit_comments')
       .select('*')
       .eq('order_id', orderId)
       .order('created_at', { ascending: false });
@@ -106,7 +106,7 @@ export const editRequestService = {
 
   async getEditRequestsByCustomer(customerId: string): Promise<EditRequest[]> {
     const { data, error } = await supabase
-      .from('edit_requests')
+      .from('edit_comments')
       .select('*')
       .eq('customer_id', customerId)
       .order('created_at', { ascending: false });
@@ -117,7 +117,7 @@ export const editRequestService = {
 
   async getAllPendingEditRequests(): Promise<EditRequest[]> {
     const { data, error } = await supabase
-      .from('edit_requests')
+      .from('edit_comments')
       .select('*')
       .eq('status', 'pending')
       .order('created_at', { ascending: false });
@@ -141,7 +141,7 @@ export const editRequestService = {
     }
 
     const { data, error } = await supabase
-      .from('edit_requests')
+      .from('edit_comments')
       .update(updateData)
       .eq('id', id)
       .select()
@@ -153,7 +153,7 @@ export const editRequestService = {
 
   async deleteEditRequest(id: string): Promise<void> {
     const { error } = await supabase
-      .from('edit_requests')
+      .from('edit_comments')
       .delete()
       .eq('id', id);
 
