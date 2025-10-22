@@ -146,6 +146,7 @@ export const getRecentOrders = async (limit: number = 10): Promise<AdminOrder[]>
       assigned_designer_id: order.assigned_designer_id,
       assigned_designer_name: order.designer?.full_name,
       invoice_url: order.invoice_url,
+      edits: order.edits,
       created_at: order.created_at,
       updated_at: order.updated_at,
     }));
@@ -588,6 +589,7 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
       assigned_designer_id: order.assigned_designer_id,
       assigned_designer_name: order.designer?.full_name,
       invoice_url: order.invoice_url,
+      edits: order.edits,
       created_at: order.created_at,
       updated_at: order.updated_at,
     }));
@@ -793,6 +795,7 @@ export const getOrderById = async (id: string): Promise<AdminOrder> => {
       assigned_designer_id: data.assigned_designer_id,
       assigned_designer_name: data.designer?.full_name,
       invoice_url: data.invoice_url,
+      edits: data.edits,
       created_at: data.created_at,
       updated_at: data.updated_at,
     };
@@ -1242,6 +1245,7 @@ export const getOrdersByIds = async (orderIds: string[]): Promise<AdminOrder[]> 
       assigned_designer_id: order.assigned_designer_id,
       assigned_designer_name: undefined,
       invoice_url: order.invoice_url,
+      edits: order.edits,
       created_at: order.created_at,
       updated_at: order.updated_at,
     }));
@@ -1290,6 +1294,7 @@ export const getAllCustomerOrders = async (customerId: string): Promise<AdminOrd
       assigned_designer_id: order.assigned_designer_id,
       assigned_designer_name: undefined,
       invoice_url: order.invoice_url,
+      edits: order.edits,
       created_at: order.created_at,
       updated_at: order.updated_at,
     }));
@@ -1334,8 +1339,8 @@ export const deleteFileFromStorage = async (fileUrl: string, bucket: string): Pr
 };
 
 export const getUnpaidOrdersForCustomer = async (
-  customerId: string, 
-  dateFrom?: string, 
+  customerId: string,
+  dateFrom?: string,
   dateTo?: string
 ): Promise<AdminOrder[]> => {
   try {
@@ -1366,6 +1371,7 @@ export const getUnpaidOrdersForCustomer = async (
     return (data || []).map(order => ({
       id: order.id,
       order_number: order.order_number,
+      order_name: order.order_name,
       order_type: order.order_type,
       customer_id: order.customer_id,
       customer_name: order.customer?.full_name || 'Unknown',
@@ -1381,12 +1387,14 @@ export const getUnpaidOrdersForCustomer = async (
       custom_width: order.custom_width,
       custom_height: order.custom_height,
       total_amount: order.total_amount,
+      payment_status: order.payment_status,
       status: order.status,
       assigned_sales_rep_id: order.assigned_sales_rep_id,
       assigned_sales_rep_name: undefined,
       assigned_designer_id: order.assigned_designer_id,
       assigned_designer_name: undefined,
       invoice_url: order.invoice_url,
+      edits: order.edits,
       created_at: order.created_at,
       updated_at: order.updated_at,
     }));
@@ -1607,6 +1615,7 @@ export const getCustomerOrdersPaginated = async (params: PaginationParams & { cu
       assigned_designer_id: order.assigned_designer_id,
       assigned_designer_name: order.designer?.full_name,
       invoice_url: order.invoice_url,
+      edits: order.edits,
       created_at: order.created_at,
       updated_at: order.updated_at,
     }));

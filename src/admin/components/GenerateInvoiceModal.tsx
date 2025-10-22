@@ -336,8 +336,13 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
                           </div>
                           <div className="flex items-center space-x-2 mt-1">
                             <p className="text-sm text-gray-500">
-                              {order.order_type === 'custom' ? 'Custom Design' : 'Stock Design'} •{' '}
-                              {new Date(order.created_at).toLocaleDateString()}
+                              {order.order_type === 'custom' ? 'Custom Design' : 'Stock Design'}
+                              {order.edits && order.edits > 0 && (
+                                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-md bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold">
+                                  Edit #{order.edits}
+                                </span>
+                              )}
+                              {' • '}{new Date(order.created_at).toLocaleDateString()}
                             </p>
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getOrderStatusColor(order.status)}`}>
                               {(order.status || 'unknown').replace('_', ' ')}
