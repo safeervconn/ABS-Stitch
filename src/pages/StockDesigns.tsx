@@ -240,4 +240,4 @@ const Catalog: React.FC = () => {
   );
 };
 
-export default Catalog;
+export default StockDesigns;
