@@ -1,8 +1,8 @@
 /**
- * Catalog Page Component
+ * StockDesigns Page Component
  * 
  * Features:
- * - Database-driven stockdesign catalog
+ * - Database-driven StockDesigns
  * - Filter and search functionality
  * - Consistent design with sign-in page
  * - Responsive grid layout
