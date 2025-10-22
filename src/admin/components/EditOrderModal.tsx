@@ -711,8 +711,10 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                 {/* Edit Comments Section */}
                 {editComments.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Edit Comments</h3>
-                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+<label className="block text-sm font-medium text-gray-700 mb-2">
+                      <MessageSquare className="h-4 w-4 inline mr-1" />
+                      Edit Comments
+                    </label>                    <div className="bg-white border border-gray-200 rounded-lg p-4">
                       {loadingEditComments ? (
                         <div className="flex items-center justify-center py-4">
                           <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
