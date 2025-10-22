@@ -186,7 +186,7 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
                                     <span className="text-sm text-gray-500 ml-2">({order.order_name || 'No Order Name'})</span>
                                   </div>
                                   <p className="text-sm text-gray-500">
-                                    {order.order_type === 'custom' ? 'Custom Design' : 'Catalog Item'} •
+                                    {order.order_type === 'custom' ? 'Custom Design' : 'Stock Design'} •
                                     {new Date(order.created_at).toLocaleDateString()}
                                   </p>
                                   {order.category_name && (
