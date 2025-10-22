@@ -61,7 +61,7 @@ const StockDesigns: React.FC = () => {
         setCategories(categoriesData || []);
       } catch (err: any) {
         setError(err.message || 'Failed to load Stock Designs');
-        console.error('Error fetching catalog data:', err);
+        console.error('Error fetching Stock Designs data:', err);
       } finally {
         setLoading(false);
       }
