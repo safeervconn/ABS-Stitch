@@ -39,7 +39,7 @@ const StockDesignsPreview: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-16 bg-gradient-to-b from-white to-gray-50" id="catalog">
+    <section className="py-16 bg-gradient-to-b from-white to-gray-50" id="StockDesignsPreview">
       <div className="container mx-auto px-4">
         
         {/* Section Header */}
