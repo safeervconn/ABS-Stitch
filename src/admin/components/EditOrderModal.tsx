@@ -208,6 +208,22 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
       return;
     }
 
+    // Validate required fields
+    if (!formData.category_id) {
+      setError('Category is required.');
+      return;
+    }
+
+    if (!formData.custom_width || formData.custom_width <= 0) {
+      setError('Custom width must be greater than 0.');
+      return;
+    }
+
+    if (!formData.custom_height || formData.custom_height <= 0) {
+      setError('Custom height must be greater than 0.');
+      return;
+    }
+
     // Validate designer assignment for in_progress orders
     if (formData.status === 'in_progress' && !formData.assigned_designer_id) {
       setError('Please assign a designer before setting order to "In Progress".');
@@ -217,7 +233,6 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
     // Convert empty strings to null for UUID fields to prevent database errors
     const sanitizedData = {
       ...formData,
-      category_id: formData.category_id || null,
       assigned_sales_rep_id: formData.assigned_sales_rep_id || null,
       assigned_designer_id: formData.assigned_designer_id || null,
     };

@@ -62,10 +62,10 @@ export interface AdminOrder {
   attachments?: OrderAttachment[];
   first_attachment_url?: string;
   first_attachment_id?: string;
-  category_id?: string;
+  category_id: string;
   category_name?: string;
-  custom_width?: number;
-  custom_height?: number;
+  custom_width: number;
+  custom_height: number;
   total_amount: number;
   payment_status: 'paid' | 'unpaid';
   status: 'new' | 'in_progress' | 'under_review' | 'completed' | 'cancelled';
@@ -180,10 +180,10 @@ export interface CustomerOrder {
   created_at: string;
   updated_at: string;
   custom_description?: string;
-  category_id?: string;
+  category_id: string;
   category_name?: string;
-  custom_width?: number;
-  custom_height?: number;
+  custom_width: number;
+  custom_height: number;
   assigned_sales_rep_name?: string;
   assigned_designer_name?: string;
   assigned_sales_rep_id?: string;

@@ -47,9 +47,9 @@ export interface Database {
           order_name: string;
           total_amount: number;
           payment_status: 'paid' | 'unpaid' | 'cancelled';
-          custom_width: number | null;
-          custom_height: number | null;
-          category_id: string | null;
+          custom_width: number;
+          custom_height: number;
+          category_id: string;
         };
         Insert: Omit<Database['public']['Tables']['orders']['Row'], 'id' | 'created_at' | 'updated_at' | 'order_number'>;
         Update: Partial<Database['public']['Tables']['orders']['Insert']>;

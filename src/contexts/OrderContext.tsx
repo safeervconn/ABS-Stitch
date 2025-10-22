@@ -7,7 +7,7 @@ interface OrderContextType {
   addOrder: (orderData: {
     order_type: 'custom' | 'catalog';
     order_name: string;
-    stockdesign_id?: string;
+    stock_design_id?: string;
     custom_description: string;
     total_amount: number;
     category_id?: string;
@@ -41,7 +41,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const addOrder = async (orderData: {
     order_type: 'custom' | 'catalog';
     order_name: string;
-    stockdesign_id?: string;
+    stock_design_id?: string;
     custom_description: string;
     total_amount: number;
     category_id?: string;
@@ -74,7 +74,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           customer_id: profile.id,
           order_type: orderData.order_type,
           order_name: orderData.order_name,
-          stockdesign_id: orderData.stockdesign_id || null,
+          stock_design_id: orderData.stock_design_id || null,
           custom_description: orderData.custom_description,
           category_id: orderData.category_id || null,
           custom_width: orderData.custom_width || null,

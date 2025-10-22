@@ -100,7 +100,8 @@ const Checkout: React.FC = () => {
         const itemTotal = itemPrice; // Always quantity 1
 
         const orderData = {
-          order_type: 'catalog',
+          order_type: 'catalog' as 'catalog',
+          order_name: item.title,
           stock_design_id: item.id,
           custom_description: `${item.title}`,
           category_id: item.selectedCategoryId,

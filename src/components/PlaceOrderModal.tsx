@@ -96,13 +96,18 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
       return;
     }
 
-    if (formData.customWidth && parseFloat(formData.customWidth) <= 0) {
-      toast.error('Width must be greater than 0');
+    if (!formData.categoryId) {
+      toast.error('Please select a category');
       return;
     }
 
-    if (formData.customHeight && parseFloat(formData.customHeight) <= 0) {
-      toast.error('Height must be greater than 0');
+    if (!formData.customWidth || parseFloat(formData.customWidth) <= 0) {
+      toast.error('Please enter a valid width greater than 0');
+      return;
+    }
+
+    if (!formData.customHeight || parseFloat(formData.customHeight) <= 0) {
+      toast.error('Please enter a valid height greater than 0');
       return;
     }
 
@@ -112,9 +117,9 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
         order_type: 'custom' as const,
         order_name: formData.orderName,
         custom_description: formData.designInstructions,
-        category_id: formData.categoryId || undefined,
-        custom_width: formData.customWidth ? parseFloat(formData.customWidth) : undefined,
-        custom_height: formData.customHeight ? parseFloat(formData.customHeight) : undefined,
+        category_id: formData.categoryId,
+        custom_width: parseFloat(formData.customWidth),
+        custom_height: parseFloat(formData.customHeight),
         total_amount: 0,
       };
 
@@ -395,15 +400,16 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Category
+                    Category *
                   </label>
                   <select
                     name="categoryId"
                     value={formData.categoryId}
                     onChange={handleInputChange}
+                    required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="">Select Type</option>
+                    <option value="">Select Category</option>
                     {categories.map(category => (
                       <option key={category.id} value={category.id}>{category.category_name}</option>
                     ))}
@@ -412,7 +418,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Width (inches)
+                    Width (inches) *
                   </label>
                   <input
                     type="number"
@@ -421,6 +427,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
                     min="0.1"
                     value={formData.customWidth}
                     onChange={handleInputChange}
+                    required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Width"
                   />
@@ -428,7 +435,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Height (inches)
+                    Height (inches) *
                   </label>
                   <input
                     type="number"
@@ -437,6 +444,7 @@ const PlaceOrderModal: React.FC<PlaceOrderModalProps> = ({ isOpen, onClose }) =>
                     min="0.1"
                     value={formData.customHeight}
                     onChange={handleInputChange}
+                    required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Height"
                   />
