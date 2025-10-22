@@ -143,8 +143,8 @@ export interface Database {
           resolved_at: string | null;
           resolved_by: string | null;
         };
-        Insert: Omit<Database['public']['Tables']['edit_requests']['Row'], 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Database['public']['Tables']['edit_requests']['Insert']>;
+        Insert: Omit<Database['public']['Tables']['edit_comments']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Database['public']['Tables']['edit_comments']['Insert']>;
       };
       order_attachments: {
         Row: {
