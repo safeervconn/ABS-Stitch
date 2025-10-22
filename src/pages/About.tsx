@@ -204,7 +204,7 @@ const About: React.FC = () => {
               Get Started Today
             </button>
             <button 
-              onClick={() => window.location.href = '/catalog'}
+              onClick={() => window.location.href = '/stock-designs'}
               className="btn-purple btn-large px-8"
             >
               Browse Our Work
