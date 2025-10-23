@@ -751,7 +751,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                               />
                               <div className="flex justify-end mt-2">
                                 <button
-                                  type="submit"
+                                  type="button"
                                   disabled={submittingEditComment || !newEditComment.trim()}
                                   className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
