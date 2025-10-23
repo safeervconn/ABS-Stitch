@@ -252,14 +252,7 @@ const NotificationDropdown: React.FC = () => {
                   <span>{notifications.length} notifications shown</span>
                   <span>{unreadCount} unread</span>
                 </div>
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                  }}
-                  className="w-full text-center text-sm text-blue-600 hover:text-blue-700 transition-colors"
-                >
-                  View All Notifications
-                </button>
+                
               </div>
             )}
           </div>
