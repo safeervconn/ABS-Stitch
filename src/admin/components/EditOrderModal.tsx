@@ -14,7 +14,7 @@ order: AdminOrder | null;
 currentUser?: any;
 onSuccess: () => void;
 }
-const EditOrderModal: React.FC;
+const EditOrderModal: React.FC
 <EditOrderModalProps>
 = ({
 isOpen,
