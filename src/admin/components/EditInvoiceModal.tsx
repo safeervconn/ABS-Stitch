@@ -340,9 +340,11 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                                 {order.category_name} • {order.custom_width}"×{order.custom_height}"
                               </p>
                             )}
-                            {order.custom_description && (
-                              <p className="text-sm text-gray-600 mt-1 truncate">{order.custom_description}</p>
-                            )}
+                             {order.edits && order.edits > 0 && (
+                                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-md bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold">
+                                  No. of Edits:{ } {order.edits}
+                                </span>
+                              )}
                           </div>
                         </label>
                       ))}
