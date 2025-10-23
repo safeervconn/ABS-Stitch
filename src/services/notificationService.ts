@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase';
 
-export type NotificationType = 'order' | 'user' | 'stockdesign' | 'system';
+export type NotificationType = 'order' | 'user' | 'stock_design' | 'system' | 'invoice';
 
 export interface NotificationTemplate {
   type: NotificationType;
@@ -209,7 +209,7 @@ export async function notifyCustomerAboutInvoice(
   try {
     await createNotification(
       customerId,
-      'order',
+      'invoice',
       `A new invoice "${invoiceTitle}" has been generated for you. Please check your invoices section.`
     );
   } catch (error) {

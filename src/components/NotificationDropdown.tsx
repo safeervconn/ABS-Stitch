@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, X, Check, CheckCheck, Eye, EyeOff } from 'lucide-react';
+import { Bell, X, Check, CheckCheck, Eye, EyeOff, Package, Users, ShoppingBag, Settings, FileText } from 'lucide-react';
 import { getCurrentUser } from '../lib/supabase';
 import { 
   getNotificationsWithUnreadCount, 
@@ -11,7 +11,7 @@ import {
 interface Notification {
   id: number;
   user_id: string;
-  type: 'order' | 'user' | 'stockdesign' | 'system';
+  type: 'order' | 'user' | 'stock_design' | 'system' | 'invoice';
   message: string;
   read: boolean;
   created_at: string;
@@ -114,12 +114,14 @@ const NotificationDropdown: React.FC = () => {
     }
   };
   const getNotificationIcon = (type: string) => {
+    const iconClass = "h-5 w-5";
     switch (type) {
-      case 'order': return '📦';
-      case 'user': return '👤';
-      case 'stockdesign': return '🛍️';
-      case 'system': return '⚙️';
-      default: return '📢';
+      case 'order': return <Package className={`${iconClass} text-blue-600`} />;
+      case 'invoice': return <FileText className={`${iconClass} text-green-600`} />;
+      case 'user': return <Users className={`${iconClass} text-purple-600`} />;
+      case 'stock_design': return <ShoppingBag className={`${iconClass} text-orange-600`} />;
+      case 'system': return <Settings className={`${iconClass} text-gray-600`} />;
+      default: return <Bell className={`${iconClass} text-gray-400`} />;
     }
   };
 
@@ -207,7 +209,7 @@ const NotificationDropdown: React.FC = () => {
                       }`}
                     >
                       <div className="flex items-start space-x-3 pr-8">
-                        <div className="text-lg">
+                        <div className="mt-0.5">
                           {getNotificationIcon(notification.type)}
                         </div>
                         <div className="flex-1 min-w-0">
