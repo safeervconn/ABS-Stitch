@@ -499,7 +499,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       required
                     >
                       {!isDesigner && <option value="new">New</option>}
-                      <option value="in_progress">In Progress</option>
+                      {!isDesigner && <option value="in_progress">In Progress</option>}
                       <option value="under_review">Under Review</option>
                       {!isDesigner && <option value="completed">Completed</option>}
                       {!isDesigner && <option value="cancelled">Cancelled</option>}
