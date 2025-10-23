@@ -121,10 +121,12 @@ export async function notifyAboutNewOrder(
   salesRepId?: string
 ): Promise<void> {
   try {
+    const notificationType: NotificationType = orderType === 'stock_design' ? 'stock_design' : 'order';
+
     const notifications: Array<{ userId: string; type: NotificationType; message: string }> = [
       {
         userId: customerId,
-        type: 'order',
+        type: notificationType,
         message: `Your ${orderType} order ${orderNumber} has been placed successfully!`,
       },
     ];
@@ -133,7 +135,7 @@ export async function notifyAboutNewOrder(
     admins.forEach(admin => {
       notifications.push({
         userId: admin.id,
-        type: 'order',
+        type: notificationType,
         message: `New ${orderType} order ${orderNumber} has been placed by ${customerName}`,
       });
     });
@@ -141,7 +143,7 @@ export async function notifyAboutNewOrder(
     if (salesRepId) {
       notifications.push({
         userId: salesRepId,
-        type: 'order',
+        type: notificationType,
         message: `New ${orderType} order ${orderNumber} has been placed by your assigned customer ${customerName}`,
       });
     }
@@ -166,7 +168,7 @@ export async function notifyAboutOrderStatusChange(
     if (newStatus === 'under_review' && salesRepId) {
       notifications.push({
         userId: salesRepId,
-        type: 'order',
+        type: 'system',
         message: `Order ${orderNumber} is now under review. Please check it.`,
       });
     }
@@ -174,7 +176,7 @@ export async function notifyAboutOrderStatusChange(
     if (newStatus === 'completed') {
       notifications.push({
         userId: customerId,
-        type: 'order',
+        type: 'system',
         message: `Your order ${orderNumber} has been completed!`,
       });
     }
@@ -225,7 +227,7 @@ export async function notifyDesignerAboutEditRequest(
   try {
     await createNotification(
       designerId,
-      'order',
+      'system',
       `New edit request received for order ${orderName || orderNumber}. Please review.`
     );
   } catch (error) {
@@ -245,7 +247,7 @@ export async function notifyAboutEditRequest(
     admins.forEach(admin => {
       notifications.push({
         userId: admin.id,
-        type: 'order',
+        type: 'system',
         message: `New edit request received for order ${orderName || orderNumber}. Please review.`,
       });
     });
@@ -253,7 +255,7 @@ export async function notifyAboutEditRequest(
     if (salesRepId) {
       notifications.push({
         userId: salesRepId,
-        type: 'order',
+        type: 'system',
         message: `Your customer has requested an edit for order ${orderName || orderNumber}. Please review.`,
       });
     }
@@ -279,7 +281,7 @@ export async function notifyCustomerAboutEditRequestResponse(
 
     await createNotification(
       customerId,
-      'order',
+      'system',
       message
     );
   } catch (error) {

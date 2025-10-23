@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, X, Check, CheckCheck, Eye, EyeOff, Package, Users, ShoppingBag, Settings, FileText } from 'lucide-react';
+import { Bell, X, Check, CheckCheck, Eye, EyeOff, Package, Users, ShoppingBag, Settings, FileText, CheckCircle } from 'lucide-react';
 import { getCurrentUser } from '../lib/supabase';
 import { 
   getNotificationsWithUnreadCount, 
@@ -118,9 +118,9 @@ const NotificationDropdown: React.FC = () => {
     switch (type) {
       case 'order': return <Package className={`${iconClass} text-blue-600`} />;
       case 'invoice': return <FileText className={`${iconClass} text-green-600`} />;
-      case 'user': return <Users className={`${iconClass} text-purple-600`} />;
+      case 'user': return <Users className={`${iconClass} text-indigo-600`} />;
       case 'stock_design': return <ShoppingBag className={`${iconClass} text-orange-600`} />;
-      case 'system': return <Settings className={`${iconClass} text-gray-600`} />;
+      case 'system': return <CheckCircle className={`${iconClass} text-teal-600`} />;
       default: return <Bell className={`${iconClass} text-gray-400`} />;
     }
   };
