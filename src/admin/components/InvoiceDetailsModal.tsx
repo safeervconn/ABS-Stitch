@@ -194,6 +194,11 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
                                 {order.category_name} • {order.custom_width}"×{order.custom_height}"
                               </p>
                             )}
+                                   {order.edits && order.edits > 0 && (
+                                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-md bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold">
+                                  No. of Edits:{ } {order.edits}
+                                </span>
+                              )}
 
                                 </div>
                               </div>
@@ -202,11 +207,7 @@ const InvoiceDetailsModal: React.FC<InvoiceDetailsModalProps> = ({
                                   <p className="font-semibold text-gray-900">
                                     ${order.total_amount?.toFixed(2) || '0'}
                                   </p>
-                                   {order.edits && order.edits > 0 && (
-                                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-md bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold">
-                                  No. of Edits:{ } {order.edits}
-                                </span>
-                              )}
+                                  
                                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getOrderStatusColor(order.status)}`}>
                                     {order.status.replace('_', ' ')}
                                   </span>
