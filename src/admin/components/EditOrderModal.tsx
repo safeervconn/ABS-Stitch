@@ -604,7 +604,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                   )}
 
                   {/* Total Amount */}
-                  {!isDesigner && (
+                  {currentUser && currentUser.role !== 'designer' && (
                     <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Total Amount
