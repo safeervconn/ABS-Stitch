@@ -24,11 +24,19 @@ export async function getOrdersFromView(params: PaginationParams): Promise<Pagin
     }
 
     if (params.salesRepId) {
-      query = query.eq('assigned_sales_rep_id', params.salesRepId);
+      // Sales reps should only see custom orders assigned to them
+      // Stock design orders are admin-only
+      query = query
+        .eq('assigned_sales_rep_id', params.salesRepId)
+        .eq('order_type', 'custom');
     }
 
     if (params.assignedDesignerId) {
-      query = query.eq('assigned_designer_id', params.assignedDesignerId);
+      // Designers should only see custom orders assigned to them
+      // Stock design orders are admin-only
+      query = query
+        .eq('assigned_designer_id', params.assignedDesignerId)
+        .eq('order_type', 'custom');
     }
 
     if (params.amountMin !== undefined && !isNaN(params.amountMin) && params.amountMin >= 0) {

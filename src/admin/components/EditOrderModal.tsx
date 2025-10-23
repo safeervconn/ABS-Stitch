@@ -233,8 +233,8 @@ if (!formData.custom_height || formData.custom_height <= 0) {
 setError('Custom height must be greater than 0.');
 return;
 }
-// Validate designer assignment for in_progress orders
-if (formData.status === 'in_progress' && !formData.assigned_designer_id) {
+// Validate designer assignment for in_progress orders (skip for stock designs)
+if (formData.status === 'in_progress' && !formData.assigned_designer_id && order.order_type !== 'stock_design') {
 setError('Please assign a designer before setting order to "In Progress".');
 return;
 }
@@ -321,6 +321,7 @@ const canEditCompletedOrder = currentUser?.role === 'admin' || currentUser?.role
 const isFormDisabled = isCompletedOrCancelled && !canEditCompletedOrder;
 const isAssignedSalesRep = currentUser?.role === 'sales_rep' && order.assigned_sales_rep_id === currentUser.id;
 const canDeleteAttachment = currentUser?.role === 'admin' || isAssignedSalesRep;
+const isStockDesign = order.order_type === 'stock_design';
 return (
 <>
 {/* Backdrop */}
@@ -535,12 +536,16 @@ return (
             <div>
                <label className="block text-sm font-medium text-gray-700 mb-2">
                Assign to Sales Rep
+               {isStockDesign && (
+                  <span className="ml-2 text-xs text-orange-600">(Disabled for Stock Designs)</span>
+               )}
                </label>
                <select
                   name="assigned_sales_rep_id"
                   value={formData.assigned_sales_rep_id}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  disabled={isStockDesign}
                   >
                   <option value="">Unassigned</option>
                   {salesReps.map(rep => (
@@ -554,13 +559,16 @@ return (
             <div>
                <label className="block text-sm font-medium text-gray-700 mb-2">
                Assign to Designer
+               {isStockDesign && (
+                  <span className="ml-2 text-xs text-orange-600">(Disabled for Stock Designs)</span>
+               )}
                </label>
                <select
                   name="assigned_designer_id"
                   value={formData.assigned_designer_id}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  disabled={isFormDisabled}
+                  disabled={isFormDisabled || isStockDesign}
                   >
                   <option value="">Unassigned</option>
                   {designers.map(designer => (

@@ -499,13 +499,21 @@ export const getOrders = async (params: PaginationParams): Promise<PaginatedResp
     }
 
     // Apply sales rep filter
+    // Sales reps should only see custom orders assigned to them
+    // Stock design orders are admin-only
     if (params.salesRepId) {
-      query = query.eq('assigned_sales_rep_id', params.salesRepId);
+      query = query
+        .eq('assigned_sales_rep_id', params.salesRepId)
+        .eq('order_type', 'custom');
     }
 
     // Apply designer filter
+    // Designers should only see custom orders assigned to them
+    // Stock design orders are admin-only
     if (params.assignedDesignerId) {
-      query = query.eq('assigned_designer_id', params.assignedDesignerId);
+      query = query
+        .eq('assigned_designer_id', params.assignedDesignerId)
+        .eq('order_type', 'custom');
     }
 
     // Apply amount range filters

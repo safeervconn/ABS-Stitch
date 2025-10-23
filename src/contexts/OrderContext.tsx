@@ -67,6 +67,12 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         throw new Error('Failed to fetch customer information');
       }
 
+      // For stock design orders, do not assign sales rep or designer
+      // Only custom orders get sales rep assignment from customer profile
+      const assignedSalesRepId = orderData.order_type === 'stock_design'
+        ? null
+        : customerProfile.assigned_sales_rep_id;
+
       // Create order without files - files will be uploaded separately via attachmentService
       const { data: newOrderData, error } = await supabase
         .from('orders')
@@ -79,7 +85,8 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           category_id: orderData.category_id || null,
           custom_width: orderData.custom_width || null,
           custom_height: orderData.custom_height || null,
-          assigned_sales_rep_id: customerProfile.assigned_sales_rep_id,
+          assigned_sales_rep_id: assignedSalesRepId,
+          assigned_designer_id: null,
           total_amount: orderData.total_amount,
           payment_status: 'unpaid',
           status: 'new',
@@ -93,12 +100,14 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         const { notifyAboutNewOrder } = await import('../services/notificationService');
         const orderNumber = newOrderData.order_number || `ORD-${newOrderData.id.slice(0, 8)}`;
 
+        // For stock design orders, only notify customer and admins (pass null for salesRepId)
+        // For custom orders, notify customer, admins, and assigned sales rep
         await notifyAboutNewOrder(
           profile.id,
           profile.full_name,
           orderNumber,
           orderData.order_type,
-          customerProfile.assigned_sales_rep_id
+          assignedSalesRepId
         );
       } catch (notificationError) {
         console.error('Error creating order notifications:', notificationError);
@@ -143,10 +152,18 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         query = query.eq("customer_id", profile.id);
         break;
       case "sales_rep":
-        query = query.eq("assigned_sales_rep_id", profile.id);
+        // Sales reps should only see custom orders assigned to them
+        // Stock design orders are admin-only
+        query = query
+          .eq("assigned_sales_rep_id", profile.id)
+          .eq("order_type", "custom");
         break;
       case "designer":
-        query = query.eq("assigned_designer_id", profile.id);
+        // Designers should only see custom orders assigned to them
+        // Stock design orders are admin-only
+        query = query
+          .eq("assigned_designer_id", profile.id)
+          .eq("order_type", "custom");
         break;
     }
 

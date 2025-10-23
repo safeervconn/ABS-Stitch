@@ -140,7 +140,9 @@ export async function notifyAboutNewOrder(
       });
     });
 
-    if (salesRepId) {
+    // Only notify sales rep for custom orders, not for stock design orders
+    // Stock design orders are admin-only and should not be visible to sales reps
+    if (salesRepId && orderType !== 'stock_design') {
       notifications.push({
         userId: salesRepId,
         type: notificationType,
