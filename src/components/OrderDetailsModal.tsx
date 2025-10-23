@@ -384,7 +384,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
               </div>
 
-
+<div className="space-y-6">
 
               {currentUser?.role !== 'designer' && (
   <div className="bg-blue-50 rounded-lg p-4">
