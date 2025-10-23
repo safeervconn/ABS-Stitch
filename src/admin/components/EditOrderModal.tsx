@@ -499,7 +499,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                       required
                     >
                       {!isDesigner && <option value="new">New</option>}
-                      {!isDesigner && <option value="in_progress">In Progress</option>}
+                      <option value="in_progress">In Progress</option>
                       <option value="under_review">Under Review</option>
                       {!isDesigner && <option value="completed">Completed</option>}
                       {!isDesigner && <option value="cancelled">Cancelled</option>}
@@ -739,7 +739,7 @@ const EditOrderModal: React.FC<EditOrderModalProps> = ({
                             ))}
                           </div>
 
-                          {currentUser && ['admin', 'sales_rep', 'designer'].includes(currentUser.role) && (
+                          {currentUser && ['admin', 'sales_rep'].includes(currentUser.role) && (
                             <form onSubmit={handleSubmitEditComment} className="mt-4 pt-4 border-t border-gray-200">
                               <textarea
                                 value={newEditComment}
