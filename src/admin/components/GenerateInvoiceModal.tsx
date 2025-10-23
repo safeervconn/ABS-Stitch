@@ -339,7 +339,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
                               {order.order_type === 'custom' ? 'Custom Design' : 'Stock Design'}
                               {order.edits && order.edits > 0 && (
                                 <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-md bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold">
-                                  No. of Edits{ } {order.edits}
+                                  No. of Edits:{ } {order.edits}
                                 </span>
                               )}
                               {' • '}{new Date(order.created_at).toLocaleDateString()}
