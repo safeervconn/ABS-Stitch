@@ -396,7 +396,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     <h3 className="text-lg font-semibold text-gray-800 mb-3">Order Total</h3>
     <div className="text-2xl font-bold text-blue-600">
       ${order.total_amount?.toFixed(2) || '0.00'}
-    </div>
+    
   </div>
 )}
 
