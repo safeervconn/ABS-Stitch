@@ -7,7 +7,6 @@ import LoadingSpinner from '../shared/components/LoadingSpinner';
 import StatCard from '../shared/components/StatCard';
 import OrderDetailsModal from '../components/OrderDetailsModal';
 import EditOrderModal from '../admin/components/EditOrderModal';
-import { EditRequestCard } from '../components/EditRequestCard';
 import FilterBar, { FilterConfig } from '../admin/components/FilterBar';
 import DataTable from '../admin/components/DataTable';
 import { usePaginatedData } from '../admin/hooks/useAdminData';
