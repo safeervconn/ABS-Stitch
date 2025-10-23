@@ -249,7 +249,7 @@ const NotificationDropdown: React.FC = () => {
             {notifications.length > 0 && (
               <div className="border-t border-gray-200 p-3 bg-gray-50">
                 <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
-                  <span>{notifications.length} notifications shown</span>
+                  <span>{notifications.length} notification(s)</span>
                   <span>{unreadCount} unread</span>
                 </div>
                 
