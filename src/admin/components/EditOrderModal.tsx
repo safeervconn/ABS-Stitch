@@ -7,6 +7,7 @@ import { toast } from '../../utils/toast';
 import { AttachmentList } from '../../components/AttachmentList';
 import { fetchOrderAttachments, uploadAttachment, deleteAttachment } from '../../lib/attachmentService';
 import { editCommentsService } from '../../services/editCommentsService';
+import { notifyAboutOrderStatusChange, notifyDesignerAboutAssignment } from '../../services/notificationService';
 interface EditOrderModalProps {
 isOpen: boolean;
 onClose: () => void;
@@ -246,8 +247,30 @@ assigned_designer_id: formData.assigned_designer_id || null,
 setSubmitting(true);
 setError('');
 try {
+// Track changes for notifications
+const previousStatus = order.status;
+const previousDesignerId = order.assigned_designer_id;
+
 // Update order
 await updateOrder(order.id, sanitizedData);
+
+// Send notifications for status changes
+if (formData.status !== previousStatus) {
+  await notifyAboutOrderStatusChange(
+    order.id,
+    order.order_number,
+    formData.status,
+    order.customer_id,
+    sanitizedData.assigned_sales_rep_id || undefined,
+    sanitizedData.assigned_designer_id || undefined
+  );
+}
+
+// Send notification for designer assignment
+if (sanitizedData.assigned_designer_id && sanitizedData.assigned_designer_id !== previousDesignerId) {
+  await notifyDesignerAboutAssignment(sanitizedData.assigned_designer_id, order.order_number);
+}
+
 toast.success('Order updated successfully');
 onSuccess();
 onClose();

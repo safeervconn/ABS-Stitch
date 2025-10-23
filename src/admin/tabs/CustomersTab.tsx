@@ -10,6 +10,7 @@ import { usePaginatedData } from '../hooks/useAdminData';
 import { getCustomers } from '../api/supabaseHelpers';
 import { toast } from '../../utils/toast';
 import { CSVColumn } from '../../shared/utils/csvExport';
+import { notifySalesRepAboutAssignment } from '../../services/notificationService';
 
 const CustomersTab: React.FC = () => {
   // Use the new paginated data hook
@@ -176,8 +177,15 @@ const CustomersTab: React.FC = () => {
   const handleModalSubmit = async (formData: any) => {
     try {
       if (selectedCustomer) {
+        const previousSalesRepId = selectedCustomer.assigned_sales_rep_id;
+        const newSalesRepId = formData.assigned_sales_rep_id;
+
         await updateCustomer(selectedCustomer.id, formData);
         toast.success(`Customer ${formData.full_name} updated successfully`);
+
+        if (newSalesRepId && newSalesRepId !== previousSalesRepId) {
+          await notifySalesRepAboutAssignment(newSalesRepId, formData.full_name);
+        }
       }
       await refetch();
     } catch (error) {

@@ -4,6 +4,7 @@ import { getInvoiceById, getAllCustomerOrders, updateInvoice } from '../api/supa
 import { Invoice, AdminOrder } from '../types';
 import ConfirmationModal from './ConfirmationModal';
 import { toast } from '../../utils/toast';
+import { notifyAboutInvoiceStatusChange } from '../../services/notificationService';
 
 interface EditInvoiceModalProps {
   isOpen: boolean;
@@ -114,6 +115,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
 
     try {
       const totalAmount = calculateTotal();
+      const previousStatus = invoice.status;
 
       await updateInvoice(invoice.id, {
         invoice_title: invoiceTitle.trim(),
@@ -122,6 +124,10 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
         order_ids: selectedOrderIds,
         total_amount: totalAmount,
       });
+
+      if (invoiceStatus !== previousStatus && (invoiceStatus === 'paid' || invoiceStatus === 'cancelled')) {
+        await notifyAboutInvoiceStatusChange(invoice.customer_id, invoiceTitle, invoiceStatus);
+      }
 
       toast.success('Invoice updated successfully');
       onSuccess();

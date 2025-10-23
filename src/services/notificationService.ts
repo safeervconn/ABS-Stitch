@@ -165,6 +165,14 @@ export async function notifyAboutOrderStatusChange(
   try {
     const notifications: Array<{ userId: string; type: NotificationType; message: string }> = [];
 
+    if (newStatus === 'in_progress' && designerId) {
+      notifications.push({
+        userId: designerId,
+        type: 'order',
+        message: `Order ${orderNumber} is now in progress. Please start working on it.`,
+      });
+    }
+
     if (newStatus === 'under_review' && salesRepId) {
       notifications.push({
         userId: salesRepId,
@@ -178,6 +186,48 @@ export async function notifyAboutOrderStatusChange(
         userId: customerId,
         type: 'system',
         message: `Your order ${orderNumber} has been completed!`,
+      });
+
+      if (salesRepId) {
+        notifications.push({
+          userId: salesRepId,
+          type: 'order',
+          message: `Order ${orderNumber} has been completed.`,
+        });
+      }
+
+      const admins = await getAllAdmins();
+      admins.forEach(admin => {
+        notifications.push({
+          userId: admin.id,
+          type: 'order',
+          message: `Order ${orderNumber} has been completed.`,
+        });
+      });
+    }
+
+    if (newStatus === 'cancelled') {
+      notifications.push({
+        userId: customerId,
+        type: 'order',
+        message: `Your order ${orderNumber} has been cancelled.`,
+      });
+
+      if (salesRepId) {
+        notifications.push({
+          userId: salesRepId,
+          type: 'order',
+          message: `Order ${orderNumber} has been cancelled.`,
+        });
+      }
+
+      const admins = await getAllAdmins();
+      admins.forEach(admin => {
+        notifications.push({
+          userId: admin.id,
+          type: 'order',
+          message: `Order ${orderNumber} has been cancelled.`,
+        });
       });
     }
 
@@ -286,5 +336,57 @@ export async function notifyCustomerAboutEditRequestResponse(
     );
   } catch (error) {
     console.error('Error notifying customer about edit request response:', error);
+  }
+}
+
+export async function notifySalesRepAboutAssignment(
+  salesRepId: string,
+  customerName: string
+): Promise<void> {
+  try {
+    await createNotification(
+      salesRepId,
+      'user',
+      `You have been assigned to customer ${customerName}.`
+    );
+  } catch (error) {
+    console.error('Error notifying sales rep about customer assignment:', error);
+  }
+}
+
+export async function notifyAboutInvoiceStatusChange(
+  customerId: string,
+  invoiceTitle: string,
+  newStatus: 'paid' | 'cancelled'
+): Promise<void> {
+  try {
+    const notifications: Array<{ userId: string; type: NotificationType; message: string }> = [];
+
+    const customerMessage = newStatus === 'paid'
+      ? `Your invoice "${invoiceTitle}" has been marked as paid. Thank you!`
+      : `Your invoice "${invoiceTitle}" has been cancelled.`;
+
+    notifications.push({
+      userId: customerId,
+      type: 'invoice',
+      message: customerMessage,
+    });
+
+    const admins = await getAllAdmins();
+    const adminMessage = newStatus === 'paid'
+      ? `Invoice "${invoiceTitle}" has been marked as paid.`
+      : `Invoice "${invoiceTitle}" has been cancelled.`;
+
+    admins.forEach(admin => {
+      notifications.push({
+        userId: admin.id,
+        type: 'invoice',
+        message: adminMessage,
+      });
+    });
+
+    await createBatchNotifications(notifications);
+  } catch (error) {
+    console.error('Error notifying about invoice status change:', error);
   }
 }
