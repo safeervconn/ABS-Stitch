@@ -394,7 +394,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       ${order.total_amount?.toFixed(2) || '0.00'}
     </div>
   </div>
-)}
+
 
                 {currentUser?.role === 'admin' && (order.assigned_sales_rep_name || order.assigned_designer_name) && (
                   <div className="bg-gray-50 rounded-lg p-4">
@@ -454,6 +454,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     </div>
                   </div>
                 )}
+        )}
               </div>
             </div>
           </div>
