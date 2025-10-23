@@ -14,9 +14,7 @@ order: AdminOrder | null;
 currentUser?: any;
 onSuccess: () => void;
 }
-const EditOrderModal: React.FC
-<EditOrderModalProps>
-= ({
+const EditOrderModal: React.FC<EditOrderModalProps> = ({
 isOpen,
 onClose,
 order,
@@ -37,9 +35,7 @@ custom_height: 0,
 const [salesReps, setSalesReps] = useState<AdminUser[]>([]);
 const [designers, setDesigners] = useState<AdminUser[]>([]);
 const [categories, setCategories] = useState<{id: string, category_name: string}[]>([]);
-const [currentUser, setCurrentUser] = useState
-<any>
-(propCurrentUser || null);
+const [currentUser, setCurrentUser] = useState<any>(propCurrentUser || null);
 const [loading, setLoading] = useState(false);
 const [submitting, setSubmitting] = useState(false);
 const [error, setError] = useState('');
@@ -186,9 +182,7 @@ setError('Failed to load assignment options');
 setLoading(false);
 }
 };
-const handleInputChange = (e: React.ChangeEvent
-<HTMLInputElement | HTMLSelectElement>
-) => {
+const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 const { name, value } = e.target;
 setFormData(prev => ({
 ...prev,
@@ -652,9 +646,66 @@ return (
             </div>
          </div>
          )}
-         {/* Edit Comments Section */} {editComments.length > 0 && ( <div className="mb-6"> <label className="block text-sm font-medium text-gray-700 mb-2"> <MessageSquare className="h-4 w-4 inline mr-1" /> Edit Comments </label> <div className="bg-white border border-gray-200 rounded-lg p-4"> {loadingEditComments ? ( <div className="flex items-center justify-center py-4"> <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div> <span className="text-gray-600 text-sm">Loading edit comments...</span> </div> ) : ( <div className="space-y-4"> <div className="max-h-96 overflow-y-auto space-y-4"> {editComments.map((comment) => ( <div key={comment.id} className="bg-blue-50 rounded-lg p-3 border border-blue-100"> <div className="flex items-center justify-between mb-2"> <div className="flex items-center space-x-2"> <MessageSquare className="h-4 w-4 text-blue-600" /> <span className="font-medium text-gray-800 text-sm">{comment.author_name}</span> </div> <span className="text-xs text-gray-500"> {new Date(comment.created_at).toLocaleDateString()} {new Date(comment.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} </span> </div> <p className="text-gray-700 text-sm leading-relaxed">{comment.content}</p> </div> ))} </div> {currentUser && ['admin', 'sales_rep'].includes(currentUser.role) && ( <form onSubmit={handleSubmitEditComment} className="mt-4 pt-4 border-t border-gray-200"> <textarea value={newEditComment} onChange={(e) => setNewEditComment(e.target.value)} placeholder="Add a reply to this edit request..." rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm" disabled={submittingEditComment} /> <div className="flex justify-end mt-2"> <button type="submit" disabled={submittingEditComment || !newEditComment.trim()} className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" > {submittingEditComment ? 'Posting...' : 'Post Reply'} </button> </div> </form> )} </div> )} </div> </div> )}
-           
-      {/* Attachments Section */}
+
+         {/* Edit Comments Section */}
+         {editComments.length > 0 && (
+         <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+               <MessageSquare className="h-4 w-4 inline mr-1" />
+               Edit Comments
+            </label>
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+               {loadingEditComments ? (
+               <div className="flex items-center justify-center py-4">
+                  <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                  <span className="text-gray-600 text-sm">Loading edit comments...</span>
+               </div>
+               ) : (
+               <div className="space-y-4">
+                  <div className="max-h-96 overflow-y-auto space-y-4">
+                     {editComments.map((comment) => (
+                     <div key={comment.id} className="bg-blue-50 rounded-lg p-3 border border-blue-100">
+                        <div className="flex items-center justify-between mb-2">
+                           <div className="flex items-center space-x-2">
+                              <MessageSquare className="h-4 w-4 text-blue-600" />
+                              <span className="font-medium text-gray-800 text-sm">{comment.author_name}</span>
+                           </div>
+                           <span className="text-xs text-gray-500">
+                              {new Date(comment.created_at).toLocaleDateString()} {new Date(comment.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                           </span>
+                        </div>
+                        <p className="text-gray-700 text-sm leading-relaxed">{comment.content}</p>
+                     </div>
+                     ))}
+                  </div>
+                  {currentUser && ['admin', 'sales_rep'].includes(currentUser.role) && (
+                  <form onSubmit={handleSubmitEditComment} className="mt-4 pt-4 border-t border-gray-200">
+                     <textarea
+                        value={newEditComment}
+                        onChange={(e) => setNewEditComment(e.target.value)}
+                        placeholder="Add a reply to this edit request..."
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+                        disabled={submittingEditComment}
+                     />
+                     <div className="flex justify-end mt-2">
+                        <button
+                           type="submit"
+                           disabled={submittingEditComment || !newEditComment.trim()}
+                           className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                           {submittingEditComment ? 'Posting...' : 'Post Reply'}
+                        </button>
+                     </div>
+                  </form>
+                  )}
+               </div>
+               )}
+            </div>
+         </div>
+         )}
+
+         {/* Attachments Section */}
       <div className="mb-6">
          <AttachmentList
             orderId={order.id}
