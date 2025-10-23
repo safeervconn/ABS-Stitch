@@ -191,7 +191,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
           <div className="p-6">
             <div className="grid lg:grid-cols-3 gap-8">
 
-              <div className="lg:col-span-2 space-y-6">
+              <div className="lg:col-span-2 space-y-8">
 
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">Order Summary</h3>
