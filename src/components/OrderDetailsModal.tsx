@@ -384,10 +384,10 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
               </div>
 
-
+<div className="space-y-6">
 
               {currentUser?.role !== 'designer' && (
-      <div className="space-y-6">
+      
   <div className="bg-blue-50 rounded-lg p-4">
     <h3 className="text-lg font-semibold text-gray-800 mb-3">Order Total</h3>
     <div className="text-2xl font-bold text-blue-600">
