@@ -454,8 +454,9 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     </div>
                   </div>
                 )}
-        )}
+        
               </div>
+      )}
             </div>
           </div>
         </div>
