@@ -144,8 +144,7 @@ setError('Failed to add comment. Please try again.');
 setAddingComment(false);
 }
 };
-const handleSubmitEditComment = async (e: React.FormEvent) => {
-e.preventDefault();
+const handleSubmitEditComment = async () => {
 if (!newEditComment.trim() || !order?.id) return;
 setSubmittingEditComment(true);
 try {
@@ -314,7 +313,7 @@ return (
                <p className="text-gray-600">{order.order_number}</p>
                <p className="text-sm text-gray-500 mt-1">{order.order_name || 'No Order Name'}</p>
             </div>
-            {order.edits && order.edits > 0 && (
+            {order.edits > 0 && (
             <div className="flex items-center justify-center mx-4">
                <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg shadow-md">
                   <p className="text-sm font-bold whitespace-nowrap">
@@ -422,8 +421,8 @@ return (
                name="order_type"
                value={formData.order_type}
                onChange={handleInputChange}
-               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
-               disabled={isDesigner || isFormDisabled}
+               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-100 cursor-not-allowed"
+               disabled={true}
                >
                <option value="custom">Custom</option>
                <option value="stock_design">Stock Design</option>
@@ -679,7 +678,7 @@ return (
                      ))}
                   </div>
                   {currentUser && ['admin', 'sales_rep'].includes(currentUser.role) && (
-                  <form onSubmit={handleSubmitEditComment} className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="mt-4 pt-4 border-t border-gray-200">
                      <textarea
                         value={newEditComment}
                         onChange={(e) => setNewEditComment(e.target.value)}
@@ -690,14 +689,25 @@ return (
                      />
                      <div className="flex justify-end mt-2">
                         <button
-                           type="submit"
+                           type="button"
+                           onClick={handleSubmitEditComment}
                            disabled={submittingEditComment || !newEditComment.trim()}
-                           className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                           className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
-                           {submittingEditComment ? 'Posting...' : 'Post Reply'}
+                           {submittingEditComment ? (
+                              <>
+                                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                 <span>Posting...</span>
+                              </>
+                           ) : (
+                              <>
+                                 <Send className="h-4 w-4" />
+                                 <span>Post Reply</span>
+                              </>
+                           )}
                         </button>
                      </div>
-                  </form>
+                  </div>
                   )}
                </div>
                )}

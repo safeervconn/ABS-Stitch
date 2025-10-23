@@ -170,7 +170,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 <p className="text-gray-600">{order.order_number}</p>
                 <p className="text-sm text-gray-500 mt-1">{order.order_name || 'No Order Name'}</p>
               </div>
-              {order.edits && order.edits > 0 && (
+              {order.edits > 0 && (
                 <div className="flex items-center justify-center mx-4">
                   <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg shadow-md">
                     <p className="text-sm font-bold whitespace-nowrap">
@@ -189,9 +189,9 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
           </div>
 
           <div className="p-6">
-            <div className="grid lg:grid-cols-3 gap-8">
+            <div className={`grid gap-8 ${currentUser?.role === 'designer' ? 'lg:grid-cols-1' : 'lg:grid-cols-3'}`}>
 
-              <div className="lg:col-span-2 space-y-8">
+              <div className={`space-y-8 ${currentUser?.role === 'designer' ? 'w-full' : 'lg:col-span-2'}`}>
 
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">Order Summary</h3>
