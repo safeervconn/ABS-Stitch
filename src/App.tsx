@@ -29,6 +29,7 @@ import CustomerDashboard from './pages/CustomerDashboard';
 import AdminModule from './admin/AdminDashboard';
 import ProfileSettings from './pages/ProfileSettings';
 import Checkout from './pages/Checkout';
+import NotificationsPage from './pages/NotificationsPage';
 
 // Homepage Component
 const Homepage: React.FC = () => {
@@ -100,6 +101,7 @@ function App() {
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/profile" element={<ProfileSettings />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
               <Route path="/sales/dashboard" element={<SalesRepDashboard />} />
               <Route path="/designer/dashboard" element={<DesignerDashboard />} />
               <Route path="/customer/dashboard" element={<CustomerDashboard />} />

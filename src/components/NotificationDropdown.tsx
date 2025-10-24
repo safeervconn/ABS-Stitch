@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, X, Check, CheckCheck, Eye, EyeOff, Package, Users, ShoppingBag, Settings, FileText, CheckCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Bell, X, Check, CheckCheck, Eye, EyeOff, Package, Users, ShoppingBag, Settings, FileText, CheckCircle, ArrowRight } from 'lucide-react';
 import { getCurrentUser } from '../lib/supabase';
 import { 
   getNotificationsWithUnreadCount, 
@@ -18,6 +19,7 @@ interface Notification {
 }
 
 const NotificationDropdown: React.FC = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -254,7 +256,16 @@ const NotificationDropdown: React.FC = () => {
                   <span>{notifications.length} notification(s)</span>
                   <span>{unreadCount} unread</span>
                 </div>
-                
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    navigate('/notifications');
+                  }}
+                  className="w-full mt-2 py-2 px-3 text-sm font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  View all notifications
+                  <ArrowRight className="h-4 w-4" />
+                </button>
               </div>
             )}
           </div>

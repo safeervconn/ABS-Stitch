@@ -1461,6 +1461,80 @@ export const getNotificationsWithUnreadCount = async (userId: string, limit: num
   }
 };
 
+export interface NotificationFilters {
+  type?: 'all' | 'order' | 'user' | 'stock_design' | 'system' | 'invoice';
+  readStatus?: 'all' | 'read' | 'unread';
+}
+
+export const getNotificationsPaginated = async (
+  userId: string,
+  page: number = 1,
+  limit: number = 10,
+  filters?: NotificationFilters
+): Promise<PaginatedResponse<any>> => {
+  try {
+    let query = supabase
+      .from('notifications')
+      .select('*', { count: 'exact' })
+      .eq('user_id', userId);
+
+    // Apply type filter
+    if (filters?.type && filters.type !== 'all') {
+      query = query.eq('type', filters.type);
+    }
+
+    // Apply read status filter
+    if (filters?.readStatus && filters.readStatus !== 'all') {
+      query = query.eq('read', filters.readStatus === 'read');
+    }
+
+    // Apply sorting by created_at descending
+    query = query.order('created_at', { ascending: false });
+
+    // Apply pagination
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+    query = query.range(from, to);
+
+    const { data, error, count } = await query;
+
+    if (error) throw error;
+
+    return {
+      data: data || [],
+      total: count || 0,
+      page,
+      limit,
+      totalPages: Math.ceil((count || 0) / limit),
+    };
+  } catch (error) {
+    console.error('Error fetching paginated notifications:', error);
+    return {
+      data: [],
+      total: 0,
+      page,
+      limit,
+      totalPages: 0,
+    };
+  }
+};
+
+export const getUnreadNotificationCount = async (userId: string): Promise<number> => {
+  try {
+    const { count, error } = await supabase
+      .from('notifications')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('read', false);
+
+    if (error) throw error;
+    return count || 0;
+  } catch (error) {
+    console.error('Error fetching unread notification count:', error);
+    return 0;
+  }
+};
+
 export const markNotificationAsRead = async (notificationId: number): Promise<void> => {
   try {
     const { error } = await supabase
@@ -1696,6 +1770,20 @@ export const addOrderComment = async (orderId: string, authorId: string, content
     };
   } catch (error) {
     console.error('Error adding order comment:', error);
+    throw error;
+  }
+};
+
+export const deleteNotification = async (notificationId: number): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('notifications')
+      .delete()
+      .eq('id', notificationId);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error deleting notification:', error);
     throw error;
   }
 };
