@@ -16,19 +16,18 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useCart } from '../contexts/CartContext';
 import { useOrders } from '../contexts/OrderContext';
-import { getCurrentUser, getUserProfile, getCategories } from '../lib/supabase';
+import { getCurrentUser, getUserProfile } from '../lib/supabase';
 import { toast } from '../utils/toast';
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
-  const { items, getTotalPrice, clearCart, removeFromCart, updateCartItem } = useCart();
+  const { items, getTotalPrice, clearCart, removeFromCart } = useCart();
   const { addOrder } = useOrders();
   
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState<{id: string, category_name: string}[]>([]);
 
   useEffect(() => {
     const checkUserAndCart = async () => {
@@ -51,10 +50,6 @@ const Checkout: React.FC = () => {
         if (profile) {
           setCurrentUser(profile);
         }
-
-        // Fetch categories
-        const categoriesData = await getCategories();
-        setCategories(categoriesData);
       } catch (error) {
         console.error('Error checking user:', error);
         navigate('/login');
@@ -74,21 +69,6 @@ const Checkout: React.FC = () => {
       return;
     }
 
-    // Validate that all items have required fields
-    for (const item of items) {
-      if (!item.selectedCategoryId) {
-        setError(`Please select a category for ${item.title}`);
-        return;
-      }
-      if (!item.customWidth || item.customWidth <= 0) {
-        setError(`Please enter a valid width for ${item.title}`);
-        return;
-      }
-      if (!item.customHeight || item.customHeight <= 0) {
-        setError(`Please enter a valid height for ${item.title}`);
-        return;
-      }
-    }
     setIsSubmitting(true);
     setError('');
 
@@ -104,9 +84,6 @@ const Checkout: React.FC = () => {
           order_name: item.title,
           stock_design_id: item.id,
           custom_description: `${item.title}`,
-          category_id: item.selectedCategoryId,
-          custom_width: item.customWidth,
-          custom_height: item.customHeight,
           total_amount: itemTotal,
         };
 
@@ -220,64 +197,6 @@ const Checkout: React.FC = () => {
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
-                          </div>
-                          
-                          {/* Custom Fields for Each Item */}
-                          <div className="mt-4 pt-4 border-t border-gray-100">
-                            <h4 className="text-sm font-medium text-gray-700 mb-3">Customization Options</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                              {/* Apparel Type Dropdown */}
-                              <div>
-                                <label className="block text-xs font-medium text-gray-600 mb-1">
-                                  Category *
-                                </label>
-                                <select
-                                  value={item.selectedCategoryId || ''}
-                                  onChange={(e) => updateCartItem(item.id, { selectedCategoryId: e.target.value })}
-                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                  required
-                                >
-                                  <option value="">Select Category</option>
-                                  {categories.map(category => (
-                                    <option key={category.id} value={category.id}>{category.category_name}</option>
-                                  ))}
-                                </select>
-                              </div>
-                              
-                              {/* Custom Width */}
-                              <div>
-                                <label className="block text-xs font-medium text-gray-600 mb-1">
-                                  Width (inches) *
-                                </label>
-                                <input
-                                  type="number"
-                                  value={item.customWidth || ''}
-                                  onChange={(e) => updateCartItem(item.id, { customWidth: parseFloat(e.target.value) || 0 })}
-                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                  placeholder="Width"
-                                  min="0.1"
-                                  step="0.1"
-                                  required
-                                />
-                              </div>
-                              
-                              {/* Custom Height */}
-                              <div>
-                                <label className="block text-xs font-medium text-gray-600 mb-1">
-                                  Height (inches) *
-                                </label>
-                                <input
-                                  type="number"
-                                  value={item.customHeight || ''}
-                                  onChange={(e) => updateCartItem(item.id, { customHeight: parseFloat(e.target.value) || 0 })}
-                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                  placeholder="Height"
-                                  min="0.1"
-                                  step="0.1"
-                                  required
-                                />
-                              </div>
-                            </div>
                           </div>
                         </div>
                       ))}
