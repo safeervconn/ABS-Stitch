@@ -100,7 +100,7 @@ export interface Database {
         Row: {
           id: number;
           user_id: string;
-          type: 'order' | 'user' | 'stock_design' | 'system' | 'invoice';
+          type: 'order' | 'user' | 'stock_design' | 'invoice';
           message: string;
           read: boolean;
           created_at: string;

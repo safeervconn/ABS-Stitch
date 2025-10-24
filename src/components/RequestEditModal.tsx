@@ -83,7 +83,7 @@ export function RequestEditModal({
 
       const { data: order, error: orderFetchError } = await supabase
         .from('orders')
-        .select('edits, assigned_sales_rep_id, order_number, order_name')
+        .select('edits, assigned_sales_rep_id, order_number, order_name, order_type, customer_id')
         .eq('id', orderId)
         .maybeSingle();
 
@@ -106,8 +106,10 @@ export function RequestEditModal({
       }
 
       await notifyAboutEditRequest(
+        order?.customer_id || user.id,
         order?.order_number || orderId.slice(0, 8),
         order?.order_name || orderName,
+        order?.order_type as 'custom' | 'stock_design',
         order?.assigned_sales_rep_id
       );
 

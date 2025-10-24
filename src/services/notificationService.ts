@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase';
 
-export type NotificationType = 'order' | 'user' | 'stock_design' | 'system' | 'invoice';
+export type NotificationType = 'order' | 'user' | 'stock_design' | 'invoice';
 
 export interface NotificationTemplate {
   type: NotificationType;
@@ -161,39 +161,41 @@ export async function notifyAboutOrderStatusChange(
   orderNumber: string,
   newStatus: string,
   customerId: string,
+  orderType: 'custom' | 'stock_design',
   salesRepId?: string,
   designerId?: string
 ): Promise<void> {
   try {
     const notifications: Array<{ userId: string; type: NotificationType; message: string }> = [];
+    const notificationType: NotificationType = orderType === 'stock_design' ? 'stock_design' : 'order';
 
     if (newStatus === 'in_progress' && designerId) {
       notifications.push({
         userId: designerId,
-        type: 'order',
-        message: `Order ${orderNumber} is now in progress. Please start working on it.`,
+        type: notificationType,
+        message: `Order ${orderNumber} has been moved to in progress status.`,
       });
     }
 
     if (newStatus === 'under_review' && salesRepId) {
       notifications.push({
         userId: salesRepId,
-        type: 'system',
-        message: `Order ${orderNumber} is now under review. Please check it.`,
+        type: notificationType,
+        message: `Order ${orderNumber} is now under review and requires your attention.`,
       });
     }
 
     if (newStatus === 'completed') {
       notifications.push({
         userId: customerId,
-        type: 'system',
+        type: notificationType,
         message: `Your order ${orderNumber} has been completed!`,
       });
 
       if (salesRepId) {
         notifications.push({
           userId: salesRepId,
-          type: 'order',
+          type: notificationType,
           message: `Order ${orderNumber} has been completed.`,
         });
       }
@@ -202,7 +204,7 @@ export async function notifyAboutOrderStatusChange(
       admins.forEach(admin => {
         notifications.push({
           userId: admin.id,
-          type: 'order',
+          type: notificationType,
           message: `Order ${orderNumber} has been completed.`,
         });
       });
@@ -211,14 +213,14 @@ export async function notifyAboutOrderStatusChange(
     if (newStatus === 'cancelled') {
       notifications.push({
         userId: customerId,
-        type: 'order',
+        type: notificationType,
         message: `Your order ${orderNumber} has been cancelled.`,
       });
 
       if (salesRepId) {
         notifications.push({
           userId: salesRepId,
-          type: 'order',
+          type: notificationType,
           message: `Order ${orderNumber} has been cancelled.`,
         });
       }
@@ -227,7 +229,7 @@ export async function notifyAboutOrderStatusChange(
       admins.forEach(admin => {
         notifications.push({
           userId: admin.id,
-          type: 'order',
+          type: notificationType,
           message: `Order ${orderNumber} has been cancelled.`,
         });
       });
@@ -256,59 +258,65 @@ export async function notifyDesignerAboutAssignment(
   }
 }
 
-export async function notifyCustomerAboutInvoice(
+export async function notifyAboutInvoiceCreation(
   customerId: string,
   invoiceTitle: string
 ): Promise<void> {
   try {
-    await createNotification(
-      customerId,
-      'invoice',
-      `A new invoice "${invoiceTitle}" has been generated for you. Please check your invoices section.`
-    );
-  } catch (error) {
-    console.error('Error notifying customer about invoice:', error);
-  }
-}
-
-export async function notifyDesignerAboutEditRequest(
-  designerId: string,
-  orderNumber: string,
-  orderName: string
-): Promise<void> {
-  try {
-    await createNotification(
-      designerId,
-      'system',
-      `New edit request received for order ${orderName || orderNumber}. Please review.`
-    );
-  } catch (error) {
-    console.error('Error notifying designer about edit request:', error);
-  }
-}
-
-export async function notifyAboutEditRequest(
-  orderNumber: string,
-  orderName: string,
-  salesRepId?: string
-): Promise<void> {
-  try {
     const notifications: Array<{ userId: string; type: NotificationType; message: string }> = [];
+
+    notifications.push({
+      userId: customerId,
+      type: 'invoice',
+      message: `A new invoice "${invoiceTitle}" has been generated for you.`,
+    });
 
     const admins = await getAllAdmins();
     admins.forEach(admin => {
       notifications.push({
         userId: admin.id,
-        type: 'system',
-        message: `New edit request received for order ${orderName || orderNumber}. Please review.`,
+        type: 'invoice',
+        message: `New invoice "${invoiceTitle}" has been created.`,
       });
     });
 
-    if (salesRepId) {
+    await createBatchNotifications(notifications);
+  } catch (error) {
+    console.error('Error notifying about invoice creation:', error);
+  }
+}
+
+export async function notifyAboutEditRequest(
+  customerId: string,
+  orderNumber: string,
+  orderName: string,
+  orderType: 'custom' | 'stock_design',
+  salesRepId?: string
+): Promise<void> {
+  try {
+    const notifications: Array<{ userId: string; type: NotificationType; message: string }> = [];
+    const notificationType: NotificationType = orderType === 'stock_design' ? 'stock_design' : 'order';
+
+    notifications.push({
+      userId: customerId,
+      type: notificationType,
+      message: `Your edit request for order ${orderName || orderNumber} has been submitted successfully.`,
+    });
+
+    const admins = await getAllAdmins();
+    admins.forEach(admin => {
+      notifications.push({
+        userId: admin.id,
+        type: notificationType,
+        message: `New edit request received for order ${orderName || orderNumber}.`,
+      });
+    });
+
+    if (orderType === 'custom' && salesRepId) {
       notifications.push({
         userId: salesRepId,
-        type: 'system',
-        message: `Your customer has requested an edit for order ${orderName || orderNumber}. Please review.`,
+        type: notificationType,
+        message: `Edit request received for order ${orderName || orderNumber}.`,
       });
     }
 
@@ -317,27 +325,6 @@ export async function notifyAboutEditRequest(
     }
   } catch (error) {
     console.error('Error notifying about edit request:', error);
-  }
-}
-
-export async function notifyCustomerAboutEditRequestResponse(
-  customerId: string,
-  orderNumber: string,
-  orderName: string,
-  status: 'approved' | 'rejected'
-): Promise<void> {
-  try {
-    const message = status === 'approved'
-      ? `Your edit request for order ${orderName || orderNumber} has been approved.`
-      : `Your edit request for order ${orderName || orderNumber} has been reviewed. Please check the designer's response.`;
-
-    await createNotification(
-      customerId,
-      'system',
-      message
-    );
-  } catch (error) {
-    console.error('Error notifying customer about edit request response:', error);
   }
 }
 

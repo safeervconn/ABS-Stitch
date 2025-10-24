@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, X, Check, CheckCheck, Eye, EyeOff, Package, Users, ShoppingBag, Settings, FileText, CheckCircle, ArrowRight } from 'lucide-react';
+import { Bell, X, CheckCheck, Eye, EyeOff, Package, Users, ShoppingBag, FileText, ArrowRight } from 'lucide-react';
 import { getCurrentUser } from '../lib/supabase';
-import { 
-  getNotificationsWithUnreadCount, 
-  markNotificationAsRead, 
-  markNotificationAsUnread, 
-  markAllNotificationsAsRead 
+import {
+  getNotificationsWithUnreadCount,
+  markNotificationAsRead,
+  markNotificationAsUnread,
+  markAllNotificationsAsRead
 } from '../admin/api/supabaseHelpers';
 
 interface Notification {
   id: number;
   user_id: string;
-  type: 'order' | 'user' | 'stock_design' | 'system' | 'invoice';
+  type: 'order' | 'user' | 'stock_design' | 'invoice';
   message: string;
   read: boolean;
   created_at: string;
@@ -120,9 +120,8 @@ const NotificationDropdown: React.FC = () => {
     switch (type) {
       case 'order': return <Package className={`${iconClass} text-blue-600`} />;
       case 'invoice': return <FileText className={`${iconClass} text-green-600`} />;
-      case 'user': return <Users className={`${iconClass} text-indigo-600`} />;
+      case 'user': return <Users className={`${iconClass} text-purple-600`} />;
       case 'stock_design': return <ShoppingBag className={`${iconClass} text-orange-600`} />;
-      case 'system': return <CheckCircle className={`${iconClass} text-teal-600`} />;
       default: return <Bell className={`${iconClass} text-gray-400`} />;
     }
   };

@@ -261,6 +261,7 @@ if (formData.status !== previousStatus) {
     order.order_number,
     formData.status,
     order.customer_id,
+    order.order_type as 'custom' | 'stock_design',
     sanitizedData.assigned_sales_rep_id || undefined,
     sanitizedData.assigned_designer_id || undefined
   );

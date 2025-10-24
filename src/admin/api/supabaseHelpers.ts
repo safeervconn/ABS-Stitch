@@ -1,7 +1,7 @@
 import { supabase } from '../../lib/supabase';
 import { getCurrentUser as getSupabaseCurrentUser, getUserProfile as getSupabaseUserProfile } from '../../lib/supabase';
 import { AdminUser, AdminCustomer, AdminOrder, AdminStockDesign, Category, AdminStats, PaginatedResponse, PaginationParams, Invoice, OrderComment } from '../types';
-import { notifyAdminsAboutNewEmployee, notifyAdminsAboutNewCustomer, notifyAboutOrderStatusChange, notifyDesignerAboutAssignment, notifyCustomerAboutInvoice } from '../../services/notificationService';
+import { notifyAdminsAboutNewEmployee, notifyAdminsAboutNewCustomer, notifyAboutOrderStatusChange, notifyDesignerAboutAssignment, notifyAboutInvoiceCreation } from '../../services/notificationService';
 
 export const getAdminStats = async (): Promise<AdminStats> => {
   try {
@@ -735,10 +735,13 @@ export const updateOrder = async (id: string, orderData: Partial<AdminOrder>): P
     try {
       if (orderData.status && orderData.status !== currentOrder.status) {
         await notifyAboutOrderStatusChange(
-          currentOrder.customer_id,
+          updatedOrder.id,
           updatedOrder.order_number,
           orderData.status,
-          updatedOrder.assigned_sales_rep_id
+          currentOrder.customer_id,
+          updatedOrder.order_type as 'custom' | 'stock_design',
+          updatedOrder.assigned_sales_rep_id || undefined,
+          updatedOrder.assigned_designer_id || undefined
         );
       }
 
@@ -1111,7 +1114,7 @@ export const createInvoice = async (invoiceData: Partial<Invoice>): Promise<Invo
 
     try {
       if (invoiceData.customer_id) {
-        await notifyCustomerAboutInvoice(invoiceData.customer_id, invoiceData.invoice_title);
+        await notifyAboutInvoiceCreation(invoiceData.customer_id, invoiceData.invoice_title);
       }
     } catch (notificationError) {
       console.error('Error creating invoice notification:', notificationError);
