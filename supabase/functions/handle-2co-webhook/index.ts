@@ -108,24 +108,82 @@ Deno.serve(async (req: Request) => {
     });
   }
 
+  if (req.method === "GET") {
+    return new Response(
+      JSON.stringify({
+        message: '2Checkout IPN endpoint is active',
+        status: 'ready'
+      }),
+      {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+  }
+
   try {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    const formData = await req.formData();
-    const payload: Record<string, string> = {};
+    const contentType = req.headers.get('content-type') || '';
+    let payload: Record<string, string> = {};
 
-    for (const [key, value] of formData.entries()) {
-      payload[key] = value.toString();
+    if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
+      const formData = await req.formData();
+      for (const [key, value] of formData.entries()) {
+        payload[key] = value.toString();
+      }
+    } else if (contentType.includes('application/json')) {
+      const jsonData = await req.json();
+      payload = jsonData;
+    } else {
+      const text = await req.text();
+      if (text) {
+        const params = new URLSearchParams(text);
+        for (const [key, value] of params.entries()) {
+          payload[key] = value;
+        }
+      }
     }
 
     console.log('Received webhook payload:', JSON.stringify(payload, null, 2));
 
+    if (Object.keys(payload).length === 0) {
+      console.log('Empty payload - likely a test request from 2CO');
+      return new Response(
+        JSON.stringify({ message: 'Endpoint is active and ready' }),
+        {
+          status: 200,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+    }
+
+    if (!payload.HASH) {
+      console.error('Missing HASH in payload');
+      return new Response(
+        JSON.stringify({ message: 'Received but missing signature' }),
+        {
+          status: 200,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+    }
+
     if (!verifyINSSignature(payload)) {
       console.error('Invalid webhook signature');
       return new Response(
-        JSON.stringify({ error: 'Invalid signature' }),
+        JSON.stringify({ message: 'Signature verification failed' }),
         {
-          status: 401,
+          status: 200,
           headers: {
             ...corsHeaders,
             'Content-Type': 'application/json',

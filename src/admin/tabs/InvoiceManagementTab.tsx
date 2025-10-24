@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, FileText, Eye, CreditCard as Edit, Calendar } from 'lucide-react';
+import { Plus, FileText, Eye, CreditCard as Edit, Calendar, Copy, Link as LinkIcon, CheckCircle, RefreshCw } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import FilterBar, { FilterConfig } from '../components/FilterBar';
 import GenerateInvoiceModal from '../components/GenerateInvoiceModal';
@@ -9,6 +9,9 @@ import { getInvoices, getCustomersForInvoice } from '../api/supabaseHelpers';
 import { Invoice, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
 import { CSVColumn } from '../../shared/utils/csvExport';
+import { toast } from '../../utils/toast';
+import { supabase } from '../../lib/supabase';
+import { generatePaymentLink } from '../../services/twoCheckoutService';
 
 const InvoiceManagementTab: React.FC = () => {
   // Use the paginated data hook
@@ -137,12 +140,84 @@ const InvoiceManagementTab: React.FC = () => {
   };
 
   const handleEditInvoice = (invoice: Invoice) => {
-    // Disable edit for paid and cancelled invoices
     if (invoice.status === 'paid' || invoice.status === 'cancelled') {
       return;
     }
     setSelectedInvoiceId(invoice.id);
     setIsEditModalOpen(true);
+  };
+
+  const handleCopyPaymentLink = (invoice: Invoice) => {
+    if (invoice.payment_link) {
+      navigator.clipboard.writeText(invoice.payment_link);
+      toast.success('Payment link copied to clipboard!');
+    }
+  };
+
+  const handleMarkAsPaid = async (invoice: Invoice) => {
+    if (!window.confirm('Are you sure you want to mark this invoice as paid?')) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('invoices')
+        .update({ status: 'paid' })
+        .eq('id', invoice.id);
+
+      if (error) throw error;
+
+      toast.success('Invoice marked as paid!');
+      refetch();
+    } catch (error) {
+      console.error('Error marking invoice as paid:', error);
+      toast.error('Failed to mark invoice as paid');
+    }
+  };
+
+  const handleRegeneratePaymentLink = async (invoice: Invoice) => {
+    try {
+      const { data: invoiceData, error: fetchError } = await supabase
+        .from('invoices')
+        .select('*, customers!inner(full_name, email), orders!inner(order_name, total_amount)')
+        .eq('id', invoice.id)
+        .single();
+
+      if (fetchError || !invoiceData) {
+        throw new Error('Failed to fetch invoice details');
+      }
+
+      const baseUrl = window.location.origin;
+      const products = invoiceData.orders.map((order: any) => ({
+        name: order.order_name || `Order`,
+        price: order.total_amount || 0,
+        quantity: 1,
+      }));
+
+      const paymentLink = generatePaymentLink({
+        invoiceId: invoice.id,
+        amount: invoice.total_amount,
+        currency: 'USD',
+        products,
+        customerEmail: invoiceData.customers.email,
+        customerName: invoiceData.customers.full_name,
+        returnUrl: `${baseUrl}/payment/success`,
+        cancelUrl: `${baseUrl}/payment/failure`,
+      });
+
+      const { error: updateError } = await supabase
+        .from('invoices')
+        .update({ payment_link: paymentLink })
+        .eq('id', invoice.id);
+
+      if (updateError) throw updateError;
+
+      toast.success('Payment link regenerated!');
+      refetch();
+    } catch (error) {
+      console.error('Error regenerating payment link:', error);
+      toast.error('Failed to regenerate payment link');
+    }
   };
 
   const columns = [
@@ -180,9 +255,67 @@ const InvoiceManagementTab: React.FC = () => {
       label: 'Status',
       sortable: true,
       render: (invoice: Invoice) => (
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(invoice.status)}`}>
-          {invoice.status.replace('_', ' ')}
-        </span>
+        <div className="space-y-1">
+          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(invoice.status)}`}>
+            {invoice.status.replace('_', ' ')}
+          </span>
+          {invoice.tco_reference_number && (
+            <div className="text-xs text-gray-500">
+              TCO: {invoice.tco_reference_number}
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: 'payment_link',
+      label: 'Payment',
+      render: (invoice: Invoice) => (
+        <div className="flex items-center space-x-1">
+          {invoice.payment_link && invoice.status === 'unpaid' && (
+            <>
+              <button
+                onClick={() => handleCopyPaymentLink(invoice)}
+                className="text-blue-600 hover:text-blue-900 transition-colors p-1"
+                title="Copy Payment Link"
+              >
+                <Copy className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={() => window.open(invoice.payment_link, '_blank')}
+                className="text-green-600 hover:text-green-900 transition-colors p-1"
+                title="Open Payment Link"
+              >
+                <LinkIcon className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={() => handleRegeneratePaymentLink(invoice)}
+                className="text-purple-600 hover:text-purple-900 transition-colors p-1"
+                title="Regenerate Link"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+              </button>
+            </>
+          )}
+          {invoice.status === 'unpaid' && !invoice.payment_link && (
+            <button
+              onClick={() => handleRegeneratePaymentLink(invoice)}
+              className="text-blue-600 hover:text-blue-900 transition-colors text-xs"
+              title="Generate Payment Link"
+            >
+              Generate
+            </button>
+          )}
+          {invoice.status === 'unpaid' && (
+            <button
+              onClick={() => handleMarkAsPaid(invoice)}
+              className="text-green-600 hover:text-green-900 transition-colors p-1"
+              title="Mark as Paid"
+            >
+              <CheckCircle className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
       ),
     },
     {
