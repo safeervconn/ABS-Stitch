@@ -282,7 +282,7 @@ const Checkout: React.FC = () => {
                           ) : (
                             <>
                               <ShoppingCart className="h-5 w-5" />
-                              <span>Place Orders </br> ({items.length} items)</span>
+                              <span>Place Orders  ({items.length} items)</span>
                             </>
                           )}
                         </button>
