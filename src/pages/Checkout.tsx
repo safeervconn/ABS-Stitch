@@ -166,7 +166,7 @@ const Checkout: React.FC = () => {
                   
                   {/* Order Items */}
                   <div className="lg:col-span-2">
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">Order Items({items.length})</h2>
+                    <h2 className="text-xl font-bold text-gray-800 mb-4">Order Items ({items.length})</h2>
                     
                     <div className="space-y-4 mb-6">
                       {items.map((item) => (
