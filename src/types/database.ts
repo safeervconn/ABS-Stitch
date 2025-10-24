@@ -46,11 +46,12 @@ export interface Database {
           order_number: string;
           order_name: string;
           total_amount: number;
-          payment_status: 'paid' | 'unpaid' | 'cancelled';
+          payment_status: 'paid' | 'unpaid' | 'cancelled' | 'pending_payment';
           custom_width: number;
           custom_height: number;
           category_id: string;
           edits: number;
+          invoice_id: string | null;
         };
         Insert: Omit<Database['public']['Tables']['orders']['Row'], 'id' | 'created_at' | 'updated_at' | 'order_number'>;
         Update: Partial<Database['public']['Tables']['orders']['Insert']>;
@@ -66,6 +67,9 @@ export interface Database {
           status: 'active' | 'inactive';
           created_at: string;
           updated_at: string;
+          attachment_url: string | null;
+          attachment_filename: string | null;
+          attachment_size: number | null;
         };
         Insert: Omit<Database['public']['Tables']['stock_designs']['Row'], 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Database['public']['Tables']['stock_designs']['Insert']>;
@@ -92,6 +96,9 @@ export interface Database {
           status: 'paid' | 'unpaid' | 'cancelled';
           created_at: string;
           updated_at: string;
+          tco_reference_number: string | null;
+          tco_order_id: string | null;
+          tco_payment_method: string | null;
         };
         Insert: Omit<Database['public']['Tables']['invoices']['Row'], 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Database['public']['Tables']['invoices']['Insert']>;
