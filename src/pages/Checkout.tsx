@@ -18,6 +18,8 @@ import { useCart } from '../contexts/CartContext';
 import { useOrders } from '../contexts/OrderContext';
 import { getCurrentUser, getUserProfile } from '../lib/supabase';
 import { toast } from '../utils/toast';
+import { createInvoiceWithPayment } from '../services/invoiceService';
+import { supabase } from '../lib/supabase';
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
@@ -63,9 +65,14 @@ const Checkout: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (items.length === 0) {
       setError('Your cart is empty');
+      return;
+    }
+
+    if (!currentUser) {
+      setError('User information not found');
       return;
     }
 
@@ -73,35 +80,66 @@ const Checkout: React.FC = () => {
     setError('');
 
     try {
+      const createdOrderIds: string[] = [];
+      const totalAmount = getTotalPrice();
 
-      // Create a separate order for each cart item
+      // Create orders first
       for (const item of items) {
         const itemPrice = parseFloat(item.price.replace('$', ''));
-        const itemTotal = itemPrice; // Always quantity 1
+        const itemTotal = itemPrice;
 
-        const orderData = {
-          order_type: 'stock_design' as const,
-          order_name: item.title,
-          stock_design_id: item.id,
-          custom_description: `${item.title}`,
-          total_amount: itemTotal,
-        };
+        const { data: order, error: orderError } = await supabase
+          .from('orders')
+          .insert({
+            customer_id: currentUser.id,
+            order_type: 'stock_design',
+            order_name: item.title,
+            stock_design_id: item.id,
+            custom_description: `${item.title}`,
+            total_amount: itemTotal,
+            status: 'new',
+            payment_status: 'unpaid',
+          })
+          .select()
+          .single();
 
-        await addOrder(orderData);
-        
-        // Small delay between orders to ensure unique timestamps
+        if (orderError || !order) {
+          throw new Error('Failed to create order');
+        }
+
+        createdOrderIds.push(order.id);
         await new Promise(resolve => setTimeout(resolve, 100));
       }
 
+      // Create invoice and generate payment link
+      const products = items.map(item => ({
+        name: item.title,
+        price: parseFloat(item.price.replace('$', '')),
+        quantity: 1,
+      }));
+
+      const invoiceParams = {
+        customer_id: currentUser.id,
+        invoice_title: `Stock Designs Purchase - ${new Date().toLocaleDateString()}`,
+        month_year: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+        order_ids: createdOrderIds,
+        total_amount: totalAmount,
+        customerEmail: currentUser.email,
+        customerName: currentUser.full_name,
+        products,
+      };
+
+      const { paymentLink } = await createInvoiceWithPayment(invoiceParams);
+
       clearCart();
-      toast.success(`${items.length} order${items.length > 1 ? 's' : ''} placed successfully!`);
-      
-      // Navigate to customer dashboard instead of showing success modal
-      navigate('/customer/dashboard');
+      toast.success('Orders created! Redirecting to payment...');
+
+      // Redirect to 2Checkout payment page
+      window.location.href = paymentLink;
     } catch (error) {
-      console.error('Error placing orders:', error);
-      toast.error('Failed to place orders. Please try again.');
-      setError('Failed to place orders. Please try again.');
+      console.error('Error processing checkout:', error);
+      toast.error('Failed to process checkout. Please try again.');
+      setError('Failed to process checkout. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

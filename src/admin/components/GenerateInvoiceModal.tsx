@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Loader, Calendar, User, FileText } from 'lucide-react';
-import { getCustomersForInvoice, getUnpaidOrdersForCustomer, createInvoice } from '../api/supabaseHelpers';
+import { X, Save, Loader, Calendar, User, FileText, Copy, Link as LinkIcon } from 'lucide-react';
+import { getCustomersForInvoice, getUnpaidOrdersForCustomer } from '../api/supabaseHelpers';
 import { AdminOrder } from '../types';
 import { toast } from '../../utils/toast';
+import { createInvoiceWithPayment } from '../../services/invoiceService';
 
 interface GenerateInvoiceModalProps {
   isOpen: boolean;
@@ -23,8 +24,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
   const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
   const [invoiceTitle, setInvoiceTitle] = useState('');
   const [monthYear, setMonthYear] = useState('');
-  const [paymentLink, setPaymentLink] = useState('');
-  const [invoiceLink, setInvoiceLink] = useState('');
+  const [generatedPaymentLink, setGeneratedPaymentLink] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -109,7 +109,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!selectedCustomerId || selectedOrderIds.length === 0) {
       setError('Please select a customer and at least one order');
       return;
@@ -127,19 +127,28 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
       const selectedCustomer = customers.find(c => c.id === selectedCustomerId);
       const totalAmount = calculateTotal();
 
-      await createInvoice({
+      const selectedOrders = unpaidOrders.filter(order => selectedOrderIds.includes(order.id));
+      const products = selectedOrders.map(order => ({
+        name: order.order_name || `Order ${order.order_number}`,
+        price: order.total_amount || 0,
+        quantity: 1,
+      }));
+
+      const { paymentLink } = await createInvoiceWithPayment({
         customer_id: selectedCustomerId,
         invoice_title: invoiceTitle.trim(),
         month_year: monthYear,
-        payment_link: paymentLink.trim() || null,
         order_ids: selectedOrderIds,
         total_amount: totalAmount,
-        status: 'unpaid',
+        customerEmail: selectedCustomer?.email || '',
+        customerName: selectedCustomer?.full_name || '',
+        products,
       });
 
-      toast.success('Invoice generated successfully');
+      setGeneratedPaymentLink(paymentLink);
+      toast.success('Invoice generated with payment link!');
       onSuccess();
-      
+
       // Reset form
       setSelectedCustomerId('');
       setDateFrom('');
@@ -147,8 +156,6 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
       setUnpaidOrders([]);
       setSelectedOrderIds([]);
       setInvoiceTitle('');
-      setPaymentLink('');
-      setInvoiceLink('');
       setError('');
     } catch (error) {
       console.error('Error creating invoice:', error);
@@ -156,6 +163,13 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
       setError('Failed to create invoice. Please try again.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const copyPaymentLink = () => {
+    if (generatedPaymentLink) {
+      navigator.clipboard.writeText(generatedPaymentLink);
+      toast.success('Payment link copied to clipboard!');
     }
   };
 
@@ -249,21 +263,6 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
                 />
               </div>
 
-              {/* Payment Link */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Payment Link (Optional)
-                </label>
-                <input
-                  type="url"
-                  value={paymentLink}
-                  onChange={(e) => setPaymentLink(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  placeholder="https://payment-provider.com/invoice/..."
-                />
-              </div>
-
-              
 
               {/* Date Range Filters */}
               <div className="grid grid-cols-2 gap-2">
@@ -364,6 +363,29 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
                     No unpaid orders found for this customer
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Generated Payment Link */}
+            {generatedPaymentLink && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center space-x-2">
+                    <LinkIcon className="h-5 w-5 text-green-600" />
+                    <h3 className="text-sm font-semibold text-gray-800">Payment Link Generated</h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={copyPaymentLink}
+                    className="flex items-center space-x-1 px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
+                  >
+                    <Copy className="h-3 w-3" />
+                    <span>Copy</span>
+                  </button>
+                </div>
+                <div className="bg-white rounded p-2 mt-2">
+                  <p className="text-xs text-gray-600 break-all">{generatedPaymentLink}</p>
+                </div>
               </div>
             )}
 

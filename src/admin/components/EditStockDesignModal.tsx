@@ -31,6 +31,11 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
   const [existingImageUrl, setExistingImageUrl] = useState<string>('');
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [imageToDelete, setImageToDelete] = useState<string>('');
+  const [existingAttachmentUrl, setExistingAttachmentUrl] = useState<string>('');
+  const [existingAttachmentFilename, setExistingAttachmentFilename] = useState<string>('');
+  const [existingAttachmentSize, setExistingAttachmentSize] = useState<number>(0);
+  const [newAttachmentFile, setNewAttachmentFile] = useState<File | null>(null);
+  const [attachmentToDelete, setAttachmentToDelete] = useState<string>('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -48,6 +53,9 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
           status: stockDesign.status,
         });
         setExistingImageUrl(stockDesign.image_url || '');
+        setExistingAttachmentUrl(stockDesign.attachment_url || '');
+        setExistingAttachmentFilename(stockDesign.attachment_filename || '');
+        setExistingAttachmentSize(stockDesign.attachment_size || 0);
       } else {
         // Initialize form data for creation
         setFormData({
@@ -58,10 +66,15 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
           status: 'active',
         });
         setExistingImageUrl('');
+        setExistingAttachmentUrl('');
+        setExistingAttachmentFilename('');
+        setExistingAttachmentSize(0);
       }
 
       setNewImageFile(null);
       setImageToDelete('');
+      setNewAttachmentFile(null);
+      setAttachmentToDelete('');
       setError('');
       fetchCategories();
     }
@@ -99,6 +112,20 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
     }
   };
 
+  const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.name.endsWith('.zip')) {
+        setError('Only ZIP files are allowed for attachments');
+        return;
+      }
+      setNewAttachmentFile(file);
+      if (existingAttachmentUrl) {
+        setAttachmentToDelete(existingAttachmentUrl);
+      }
+    }
+  };
+
   const removeCurrentImage = () => {
     if (newImageFile) {
       // Remove newly selected file
@@ -108,6 +135,18 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
       // Mark existing image for deletion
       setImageToDelete(existingImageUrl);
       setExistingImageUrl('');
+    }
+  };
+
+  const removeCurrentAttachment = () => {
+    if (newAttachmentFile) {
+      setNewAttachmentFile(null);
+      setAttachmentToDelete('');
+    } else if (existingAttachmentUrl) {
+      setAttachmentToDelete(existingAttachmentUrl);
+      setExistingAttachmentUrl('');
+      setExistingAttachmentFilename('');
+      setExistingAttachmentSize(0);
     }
   };
 
@@ -148,6 +187,47 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
     }
   };
 
+  const uploadAttachment = async (): Promise<{ url: string; filename: string; size: number } | null> => {
+    if (!newAttachmentFile) return null;
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        throw new Error('Authentication required');
+      }
+
+      const formData = new FormData();
+      formData.append('file', newAttachmentFile);
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-stock-design-file`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to upload attachment');
+      }
+
+      const result = await response.json();
+      return {
+        url: result.storagePath,
+        filename: newAttachmentFile.name,
+        size: newAttachmentFile.size
+      };
+    } catch (error) {
+      console.error('Attachment upload error:', error);
+      throw new Error('Failed to upload attachment');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -166,12 +246,25 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
 
     try {
       let finalImageUrl = existingImageUrl;
+      let finalAttachmentUrl = existingAttachmentUrl;
+      let finalAttachmentFilename = existingAttachmentFilename;
+      let finalAttachmentSize = existingAttachmentSize;
 
       // Upload new image if selected
       if (newImageFile) {
         const uploadedUrl = await uploadImage();
         if (uploadedUrl) {
           finalImageUrl = uploadedUrl;
+        }
+      }
+
+      // Upload new attachment if selected
+      if (newAttachmentFile) {
+        const uploadedAttachment = await uploadAttachment();
+        if (uploadedAttachment) {
+          finalAttachmentUrl = uploadedAttachment.url;
+          finalAttachmentFilename = uploadedAttachment.filename;
+          finalAttachmentSize = uploadedAttachment.size;
         }
       }
 
@@ -207,10 +300,38 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
         }
       }
 
+      // Delete old attachment if marked for deletion
+      if (attachmentToDelete) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+
+          if (session && attachmentToDelete) {
+            const response = await fetch(
+              `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-stock-design-file?storagePath=${encodeURIComponent(attachmentToDelete)}`,
+              {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${session.access_token}`,
+                },
+              }
+            );
+
+            if (!response.ok) {
+              console.warn('Failed to delete old attachment:', await response.text());
+            }
+          }
+        } catch (error) {
+          console.warn('Error deleting old attachment:', error);
+        }
+      }
+
       // Create or update stock design
       const stockDesignData = {
         ...formData,
         image_url: finalImageUrl || null,
+        attachment_url: finalAttachmentUrl || null,
+        attachment_filename: finalAttachmentFilename || null,
+        attachment_size: finalAttachmentSize || null,
       };
 
       if (mode === 'create') {
@@ -427,6 +548,72 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
                         {hasImage() ? 'Replace image' : 'Click to upload stock design image'}
                       </span>
                     </label>
+                  </div>
+                </div>
+
+                {/* ZIP File Attachment Section */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Package className="h-4 w-4 inline mr-1" />
+                    ZIP File Attachment (Required for Stock Designs)
+                  </label>
+
+                  {/* Current Attachment Display */}
+                  {(existingAttachmentUrl || newAttachmentFile) && (
+                    <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Package className="h-5 w-5 text-blue-600" />
+                          <div>
+                            <p className="font-medium text-gray-800">
+                              {newAttachmentFile ? newAttachmentFile.name : existingAttachmentFilename}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {newAttachmentFile
+                                ? `${(newAttachmentFile.size / (1024 * 1024)).toFixed(2)} MB`
+                                : `${(existingAttachmentSize / (1024 * 1024)).toFixed(2)} MB`
+                              }
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={removeCurrentAttachment}
+                          className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Remove Attachment"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                      {newAttachmentFile && (
+                        <p className="text-sm text-green-600 mt-2">
+                          New attachment selected
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Attachment Upload */}
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                    <input
+                      type="file"
+                      onChange={handleAttachmentChange}
+                      className="hidden"
+                      id="attachment-upload"
+                      accept=".zip"
+                    />
+                    <label
+                      htmlFor="attachment-upload"
+                      className="cursor-pointer flex items-center justify-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors"
+                    >
+                      <Upload className="h-5 w-5" />
+                      <span>
+                        {(existingAttachmentUrl || newAttachmentFile) ? 'Replace ZIP file' : 'Click to upload ZIP file'}
+                      </span>
+                    </label>
+                    <p className="text-xs text-gray-500 text-center mt-2">
+                      Only ZIP files are accepted. This file will be provided to customers after purchase.
+                    </p>
                   </div>
                 </div>
               </>

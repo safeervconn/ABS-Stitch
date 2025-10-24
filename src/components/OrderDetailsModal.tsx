@@ -357,30 +357,49 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                             ))}
                           </div>
 
-                          
+
                         </div>
                       )}
                     </div>
                   </div>
                 )}
 
-                <div>
-                  <AttachmentList
-                    orderId={order.id}
-                    orderNumber={order.order_number}
-                    attachments={attachments}
-                    onAttachmentsChange={async () => {
-                      try {
-                        const orderAttachments = await fetchOrderAttachments(order.id);
-                        setAttachments(orderAttachments);
-                      } catch (error) {
-                        console.error('Error refreshing attachments:', error);
-                      }
-                    }}
-                    canUpload={true}
-                    canDelete={false}
-                  />
-                </div>
+                {/* Attachments Section with Payment Status Check */}
+                {isCustomer && order.payment_status !== 'paid' && order.order_type === 'stock_design' ? (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Order Files</h3>
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+                      <Paperclip className="h-12 w-12 text-yellow-600 mx-auto mb-3" />
+                      <h4 className="font-semibold text-gray-800 mb-2">Payment Required</h4>
+                      <p className="text-sm text-gray-600">
+                        Files will be available once payment is completed for this order.
+                      </p>
+                      {order.payment_status === 'pending_payment' && (
+                        <p className="text-xs text-yellow-700 mt-2">
+                          Payment is currently pending. Files will be unlocked after payment confirmation.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <AttachmentList
+                      orderId={order.id}
+                      orderNumber={order.order_number}
+                      attachments={attachments}
+                      onAttachmentsChange={async () => {
+                        try {
+                          const orderAttachments = await fetchOrderAttachments(order.id);
+                          setAttachments(orderAttachments);
+                        } catch (error) {
+                          console.error('Error refreshing attachments:', error);
+                        }
+                      }}
+                      canUpload={!isCustomer}
+                      canDelete={false}
+                    />
+                  </div>
+                )}
 
               </div>
 
