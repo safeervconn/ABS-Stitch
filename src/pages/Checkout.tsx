@@ -94,6 +94,17 @@ const Checkout: React.FC = () => {
 
         console.log(`Creating order for: ${item.title}, Price: ${itemPrice}`);
 
+        const { data: stockDesign, error: fetchError } = await supabase
+          .from('stock_designs')
+          .select('category_id')
+          .eq('id', item.id)
+          .single();
+
+        if (fetchError || !stockDesign?.category_id) {
+          console.error('Failed to fetch stock design category:', fetchError);
+          throw new Error(`Failed to get category for ${item.title}`);
+        }
+
         const { data: order, error: orderError } = await supabase
           .from('orders')
           .insert({
@@ -101,6 +112,7 @@ const Checkout: React.FC = () => {
             order_type: 'stock_design',
             order_name: item.title,
             stock_design_id: item.id,
+            category_id: stockDesign.category_id,
             custom_description: `Stock Design: ${item.title}`,
             total_amount: itemPrice,
             status: 'new',
