@@ -166,7 +166,10 @@ const CustomerOverviewTab: React.FC = () => {
                       <p className="text-xs sm:text-sm text-gray-500">{order.order_type === 'custom' ? 'Custom Design' : 'Stock Design'} • {new Date(order.created_at).toLocaleDateString()}</p>
                       {order.category?.category_name && (
                         <p className="text-xs text-gray-500 mt-1">
-                          {order.category.category_name} • {order.custom_width}"×{order.custom_height}"
+                          {order.category.category_name}
+                          {order.order_type === 'custom' && order.custom_width > 0 && order.custom_height > 0 && (
+                            <> • {order.custom_width}"×{order.custom_height}"</>
+                          )}
                         </p>
                       )}
                     </div>

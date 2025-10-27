@@ -5,6 +5,7 @@ import FilterBar, { FilterConfig } from '../components/FilterBar';
 import GenerateInvoiceModal from '../components/GenerateInvoiceModal';
 import InvoiceDetailsModal from '../components/InvoiceDetailsModal';
 import EditInvoiceModal from '../components/EditInvoiceModal';
+import ConfirmationModal from '../components/ConfirmationModal';
 import { getInvoices, getCustomersForInvoice } from '../api/supabaseHelpers';
 import { Invoice, PaginationParams } from '../types';
 import { usePaginatedData } from '../hooks/useAdminData';
@@ -39,7 +40,9 @@ const InvoiceManagementTab: React.FC = () => {
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isMarkAsPaidModalOpen, setIsMarkAsPaidModalOpen] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null);
+  const [selectedInvoiceForPayment, setSelectedInvoiceForPayment] = useState<Invoice | null>(null);
   const [customers, setCustomers] = useState<{ id: string; full_name: string; email: string }[]>([]);
 
   // Initial params for reset
@@ -154,20 +157,25 @@ const InvoiceManagementTab: React.FC = () => {
     }
   };
 
-  const handleMarkAsPaid = async (invoice: Invoice) => {
-    if (!window.confirm('Are you sure you want to mark this invoice as paid?')) {
-      return;
-    }
+  const handleMarkAsPaid = (invoice: Invoice) => {
+    setSelectedInvoiceForPayment(invoice);
+    setIsMarkAsPaidModalOpen(true);
+  };
+
+  const confirmMarkAsPaid = async () => {
+    if (!selectedInvoiceForPayment) return;
 
     try {
       const { error } = await supabase
         .from('invoices')
         .update({ status: 'paid' })
-        .eq('id', invoice.id);
+        .eq('id', selectedInvoiceForPayment.id);
 
       if (error) throw error;
 
       toast.success('Invoice marked as paid!');
+      setIsMarkAsPaidModalOpen(false);
+      setSelectedInvoiceForPayment(null);
       refetch();
     } catch (error) {
       console.error('Error marking invoice as paid:', error);
@@ -196,12 +204,12 @@ const InvoiceManagementTab: React.FC = () => {
 
       const products = ordersData && ordersData.length > 0
         ? ordersData.map((order: any) => ({
-            name: order.order_name || `Order ${order.order_number}`,
+            name: (order.order_name && order.order_name.trim()) || `Order ${order.order_number}`,
             price: order.total_amount || 0,
             quantity: 1,
           }))
         : [{
-            name: invoiceData.invoice_title,
+            name: invoiceData.invoice_title || 'Invoice Payment',
             price: invoice.total_amount,
             quantity: 1,
           }];
@@ -468,6 +476,21 @@ const InvoiceManagementTab: React.FC = () => {
             setIsEditModalOpen(false);
             refetch();
           }}
+        />
+
+        {/* Mark as Paid Confirmation Modal */}
+        <ConfirmationModal
+          isOpen={isMarkAsPaidModalOpen}
+          onClose={() => {
+            setIsMarkAsPaidModalOpen(false);
+            setSelectedInvoiceForPayment(null);
+          }}
+          onConfirm={confirmMarkAsPaid}
+          title="Mark Invoice as Paid"
+          message={`Are you sure you want to mark invoice "${selectedInvoiceForPayment?.invoice_title}" as paid? This action will update the invoice status.`}
+          confirmText="Mark as Paid"
+          cancelText="Cancel"
+          type="info"
         />
       </div>
     </div>

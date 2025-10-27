@@ -122,32 +122,46 @@ export async function notifyAboutNewOrder(
 ): Promise<void> {
   try {
     const notificationType: NotificationType = orderType === 'stock_design' ? 'stock_design' : 'order';
+    const notifications: Array<{ userId: string; type: NotificationType; message: string }> = [];
 
-    const notifications: Array<{ userId: string; type: NotificationType; message: string }> = [
-      {
+    if (orderType === 'stock_design') {
+      notifications.push({
         userId: customerId,
         type: notificationType,
-        message: `Your ${orderType} order ${orderNumber} has been placed successfully!`,
-      },
-    ];
-
-    const admins = await getAllAdmins();
-    admins.forEach(admin => {
-      notifications.push({
-        userId: admin.id,
-        type: notificationType,
-        message: `New ${orderType} order ${orderNumber} has been placed by ${customerName}`,
+        message: `Your stock design order ${orderNumber} has been placed successfully!`,
       });
-    });
 
-    // Only notify sales rep for custom orders, not for stock design orders
-    // Stock design orders are admin-only and should not be visible to sales reps
-    if (salesRepId && orderType !== 'stock_design') {
-      notifications.push({
-        userId: salesRepId,
-        type: notificationType,
-        message: `New ${orderType} order ${orderNumber} has been placed by your assigned customer ${customerName}`,
+      const admins = await getAllAdmins();
+      admins.forEach(admin => {
+        notifications.push({
+          userId: admin.id,
+          type: notificationType,
+          message: `New stock design order ${orderNumber} has been placed by ${customerName}`,
+        });
       });
+    } else {
+      notifications.push({
+        userId: customerId,
+        type: notificationType,
+        message: `Your custom order ${orderNumber} has been placed successfully!`,
+      });
+
+      const admins = await getAllAdmins();
+      admins.forEach(admin => {
+        notifications.push({
+          userId: admin.id,
+          type: notificationType,
+          message: `New custom order ${orderNumber} has been placed by ${customerName}`,
+        });
+      });
+
+      if (salesRepId) {
+        notifications.push({
+          userId: salesRepId,
+          type: notificationType,
+          message: `New custom order ${orderNumber} has been placed by your assigned customer ${customerName}`,
+        });
+      }
     }
 
     await createBatchNotifications(notifications);
@@ -169,19 +183,11 @@ export async function notifyAboutOrderStatusChange(
     const notifications: Array<{ userId: string; type: NotificationType; message: string }> = [];
     const notificationType: NotificationType = orderType === 'stock_design' ? 'stock_design' : 'order';
 
-    if (newStatus === 'in_progress' && designerId) {
-      notifications.push({
-        userId: designerId,
-        type: notificationType,
-        message: `Order ${orderNumber} has been moved to in progress status.`,
-      });
-    }
-
-    if (newStatus === 'under_review' && salesRepId) {
+    if (newStatus === 'under_review' && orderType === 'custom' && salesRepId) {
       notifications.push({
         userId: salesRepId,
         type: notificationType,
-        message: `Order ${orderNumber} is now under review and requires your attention.`,
+        message: `Custom order ${orderNumber} is now under review and requires your attention.`,
       });
     }
 
@@ -190,48 +196,6 @@ export async function notifyAboutOrderStatusChange(
         userId: customerId,
         type: notificationType,
         message: `Your order ${orderNumber} has been completed!`,
-      });
-
-      if (salesRepId) {
-        notifications.push({
-          userId: salesRepId,
-          type: notificationType,
-          message: `Order ${orderNumber} has been completed.`,
-        });
-      }
-
-      const admins = await getAllAdmins();
-      admins.forEach(admin => {
-        notifications.push({
-          userId: admin.id,
-          type: notificationType,
-          message: `Order ${orderNumber} has been completed.`,
-        });
-      });
-    }
-
-    if (newStatus === 'cancelled') {
-      notifications.push({
-        userId: customerId,
-        type: notificationType,
-        message: `Your order ${orderNumber} has been cancelled.`,
-      });
-
-      if (salesRepId) {
-        notifications.push({
-          userId: salesRepId,
-          type: notificationType,
-          message: `Order ${orderNumber} has been cancelled.`,
-        });
-      }
-
-      const admins = await getAllAdmins();
-      admins.forEach(admin => {
-        notifications.push({
-          userId: admin.id,
-          type: notificationType,
-          message: `Order ${orderNumber} has been cancelled.`,
-        });
       });
     }
 

@@ -116,11 +116,15 @@ export interface Invoice {
   customer_company_name?: string;
   category_id?: string;
   category_name?: string;
+  invoice_title: string;
   month_year: string;
   payment_link?: string;
   order_ids: string[];
   total_amount: number;
   status: 'paid' | 'unpaid' | 'cancelled';
+  tco_reference_number?: string;
+  tco_order_id?: string;
+  tco_payment_method?: string;
   created_at: string;
   updated_at: string;
 }

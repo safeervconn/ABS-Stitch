@@ -359,7 +359,10 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
                           </div>
                           {order.category_name && (
                             <p className="text-xs text-gray-500 mt-1">
-                              {order.category_name} • {order.custom_width}"×{order.custom_height}"
+                              {order.category_name}
+                              {order.order_type === 'custom' && order.custom_width > 0 && order.custom_height > 0 && (
+                                <> • {order.custom_width}"×{order.custom_height}"</>
+                              )}
                             </p>
                           )}
                           {order.edits > 0 && (

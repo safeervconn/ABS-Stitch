@@ -343,7 +343,10 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                             </div>
                             {order.category_name && (
                               <p className="text-xs text-gray-500 mt-1">
-                                {order.category_name} • {order.custom_width}"×{order.custom_height}"
+                                {order.category_name}
+                                {order.order_type === 'custom' && order.custom_width > 0 && order.custom_height > 0 && (
+                                  <> • {order.custom_width}"×{order.custom_height}"</>
+                                )}
                               </p>
                             )}
                              {order.edits && order.edits > 0 && (

@@ -114,6 +114,8 @@ const Checkout: React.FC = () => {
             stock_design_id: item.id,
             category_id: stockDesign.category_id,
             custom_description: `Stock Design: ${item.title}`,
+            custom_width: 0,
+            custom_height: 0,
             total_amount: itemPrice,
             status: 'new',
             payment_status: 'unpaid',

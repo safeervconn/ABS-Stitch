@@ -79,6 +79,13 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
       throw new Error('Failed to update invoice with payment link');
     }
 
+    try {
+      const { notifyAboutInvoiceCreation } = await import('./notificationService');
+      await notifyAboutInvoiceCreation(customer_id, invoice_title);
+    } catch (notificationError) {
+      console.error('Error creating invoice notifications:', notificationError);
+    }
+
     const { data: updatedOrders, error: ordersError } = await supabase
       .from('orders')
       .update({

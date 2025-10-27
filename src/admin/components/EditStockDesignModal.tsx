@@ -251,6 +251,10 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
       let finalAttachmentSize = existingAttachmentSize;
       let currentStockDesignId = stockDesign?.id;
 
+      if (mode === 'edit' && stockDesign) {
+        await updateStockDesign(currentStockDesignId!, formData);
+      }
+
       if (mode === 'create') {
         const stockDesignData = {
           ...formData,
@@ -336,18 +340,28 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
         }
       }
 
-      if (newImageFile || newAttachmentFile) {
-        const updateData = {
-          image_url: finalImageUrl || existingImageUrl || null,
-          attachment_url: finalAttachmentUrl || existingAttachmentUrl || null,
-          attachment_filename: finalAttachmentFilename || existingAttachmentFilename || null,
-          attachment_size: finalAttachmentSize || existingAttachmentSize || null,
-        };
-        await updateStockDesign(currentStockDesignId, updateData);
-      }
+      if (newImageFile || newAttachmentFile || imageToDelete || attachmentToDelete) {
+        const updateData: any = {};
 
-      if (mode === 'edit' && stockDesign) {
-        await updateStockDesign(currentStockDesignId, formData);
+        if (newImageFile) {
+          updateData.image_url = finalImageUrl;
+        } else if (imageToDelete && !existingImageUrl) {
+          updateData.image_url = null;
+        }
+
+        if (newAttachmentFile) {
+          updateData.attachment_url = finalAttachmentUrl;
+          updateData.attachment_filename = finalAttachmentFilename;
+          updateData.attachment_size = finalAttachmentSize;
+        } else if (attachmentToDelete && !existingAttachmentUrl) {
+          updateData.attachment_url = null;
+          updateData.attachment_filename = null;
+          updateData.attachment_size = null;
+        }
+
+        if (Object.keys(updateData).length > 0) {
+          await updateStockDesign(currentStockDesignId, updateData);
+        }
       }
 
       toast.success(`Stock Design ${mode === 'create' ? 'created' : 'updated'} successfully`);
