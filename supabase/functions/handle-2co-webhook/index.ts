@@ -8,7 +8,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const INS_SECRET_WORD = Deno.env.get("VITE_2CO_INS_SECRET_WORD") || "";
+// Read from Supabase Secrets (not VITE_ prefixed env vars)
+const INS_SECRET_WORD = Deno.env.get("TCO_INS_SECRET_WORD") || "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
@@ -125,6 +126,11 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    console.log('=== 2Checkout Webhook Received ===');
+    console.log('Method:', req.method);
+    console.log('Content-Type:', req.headers.get('content-type'));
+    console.log('INS_SECRET_WORD configured:', INS_SECRET_WORD ? 'YES' : 'NO');
+
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     const contentType = req.headers.get('content-type') || '';
@@ -148,12 +154,18 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    console.log('Received webhook payload:', JSON.stringify(payload, null, 2));
+    console.log('Received webhook payload keys:', Object.keys(payload));
+    console.log('Full payload:', JSON.stringify(payload, null, 2));
 
+    // Handle test/verification requests from 2Checkout
     if (Object.keys(payload).length === 0) {
-      console.log('Empty payload - likely a test request from 2CO');
+      console.log('Empty payload - 2CO test/verification request');
       return new Response(
-        JSON.stringify({ message: 'Endpoint is active and ready' }),
+        JSON.stringify({
+          status: 'ok',
+          message: '2Checkout webhook endpoint is ready',
+          timestamp: new Date().toISOString()
+        }),
         {
           status: 200,
           headers: {
@@ -165,9 +177,13 @@ Deno.serve(async (req: Request) => {
     }
 
     if (!payload.HASH) {
-      console.error('Missing HASH in payload');
+      console.warn('Missing HASH in payload - may be test request');
       return new Response(
-        JSON.stringify({ message: 'Received but missing signature' }),
+        JSON.stringify({
+          status: 'ok',
+          message: 'Webhook endpoint active (no signature to verify)',
+          timestamp: new Date().toISOString()
+        }),
         {
           status: 200,
           headers: {
