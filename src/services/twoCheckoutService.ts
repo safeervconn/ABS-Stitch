@@ -69,28 +69,7 @@ export function generatePaymentLink(params: PaymentLinkParams): string {
     throw new Error('At least one product is required to generate a payment link');
   }
 
-  // Build product arrays using semicolon-separated format (2Checkout ConvertPlus format)
-  const prodNames: string[] = [];
-  const prices: string[] = [];
-  const quantities: string[] = [];
-  const types: string[] = [];
-
-  products.forEach((product, index) => {
-    console.log(`Adding product ${index}:`, product);
-    if (!product.name || !product.name.trim()) {
-      throw new Error(`Product at index ${index} must have a name`);
-    }
-
-    prodNames.push(product.name);
-    prices.push(product.price.toFixed(2));
-    quantities.push(product.quantity.toString());
-    types.push('PRODUCT');
-
-    console.log(`Product ${index}: name=${product.name}, price=${product.price.toFixed(2)}, qty=${product.quantity}`);
-  });
-
-  // Create URL params with semicolon-separated values for multiple products
-  const urlParams = new URLSearchParams({
+  const baseParams: Record<string, string> = {
     merchant: MERCHANT_CODE,
     dynamic: '1',
     'return-url': returnUrl,
@@ -100,23 +79,28 @@ export function generatePaymentLink(params: PaymentLinkParams): string {
     'merchant-order-id': invoiceId,
     tangible: '0',
     src: 'DYNAMIC',
-    prod: prodNames.join(';'),
-    price: prices.join(';'),
-    qty: quantities.join(';'),
-    type: types.join(';'),
+  };
+
+  products.forEach((product, index) => {
+    console.log(`Adding product ${index}:`, product);
+    if (!product.name || !product.name.trim()) {
+      throw new Error(`Product at index ${index} must have a name`);
+    }
+
+    const suffix = index === 0 ? '' : `_${index}`;
+    baseParams[`prod${suffix}`] = product.name.trim();
+    baseParams[`price${suffix}`] = product.price.toFixed(2);
+    baseParams[`qty${suffix}`] = product.quantity.toString();
+    baseParams[`type${suffix}`] = 'PRODUCT';
+
+    console.log(`Product ${index}: prod${suffix}=${product.name.trim()}, price${suffix}=${product.price.toFixed(2)}, qty${suffix}=${product.quantity}`);
   });
 
-  console.log('Base URL params:', Object.fromEntries(urlParams.entries()));
+  console.log('All params before signature:', baseParams);
 
-  console.log('All URL params before signature:', Object.fromEntries(urlParams.entries()));
-
-  // Create signature string by concatenating parameter length + value for each parameter
-  // Sort parameters alphabetically by key name
-  const paramsArray = Array.from(urlParams.entries())
-    .filter(([key]) => key !== 'signature')
+  const paramsArray = Object.entries(baseParams)
     .sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
 
-  // Serialize each parameter: length + value (e.g., "3USD", "210")
   const signatureString = paramsArray
     .map(([key, value]) => {
       const serialized = `${value.length}${value}`;
@@ -125,15 +109,14 @@ export function generatePaymentLink(params: PaymentLinkParams): string {
     })
     .join('');
 
-  console.log('Params for signature (sorted):', paramsArray.map(([k, v]) => `${k}=${v}`));
   console.log('Final signature string:', signatureString);
 
-  // Use HMAC-SHA256 (not MD5) as per 2Checkout's current specification
   const signature = CryptoJS.HmacSHA256(signatureString, BUY_LINK_SECRET).toString();
   console.log('Generated signature (SHA256):', signature);
 
-  urlParams.append('signature', signature);
+  baseParams['signature'] = signature;
 
+  const urlParams = new URLSearchParams(baseParams);
   const finalUrl = `https://secure.2checkout.com/order/checkout.php?${urlParams.toString()}`;
   console.log('Final payment URL:', finalUrl);
   console.log('=== generatePaymentLink complete ===');

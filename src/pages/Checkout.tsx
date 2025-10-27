@@ -79,14 +79,20 @@ const Checkout: React.FC = () => {
     setIsSubmitting(true);
     setError('');
 
+    const createdOrderIds: string[] = [];
+
     try {
-      const createdOrderIds: string[] = [];
+      console.log('=== CHECKOUT PROCESS STARTED ===');
+      console.log('Cart items:', items.length);
+      console.log('Customer:', currentUser.email);
+
       const totalAmount = getTotalPrice();
 
-      // Create orders first
+      console.log('Creating orders...');
       for (const item of items) {
         const itemPrice = parseFloat(item.price.replace('$', ''));
-        const itemTotal = itemPrice;
+
+        console.log(`Creating order for: ${item.title}, Price: ${itemPrice}`);
 
         const { data: order, error: orderError } = await supabase
           .from('orders')
@@ -95,28 +101,36 @@ const Checkout: React.FC = () => {
             order_type: 'stock_design',
             order_name: item.title,
             stock_design_id: item.id,
-            custom_description: `${item.title}`,
-            total_amount: itemTotal,
+            custom_description: `Stock Design: ${item.title}`,
+            total_amount: itemPrice,
             status: 'new',
             payment_status: 'unpaid',
           })
           .select()
           .single();
 
-        if (orderError || !order) {
-          throw new Error('Failed to create order');
+        if (orderError) {
+          console.error('Order creation error:', orderError);
+          throw new Error(`Failed to create order for ${item.title}: ${orderError.message}`);
         }
 
+        if (!order) {
+          throw new Error(`Failed to create order for ${item.title}: No data returned`);
+        }
+
+        console.log(`Order created: ${order.order_number} (${order.id})`);
         createdOrderIds.push(order.id);
-        await new Promise(resolve => setTimeout(resolve, 100));
       }
 
-      // Create invoice and generate payment link
+      console.log(`All ${createdOrderIds.length} orders created successfully`);
+
       const products = items.map(item => ({
         name: item.title,
         price: parseFloat(item.price.replace('$', '')),
         quantity: 1,
       }));
+
+      console.log('Creating invoice with products:', products);
 
       const invoiceParams = {
         customer_id: currentUser.id,
@@ -129,17 +143,40 @@ const Checkout: React.FC = () => {
         products,
       };
 
+      console.log('Calling createInvoiceWithPayment...');
       const { paymentLink } = await createInvoiceWithPayment(invoiceParams);
+
+      console.log('Payment link generated successfully');
+      console.log('=== CHECKOUT PROCESS COMPLETED ===');
 
       clearCart();
       toast.success('Orders created! Redirecting to payment...');
 
-      // Redirect to 2Checkout payment page
-      window.location.href = paymentLink;
+      setTimeout(() => {
+        window.location.href = paymentLink;
+      }, 500);
     } catch (error) {
-      console.error('Error processing checkout:', error);
-      toast.error('Failed to process checkout. Please try again.');
-      setError('Failed to process checkout. Please try again.');
+      console.error('=== CHECKOUT ERROR ===');
+      console.error('Error details:', error);
+
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      console.error('Error message:', errorMessage);
+
+      if (createdOrderIds.length > 0) {
+        console.log('Cleaning up created orders:', createdOrderIds);
+        try {
+          await supabase
+            .from('orders')
+            .delete()
+            .in('id', createdOrderIds);
+          console.log('Orders cleaned up successfully');
+        } catch (cleanupError) {
+          console.error('Failed to cleanup orders:', cleanupError);
+        }
+      }
+
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

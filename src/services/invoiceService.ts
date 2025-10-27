@@ -31,12 +31,20 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
     products
   } = params;
 
+  console.log('=== createInvoiceWithPayment START ===');
+  console.log('Order IDs to link:', order_ids);
+  console.log('Products for payment:', products);
+
+  if (!products || products.length === 0) {
+    console.error('No products provided for payment link');
+    throw new Error('At least one product is required for payment');
+  }
+
   const baseUrl = window.location.origin;
   const returnUrl = `${baseUrl}/payment/success`;
   const cancelUrl = `${baseUrl}/payment/failure`;
 
-  console.log('Creating invoice with products:', products);
-
+  console.log('Creating invoice...');
   const { data: invoice, error: invoiceError } = await supabase
     .from('invoices')
     .insert({
@@ -52,53 +60,67 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
 
   if (invoiceError || !invoice) {
     console.error('Invoice creation error:', invoiceError);
-    throw new Error('Failed to create invoice');
+    throw new Error(`Failed to create invoice: ${invoiceError?.message || 'Unknown error'}`);
   }
 
-  console.log('Invoice created:', invoice.id);
-  console.log('Generating payment link with products:', products);
+  console.log('Invoice created successfully:', invoice.id);
 
-  const paymentLink = generatePaymentLink({
-    invoiceId: invoice.id,
-    amount: total_amount,
-    currency: 'USD',
-    products,
-    customerEmail,
-    customerName,
-    returnUrl,
-    cancelUrl,
-  });
+  try {
+    console.log('Generating payment link...');
+    const paymentLink = generatePaymentLink({
+      invoiceId: invoice.id,
+      amount: total_amount,
+      currency: 'USD',
+      products,
+      customerEmail,
+      customerName,
+      returnUrl,
+      cancelUrl,
+    });
 
-  console.log('Generated payment link:', paymentLink);
+    console.log('Payment link generated:', paymentLink);
 
-  const { error: updateError } = await supabase
-    .from('invoices')
-    .update({ payment_link: paymentLink })
-    .eq('id', invoice.id);
+    console.log('Updating invoice with payment link...');
+    const { error: updateError } = await supabase
+      .from('invoices')
+      .update({ payment_link: paymentLink })
+      .eq('id', invoice.id);
 
-  if (updateError) {
-    throw new Error('Failed to update invoice with payment link');
+    if (updateError) {
+      console.error('Failed to update invoice with payment link:', updateError);
+      throw new Error('Failed to update invoice with payment link');
+    }
+
+    console.log('Linking orders to invoice...');
+    const { data: updatedOrders, error: ordersError } = await supabase
+      .from('orders')
+      .update({
+        invoice_id: invoice.id,
+        payment_status: 'pending_payment'
+      })
+      .in('id', order_ids)
+      .select();
+
+    if (ordersError) {
+      console.error('Orders update error:', ordersError);
+      throw new Error(`Failed to link orders to invoice: ${ordersError.message}`);
+    }
+
+    console.log('Orders linked successfully:', updatedOrders?.length || 0);
+    console.log('=== createInvoiceWithPayment SUCCESS ===');
+
+    return { invoice, paymentLink };
+  } catch (error) {
+    console.error('Error during invoice payment setup:', error);
+    console.log('Cleaning up: deleting invoice', invoice.id);
+
+    await supabase
+      .from('invoices')
+      .delete()
+      .eq('id', invoice.id);
+
+    throw error;
   }
-
-  console.log('Updating orders:', order_ids);
-
-  const { data: updatedOrders, error: ordersError } = await supabase
-    .from('orders')
-    .update({
-      invoice_id: invoice.id,
-      payment_status: 'pending_payment'
-    })
-    .in('id', order_ids)
-    .select();
-
-  if (ordersError) {
-    console.error('Orders update error:', ordersError);
-    throw new Error('Failed to link orders to invoice');
-  }
-
-  console.log('Orders updated:', updatedOrders);
-
-  return { invoice, paymentLink };
 }
 
 export async function updateInvoiceWithTransaction(
