@@ -14,6 +14,10 @@ export interface PaymentLinkParams {
   cancelUrl: string;
 }
 
+/**
+ * Generates a 2Checkout ConvertPlus payment link with proper HMAC-SHA256 signature
+ * Following the official Verifone documentation for dynamic products
+ */
 export function generatePaymentLink(
   params: PaymentLinkParams,
   sellerId: string,
@@ -29,40 +33,80 @@ export function generatePaymentLink(
     throw new Error("At least one product is required");
   }
 
+  // Build product parameter arrays (semicolon-separated for multiple products)
+  const prodNames: string[] = [];
+  const prices: string[] = [];
+  const quantities: string[] = [];
+  const types: string[] = [];
+
+  products.forEach((product) => {
+    if (!product.name || !product.name.trim()) {
+      throw new Error("Product must have a name");
+    }
+    prodNames.push(product.name.trim());
+    prices.push(product.price.toFixed(2));
+    quantities.push(product.quantity.toString());
+    types.push("PRODUCT");
+  });
+
+  // Join arrays with semicolon for multiple products
+  const prodValue = prodNames.join(";");
+  const priceValue = prices.join(";");
+  const qtyValue = quantities.join(";");
+  const typeValue = types.join(";");
+
+  // Build base parameters (these go in URL but not all in signature)
+  const baseParams: Record<string, string> = {
+    merchant: sellerId,
+    dynamic: "1",
+    currency: currency,
+    prod: prodValue,
+    price: priceValue,
+    qty: qtyValue,
+    type: typeValue,
+    "return-url": returnUrl,
+    "return-type": "redirect",
+    "merchant-order-id": invoiceId,
+  };
+
+  // Parameters that MUST be included in signature (alphabetically sorted)
+  // Per ConvertPlus documentation: currency, prod, price, qty, type
+  const signatureParams: Record<string, string> = {
+    currency: currency,
+    price: priceValue,
+    prod: prodValue,
+    qty: qtyValue,
+    type: typeValue,
+  };
+
+  // Sort parameters alphabetically
+  const sortedKeys = Object.keys(signatureParams).sort();
+
+  // Serialize with length prefix (e.g., "3USD" for "USD")
+  const serializedParts: string[] = [];
+  sortedKeys.forEach((key) => {
+    const value = signatureParams[key];
+    const length = new TextEncoder().encode(value).length; // UTF-8 byte length
+    serializedParts.push(`${length}${value}`);
+  });
+
+  const serializedString = serializedParts.join("");
+
+  // Generate HMAC-SHA256 signature
+  const signature = CryptoJS.HmacSHA256(serializedString, secretWord).toString();
+
+  // Add signature to parameters
+  baseParams.signature = signature;
+
+  // Build final URL
+  const urlParams = new URLSearchParams(baseParams);
+  const checkoutUrl = `https://secure.2checkout.com/checkout/buy?${urlParams.toString()}`;
+
+  // Calculate total for debug info
   const total = products.reduce(
     (sum, product) => sum + product.price * product.quantity,
     0
   ).toFixed(2);
-
-  const toSign = `${secretWord}${sellerId}${currency}${total}`;
-  const signature = CryptoJS.SHA256(toSign).toString();
-
-  const baseParams: Record<string, string> = {
-    merchant: sellerId,
-    dynamic: "1",
-    src: "DYNAMIC",
-    currency: currency,
-    "return-url": returnUrl,
-    "return-type": "redirect",
-    "cancel-url": cancelUrl,
-    "merchant-order-id": invoiceId,
-    signature: signature,
-  };
-
-  products.forEach((product, index) => {
-    if (!product.name || !product.name.trim()) {
-      throw new Error(`Product at index ${index} must have a name`);
-    }
-
-    const suffix = index === 0 ? "" : `_${index}`;
-    baseParams[`prod${suffix}`] = product.name.trim();
-    baseParams[`price${suffix}`] = product.price.toFixed(2);
-    baseParams[`qty${suffix}`] = product.quantity.toString();
-    baseParams[`type${suffix}`] = "PRODUCT";
-  });
-
-  const urlParams = new URLSearchParams(baseParams);
-  const checkoutUrl = `https://secure.2checkout.com/order/checkout.php?${urlParams.toString()}`;
 
   return {
     url: checkoutUrl,
@@ -71,9 +115,12 @@ export function generatePaymentLink(
       products,
       currency,
       total,
-      toSign,
-      signature,
       sellerId,
+      signatureParams,
+      sortedKeys,
+      serializedString,
+      signature,
+      finalParams: baseParams,
     },
   };
 }

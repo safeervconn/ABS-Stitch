@@ -94,8 +94,13 @@ Deno.serve(async (req: Request) => {
     console.log("Currency:", debugInfo.currency);
     console.log("Total:", debugInfo.total);
     console.log("Seller ID:", debugInfo.sellerId);
-    console.log("String to Sign:", debugInfo.toSign);
+    console.log("--- Signature Calculation ---");
+    console.log("Signature Params:", JSON.stringify(debugInfo.signatureParams, null, 2));
+    console.log("Sorted Keys:", debugInfo.sortedKeys);
+    console.log("Serialized String:", debugInfo.serializedString);
     console.log("Generated Signature:", debugInfo.signature);
+    console.log("--- Final URL Parameters ---");
+    console.log("All Params:", JSON.stringify(debugInfo.finalParams, null, 2));
     console.log("Final URL:", url);
     console.log("=== End Debug Info ===");
 
