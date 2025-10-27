@@ -53,7 +53,7 @@ export const createStatusColumn = () => ({
 
 export const createDesignerColumn = () => ({
   key: 'assigned_designer_name',
-  label: 'Designer Assigned',
+  label: 'Assigned Designer',
   render: (order: AdminOrder) => (
     <span className={`text-sm ${order.assigned_designer_name === 'Unassigned' || !order.assigned_designer_name ? 'text-gray-400' : 'text-purple-600'}`}>
       {order.assigned_designer_name || 'Unassigned'}
