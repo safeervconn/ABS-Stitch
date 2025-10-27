@@ -41,6 +41,10 @@ export function generatePaymentLink(params: PaymentLinkParams): string {
     cancelUrl,
   } = params;
 
+  if (!products || products.length === 0) {
+    throw new Error('At least one product is required to generate a payment link');
+  }
+
   const urlParams = new URLSearchParams({
     merchant: MERCHANT_CODE,
     dynamic: '1',
@@ -53,8 +57,11 @@ export function generatePaymentLink(params: PaymentLinkParams): string {
   });
 
   products.forEach((product, index) => {
+    if (!product.name || !product.name.trim()) {
+      throw new Error(`Product at index ${index} must have a name`);
+    }
     urlParams.append(`prod[${index}]`, product.name);
-    urlParams.append(`price[${index}]`, product.price.toString());
+    urlParams.append(`price[${index}]`, product.price.toFixed(2));
     urlParams.append(`qty[${index}]`, product.quantity.toString());
   });
 

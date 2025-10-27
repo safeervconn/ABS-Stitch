@@ -128,11 +128,18 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
       const totalAmount = calculateTotal();
 
       const selectedOrders = unpaidOrders.filter(order => selectedOrderIds.includes(order.id));
-      const products = selectedOrders.map(order => ({
-        name: order.order_name || `Order ${order.order_number}`,
-        price: order.total_amount || 0,
-        quantity: 1,
-      }));
+
+      const products = selectedOrders.length > 0
+        ? selectedOrders.map(order => ({
+            name: order.order_name || `Order ${order.order_number}`,
+            price: order.total_amount || 0,
+            quantity: 1,
+          }))
+        : [{
+            name: invoiceTitle.trim(),
+            price: totalAmount,
+            quantity: 1,
+          }];
 
       const { paymentLink } = await createInvoiceWithPayment({
         customer_id: selectedCustomerId,
