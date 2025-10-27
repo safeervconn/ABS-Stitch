@@ -31,7 +31,7 @@ function generateStoredFilename(originalFilename: string): string {
 }
 
 function generateStoragePath(orderNumber: string, storedFilename: string): string {
-  return `order-${orderNumber}/${storedFilename}`;
+  return `orders/${orderNumber}/${storedFilename}`;
 }
 
 export async function fetchOrderAttachments(orderId: string): Promise<OrderAttachment[]> {
