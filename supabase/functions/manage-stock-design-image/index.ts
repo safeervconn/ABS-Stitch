@@ -1,5 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.57.4';
 import { corsHeaders } from '../_shared/corsHeaders.ts';
 
 const STORAGE_BUCKET = 'stock-design-images';

@@ -13,7 +13,6 @@ async function getSignedImageUrl(attachmentId: string): Promise<string | null> {
       .maybeSingle();
 
     if (fetchError || !attachment) {
-      console.error('Failed to fetch attachment:', fetchError);
       return null;
     }
 
@@ -22,13 +21,11 @@ async function getSignedImageUrl(attachmentId: string): Promise<string | null> {
       .createSignedUrl(attachment.storage_path, 3600);
 
     if (error || !data) {
-      console.error('Failed to create signed URL:', error);
       return null;
     }
 
     return data.signedUrl;
   } catch (error) {
-    console.error('Error fetching signed image URL:', error);
     return null;
   }
 }
