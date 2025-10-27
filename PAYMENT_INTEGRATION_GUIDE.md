@@ -60,38 +60,46 @@ The payment integration uses **Supabase Edge Functions** to securely handle 2Che
 
 All sensitive credentials are stored as **Supabase Secrets** and are **never exposed to the frontend**:
 
-- `TCO_MERCHANT_CODE` - Your 2Checkout merchant/seller ID
-- `TCO_BUY_LINK_SECRET` - Used for signing payment URLs (HMAC-SHA256)
+- `TCO_SELLER_ID` - Your 2Checkout seller ID (also called merchant code)
+- `TCO_SECRET_WORD` - Used for signing dynamic product payment URLs (SHA256)
 - `TCO_INS_SECRET_WORD` - Used for verifying webhook signatures (MD5)
 
 The frontend code only calls the Edge Function endpoints and never handles credentials directly.
 
 ### Signature Generation Algorithm
 
-The payment URL signature follows Verifone's specification for hosted checkout:
+The payment URL signature follows Verifone's specification for dynamic product checkout:
 
-1. **Collect all parameters** (merchant, products, currency, return URLs, etc.)
-2. **Sort alphabetically** by parameter key
-3. **Create length-prefixed string**: For each parameter, concatenate `{length}{value}`
-4. **Generate HMAC-SHA256** signature using the `TCO_BUY_LINK_SECRET`
-5. **Append signature** to the URL parameters
+**Formula**: `SHA256(secretWord + sellerId + currency + total)`
+
+Where:
+- `secretWord` = Your 2Checkout Secret Word (`TCO_SECRET_WORD`)
+- `sellerId` = Your 2Checkout Seller ID (`TCO_SELLER_ID`)
+- `currency` = Payment currency (e.g., "USD")
+- `total` = Sum of (price × quantity) for all products, formatted to 2 decimals
 
 Example:
 ```
-Params: merchant=123, prod=Test, price=10.00, currency=USD
-Sorted: currency=USD, merchant=123, price=10.00, prod=Test
-Length-prefixed: 3USD6123435.004Test
-Signature: HMAC-SHA256(length-prefixed-string, secret)
+secretWord: "mySecret123"
+sellerId: "254923900946"
+currency: "USD"
+total: "20.00" (calculated from products)
+
+toSign: "mySecret123254923900946USD20.00"
+signature: SHA256(toSign) = "a1b2c3d4..."
 ```
+
+**Important**: This is different from the Buy Link signature method. Dynamic products use a simpler SHA256 hash without parameter sorting or length-prefixing.
 
 ### Debug Logging
 
 When generating payment URLs, the Edge Function logs:
 - Invoice ID and products
-- Sorted parameters used for signature
-- The length-prefixed signature string
-- The generated signature
-- The final checkout URL
+- Currency and calculated total
+- Seller ID
+- String to sign (concatenated: secretWord + sellerId + currency + total)
+- Generated signature (SHA256 hash)
+- Final checkout URL
 
 These logs can be viewed in the Supabase Dashboard under **Edge Functions → Logs**.
 
@@ -125,10 +133,11 @@ These logs can be viewed in the Supabase Dashboard under **Edge Functions → Lo
 
 ### "Empty Cart" Error on 2Checkout
 
-This was caused by an incorrect signature algorithm. The issue has been fixed by:
-- Using HMAC-SHA256 instead of simple SHA256
-- Implementing length-prefixed value concatenation
-- Including all required parameters in the signature
+This was caused by using the wrong signature algorithm. The issue has been fixed by:
+- Using the correct dynamic product signature formula: `SHA256(secretWord + sellerId + currency + total)`
+- Calculating the total as sum of (price × quantity) for all products
+- Using plain SHA256 hash (not HMAC) as per Verifone's dynamic product specification
+- No parameter sorting or length-prefixing required for dynamic products
 
 ### Testing Payment Links
 

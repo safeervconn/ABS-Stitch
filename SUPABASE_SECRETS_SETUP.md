@@ -15,17 +15,17 @@ To complete the 2Checkout payment integration setup, you need to configure the f
 
 ## Secrets to Configure
 
-### 1. TCO_MERCHANT_CODE
-- **Description**: Your 2Checkout Merchant/Seller ID
+### 1. TCO_SELLER_ID
+- **Description**: Your 2Checkout Seller ID (also called Merchant Code)
 - **Current Value**: `254923900946` (from your old .env file)
 - **Used by**: `generate-2co-payment-url` Edge Function
 - **Where to find**: 2Checkout Dashboard → Account Settings → Site Management
 
-### 2. TCO_BUY_LINK_SECRET
-- **Description**: Secret key used for signing payment checkout URLs (HMAC-SHA256)
+### 2. TCO_SECRET_WORD
+- **Description**: Secret word used for signing dynamic product payment URLs (SHA256)
 - **Current Value**: `&Ksdf4F7&7zuQ7@$B%!z&6Gc5yuAA5Vq6yAfCgX#k7ffA8*Hz5B&h8JzWc7Yv-9s`
 - **Used by**: `generate-2co-payment-url` Edge Function
-- **Where to find**: 2Checkout Dashboard → Integrations → Webhooks & API → Buy Link Secret Word
+- **Where to find**: 2Checkout Dashboard → Integrations → Webhooks & API → Secret Word
 
 ### 3. TCO_INS_SECRET_WORD
 - **Description**: Secret word used for verifying Instant Payment Notification (IPN) webhooks
@@ -93,10 +93,15 @@ This means the secrets are not set in Supabase. Double-check:
 
 ### Payment link shows "Empty Cart"
 
-This was fixed by correcting the signature algorithm. If it still happens:
-1. Check the Edge Function logs for the generated signature
-2. Verify `TCO_BUY_LINK_SECRET` matches what's in your 2Checkout dashboard
-3. Ensure you're using the correct merchant code
+This was fixed by using the correct dynamic product signature algorithm:
+- Formula: `SHA256(secretWord + sellerId + currency + total)`
+- No parameter sorting or length-prefixing for dynamic products
+
+If it still happens:
+1. Check the Edge Function logs for the generated signature and toSign string
+2. Verify `TCO_SECRET_WORD` matches what's in your 2Checkout dashboard
+3. Ensure you're using the correct seller ID
+4. Verify the total amount calculation is correct
 
 ### Webhook signature verification fails
 

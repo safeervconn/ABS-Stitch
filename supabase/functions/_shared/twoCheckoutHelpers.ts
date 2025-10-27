@@ -16,10 +16,10 @@ export interface PaymentLinkParams {
 
 export function generatePaymentLink(
   params: PaymentLinkParams,
-  merchantCode: string,
-  buyLinkSecret: string
+  sellerId: string,
+  secretWord: string
 ): { url: string; debugInfo: Record<string, unknown> } {
-  if (!merchantCode || !buyLinkSecret) {
+  if (!sellerId || !secretWord) {
     throw new Error("2Checkout credentials not configured");
   }
 
@@ -29,16 +29,24 @@ export function generatePaymentLink(
     throw new Error("At least one product is required");
   }
 
+  const total = products.reduce(
+    (sum, product) => sum + product.price * product.quantity,
+    0
+  ).toFixed(2);
+
+  const toSign = `${secretWord}${sellerId}${currency}${total}`;
+  const signature = CryptoJS.SHA256(toSign).toString();
+
   const baseParams: Record<string, string> = {
-    merchant: merchantCode,
+    merchant: sellerId,
     dynamic: "1",
+    src: "DYNAMIC",
+    currency: currency,
     "return-url": returnUrl,
     "return-type": "redirect",
     "cancel-url": cancelUrl,
-    currency: currency,
     "merchant-order-id": invoiceId,
-    tangible: "0",
-    src: "DYNAMIC",
+    signature: signature,
   };
 
   products.forEach((product, index) => {
@@ -53,18 +61,6 @@ export function generatePaymentLink(
     baseParams[`type${suffix}`] = "PRODUCT";
   });
 
-  const paramsArray = Object.entries(baseParams).sort(([keyA], [keyB]) =>
-    keyA.localeCompare(keyB)
-  );
-
-  const signatureString = paramsArray
-    .map(([_, value]) => `${value.length}${value}`)
-    .join("");
-
-  const signature = CryptoJS.HmacSHA256(signatureString, buyLinkSecret).toString();
-
-  baseParams["signature"] = signature;
-
   const urlParams = new URLSearchParams(baseParams);
   const checkoutUrl = `https://secure.2checkout.com/order/checkout.php?${urlParams.toString()}`;
 
@@ -73,9 +69,11 @@ export function generatePaymentLink(
     debugInfo: {
       invoiceId,
       products,
-      sortedParams: paramsArray.map(([k, v]) => ({ key: k, value: v })),
-      signatureString,
+      currency,
+      total,
+      toSign,
       signature,
+      sellerId,
     },
   };
 }

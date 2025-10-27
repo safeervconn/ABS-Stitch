@@ -2,8 +2,8 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { corsHeaders } from "../_shared/corsHeaders.ts";
 import { generatePaymentLink, type Product } from "../_shared/twoCheckoutHelpers.ts";
 
-const TCO_MERCHANT_CODE = Deno.env.get("TCO_MERCHANT_CODE") || "";
-const TCO_BUY_LINK_SECRET = Deno.env.get("TCO_BUY_LINK_SECRET") || "";
+const TCO_SELLER_ID = Deno.env.get("TCO_SELLER_ID") || "";
+const TCO_SECRET_WORD = Deno.env.get("TCO_SECRET_WORD") || "";
 
 interface RequestPayload {
   invoiceId: string;
@@ -84,14 +84,17 @@ Deno.serve(async (req: Request) => {
         returnUrl: payload.returnUrl,
         cancelUrl: payload.cancelUrl,
       },
-      TCO_MERCHANT_CODE,
-      TCO_BUY_LINK_SECRET
+      TCO_SELLER_ID,
+      TCO_SECRET_WORD
     );
 
     console.log("=== 2Checkout Payment URL Generated ===");
     console.log("Invoice ID:", debugInfo.invoiceId);
     console.log("Products:", JSON.stringify(debugInfo.products, null, 2));
-    console.log("Signature String:", debugInfo.signatureString);
+    console.log("Currency:", debugInfo.currency);
+    console.log("Total:", debugInfo.total);
+    console.log("Seller ID:", debugInfo.sellerId);
+    console.log("String to Sign:", debugInfo.toSign);
     console.log("Generated Signature:", debugInfo.signature);
     console.log("Final URL:", url);
     console.log("=== End Debug Info ===");
