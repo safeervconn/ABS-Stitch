@@ -1,5 +1,4 @@
 import { supabase } from '../lib/supabase';
-import { generatePaymentLink } from './twoCheckoutService';
 
 export interface CreateInvoiceParams {
   customer_id: string;
@@ -58,16 +57,29 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
   }
 
   try {
-    const paymentLink = generatePaymentLink({
-      invoiceId: invoice.id,
-      amount: total_amount,
-      currency: 'USD',
-      products,
-      customerEmail,
-      customerName,
-      returnUrl,
-      cancelUrl,
-    });
+    const { data: paymentData, error: paymentError } = await supabase.functions.invoke(
+      'generate-2co-payment-url',
+      {
+        body: {
+          invoiceId: invoice.id,
+          products,
+          returnUrl,
+          cancelUrl,
+          currency: 'USD',
+        },
+      }
+    );
+
+    if (paymentError) {
+      console.error('Payment URL generation error:', paymentError);
+      throw new Error(`Failed to generate payment URL: ${paymentError.message}`);
+    }
+
+    if (!paymentData || !paymentData.checkoutUrl) {
+      throw new Error('Invalid response from payment URL generator');
+    }
+
+    const paymentLink = paymentData.checkoutUrl;
 
     const { error: updateError } = await supabase
       .from('invoices')
