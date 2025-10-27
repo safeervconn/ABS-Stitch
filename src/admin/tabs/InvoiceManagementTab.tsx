@@ -179,20 +179,32 @@ const InvoiceManagementTab: React.FC = () => {
     try {
       const { data: invoiceData, error: fetchError } = await supabase
         .from('invoices')
-        .select('*, customers!inner(full_name, email), orders!inner(order_name, total_amount)')
+        .select('*, customers!inner(full_name, email)')
         .eq('id', invoice.id)
-        .single();
+        .maybeSingle();
 
       if (fetchError || !invoiceData) {
         throw new Error('Failed to fetch invoice details');
       }
 
+      const { data: ordersData } = await supabase
+        .from('orders')
+        .select('order_name, order_number, total_amount')
+        .eq('invoice_id', invoice.id);
+
       const baseUrl = window.location.origin;
-      const products = invoiceData.orders.map((order: any) => ({
-        name: order.order_name || `Order`,
-        price: order.total_amount || 0,
-        quantity: 1,
-      }));
+
+      const products = ordersData && ordersData.length > 0
+        ? ordersData.map((order: any) => ({
+            name: order.order_name || `Order ${order.order_number}`,
+            price: order.total_amount || 0,
+            quantity: 1,
+          }))
+        : [{
+            name: invoiceData.invoice_title,
+            price: invoice.total_amount,
+            quantity: 1,
+          }];
 
       const paymentLink = generatePaymentLink({
         invoiceId: invoice.id,
@@ -216,7 +228,8 @@ const InvoiceManagementTab: React.FC = () => {
       refetch();
     } catch (error) {
       console.error('Error regenerating payment link:', error);
-      toast.error('Failed to regenerate payment link');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to regenerate payment link';
+      toast.error(errorMessage);
     }
   };
 

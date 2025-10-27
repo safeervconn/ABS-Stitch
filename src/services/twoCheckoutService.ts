@@ -5,6 +5,19 @@ const SECRET_KEY = import.meta.env.VITE_2CO_SECRET_KEY;
 const INS_SECRET_WORD = import.meta.env.VITE_2CO_INS_SECRET_WORD;
 const BUY_LINK_SECRET = import.meta.env.VITE_2CO_BUY_LINK_SECRET;
 
+function validate2CheckoutConfig(): { isValid: boolean; missing: string[] } {
+  const missing: string[] = [];
+
+  if (!MERCHANT_CODE) missing.push('VITE_2CO_MERCHANT_CODE');
+  if (!BUY_LINK_SECRET) missing.push('VITE_2CO_BUY_LINK_SECRET');
+  if (!INS_SECRET_WORD) missing.push('VITE_2CO_INS_SECRET_WORD');
+
+  return {
+    isValid: missing.length === 0,
+    missing
+  };
+}
+
 export interface PaymentLinkParams {
   invoiceId: string;
   amount: number;
@@ -32,6 +45,11 @@ export interface WebhookPayload {
 }
 
 export function generatePaymentLink(params: PaymentLinkParams): string {
+  const config = validate2CheckoutConfig();
+  if (!config.isValid) {
+    throw new Error(`2Checkout is not configured. Missing environment variables: ${config.missing.join(', ')}`);
+  }
+
   const {
     invoiceId,
     amount,

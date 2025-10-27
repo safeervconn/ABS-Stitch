@@ -166,8 +166,15 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
       setError('');
     } catch (error) {
       console.error('Error creating invoice:', error);
-      toast.error('Failed to generate invoice');
-      setError('Failed to create invoice. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create invoice. Please try again.';
+
+      if (errorMessage.includes('2Checkout is not configured')) {
+        toast.error('2Checkout payment gateway is not configured. Please add the required environment variables.');
+        setError('2Checkout is not configured. Please contact your administrator to set up the payment gateway.');
+      } else {
+        toast.error('Failed to generate invoice');
+        setError(errorMessage);
+      }
     } finally {
       setSubmitting(false);
     }
