@@ -45,6 +45,9 @@ export interface WebhookPayload {
 }
 
 export function generatePaymentLink(params: PaymentLinkParams): string {
+  console.log('=== generatePaymentLink called ===');
+  console.log('Input params:', JSON.stringify(params, null, 2));
+
   const config = validate2CheckoutConfig();
   if (!config.isValid) {
     throw new Error(`2Checkout is not configured. Missing environment variables: ${config.missing.join(', ')}`);
@@ -59,6 +62,9 @@ export function generatePaymentLink(params: PaymentLinkParams): string {
     cancelUrl,
   } = params;
 
+  console.log('Products received:', products);
+  console.log('Products length:', products?.length);
+
   if (!products || products.length === 0) {
     throw new Error('At least one product is required to generate a payment link');
   }
@@ -72,16 +78,31 @@ export function generatePaymentLink(params: PaymentLinkParams): string {
     currency: currency,
     'merchant-order-id': invoiceId,
     tangible: '0',
+    src: 'DYNAMIC',
   });
 
+  console.log('Base URL params:', Object.fromEntries(urlParams.entries()));
+
   products.forEach((product, index) => {
+    console.log(`Adding product ${index}:`, product);
     if (!product.name || !product.name.trim()) {
       throw new Error(`Product at index ${index} must have a name`);
     }
-    urlParams.append(`prod[${index}]`, product.name);
-    urlParams.append(`price[${index}]`, product.price.toFixed(2));
-    urlParams.append(`qty[${index}]`, product.quantity.toString());
+
+    const prodKey = `prod[${index}]`;
+    const priceKey = `price[${index}]`;
+    const qtyKey = `qty[${index}]`;
+    const typeKey = `type[${index}]`;
+
+    urlParams.set(prodKey, product.name);
+    urlParams.set(priceKey, product.price.toFixed(2));
+    urlParams.set(qtyKey, product.quantity.toString());
+    urlParams.set(typeKey, 'PRODUCT');
+
+    console.log(`Product ${index} added - ${prodKey}=${product.name}, ${priceKey}=${product.price.toFixed(2)}, ${qtyKey}=${product.quantity}, ${typeKey}=PRODUCT`);
   });
+
+  console.log('All URL params before signature:', Object.fromEntries(urlParams.entries()));
 
   const paramsForSignature = Array.from(urlParams.entries())
     .filter(([key]) => key !== 'signature')
@@ -89,10 +110,16 @@ export function generatePaymentLink(params: PaymentLinkParams): string {
     .map(([key, value]) => `${key}${value}`)
     .join('');
 
+  console.log('String for signature:', paramsForSignature);
+
   const signature = CryptoJS.HmacMD5(paramsForSignature, BUY_LINK_SECRET).toString();
   urlParams.append('signature', signature);
 
-  return `https://secure.2checkout.com/order/checkout.php?${urlParams.toString()}`;
+  const finalUrl = `https://secure.2checkout.com/order/checkout.php?${urlParams.toString()}`;
+  console.log('Final payment URL:', finalUrl);
+  console.log('=== generatePaymentLink complete ===');
+
+  return finalUrl;
 }
 
 export function verifyINSSignature(payload: WebhookPayload): boolean {

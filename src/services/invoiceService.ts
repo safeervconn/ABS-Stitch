@@ -35,6 +35,8 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
   const returnUrl = `${baseUrl}/payment/success`;
   const cancelUrl = `${baseUrl}/payment/failure`;
 
+  console.log('Creating invoice with products:', products);
+
   const { data: invoice, error: invoiceError } = await supabase
     .from('invoices')
     .insert({
@@ -49,8 +51,12 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
     .single();
 
   if (invoiceError || !invoice) {
+    console.error('Invoice creation error:', invoiceError);
     throw new Error('Failed to create invoice');
   }
+
+  console.log('Invoice created:', invoice.id);
+  console.log('Generating payment link with products:', products);
 
   const paymentLink = generatePaymentLink({
     invoiceId: invoice.id,
@@ -63,6 +69,8 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
     cancelUrl,
   });
 
+  console.log('Generated payment link:', paymentLink);
+
   const { error: updateError } = await supabase
     .from('invoices')
     .update({ payment_link: paymentLink })
@@ -72,17 +80,23 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
     throw new Error('Failed to update invoice with payment link');
   }
 
-  const { error: ordersError } = await supabase
+  console.log('Updating orders:', order_ids);
+
+  const { data: updatedOrders, error: ordersError } = await supabase
     .from('orders')
     .update({
       invoice_id: invoice.id,
       payment_status: 'pending_payment'
     })
-    .in('id', order_ids);
+    .in('id', order_ids)
+    .select();
 
   if (ordersError) {
+    console.error('Orders update error:', ordersError);
     throw new Error('Failed to link orders to invoice');
   }
+
+  console.log('Orders updated:', updatedOrders);
 
   return { invoice, paymentLink };
 }
