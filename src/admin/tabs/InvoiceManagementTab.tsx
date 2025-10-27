@@ -12,7 +12,6 @@ import { usePaginatedData } from '../hooks/useAdminData';
 import { CSVColumn } from '../../shared/utils/csvExport';
 import { toast } from '../../utils/toast';
 import { supabase } from '../../lib/supabase';
-import { generatePaymentLink } from '../../services/twoCheckoutService';
 
 const InvoiceManagementTab: React.FC = () => {
   // Use the paginated data hook
@@ -214,20 +213,26 @@ const InvoiceManagementTab: React.FC = () => {
             quantity: 1,
           }];
 
-      const paymentLink = generatePaymentLink({
-        invoiceId: invoice.id,
-        amount: invoice.total_amount,
-        currency: 'USD',
-        products,
-        customerEmail: invoiceData.customers.email,
-        customerName: invoiceData.customers.full_name,
-        returnUrl: `${baseUrl}/payment/success`,
-        cancelUrl: `${baseUrl}/payment/failure`,
-      });
+      const { data: paymentData, error: paymentError } = await supabase.functions.invoke(
+        'generate-2co-payment-url',
+        {
+          body: {
+            invoiceId: invoice.id,
+            products,
+            returnUrl: `${baseUrl}/payment/success`,
+            cancelUrl: `${baseUrl}/payment/failure`,
+            currency: 'USD',
+          },
+        }
+      );
+
+      if (paymentError || !paymentData?.checkoutUrl) {
+        throw new Error(paymentError?.message || 'Failed to generate payment URL');
+      }
 
       const { error: updateError } = await supabase
         .from('invoices')
-        .update({ payment_link: paymentLink })
+        .update({ payment_link: paymentData.checkoutUrl })
         .eq('id', invoice.id);
 
       if (updateError) throw updateError;

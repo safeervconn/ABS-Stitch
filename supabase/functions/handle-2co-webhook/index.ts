@@ -1,40 +1,11 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
-import CryptoJS from "npm:crypto-js@4.2.0";
+import { corsHeaders } from "../_shared/corsHeaders.ts";
+import { verifyINSSignature } from "../_shared/twoCheckoutHelpers.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
-};
-
-// Read from Supabase Secrets (not VITE_ prefixed env vars)
 const INS_SECRET_WORD = Deno.env.get("TCO_INS_SECRET_WORD") || "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-
-function verifyINSSignature(payload: Record<string, string>): boolean {
-  try {
-    const receivedHash = payload.HASH;
-    const payloadCopy = { ...payload };
-    delete payloadCopy.HASH;
-
-    const keys = Object.keys(payloadCopy).sort();
-    let signatureString = '';
-
-    for (const key of keys) {
-      const value = payloadCopy[key] || '';
-      signatureString += `${value.length}${value}`;
-    }
-
-    const calculatedHash = CryptoJS.MD5(signatureString + INS_SECRET_WORD).toString();
-
-    return calculatedHash === receivedHash;
-  } catch (error) {
-    console.error('Error verifying INS signature:', error);
-    return false;
-  }
-}
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 
 async function copyStockDesignFiles(supabase: any, orderId: string) {
   try {
@@ -194,7 +165,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (!verifyINSSignature(payload)) {
+    if (!verifyINSSignature(payload, INS_SECRET_WORD)) {
       console.error('Invalid webhook signature');
       return new Response(
         JSON.stringify({ message: 'Signature verification failed' }),
