@@ -187,7 +187,7 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
     }
   };
 
-  const uploadAttachment = async (): Promise<{ url: string; filename: string; size: number } | null> => {
+  const uploadAttachment = async (stockDesignId: string): Promise<{ url: string; filename: string; size: number } | null> => {
     if (!newAttachmentFile) return null;
 
     try {
@@ -201,7 +201,7 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
       formData.append('file', newAttachmentFile);
 
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-stock-design-file`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-stock-design-file?action=upload&stockDesignId=${stockDesignId}`,
         {
           method: 'POST',
           headers: {
@@ -218,9 +218,9 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
 
       const result = await response.json();
       return {
-        url: result.storagePath,
-        filename: newAttachmentFile.name,
-        size: newAttachmentFile.size
+        url: result.filePath,
+        filename: result.fileName,
+        size: result.fileSize
       };
     } catch (error) {
       console.error('Attachment upload error:', error);
@@ -230,7 +230,7 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim()) {
       setError('Stock Design title is required');
       return;
@@ -249,8 +249,24 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
       let finalAttachmentUrl = existingAttachmentUrl;
       let finalAttachmentFilename = existingAttachmentFilename;
       let finalAttachmentSize = existingAttachmentSize;
+      let currentStockDesignId = stockDesign?.id;
 
-      // Upload new image if selected
+      if (mode === 'create') {
+        const stockDesignData = {
+          ...formData,
+          image_url: null,
+          attachment_url: null,
+          attachment_filename: null,
+          attachment_size: null,
+        };
+        const newStockDesign = await createStockDesign(stockDesignData);
+        currentStockDesignId = newStockDesign.id;
+      }
+
+      if (!currentStockDesignId) {
+        throw new Error('Stock design ID is required');
+      }
+
       if (newImageFile) {
         const uploadedUrl = await uploadImage();
         if (uploadedUrl) {
@@ -258,9 +274,8 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
         }
       }
 
-      // Upload new attachment if selected
       if (newAttachmentFile) {
-        const uploadedAttachment = await uploadAttachment();
+        const uploadedAttachment = await uploadAttachment(currentStockDesignId);
         if (uploadedAttachment) {
           finalAttachmentUrl = uploadedAttachment.url;
           finalAttachmentFilename = uploadedAttachment.filename;
@@ -268,13 +283,11 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
         }
       }
 
-      // Delete old image if marked for deletion
       if (imageToDelete) {
         try {
           const { data: { session } } = await supabase.auth.getSession();
 
           if (session && imageToDelete.includes('/stock-design-images/')) {
-            // Extract storage path from the URL
             const urlParts = imageToDelete.split('/stock-design-images/');
             const storagePath = urlParts.length > 1 ? urlParts[1] : null;
 
@@ -296,18 +309,16 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
           }
         } catch (error) {
           console.warn('Error deleting old image:', error);
-          // Don't throw - allow the update to proceed even if deletion fails
         }
       }
 
-      // Delete old attachment if marked for deletion
       if (attachmentToDelete) {
         try {
           const { data: { session } } = await supabase.auth.getSession();
 
           if (session && attachmentToDelete) {
             const response = await fetch(
-              `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-stock-design-file?storagePath=${encodeURIComponent(attachmentToDelete)}`,
+              `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-stock-design-file?action=delete&stockDesignId=${currentStockDesignId}`,
               {
                 method: 'DELETE',
                 headers: {
@@ -325,23 +336,21 @@ const EditStockDesignModal: React.FC<EditStockDesignModalProps> = ({
         }
       }
 
-      // Create or update stock design
-      const stockDesignData = {
-        ...formData,
-        image_url: finalImageUrl || null,
-        attachment_url: finalAttachmentUrl || null,
-        attachment_filename: finalAttachmentFilename || null,
-        attachment_size: finalAttachmentSize || null,
-      };
-
-      if (mode === 'create') {
-        await createStockDesign(stockDesignData);
-        toast.success('Stock Design created successfully');
-      } else if (stockDesign) {
-        await updateStockDesign(stockDesign.id, stockDesignData);
-        toast.success('Stock Design updated successfully');
+      if (newImageFile || newAttachmentFile) {
+        const updateData = {
+          image_url: finalImageUrl || existingImageUrl || null,
+          attachment_url: finalAttachmentUrl || existingAttachmentUrl || null,
+          attachment_filename: finalAttachmentFilename || existingAttachmentFilename || null,
+          attachment_size: finalAttachmentSize || existingAttachmentSize || null,
+        };
+        await updateStockDesign(currentStockDesignId, updateData);
       }
 
+      if (mode === 'edit' && stockDesign) {
+        await updateStockDesign(currentStockDesignId, formData);
+      }
+
+      toast.success(`Stock Design ${mode === 'create' ? 'created' : 'updated'} successfully`);
       onSuccess();
       onClose();
     } catch (error) {

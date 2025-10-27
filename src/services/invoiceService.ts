@@ -31,12 +31,7 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
     products
   } = params;
 
-  console.log('=== createInvoiceWithPayment START ===');
-  console.log('Order IDs to link:', order_ids);
-  console.log('Products for payment:', products);
-
   if (!products || products.length === 0) {
-    console.error('No products provided for payment link');
     throw new Error('At least one product is required for payment');
   }
 
@@ -44,7 +39,6 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
   const returnUrl = `${baseUrl}/payment/success`;
   const cancelUrl = `${baseUrl}/payment/failure`;
 
-  console.log('Creating invoice...');
   const { data: invoice, error: invoiceError } = await supabase
     .from('invoices')
     .insert({
@@ -63,10 +57,7 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
     throw new Error(`Failed to create invoice: ${invoiceError?.message || 'Unknown error'}`);
   }
 
-  console.log('Invoice created successfully:', invoice.id);
-
   try {
-    console.log('Generating payment link...');
     const paymentLink = generatePaymentLink({
       invoiceId: invoice.id,
       amount: total_amount,
@@ -78,9 +69,6 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
       cancelUrl,
     });
 
-    console.log('Payment link generated:', paymentLink);
-
-    console.log('Updating invoice with payment link...');
     const { error: updateError } = await supabase
       .from('invoices')
       .update({ payment_link: paymentLink })
@@ -91,7 +79,6 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
       throw new Error('Failed to update invoice with payment link');
     }
 
-    console.log('Linking orders to invoice...');
     const { data: updatedOrders, error: ordersError } = await supabase
       .from('orders')
       .update({
@@ -106,13 +93,9 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
       throw new Error(`Failed to link orders to invoice: ${ordersError.message}`);
     }
 
-    console.log('Orders linked successfully:', updatedOrders?.length || 0);
-    console.log('=== createInvoiceWithPayment SUCCESS ===');
-
     return { invoice, paymentLink };
   } catch (error) {
     console.error('Error during invoice payment setup:', error);
-    console.log('Cleaning up: deleting invoice', invoice.id);
 
     await supabase
       .from('invoices')

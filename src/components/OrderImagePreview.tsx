@@ -1,6 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { getSignedImageUrl } from '../lib/imageUrlService';
+import { supabase } from '../lib/supabase';
 import { getPlaceholderImage } from '../lib/placeholderImages';
+
+const STORAGE_BUCKET = 'order-attachments';
+
+async function getSignedImageUrl(attachmentId: string): Promise<string | null> {
+  try {
+    const { data: attachment, error: fetchError } = await supabase
+      .from('order_attachments')
+      .select('storage_path')
+      .eq('id', attachmentId)
+      .maybeSingle();
+
+    if (fetchError || !attachment) {
+      console.error('Failed to fetch attachment:', fetchError);
+      return null;
+    }
+
+    const { data, error } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .createSignedUrl(attachment.storage_path, 3600);
+
+    if (error || !data) {
+      console.error('Failed to create signed URL:', error);
+      return null;
+    }
+
+    return data.signedUrl;
+  } catch (error) {
+    console.error('Error fetching signed image URL:', error);
+    return null;
+  }
+}
 
 interface OrderImagePreviewProps {
   attachmentId?: string;

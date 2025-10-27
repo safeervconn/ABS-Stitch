@@ -45,9 +45,6 @@ export interface WebhookPayload {
 }
 
 export function generatePaymentLink(params: PaymentLinkParams): string {
-  console.log('=== generatePaymentLink called ===');
-  console.log('Input params:', JSON.stringify(params, null, 2));
-
   const config = validate2CheckoutConfig();
   if (!config.isValid) {
     throw new Error(`2Checkout is not configured. Missing environment variables: ${config.missing.join(', ')}`);
@@ -61,9 +58,6 @@ export function generatePaymentLink(params: PaymentLinkParams): string {
     returnUrl,
     cancelUrl,
   } = params;
-
-  console.log('Products received:', products);
-  console.log('Products length:', products?.length);
 
   if (!products || products.length === 0) {
     throw new Error('At least one product is required to generate a payment link');
@@ -82,7 +76,6 @@ export function generatePaymentLink(params: PaymentLinkParams): string {
   };
 
   products.forEach((product, index) => {
-    console.log(`Adding product ${index}:`, product);
     if (!product.name || !product.name.trim()) {
       throw new Error(`Product at index ${index} must have a name`);
     }
@@ -92,34 +85,21 @@ export function generatePaymentLink(params: PaymentLinkParams): string {
     baseParams[`price${suffix}`] = product.price.toFixed(2);
     baseParams[`qty${suffix}`] = product.quantity.toString();
     baseParams[`type${suffix}`] = 'PRODUCT';
-
-    console.log(`Product ${index}: prod${suffix}=${product.name.trim()}, price${suffix}=${product.price.toFixed(2)}, qty${suffix}=${product.quantity}`);
   });
-
-  console.log('All params before signature:', baseParams);
 
   const paramsArray = Object.entries(baseParams)
     .sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
 
   const signatureString = paramsArray
-    .map(([key, value]) => {
-      const serialized = `${value.length}${value}`;
-      console.log(`Serializing ${key}: "${value}" -> "${serialized}"`);
-      return serialized;
-    })
+    .map(([key, value]) => `${value.length}${value}`)
     .join('');
 
-  console.log('Final signature string:', signatureString);
-
   const signature = CryptoJS.HmacSHA256(signatureString, BUY_LINK_SECRET).toString();
-  console.log('Generated signature (SHA256):', signature);
 
   baseParams['signature'] = signature;
 
   const urlParams = new URLSearchParams(baseParams);
   const finalUrl = `https://secure.2checkout.com/order/checkout.php?${urlParams.toString()}`;
-  console.log('Final payment URL:', finalUrl);
-  console.log('=== generatePaymentLink complete ===');
 
   return finalUrl;
 }
