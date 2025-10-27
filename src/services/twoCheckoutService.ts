@@ -104,15 +104,21 @@ export function generatePaymentLink(params: PaymentLinkParams): string {
 
   console.log('All URL params before signature:', Object.fromEntries(urlParams.entries()));
 
-  const paramsForSignature = Array.from(urlParams.entries())
+  // Create signature string by concatenating parameter length + value for each parameter
+  const paramsArray = Array.from(urlParams.entries())
     .filter(([key]) => key !== 'signature')
-    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
-    .map(([key, value]) => `${key}${value}`)
+    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
+
+  const signatureString = paramsArray
+    .map(([key, value]) => `${value.length}${value}`)
     .join('');
 
-  console.log('String for signature:', paramsForSignature);
+  console.log('Params for signature:', paramsArray);
+  console.log('Signature string:', signatureString);
 
-  const signature = CryptoJS.HmacMD5(paramsForSignature, BUY_LINK_SECRET).toString();
+  const signature = CryptoJS.HmacMD5(signatureString, BUY_LINK_SECRET).toString();
+  console.log('Generated signature:', signature);
+
   urlParams.append('signature', signature);
 
   const finalUrl = `https://secure.2checkout.com/order/checkout.php?${urlParams.toString()}`;

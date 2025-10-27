@@ -131,7 +131,7 @@ const GenerateInvoiceModal: React.FC<GenerateInvoiceModalProps> = ({
 
       const products = selectedOrders.length > 0
         ? selectedOrders.map(order => ({
-            name: order.order_name || `Order ${order.order_number}`,
+            name: (order.order_name && order.order_name.trim()) || `Order ${order.order_number}`,
             price: order.total_amount || 0,
             quantity: 1,
           }))
