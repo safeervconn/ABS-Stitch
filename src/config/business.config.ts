@@ -33,7 +33,7 @@ export interface BusinessConfig {
 }
 
 export const businessConfig: BusinessConfig = {
-  businessName: import.meta.env.VITE_BUSINESS_NAME || 'ABS STITCH',
+  businessName: import.meta.env.VITE_BUSINESS_NAME || 'AB STITCH',
   tagline: import.meta.env.VITE_BUSINESS_TAGLINE || 'Professional Embroidery Services',
   contact: {
     email: import.meta.env.VITE_CONTACT_EMAIL || 'contact@absstitch.com',
