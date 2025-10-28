@@ -46,28 +46,14 @@ export function generatePaymentLink(
     prodNames.push(product.name.trim());
     prices.push(product.price.toFixed(2));
     quantities.push(product.quantity.toString());
-    types.push("PRODUCT");
+    types.push("digital");
   });
 
-  // Join arrays with semicolon for multiple products
+  // Join arrays with semicolon for multiple products (UNENCODED)
   const prodValue = prodNames.join(";");
   const priceValue = prices.join(";");
   const qtyValue = quantities.join(";");
   const typeValue = types.join(";");
-
-  // Build base parameters (these go in URL but not all in signature)
-  const baseParams: Record<string, string> = {
-    merchant: sellerId,
-    dynamic: "1",
-    currency: currency,
-    prod: prodValue,
-    price: priceValue,
-    qty: qtyValue,
-    type: typeValue,
-    "return-url": returnUrl,
-    "return-type": "redirect",
-    "merchant-order-id": invoiceId,
-  };
 
   // Parameters that MUST be included in signature (alphabetically sorted)
   // Per ConvertPlus documentation: currency, prod, price, qty, type
@@ -95,12 +81,32 @@ export function generatePaymentLink(
   // Generate HMAC-SHA256 signature
   const signature = CryptoJS.HmacSHA256(serializedString, secretWord).toString();
 
-  // Add signature to parameters
-  baseParams.signature = signature;
+  // Manually build query string to avoid double-encoding semicolons
+  // CRITICAL: Do NOT use URLSearchParams as it encodes semicolons as %3B
+  const queryParts: string[] = [];
 
-  // Build final URL
-  const urlParams = new URLSearchParams(baseParams);
-  const checkoutUrl = `https://secure.2checkout.com/checkout/buy?${urlParams.toString()}`;
+  // Add parameters in specific order for consistency
+  queryParts.push(`merchant=${encodeURIComponent(sellerId)}`);
+  queryParts.push(`currency=${encodeURIComponent(currency)}`);
+  queryParts.push(`tpl=default`); // Required for ConvertPlus
+  queryParts.push(`dynamic=1`);
+
+  // Product parameters - encode product names but keep semicolons unencoded
+  queryParts.push(`prod=${prodNames.map(n => encodeURIComponent(n)).join(";")}`);
+  queryParts.push(`price=${priceValue}`); // Already numeric, no encoding needed
+  queryParts.push(`type=${typeValue}`); // Already lowercase "digital", no encoding needed
+  queryParts.push(`qty=${qtyValue}`); // Already numeric, no encoding needed
+
+  // Add return/cancel URLs - these need full URL encoding
+  queryParts.push(`return-url=${encodeURIComponent(returnUrl)}`);
+  queryParts.push(`return-type=redirect`);
+  queryParts.push(`cancel-url=${encodeURIComponent(cancelUrl)}`);
+  queryParts.push(`merchant-order-id=${encodeURIComponent(invoiceId)}`);
+
+  // Add signature last
+  queryParts.push(`signature=${signature}`);
+
+  const checkoutUrl = `https://secure.2checkout.com/checkout/buy?${queryParts.join("&")}`;
 
   // Calculate total for debug info
   const total = products.reduce(
@@ -120,7 +126,8 @@ export function generatePaymentLink(
       sortedKeys,
       serializedString,
       signature,
-      finalParams: baseParams,
+      queryParts,
+      finalUrl: checkoutUrl,
     },
   };
 }

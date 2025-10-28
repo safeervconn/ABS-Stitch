@@ -35,8 +35,8 @@ export async function createInvoiceWithPayment(params: CreateInvoiceWithPaymentP
   }
 
   const baseUrl = window.location.origin;
-  const returnUrl = `${baseUrl}/payment/success`;
-  const cancelUrl = `${baseUrl}/payment/failure`;
+  const returnUrl = `${baseUrl}/customer-dashboard`;
+  const cancelUrl = `${baseUrl}/customer-dashboard`;
 
   const { data: invoice, error: invoiceError } = await supabase
     .from('invoices')

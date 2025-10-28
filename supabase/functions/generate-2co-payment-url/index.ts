@@ -100,7 +100,7 @@ Deno.serve(async (req: Request) => {
     console.log("Serialized String:", debugInfo.serializedString);
     console.log("Generated Signature:", debugInfo.signature);
     console.log("--- Final URL Parameters ---");
-    console.log("All Params:", JSON.stringify(debugInfo.finalParams, null, 2));
+    console.log("Query Parts:", JSON.stringify(debugInfo.queryParts, null, 2));
     console.log("Final URL:", url);
     console.log("=== End Debug Info ===");
 
