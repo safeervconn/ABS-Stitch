@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './contexts/CartContext';
 import { OrderProvider } from './contexts/OrderContext';
@@ -14,24 +14,25 @@ import QuoteForm from './components/QuoteForm';
 import ContactInfo from './components/ContactInfo';
 import Footer from './components/Footer';
 import PlaceOrderModal from './components/PlaceOrderModal';
+import { LoadingSpinner } from './shared/components/LoadingSpinner';
 
-// Pages
-import StockDesigns from "./pages/StockDesigns";
-import About from './pages/About';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import EmployeeSignup from './pages/EmployeeSignup';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import SalesRepDashboard from './pages/SalesRepDashboard';
-import DesignerDashboard from './pages/DesignerDashboard';
-import CustomerDashboard from './pages/CustomerDashboard';
-import AdminModule from './admin/AdminDashboard';
-import ProfileSettings from './pages/ProfileSettings';
-import Checkout from './pages/Checkout';
-import NotificationsPage from './pages/NotificationsPage';
-import PaymentSuccess from './pages/PaymentSuccess';
-import PaymentFailure from './pages/PaymentFailure';
+// Lazy-loaded Pages
+const StockDesigns = lazy(() => import("./pages/StockDesigns"));
+const About = lazy(() => import('./pages/About'));
+const Login = lazy(() => import('./pages/Login'));
+const Signup = lazy(() => import('./pages/Signup'));
+const EmployeeSignup = lazy(() => import('./pages/EmployeeSignup'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const SalesRepDashboard = lazy(() => import('./pages/SalesRepDashboard'));
+const DesignerDashboard = lazy(() => import('./pages/DesignerDashboard'));
+const CustomerDashboard = lazy(() => import('./pages/CustomerDashboard'));
+const AdminModule = lazy(() => import('./admin/AdminDashboard'));
+const ProfileSettings = lazy(() => import('./pages/ProfileSettings'));
+const Checkout = lazy(() => import('./pages/Checkout'));
+const NotificationsPage = lazy(() => import('./pages/NotificationsPage'));
+const PaymentSuccess = lazy(() => import('./pages/PaymentSuccess'));
+const PaymentFailure = lazy(() => import('./pages/PaymentFailure'));
 
 // Homepage Component
 const Homepage: React.FC = () => {
@@ -92,27 +93,33 @@ function App() {
       <OrderProvider>
         <Router>
           <div className="min-h-screen bg-gray-50">
-            <Routes>
-              <Route path="/" element={<Homepage />} />
-              <Route path="/stock-designs" element={<StockDesigns />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/employee-signup" element={<EmployeeSignup />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/profile" element={<ProfileSettings />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/notifications" element={<NotificationsPage />} />
-              <Route path="/payment/success" element={<PaymentSuccess />} />
-              <Route path="/payment/failure" element={<PaymentFailure />} />
-              <Route path="/sales/dashboard" element={<SalesRepDashboard />} />
-              <Route path="/designer/dashboard" element={<DesignerDashboard />} />
-              <Route path="/customer/dashboard" element={<CustomerDashboard />} />
-              <Route path="/admin" element={<AdminModule />} />
-              <Route path="/admin/*" element={<AdminModule />} />
-            </Routes>
-            
+            <Suspense fallback={
+              <div className="min-h-screen flex items-center justify-center">
+                <LoadingSpinner size="lg" />
+              </div>
+            }>
+              <Routes>
+                <Route path="/" element={<Homepage />} />
+                <Route path="/stock-designs" element={<StockDesigns />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/employee-signup" element={<EmployeeSignup />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/profile" element={<ProfileSettings />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/notifications" element={<NotificationsPage />} />
+                <Route path="/payment/success" element={<PaymentSuccess />} />
+                <Route path="/payment/failure" element={<PaymentFailure />} />
+                <Route path="/sales/dashboard" element={<SalesRepDashboard />} />
+                <Route path="/designer/dashboard" element={<DesignerDashboard />} />
+                <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+                <Route path="/admin" element={<AdminModule />} />
+                <Route path="/admin/*" element={<AdminModule />} />
+              </Routes>
+            </Suspense>
+
             {/* Place Order Modal - Available globally */}
             <PlaceOrderModal
               isOpen={isPlaceOrderOpen}
