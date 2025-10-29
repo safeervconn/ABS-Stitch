@@ -1,8 +1,7 @@
 import React from 'react';
 import { Eye, CreditCard as Edit } from 'lucide-react';
 import { AdminOrder } from '../../admin/types';
-import { getStatusColor } from './statusUtils';
-import { DEFAULT_IMAGE_URL } from '../constants/orderConstants';
+import { getStatusColor } from '../components/StatusBadge';
 import { OrderImagePreview } from '../../components/OrderImagePreview';
 
 export const createImageColumn = () => ({

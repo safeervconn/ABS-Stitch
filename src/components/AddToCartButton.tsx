@@ -16,7 +16,7 @@ interface AddToCartButtonProps {
 }
 
 const AddToCartButton: React.FC<AddToCartButtonProps> = ({ item, className = "" }) => {
-  const { addToCart, items } = useCart();
+  const { addToCart } = useCart();
   const [currentUser, setCurrentUser] = React.useState<any>(null);
 
   React.useEffect(() => {

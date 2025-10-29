@@ -16,7 +16,16 @@ export interface BusinessConfig {
     twitter?: string;
     linkedin?: string;
   };
-  
+  features: {
+    stockDesigns: boolean;
+    customOrders: boolean;
+    quoteRequests: boolean;
+    multiplePaymentGateways: boolean;
+  };
+  pricing: {
+    currency: string;
+    taxRate: number;
+  };
 }
 
 export const businessConfig: BusinessConfig = {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { LucideIcon } from 'lucide-react';
-import { getStatCardColorClasses } from '../utils/statusUtils';
+import { getStatCardColorClasses } from './StatusBadge';
 
 interface StatCardProps {
   title: string;
